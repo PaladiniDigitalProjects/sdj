@@ -2,7 +2,6 @@
 # Uncomment if you pull core with WP-CLI or Composer instead of tracking it
 #wp-admin/
 #wp-includes/
-.htaccess
 # WordPress Content
 wp-content/upgrade/
 wp-content/backup-db/
@@ -15,7 +14,6 @@ wp-content/db.php
 wp-content/object-cache.php
 
 # Sensitive files
-wp-config.php
 /.env                                 # if you use dotenv files
 .htaccess
 # Lando, Docker, node_modules, OS files
