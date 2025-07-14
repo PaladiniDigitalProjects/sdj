@@ -1,0 +1,174 @@
+/* NOTAS DE PRENSA */
+
+.notas-prensa {
+    .entry-list {
+      .entry {
+        flex-direction: column;
+        padding-left: 0;
+        .entry-image {
+          width: 100%;
+        }
+
+        .entry-content {
+          width: 100%;
+          .data {
+            color:$primary;
+          }
+
+          .entry-title {
+            margin-top: 1rem;
+            padding: 0;
+          }
+
+          .content {
+            p {
+              padding: 0;
+              margin: 0;
+            }
+          }
+        }
+
+        ul.entry-footer {
+          > li {
+            padding:0.35rem 0.25rem;
+            margin: 0;
+            a {
+              font-family: $fp-light;
+              padding-left: 2rem;
+              color:$primary;
+              text-align: left;
+              position: relative;
+              &:before {
+                position: absolute;
+                left:0;
+                top:0.35rem;
+                content:' ';
+                display: block;
+                width: 1.5rem;
+                height: 1.5rem;
+                background: url('../img/ico-right-arrow.svg') left center no-repeat;
+                background-size: 100% 100%;
+              }
+              &.open {
+                &:before {
+                  background: url('../img/ico-more-up.svg') left center no-repeat;
+                }
+              }
+            }
+            figure.block-gallery {
+              margin-top: 1rem;
+              ul.blocks-gallery-grid {
+                  li.blocks-gallery-item {
+                    margin: 0;
+                    padding: 0;
+                    &:before {
+                      width: 0;
+                      height: 0;
+                    }
+                    a {
+                      padding: 0.5rem;
+                      position: relative;
+                      display: block;
+                      transition: 0.25s;
+
+                      &:before {
+                        width: 0;
+                        height: 0;
+                        position: relative;
+                        content:'';
+                        background:none !important;
+                      }
+
+                      &:hover {
+                        img {
+                          opacity: 0.7;
+                        }
+                      }
+                    }
+                  }
+              }
+            }
+          
+          }
+        }
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+    
+    @include tablet {
+      .entry-list {
+        .entry {
+          .entry-image {
+            width: calc(100% - 2rem);
+            padding-bottom: 35%;
+          }
+
+          .entry-content {
+            max-width: 64rem;
+          }
+
+          .entry-footer {
+            display:flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            > li {
+              width: 50%;
+              &:last-child {
+                width: 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    @include laptop {
+      .entry-list {
+        
+        .entry {
+          .entry-image {
+            max-width:62rem;
+            padding-bottom: 40%;
+          }
+
+          .entry-content {
+            max-width: 64rem;
+            .entry-title {
+              margin-bottom: 2.4rem;
+            }
+          }
+          .entry-footer {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+          }
+        }
+      }
+    }
+
+
+     @include large {
+      
+      .entry-list {
+        margin:2rem 0 0 0;
+        .entry{
+          &:first-child {
+            max-width: 65rem;
+
+            .entry-image {
+              padding-bottom: 50%;
+            }
+          }
+        }
+      }
+
+      .pagination {
+        margin:2rem 0 6rem 4rem;
+        width: calc(100% - 4rem);
+      }
+
+    }    
+
+}
+// end NOTAS PRENSA

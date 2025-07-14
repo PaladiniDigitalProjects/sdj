@@ -1,0 +1,1 @@
+<?php $sg_encryption_key = "bzrIvj2WSU86mFb2XNfsJn0aQ2z0EUn+4S9hdeoPJrY="; ?>

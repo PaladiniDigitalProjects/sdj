@@ -1,0 +1,28 @@
+.category {
+
+  .filters {
+    margin: 7rem auto;
+  }
+
+
+  .grid {
+      border: 0.5rem solid white;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap:wrap;
+
+      .item {
+        border:0.5rem solid $white;
+        width: 50%;
+      }
+
+      @include sm {
+        border: 0px solid $white;
+        .item {
+          width: 25%;
+          border:1rem solid $white;
+        }
+      }
+  }
+}

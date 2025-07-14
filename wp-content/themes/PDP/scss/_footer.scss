@@ -1,0 +1,83 @@
+.site-footer {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  width: 100%;
+  background: $morat;
+  color:$crema;
+  a {
+    color:$crema;
+    text-decoration: none;
+  }
+
+.textwidget  {
+  margin: 0 2rem;
+  text-align: left;
+  }
+
+
+  .bcorb {
+    text-align: left;
+    margin-bottom: 2rem;
+    img {
+      width: 6rem;
+      height: auto;
+    }
+    p {
+      @include font-size(12);
+      text-align: left;
+      padding-right: 40%;
+    }
+  }
+
+  @include sm {
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 8rem 0 6rem;
+    @include font-size(16);
+    z-index: 1;
+
+    h5 {
+      @include font-size(16);
+      font-family: $fp-bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .textwidget {
+      @include font-size(16);
+      text-align: center;
+
+    ul.contacte {
+      margin: 5rem auto 3rem;
+      li {
+        @include font-size(16);
+        display: inline-block;
+        margin: 0 4rem 0 0;
+      }
+    }
+
+    ul.xarxes-socials {
+      border:none;
+      opacity: 1;
+      }
+    }
+
+    .bcorb {
+      position: absolute;
+      right:3rem;
+      bottom:0;
+      width: 15rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      img {
+        width: 6rem;
+        height: auto;
+      }
+      p {
+        @include font-size(12);
+        text-align: center;
+        padding-right: 0;
+      }
+    }
+  }
+}

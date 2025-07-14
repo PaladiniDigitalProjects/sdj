@@ -1,0 +1,89 @@
+/*!******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/@wordpress/scripts/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/accordion-toolbar/editor.scss ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************/
+#accordion_block_patterns_inserter {
+  display: flex;
+  align-items: center;
+}
+#accordion_block_patterns_inserter .components-button.has-icon {
+  padding: 3px;
+}
+
+.accordion__pattern_list_wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 30px;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item {
+  width: 33.33%;
+  padding: 0 15px;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview {
+  display: block;
+  width: 100%;
+  outline: none;
+  cursor: grab;
+  height: 200px;
+  overflow-y: scroll;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview:hover {
+  border-color: #0f172a;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview:hover img {
+  -o-object-position: bottom;
+     object-position: bottom;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F1F1F1;
+  border-radius: 5px;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview::-webkit-scrollbar {
+  width: 6px;
+  background-color: #F1F1F1;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview::-webkit-scrollbar-thumb {
+  background-color: #C1C1C1;
+  border-radius: 5px;
+}
+.accordion__pattern_list_wrapper .accordion__pattern_list_item .accordion__item_preview img {
+  width: 100%;
+  height: 200px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: top;
+     object-position: top;
+  transition: 2.5s all ease;
+}
+.accordion__pattern_list_wrapper .accordion_list_item_footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 16px;
+}
+.accordion__pattern_list_wrapper .accordion_list_item_footer .components-button.is-primary {
+  border-radius: 4px;
+}
+.accordion__pattern_list_wrapper .pro-badge {
+  font-size: 12px;
+  background: #ffc107;
+  color: #242729;
+  padding: 3px 8px;
+  border-radius: 3px;
+  display: inline-block;
+  vertical-align: middle;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-decoration: none !important;
+  box-sizing: content-box;
+  line-height: unset;
+  margin-left: 6px;
+  margin-right: auto;
+}
+
+/*# sourceMappingURL=index.css.map*/

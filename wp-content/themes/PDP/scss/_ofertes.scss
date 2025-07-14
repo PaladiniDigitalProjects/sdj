@@ -1,0 +1,71 @@
+.post-type-archive-ofertas {
+
+  .entry-header h2.entry-title {
+    text-align: center;
+    margin-bottom: 6rem;
+
+  }
+
+  .grid {
+    border:2rem solid $white;
+    width: 100%;
+    max-width: 80rem;
+    margin:0 auto;
+  }
+
+  .item {
+    width: 100%;
+    margin: 1rem auto;
+    padding: 2rem 0;
+    border-top:0.2rem solid $silver;
+    position: relative;
+
+
+    h4 {
+      color:$morat;
+      text-decoration:none;
+      transition: 0.25s;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    a.link {
+      position: absolute;
+      top:0;
+      left:0;
+      right:0;
+      bottom:0;
+      opacity: 0;
+      background: $white;
+      transition: 0.25s;
+      &:hover {
+        opacity: 0.35;
+      }
+    }
+
+    .metadata {
+      justify-content:flex-start;
+      dl {
+        display: block;
+        margin-right: 4rem;
+        dt {
+            color:$morat;
+            font-weight: bold;
+            display: inline;
+            @include font-size(14);
+            margin-right: 1rem;
+            letter-spacing: 0.05rem;
+        }
+         dd {
+          display: inline;
+          @include font-size(14);
+          line-height: 2;
+          color:$black;
+          margin-right: 2rem;
+          letter-spacing: 0.05rem;
+        }
+      }
+    }
+  }
+}

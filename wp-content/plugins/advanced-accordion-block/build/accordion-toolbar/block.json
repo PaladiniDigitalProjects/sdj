@@ -1,0 +1,12 @@
+{
+  "apiVersion": 2,
+  "name": "aab/accordion-toolbar",
+  "version": "0.1.0",
+  "title": "Accordion Toolbar",
+  "category": "accordion-block",
+  "description": "Build Accordion and FAQs Easily.",
+  "editorScript": [
+    "file:./index.js"
+  ],
+  "editorStyle": "file:./index.css"
+}

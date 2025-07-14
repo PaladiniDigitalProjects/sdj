@@ -1,0 +1,6 @@
+<?php exit('Access denied'); __halt_compiler(); ?>
+******************************************************************
+This file is used by the Wordfence Web Application Firewall. Read 
+more at https://docs.wordfence.com/en/Web_Application_Firewall_FAQ
+******************************************************************
+a:6:{s:9:"wafStatus";s:13:"learning-mode";s:30:"learningModeGracePeriodEnabled";i:1;s:23:"learningModeGracePeriod";i:1752748951;s:7:"authKey";s:64:".JO{=2P= J!J{j`^Ny{,t>D?]0+IE2!AwZt2,;_83E,<yx8w@duX<~>r4^y~zq]x";s:7:"version";s:5:"1.1.0";s:11:"wafDisabled";b:0;}

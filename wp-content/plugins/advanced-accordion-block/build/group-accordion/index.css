@@ -1,0 +1,136 @@
+/*!****************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/@wordpress/scripts/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/group-accordion/editor.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************/
+/*
+* Style Works for Editor Only
+*/
+.components-border-box-control .components-number-control.components-unit-control {
+  margin-bottom: 0;
+}
+
+.wp-block-aab-group-accordion {
+  border: 1px dashed rgba(204, 204, 204, 0.8);
+  padding: 15px 15px 30px 15px !important;
+}
+.wp-block-aab-group-accordion .wp-block-aab-accordion-item .block-list-appender {
+  left: auto !important;
+  right: 0;
+  margin-left: 0 !important;
+}
+.wp-block-aab-group-accordion .block-list-appender {
+  left: 50% !important;
+  right: auto;
+  margin-left: -12px !important;
+}
+.wp-block-aab-group-accordion [aria-label="Add Single Accordion"] {
+  border-radius: 50% !important;
+  position: absolute;
+  bottom: -35px !important;
+}
+.wp-block-aab-group-accordion .aab-show-more-btn-container {
+  margin-top: -10px !important;
+}
+
+.wp-block-post-content .ezd-form-group input {
+  width: 100%;
+}
+
+.aab-pro-element.is-opened {
+  background: gainsboro;
+  cursor: pointer;
+  position: relative;
+  color: rgba(0, 0, 0, 0.3098039216);
+}
+.aab-pro-element.is-opened:after {
+  content: "PRO";
+  clear: both;
+  background: rgba(0, 0, 0, 0.42);
+  position: absolute;
+  top: 48px;
+  right: 3px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  z-index: 99999;
+  left: 4px;
+  bottom: 4px;
+  width: -webkit-fill-available;
+  border-radius: 3px;
+}
+
+.block-editor-block-styles__variants button[aria-label=aab-style-pro-checked] {
+  display: none !important;
+}
+
+.custom-css-notice {
+  font-style: italic !important;
+}
+/*!****************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/@wordpress/scripts/node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/components/colorpicker.scss ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************/
+.aab-color-popover .components-popover__content {
+  width: 246px;
+}
+.aab-color-popover .components-tab-panel__tabs-item {
+  padding: 12px 16px;
+  height: 42px;
+  border-bottom: 2px solid transparent;
+}
+.aab-color-popover .components-tab-panel__tabs-item.active-tab {
+  border-color: var(--wp-admin-theme-color, #3858e9);
+}
+.aab-color-popover .components-circular-option-picker__swatches {
+  gap: 10px;
+}
+.aab-color-popover .components-color-picker {
+  overflow: hidden;
+  width: 246px;
+}
+.aab-color-popover .components-color-picker .react-colorful {
+  width: 100%;
+}
+
+.aab-color-picker {
+  margin: 5px 0;
+}
+.aab-color-picker .aab-reset-btn {
+  min-width: inherit;
+}
+.aab-color-picker .aab-reset-btn.disabled {
+  cursor: no-drop;
+}
+.aab-color-picker .aab-reset-btn.disabled .dashicon {
+  color: #e0e0e0;
+}
+.aab-color-picker .aab-reset-btn.active .dashicon {
+  color: var(--wp-admin-theme-color);
+}
+.aab-color-picker .aab-reset-btn .dashicon {
+  align-items: center;
+  box-sizing: initial;
+  display: inline-flex;
+  justify-content: center;
+  padding: 2px;
+  font-size: 12px;
+  line-height: 20px;
+}
+.aab-color-picker .components-base-control__label {
+  margin-bottom: 0;
+  font-size: 13px;
+  text-transform: capitalize;
+  font-weight: 400;
+}
+.aab-color-picker .components-button {
+  padding: 0;
+  height: 30px;
+}
+.aab-color-picker .component-color-indicator {
+  background: linear-gradient(45deg, #ddd 25%, transparent 0), linear-gradient(-45deg, #ddd 25%, transparent 0), linear-gradient(45deg, transparent 75%, #ddd 0), linear-gradient(-45deg, transparent 75%, #ddd 0);
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0;
+  background-size: 10px 10px;
+}
+
+/*# sourceMappingURL=index.css.map*/

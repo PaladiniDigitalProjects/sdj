@@ -1,0 +1,25 @@
+/**
+ * The following styles get applied both on the front of your site and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+
+#post_type_transfer_types, #same_taxonomy {
+ 	width: 100%;
+ }
+ #post-type-display {
+ 	position: absolute;
+ 	margin: 3px;
+ }
+ #ptt-gutenberg .postbox-header h2.hndle {
+ 	padding: 8px 15px;
+ }
+
+ #ptt-gutenberg .inside {
+ 	width: 80%;
+ 	padding-left: 5px;
+ }
+ #ptt-gutenberg .inside .post-type-transfer #post-type-select{
+ 	margin-top: 10px ;
+ }

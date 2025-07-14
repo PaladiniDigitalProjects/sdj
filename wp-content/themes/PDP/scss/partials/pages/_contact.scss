@@ -1,0 +1,24 @@
+.contact {
+    background-color: $secondary;
+    padding: 4rem 1rem;
+    color:$white;
+
+    a.btn {
+        margin: 2rem 0;
+        background-color: $white;
+        color:$secondary;
+        border-radius:6px;
+        @include font-size(20);
+    }
+
+    .item {
+        p {
+            @include font-size(20);
+            line-height: 130%;
+            a {
+                color:$white;
+            }
+        }
+    }
+
+}
