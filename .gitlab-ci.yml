@@ -31,4 +31,4 @@ deploy_to_siteground:
     - rsync -az --delete --exclude='.git/' -e "ssh -i ~/.ssh/id_ed25519  -p $SG_PORT" ./ $SG_USER@$SG_HOST:$SG_PATH
 
   only:
-    - master
+    - main
