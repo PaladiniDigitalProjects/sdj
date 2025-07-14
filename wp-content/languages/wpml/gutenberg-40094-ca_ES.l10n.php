@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['2a00e2a3ac0ebe36e09b00c99fcd7df0'=>'https://devsjd.lndo.site/ca/solidaritat/obra-social/','f8e70ae5759cc018426ca7d36a6ba141'=>'https://devsjd.lndo.site/ca/sant-joan-de-deu/','https://devsjd.lndo.site/san-juan-de-dios/'=>'https://devsjd.lndo.site/ca/sant-joan-de-deu/','https://devsjd.lndo.site/solidaridad/obra-social/'=>'https://devsjd.lndo.site/ca/solidaritat/obra-social/']];

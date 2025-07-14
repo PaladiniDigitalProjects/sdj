@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['5065e359dcc8a188ca91af3ba32c80a6'=>'LLISTAT DE CENTRES','LISTADO DE CENTROS'=>'LLISTAT DE CENTRES']];

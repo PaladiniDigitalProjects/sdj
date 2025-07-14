@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['Archive Events Slugeventos'=>'eventos','Archive Events Slugevents'=>'eventos','Date'=>'Data','Events'=>'eventos','Fri'=>'Ven','January'=>'Xaneiro','Organizer'=>'Protagonista','Organizer:'=>'Organizador:','Sat'=>'Sáb','Sun'=>'Dom','The default text label for the "today" button on the Month View.This Month'=>'Este mes','events'=>'eventos','organizer'=>'protagonista','organizers'=>'protagonistas']];
