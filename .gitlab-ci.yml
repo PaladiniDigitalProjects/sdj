@@ -1,0 +1,34 @@
+stages:
+  - deploy
+
+deploy_to_siteground:
+  stage: deploy
+  image: alpine:latest
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+    SG_HOST: "c1117984.sgvps.net"
+    SG_PORT: "18765"
+    SG_USER: "u3-ejmxj5pdo7jf"
+    SG_PATH: "/home/customer/www/dev.sjd.es/public_html"
+  before_script:
+    # Install required tools
+    - apk add --no-cache git-lfs rsync openssh-client
+
+    # Initialize Git LFS and fetch large files (if any)
+    - git lfs install --skip-repo
+    - git lfs pull
+
+    # Set up SSH for deploy key authentication
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+
+    # Trust SiteGround host key to prevent man-in-the-middle prompts
+    - ssh-keyscan -p "$SG_PORT" "$SG_HOST" >> ~/.ssh/known_hosts
+
+  script:
+    # Sync project files to SiteGround, excluding Git metadata
+    - rsync -az --delete --exclude='.git/' -e "ssh -i ~/.ssh/id_ed25519 -p $SG_PORT" ./ $SG_USER@$SG_HOST:$SG_PATH
+
+  only:
+    - master
