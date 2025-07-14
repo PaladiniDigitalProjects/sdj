@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "gutena/lightbox",
+  "title": "Video Lightbox",
+  "category": "gutena",
+  "keywords": [
+    "lightbox",
+    "popup",
+    "block",
+    "youtube",
+    "vimeo"
+  ],
+  "description": "Gutena Video Lightbox",
+  "textdomain": "gutena-lightbox",
+  "supports": {
+    "__experimentalLayout": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false,
+    "color": {
+      "text": false,
+      "link": false,
+      "gradients": true,
+      "background": true,
+      "enableContrastChecker": false
+    },
+    "spacing": {
+      "padding": true,
+      "margin": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}

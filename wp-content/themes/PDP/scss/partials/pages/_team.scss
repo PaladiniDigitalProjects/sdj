@@ -1,0 +1,794 @@
+.page-template-page-team{
+
+     .editorial-block{
+          h2.page-title {
+               margin-top: 0;
+               padding-top: 6rem;
+               padding-right: 1rem;
+          }
+     } 
+
+     .grid {
+          border-left:0.1rem solid $white;
+          margin-top: 6rem;
+          background: $primary;
+          line-height: 0;
+          font-size: 0;
+          z-index: 20;
+          position: relative;
+          
+          .entry {
+               width: 100%;
+               border-bottom:0.1rem solid $white;
+               border-right:0.1rem solid $white;
+
+               .entry-content {
+                    bottom: 0;
+                    left:0;
+                    right: 0;
+                    top:0;
+                    position: absolute;
+                    z-index: 0;
+                    transition: 0.5s;
+                    opacity: 0;
+
+               }
+               // end entry content
+ 
+                    .entry-data {
+                         position: absolute;
+                         z-index: 0;
+                         bottom:2rem;
+                         left:2rem;
+                         right:6rem;
+                         z-index:2;
+                         
+                         .entry-title { 
+                              @include font-size(30);
+                              color: $white;
+                              font-weight: 400;
+                              line-height: 1.2;
+                              margin-bottom: 0;
+                         }
+                         p {
+                              @include font-size(20);
+                              font-weight: 600;
+                              color: $white;
+                              font-weight: 400;
+                              line-height: 1.2;
+                         }
+
+
+                    }
+                    // end entry data
+                    
+                    .content {
+                         position: absolute;
+                         top:1rem;
+                         left:1rem;
+                         right:1rem;
+                         bottom:1rem;
+                         opacity:1;
+                         p {
+                              margin: 1.25rem;
+                              font-style: italic;
+                              @include font-size(24);
+                              line-height:1.2;
+                              text-align: left;
+                         }
+                    }
+                    // end entry content
+                    
+                    .social-link {
+                         opacity: 0;
+                         position: absolute;
+                         bottom: 2rem;
+                         right: 2rem;
+                         font-size: 0;
+                         line-height: 0;
+                         z-index: 10;
+                         transition: 0.5s;
+                         button {
+                              border:none;
+                              background-color:transparent;
+                              padding: 0;
+                         }
+                         .ico {
+                              
+                              width: 3rem;
+                              height: 3rem;
+                              &.ico-linkdin-coral {
+                                   background: url('../img/ico-linkdin-hover-team.svg');
+                                   &:hover {
+                                        background: url('../img/ico-linkdin.svg'); 
+                                   }
+                              }
+                              
+                         }
+                    }
+                    
+                    // end social link
+                    
+               &:hover {
+                    .entry-header {
+                         opacity:0;
+                    }
+
+                    .entry-content {
+                         opacity: 1;
+                         background-color: $silver;
+                         background-image: inherit;
+                    }
+
+                    .content,
+                    .social-link {
+                         opacity: 1;
+                    }
+
+                    .entry-data,
+                    .entry-content {
+                         p, .entry-title {
+                              color:$black !important;
+                         }
+                    }
+               } 
+               // end hover
+          }
+     }
+
+
+
+
+     .team-banner {
+          position: relative;
+          background-color: $white;
+          color:$black;
+          padding: 16rem 2rem 0 2rem !important;
+
+          h2 {
+               @include font-size(40);
+               line-height: 1;
+               padding-bottom: 1rem;
+          }
+
+          &:before {
+               content: ' ';
+               position: absolute;
+               top: -5rem;
+               bottom: 0;
+               right: 0;
+               left: 0;
+               z-index: 5;
+               background-image: url("../img/bkg-banner-team.svg");
+               background-repeat: no-repeat;
+               background-size: 100%;
+          }
+
+          @include large {
+              h2 { padding-left: 3rem;}
+          }
+     }
+
+
+     .team-block-quote {
+          padding-top: 3rem !important;
+          background-color: $primary;
+          .wp-block-column:first-child { order:2; }
+          .wp-block-column:last-child { order:1; }
+
+          .wp-block-quote {
+               background-color: $primary;
+               border-top:0 solid $primary;
+               border-bottom:0 solid $primary;
+               border-left: 0 solid #000;
+               margin: 0 auto;
+               padding: 2rem;
+               
+               line-height: 1.25;
+               font-weight: bold;
+               display: block;
+               color:$black;
+               text-align: left;
+          
+               p { 
+               @include font-size(30);
+               line-height: 1.2;
+               font-weight: 400;
+               color:$black;
+               padding-bottom: 3rem;
+               }
+          }
+
+          cite {
+               font-weight: normal;
+               color:$black;
+               display: block;
+               span {
+                    display: block;
+                    color:$white;
+                    font-weight: 400;
+                    text-transform: uppercase;
+               }
+          }
+
+          @include xlarge {
+               .wp-block-quote {
+                   padding:3rem 3rem 3rem 3rem !important;
+                   p { 
+                        @include font-size(50);
+                        line-height: 1;
+                        
+                    }
+               }
+          }    
+     }
+
+     .team-image-two {
+        
+          .wp-block-image figure{
+               margin:0 !important;
+          }
+
+               .wp-block-quote {
+                    border-top: 0 solid #FF7A6E;
+                    border-bottom: 0 solid #FF7A6E;
+                    border-left: 0 solid #000;
+                    margin: 0 auto;
+                    padding:3rem 0rem 3rem 2rem;
+                                  
+                    p { 
+                    font-family: $fp-regular;
+                    font-weight: 400;
+                    @include font-size(30);
+                    line-height: 1.2;
+                    padding-right: calc(20% - 3rem);
+                    margin-bottom: 3rem;
+                    }
+               }
+
+               cite {
+                    @include font-size(16);
+                    font-family: $fp-regular;
+                    font-weight: 400;
+                    color:$black;
+                    padding-top: 3rem;
+
+                    span {
+                         display: block;
+                         color: #ffffff;
+                         font-weight: 400;
+                         margin-bottom: 0;
+                         text-transform: uppercase;
+                    }
+               }
+          }
+
+     @include mobileM {
+
+          .team-banner:before{
+               top: -12rem;
+           }
+
+
+          .grid {
+               margin-top: 4rem;
+               .page-header {
+                    .page-title {
+                         @include font-size(52);
+                         line-height: 0.9;
+                    }
+               }
+
+          }
+          // end grid
+     }
+
+        @include mobileL {
+          .grid {
+               .page-header {
+                    .page-title {
+                         @include font-size(56);
+                         line-height: 0.9;
+                    }
+               }
+
+               .entry {
+                    width: 50%;
+                    .entry-header {
+                         .entry-data {
+                              bottom:1rem;
+                              left:1rem;
+                              right:1rem;
+     
+                              .entry-title {
+                                   @include font-size(20);
+                              }
+                              p {
+                                   @include font-size(15);
+                                   font-weight: 600;
+                              }
+                         } 
+                    }
+     
+                    .entry-content {
+                         .entry-data {
+                              position: absolute;
+                              bottom:1rem;
+                              left:1rem;
+                              right:1rem;
+     
+                              .entry-title {
+                                   @include font-size(20);
+                              }
+                              p {
+                                   @include font-size(15);
+                              }
+                         }
+     
+     
+                         .social-link {
+                              bottom: 1rem;
+                              right: 1rem;
+     
+                              .ico {
+                                   width: 3rem;
+                                   height: 3rem;
+                              }
+                         }
+     
+                         .content {
+                              opacity: 1;
+                              top:1rem;
+                              left:1rem;
+                              right:1rem;
+                              p {
+                                   margin: 0;
+                                   @include font-size(15);
+                                   line-height:1.2;
+                              }
+                         }
+                    }  
+               }
+               // end entry
+          }    
+     }
+
+     @include tablet {
+
+          .editorial-block{
+               h2.page-title {
+                    margin-top: 0;
+                    padding-top: 6rem;
+                    padding-right: 30%;
+               }
+          } 
+     
+          .grid {
+               margin-top: 6rem;
+
+               .entry {
+                    width:33.33333%;
+           
+                    .entry-header, 
+                    .entry-content {
+                     
+                         .entry-data {
+                              position: absolute;
+                              bottom:2rem;
+                              left:2rem;
+                              right:2rem;
+                              z-index:2;
+                              
+                              .entry-title { 
+                                   @include font-size(20);
+                                   color: $white;
+                                   font-weight: 400;
+                                   line-height: 1.2;
+                                   margin-bottom: 0;
+                              }
+                              p {
+                                   @include font-size(18);
+                                   font-weight: 600;
+                                   color: $white;
+                                   font-weight: 400;
+                                   line-height: 1.2;
+                                   padding-right: 3rem;
+                              }
+                         }
+                         // end entry data
+                         .content {
+                              position: absolute;
+                              top:2rem;
+                              left:2rem;
+                              right:2rem;
+                              bottom:2rem;
+                              opacity:1;
+                              p {
+                                   @include font-size(20);
+                                   line-height:1.2;
+                              }
+                         }
+                         // end entry content
+                         .social-link {
+                              bottom: 3rem;
+                              right: 2rem;
+                         }
+                    }    
+               }
+
+          } 
+          // end grid
+
+         
+          // end aperture
+
+          .team-banner {
+               padding: 10rem 3rem 0 3rem !important;
+               h2 {
+                    @include font-size(40);
+               }
+     
+               &:before {
+                    background-image:url('../img/bkg-banner.svg');
+                    background-size: 35%;
+                    background-position: top right;
+                    top:-17rem;
+               }
+          }
+          
+          // End team banner
+
+          .team-block-quote {
+               padding-top: 0 !important;
+               background-color: $white;
+               .wp-block-column:first-child {
+                    padding: 10rem 0;
+                    margin-left: 0;
+                    background-color: $primary;
+                    order:1;
+                    max-width: 40%;
+               }
+               .wp-block-column:last-child {
+                    padding-top: 14rem;
+                    order:2;
+               }
+
+               .wp-block-column:not(:only-child) {
+                    flex-basis: 60% !important;
+                }
+
+               .wp-block-quote {
+                    padding:2rem;
+                    line-height: 1.25;
+                    font-weight: bold;
+                    display: block;
+                    color:$black;
+                    text-align: left;
+               
+                    p { 
+                    @include font-size(30);
+                    line-height: 1.2;
+                    color:$black;
+                    padding-bottom: 3rem;
+                    }
+               }
+          }
+          // end .team-block-quote
+
+          .team-image-one {
+               .wp-block-column:not(:only-child) {
+                    flex-basis: calc(50%) !important;
+                    margin-left: -5%;
+               }
+          }
+
+          .team-image-two {
+               .wp-block-column:not(:only-child) {
+                    flex-basis: calc(50%) !important;
+               }
+
+               .wp-block-image figure{
+                    margin:0 !important;
+               }
+     
+                    .wp-block-quote {
+                         border-top: 0 solid #FF7A6E;
+                         border-bottom: 0 solid #FF7A6E;
+                         border-left: 0 solid #000;
+                         margin: 0 auto;
+                         padding:3rem 0rem 3rem 4rem;
+                                       
+                         p { 
+                         font-family: $fp-regular;
+                         font-weight: 400;
+                         @include font-size(30);
+                         line-height: 1.2;
+                         // padding-right: calc(20% - 3rem);
+                         }
+                    }
+     
+                    cite {
+                         @include font-size(20);
+                         font-family: $fp-regular;
+                         font-weight: 400;
+                         color:$black;
+                         span {
+                              display: block;
+                              color: #ffffff;
+                              font-weight: 600;
+                              margin-bottom: 0.5rem;
+                              text-transform: uppercase;
+                         }
+                    }
+               }
+      
+      .team-image-two {
+          .wp-block-quote {
+               width: 100%;
+               float: left;
+               padding: 3rem 0 3rem 2rem;
+               
+               p { 
+                    font-family: $fp-regular;
+                    @include font-size(30);
+                    margin-bottom: 4rem;
+               }
+          }
+          
+          cite {
+               @include font-size(20);
+          }
+     }  
+      
+     }
+
+     @include laptop {
+
+          .editorial-block{
+               h2.page-title {
+                    margin-top: 0;
+                    padding-top: 6rem;
+                    padding-right: 20%;
+               }
+
+               .subtitle {
+                    padding-right: 30%;
+               }
+          } 
+
+
+          .grid {
+               margin-top: 8rem;
+               .entry {
+                    
+                    .entry-header, 
+                    .entry-content {
+                     
+                         .entry-data {
+                              position: absolute;
+                              bottom:2rem;
+                              left:2rem;
+                              right:2rem;
+                              z-index:2;
+                              
+                              .entry-title { 
+                                   @include font-size(22);
+                                   color: $white;
+                                   font-weight: 400;
+                                   line-height: 1.2;
+                                   margin-bottom: 0;
+                              }
+                              p {
+                                   @include font-size(20);
+                                   font-weight: 600;
+                                   color: $white;
+                                   font-weight: 400;
+                                   line-height: 1.2;
+                                   padding-right: 3rem;
+                              }
+                         }
+                         // end entry data
+                         .content {
+                              position: absolute;
+                              top:2rem;
+                              left:2rem;
+                              right:2rem;
+                              bottom:2rem;
+                              opacity:1;
+                              p {
+                                   @include font-size(24);
+                                   line-height:1.2;
+                              }
+                         }
+                         // end entry content
+                         .social-link {
+                              bottom: 3rem;
+                              right: 2rem;
+                         }
+                    }
+               }
+          }
+
+          // end grid
+          
+          
+          .team-banner {
+               padding: 14rem 4rem 2rem 4rem !important;
+               h2 {
+                    @include font-size(64);
+                    line-height: 1;
+               }
+     
+               &:before {
+                    top: -24rem;
+                    background-size: 30%;
+               }
+          }
+          
+          // end banner
+          
+          .team-block-quote {
+               
+               .wp-block-column:last-child {
+                    padding-top: 16rem;
+               }
+
+               .wp-block-quote {
+                    padding:3rem 0rem 3rem 4rem;
+                                  
+                    p { 
+                    @include font-size(40);
+                    line-height: 1.2;
+                    // padding-right: calc(20% - 3rem);
+                    }
+               }
+
+               cite {
+                    @include font-size(20);
+                    span {
+                         margin-bottom: 0.5rem;
+                    }
+               }
+          }
+
+
+          .team-image-one {
+               .wp-block-column:not(:only-child) {
+                    margin-left: -10%;
+               }
+
+               .wp-block-column:last-child {
+                    .wp-block-image {
+                         margin-right: 10rem !important;
+                    }
+               }
+          }
+     }
+
+     @include large {
+
+          .editorial-block{
+               h2.page-title {
+                    margin-top: 0;
+                    padding-top: 6rem;
+                    padding-right: 0;
+                    max-width: 110rem;
+               }
+
+               .subtitle {
+                    max-width: 100rem;
+                    padding-right: 0;
+               }
+          } 
+
+
+          .grid {
+               position: relative;
+            
+               .entry {
+                    width: 25%;
+       
+                    .entry-header, 
+                    .entry-content {
+                     
+                         .entry-data {
+                              position: absolute;
+                              bottom:2rem;
+                              left:2rem;
+                              right:6rem;
+                              z-index:0;
+                              
+                              .entry-title { 
+                                   @include font-size(26);
+                                   color: $white;
+                                   font-weight: 400;
+                                   line-height: 1.2;
+                                   margin-bottom: 0;
+                              }
+                              p {
+                                   @include font-size(22);
+                                   font-weight: 600;
+                                   color: $white;
+                                   font-weight: 400;
+                                   line-height: 1.2;
+                                   padding-right: 3rem;
+                              }
+                         }
+                         // end entry data
+                         .content {
+                              position: absolute;
+                              top:2rem;
+                              left:2rem;
+                              right:2rem;
+                              bottom:2rem;
+                              opacity:1;
+                              p {
+                                   @include font-size(30);
+                                   line-height:1.2;
+                              }
+                         }
+                         // end entry content
+                         .social-link {
+                              bottom: 3rem;
+                              right: 2rem;
+                              
+                         }
+                    }
+               }
+          } 
+          // end grid
+
+          .team-block-quote {
+    
+               .wp-block-quote {
+                    padding: 0 !important;
+                    float: right;
+                    width: 75%;
+                   
+                    p { 
+                         @include font-size(40);
+                         line-height: 1.2;
+                         // padding-right: calc(20% - 3rem);
+                    }
+
+               }
+          }
+
+          .team-image-two {
+               .wp-block-quote {
+                    width: 65%;
+                    padding-right:0;
+                    margin-right: 20%;
+                    float: right;
+
+                    p {
+                         @include font-size(40);
+                         // padding-right: calc(20% - 3rem);
+                    }
+               }
+          }  
+     }
+
+     @include xlarge {
+          
+          .grid {
+               position: relative;
+              
+               .entry {
+                    width: 20%;
+               }
+               // end entry
+          }
+          
+          .team-block-quote {
+               .wp-block-quote {
+                    // width: 36rem;
+                    p {
+                         padding-right: 3rem;
+                    }           
+               }
+          }
+     }
+
+}
+// end team

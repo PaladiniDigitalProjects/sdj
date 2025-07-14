@@ -1,0 +1,39 @@
+.grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    justify-content:center;
+
+    .entry {
+      align-self:flex-end;
+    }
+
+    
+
+     @include mobileM {
+      flex-direction: row;  
+     }
+
+     @include mobileL {
+
+     }
+
+     @include tablet {
+      .entry {
+        width: 33.3333%;
+      }
+     }
+
+     @include laptop {
+       .entry {
+         width:25%;
+       }
+     }
+
+     @include large {
+
+     }
+
+}
+// end grid
+

@@ -1,0 +1,38 @@
+{
+  "apiVersion": 2,
+  "name": "aab/horizontal-accordion-item",
+  "version": "0.0.1",
+  "title": "Horizontal Accordion Item",
+  "category": "accordion-block",
+  "description": "Accordion Item for Horizontal Accordion",
+  "parent": [
+    "aab/horizontal-accordion"
+  ],
+  "supports": {
+    "spacing": {
+      "padding": true,
+      "margin": true
+    },
+    "color": {
+      "color": true,
+      "background": true
+    }
+  },
+  "attributes": {
+    "iconUrl": {
+      "type": "string"
+    },
+    "heading": {
+      "type": "string"
+    },
+    "subheading": {
+      "type": "string"
+    }
+  },
+  "textdomain": "advanced-accordion-block",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css"
+  ]
+}

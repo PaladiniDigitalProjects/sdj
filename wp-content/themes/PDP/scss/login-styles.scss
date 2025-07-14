@@ -1,0 +1,58 @@
+@import './partials/variables.scss';
+
+.login {
+  background-color:$primary;
+  font-family: $fp-regular !important;
+
+  form {
+    margin-top: 20px;
+    margin-left: 0;
+    padding: 26px 24px 46px;
+    font-weight: 400;
+    overflow: hidden;
+    background: transparent;
+    border: 0 solid #ccd0d4;
+    box-shadow: 0 0 0 0 rgba(0,0,0,.04);
+  }
+
+  label {
+    color:$white;
+  }
+
+  .button-primary {
+    background: $secondary;
+    border-color: $secondary;
+    color: $white;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: uppercase;
+    font-family:$fp-bold;
+    font-weight: bold;
+    &:hover {
+      background: $secondary !important;
+      border-color: $secondary !important;
+    }
+  }
+  a {
+    color: white !important;
+    transition-duration: .035s;
+    transition-timing-function: ease-in-out;
+    text-decoration: underline;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+
+#login h1 a, s
+.login h1 a {
+  background-image: url('https://sjd.es/wp-content/uploads/2021/12/Orden_San_Juan_De_Dios_w.png');
+	background-size: 300px 100px;
+	background-repeat: no-repeat;
+	padding-bottom: 0;
+  margin-bottom: 0;
+	display:block;
+	width:100%;
+  height: 100px;
+}

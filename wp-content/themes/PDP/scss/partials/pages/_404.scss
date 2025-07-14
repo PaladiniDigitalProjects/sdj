@@ -1,0 +1,37 @@
+.error404,
+.search-results {
+     h2.section-title,
+     h4,
+     h5.page-title {
+          color:$primary;
+     }
+
+     .entry-list {
+          margin-top: 2rem;
+     }
+
+    .category-nav {
+          ul.category-list{
+               display: block;
+          }
+         padding-left: 2rem;
+    }
+
+    @include laptop {
+
+     h2.section-title,
+     h4,
+     h5.page-title {
+          padding-left: 5rem;
+     }
+
+     .entry-list {
+          margin-top: 2rem;
+          padding-left: 4.5rem;
+     } 
+
+
+    }
+
+}
+// end 404

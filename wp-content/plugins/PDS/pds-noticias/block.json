@@ -1,0 +1,20 @@
+{
+  "name": "PDSNoticias",
+  "title": "PDS - Carrusel noticias",
+  "description": "Carrusel noticias seleccionadas y relacionados",
+  "category": "formatting",
+  "icon": "align-center",
+  "acf": {
+      "mode": "preview",
+      "renderTemplate": "render.php"
+  },
+  "supports": {
+    "jsx": true,
+    "anchor": true,
+    "color": {
+      "text": true,
+      "background": false
+    }
+  },
+  "style": ["file:./style.css"]
+}

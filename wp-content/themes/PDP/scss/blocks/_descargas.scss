@@ -1,0 +1,48 @@
+/* DESCARGAS */
+
+.wp-block-descarga {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	padding: 2rem 1rem;
+
+	.entry-header {
+		text-align: left;
+
+		h3 {
+			margin: 0 5rem 1rem 0;
+			line-height: 1.2;
+		}
+	}
+
+	.entry-content {
+		background: $crema;
+		border-radius: 1rem;
+		text-align: center;
+	}
+
+	.button {
+		padding: 0.65rem 2rem 0.45rem;
+	}
+
+	@include sm {
+		flex-direction: row;
+		.entry-header {
+			width: 65%;
+			padding-right: 10%;
+			text-align: left;
+			h3 {
+				margin: 0 10rem 3rem 0;
+				line-height: 1.2;
+			}
+		}
+
+		.entry-content {
+			width: 35%;
+			background: $crema;
+			border-radius: 1rem;
+			text-align: center;
+		}
+
+	}
+}

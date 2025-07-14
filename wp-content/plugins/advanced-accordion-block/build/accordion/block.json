@@ -1,0 +1,223 @@
+{
+  "apiVersion": 2,
+  "name": "aab/accordion-block",
+  "version": "0.1.0",
+  "title": "Separate Accordion",
+  "category": "accordion-block",
+  "description": "Build Accordion and FAQs Easily.",
+  "attributes": {
+    "style": {
+      "type": "object",
+      "default": {
+        "border": {
+          "color": "#CFCABE",
+          "radius": "3px",
+          "style": "dash",
+          "width": "1px"
+        }
+      }
+    },
+    "uniqueId": {
+      "type": "string"
+    },
+    "border": {
+      "type": "object"
+    },
+    "paddings": {
+      "type": "object"
+    },
+    "margins": {
+      "type": "object"
+    },
+    "borderRadius": {
+      "type": "number"
+    },
+    "qIconText": {
+      "type": "string"
+    },
+    "qIconColor": {
+      "type": "string"
+    },
+    "qIconBg": {
+      "type": "string"
+    },
+    "aIconText": {
+      "type": "string"
+    },
+    "aIconColor": {
+      "type": "string"
+    },
+    "aIconBg": {
+      "type": "string"
+    },
+    "heading": {
+      "type": "string",
+      "default": "Accordion Heading"
+    },
+    "subheading": {
+      "type": "string",
+      "default": ""
+    },
+    "subheadingColor": {
+      "type": "string"
+    },
+    "headingTag": {
+      "type": "string"
+    },
+    "headingColor": {
+      "type": "string"
+    },
+    "headerBg": {
+      "type": "string"
+    },
+    "headingIconImageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "headingIconAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "showHeadingIcon": {
+      "type": "boolean",
+      "default": false
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "anchorLinkShow": {
+      "type": "boolean"
+    },
+    "iconClass": {
+      "type": "string",
+      "default": "plus-alt2"
+    },
+    "iconPosition": {
+      "type": "string",
+      "default": "aab_right_icon"
+    },
+    "iconFontSize": {
+      "type": "number"
+    },
+    "iconColor": {
+      "type": "string"
+    },
+    "iconBackground": {
+      "type": "string"
+    },
+    "iconBorder": {
+      "type": "object"
+    },
+    "iconBorderRadius": {
+      "type": "string"
+    },
+    "bodyBg": {
+      "type": "string"
+    },
+    "makeActive": {
+      "type": "boolean",
+      "default": false
+    },
+    "id": {
+      "type": "string"
+    },
+    "linkedAccordion": {
+      "type": "boolean",
+      "default": false
+    },
+    "link": {
+      "type": "string",
+      "default": "#"
+    },
+    "tab": {
+      "type": "boolean",
+      "default": false
+    },
+    "disableAccordion": {
+      "type": "boolean",
+      "default": false
+    },
+    "feedbackShow": {
+      "type": "boolean",
+      "default": false
+    },
+    "feedbacLabel": {
+      "type": "string",
+      "default": "Was this answer helpful?"
+    },
+    "yesBtn": {
+      "type": "string",
+      "default": "Yes"
+    },
+    "noBtn": {
+      "type": "string",
+      "default": "No"
+    },
+    "counterShow": {
+      "type": "boolean",
+      "default": false
+    },
+    "incNumber": {
+      "type": "number",
+      "default": 1
+    },
+    "anchorPosition": {
+      "type": "string",
+      "default": "aab_right_link"
+    },
+    "faqSchema": {
+      "type": "boolean"
+    },
+    "QaStyle": {
+      "type": "boolean"
+    },
+    "customCSS": {
+      "type": "string",
+      "default": ""
+    },
+    "headingBorder": {
+      "type": "object"
+    },
+    "bodyBorder": {
+      "type": "object"
+    },
+    "accessibilityOn": {
+      "type": "boolean",
+      "default": true
+    },
+    "focusOutlineColor": {
+      "type": "string",
+      "default": "#C2DBFE"
+    },
+    "defaultStyles": {
+      "type": "object"
+    }
+  },
+  "styles": [
+    {
+      "name": "default",
+      "label": "Default",
+      "isDefault": true
+    },
+    {
+      "name": "qa",
+      "label": "Q A"
+    },
+    {
+      "name": "aab-style-pro-checked",
+      "label": "aab-style-pro-checked"
+    }
+  ],
+  "editorScript": [
+    "file:./index.js",
+    "aagb-separate-accordion"
+  ],
+  "editorStyle": "file:./index.css",
+  "style": [
+    "aagb-separate-accordion"
+  ],
+  "viewScript": [
+    "aagb-separate-accordion"
+  ]
+}

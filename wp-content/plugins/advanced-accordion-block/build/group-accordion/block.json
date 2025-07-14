@@ -1,0 +1,310 @@
+{
+  "apiVersion": 2,
+  "name": "aab/group-accordion",
+  "version": "0.1.0",
+  "title": "Group Accordion",
+  "category": "accordion-block",
+  "description": "Build Accordion and FAQs Easily.",
+  "supports": {
+    "html": false,
+    "anchor": false
+  },
+  "example": {
+    "attributes": {
+      "heading": "Accordion Heading"
+    }
+  },
+  "providesContext": {
+    "aagb/accordion-step": "step",
+    "aagb/accordion-QaStyle": "QaStyle",
+    "aagb/accordion-faqSchema": "faqSchema",
+    "aagb/accordion-stepText": "stepText",
+    "aagb/accordion-stepCmpltText": "stepCmpltText",
+    "aagb/accordion-checkList": "checkList",
+    "aagb/accordion-buttonShow": "buttonShow",
+    "aagb/accordion-readMoreText": "readText",
+    "aagb/accordion-border": "border",
+    "aagb/accordion-margins": "margins",
+    "aagb/accordion-paddings": "paddings",
+    "aagb/accordion-borderRadius": "borderRadius",
+    "aagb/accordion-headingColor": "headingColor",
+    "aagb/accordion-showIcon": "showIcon",
+    "aagb/accordion-iconColor": "iconColor",
+    "aagb/accordion-iconBackground": "iconBackground",
+    "aagb/accordion-headerBg": "headerBg",
+    "aagb/accordion-bodyBg": "bodyBg",
+    "aagb/accordion-qIconText": "qIconText",
+    "aagb/accordion-qIconColor": "qIconColor",
+    "aagb/accordion-qIconBg": "qIconBg",
+    "aagb/accordion-aIconText": "aIconText",
+    "aagb/accordion-aIconColor": "aIconColor",
+    "aagb/accordion-aIconBg": "aIconBg",
+    "aagb/accordion-subheadingColor": "subheadingColor",
+    "aagb/accordion-contentCount": "contentCount",
+    "aagb/accordion-headingBorder": "headingBorder",
+    "aagb/accordion-bodyBorder": "bodyBorder",
+    "aagb/accordion-categoryList": "categoryList",
+    "aagb/accordion-labelsGlobalTextColor": "labelsGlobalTextColor",
+    "aagb/accordion-labelsGlobalBgColor": "labelsGlobalBgColor",
+    "aagb/accordion-accessibilityOn": "accessibilityOn",
+    "aagb/accordion-focusOutlineColor": "focusOutlineColor",
+    "aagb/accordion-anchorLinksShow": "anchorLinksShow"
+  },
+  "attributes": {
+    "anchorLinksShow": {
+      "type": "boolean"
+    },
+    "QaStyle": {
+      "type": "boolean"
+    },
+    "uniqueId": {
+      "type": "string"
+    },
+    "activeAccordionBorder": {
+      "type": "object",
+      "default": {
+        "width": "1px",
+        "color": "#ebebeb",
+        "style": "solid"
+      }
+    },
+    "searchShow": {
+      "type": "boolean",
+      "default": false
+    },
+    "placeholderText": {
+      "type": "string"
+    },
+    "showAllbtn": {
+      "type": "boolean",
+      "default": false
+    },
+    "closeText": {
+      "type": "string",
+      "default": "Close all"
+    },
+    "openText": {
+      "type": "string",
+      "default": "Show all"
+    },
+    "heading": {
+      "type": "string",
+      "default": "Accordion Heading"
+    },
+    "subheading": {
+      "type": "string",
+      "default": ""
+    },
+    "subheadingColor": {
+      "type": "string"
+    },
+    "activetorClass": {
+      "type": "string",
+      "default": "click"
+    },
+    "faqSchema": {
+      "type": "boolean"
+    },
+    "step": {
+      "type": "boolean",
+      "default": false
+    },
+    "stepText": {
+      "type": "string",
+      "default": "Continue"
+    },
+    "stepCmpltText": {
+      "type": "string",
+      "default": "Congratulations, you are done!"
+    },
+    "checkList": {
+      "type": "boolean",
+      "default": false
+    },
+    "buttonShow": {
+      "type": "boolean",
+      "default": false
+    },
+    "contentCount": {
+      "type": "number",
+      "default": 300
+    },
+    "readText": {
+      "type": "string",
+      "default": "Read More"
+    },
+    "border": {
+      "type": "object"
+    },
+    "paddings": {
+      "type": "object"
+    },
+    "margins": {
+      "type": "object"
+    },
+    "borderRadius": {
+      "type": "number"
+    },
+    "headingColor": {
+      "type": "string"
+    },
+    "headerBg": {
+      "type": "string"
+    },
+    "iconColor": {
+      "type": "string"
+    },
+    "iconBackground": {
+      "type": "string"
+    },
+    "bodyBg": {
+      "type": "string"
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    },
+    "qIconText": {
+      "type": "string"
+    },
+    "qIconColor": {
+      "type": "string"
+    },
+    "qIconBg": {
+      "type": "string"
+    },
+    "aIconText": {
+      "type": "string"
+    },
+    "aIconColor": {
+      "type": "string"
+    },
+    "aIconBg": {
+      "type": "string"
+    },
+    "customCSS": {
+      "type": "string",
+      "default": " "
+    },
+    "openALLBtnPosition": {
+      "type": "string",
+      "default": "right_btn"
+    },
+    "headingBorder": {
+      "type": "object"
+    },
+    "bodyBorder": {
+      "type": "object"
+    },
+    "activeBackground": {
+      "type": "string"
+    },
+    "categoryList": {
+      "type": "array"
+    },
+    "filterBtnAlignment": {
+      "type": "string",
+      "default": "center_btn"
+    },
+    "filterBtnPosition": {
+      "type": "string",
+      "default": "horizontal_filter"
+    },
+    "filterBtnColor": {
+      "type": "string",
+      "default": "#0866ff"
+    },
+    "filterBtnBg": {
+      "type": "string",
+      "default": "#F4F8FF"
+    },
+    "filterBtnHoverColor": {
+      "type": "string",
+      "default": "#0866ff"
+    },
+    "filterBtnHoverBg": {
+      "type": "string",
+      "default": "#DDE9FD"
+    },
+    "filterBtnActiveColor": {
+      "type": "string",
+      "default": "#F4F8FF"
+    },
+    "filterBtnActiveBg": {
+      "type": "string",
+      "default": "#0866ff"
+    },
+    "enableCategoryFilter": {
+      "type": "boolean",
+      "default": false
+    },
+    "showMoreBtn": {
+      "type": "boolean",
+      "default": false
+    },
+    "showMoreBtnTxt": {
+      "type": "string",
+      "default": "Show More"
+    },
+    "showLessBtnTxt": {
+      "type": "string",
+      "default": "Show Less"
+    },
+    "itemsToShow": {
+      "type": "number",
+      "default": 5
+    },
+    "showMoreBtnColor": {
+      "type": "string",
+      "default": "#010101"
+    },
+    "showMoreBtnBg": {
+      "type": "string",
+      "default": "#eaeaea"
+    },
+    "labelsGlobalTextColor": {
+      "type": "string",
+      "default": "#1570EC"
+    },
+    "labelsGlobalBgColor": {
+      "type": "string",
+      "default": "#c1d8f7"
+    },
+    "accessibilityOn": {
+      "type": "boolean",
+      "default": true
+    },
+    "focusOutlineColor": {
+      "type": "string",
+      "default": "#C2DBFE"
+    },
+    "defaultStyles": {
+      "type": "object"
+    }
+  },
+  "styles": [
+    {
+      "name": "default",
+      "label": "Default",
+      "isDefault": true
+    },
+    {
+      "name": "qa",
+      "label": "Q A"
+    },
+    {
+      "name": "aab-style-pro-checked",
+      "label": "aab-style-pro-checked"
+    }
+  ],
+  "textdomain": "advanced-accordion-block",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "aagb-group-accordion"
+  ],
+  "viewScript": [
+    "aagb-accordion-group",
+    "aagb-group-accordion-frontend"
+  ]
+}

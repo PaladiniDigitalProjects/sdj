@@ -1,0 +1,27 @@
+.wp-block-galeria-gif .gallery-gif {
+  position: relative;
+}
+
+.wp-block-galeria-gif .gallery-gif a {
+  display: block;
+}
+
+.wp-block-galeria-gif .gallery-gif a:first-child:hover {
+  opacity: 0;
+  z-index: 1;
+}
+
+.wp-block-galeria-gif .gallery-gif a:last-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+}
+
+.wp-block-galeria-gif .gallery-gif a .img-responsive {
+  width: 100%;
+  height: auto;
+}
+/*# sourceMappingURL=galeria-gif.css.map */

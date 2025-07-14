@@ -1,0 +1,100 @@
+.single {
+    .site-main {
+        .entry {
+            .entry-header {
+                padding: 2rem 1.5rem;
+                
+                .entry-title {
+                    color:$primary;
+                }
+            }
+
+            .entry-content {
+                padding: 2rem 0;
+                p, h6, h5, h4, h3 {
+                    padding: 0 1.5rem 2rem 1.5rem;
+                }
+                p,ul li, {
+                    a {
+                      color:$primary;
+                      &:hover {
+                        text-decoration: underline;
+                      }
+                    }
+                  }
+            }
+        }
+     }
+
+    @include laptop {
+        .site-main {
+            .entry-single {
+                margin: 0 auto;
+                max-width: 100rem;
+                padding-right:10rem;
+            }
+         } 
+    }
+
+    @include large {
+        .site-main {
+            .entry-single {
+                margin: 0 auto;
+                max-width: 122rem;
+                padding-right: 20rem;
+            }
+         } 
+    }
+}
+
+.page-template-page-att-intermedia,
+.page-template-page-socioasistencial {
+
+.attheader {
+	background:#007fad; 
+	padding:3rem 1rem 0 !important;
+	width:100%;
+	z-index: 99999;
+	transition:0.35s;
+}
+
+.attheader .alignwide {
+	display:flex;
+	flex-direction:row;
+}
+
+.attheader .entry-title {
+	font-size:3rem;
+}
+
+.attheader .logito {
+	opacity:0;
+	width: 0;
+	height:0;
+	transition:0.35s;
+ }
+
+ .attheader.sticky {
+	-webkit-box-shadow: 0px 5px 5px 0px rgba(125,125,125,0.5);
+	-moz-box-shadow: 0px 5px 5px 0px rgba(125,125,125,0.5);
+	box-shadow: 0px 5px 5px 0px rgba(125,125,125,0.5);
+ }
+
+.attheader.sticky .logito {
+	opacity:1;
+	width: 40px;
+	height: 41px;
+	margin:-1.8rem 5rem 0 0;
+}
+
+.sticky + .entry-content {
+  padding-top: 16rem;
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+}

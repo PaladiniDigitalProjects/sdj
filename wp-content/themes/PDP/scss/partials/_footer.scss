@@ -1,0 +1,135 @@
+.site-footer {
+  margin-top: 0;
+  background-color: $primary;
+
+
+.entry-footer {
+  background-color:$primary;
+}
+
+
+
+  .content-area {
+    margin:0 auto;
+    text-align: left;
+    // border-top:0.1rem solid $primary;
+    
+    .widget-area {
+      
+      padding-top: 2rem;
+
+      ul.menu {
+        display: flex;
+        flex-wrap: wrap;
+        margin:2rem 1.5rem;
+        
+        li {
+          width:calc(50% - 2rem);
+          margin:0 2rem 0 0;
+          list-style-type: none;
+          a {
+            @include font-size(16);
+            color:$white;
+            font-family: $fp-bold;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+  // end content area
+  
+  @include tablet {
+    .content-area {
+      .widget-area {
+      ul.menu {
+        height: 10rem;
+        flex-direction: column;
+        li {
+          width: 26rem;
+          margin:0 4rem 0 0;
+        }
+      }
+    }
+
+    }
+  }
+
+  @include laptop {
+    .content-area {
+     
+      .widget-area {
+        ul.menu {
+          margin: 4rem;
+          li {
+            width: 20rem;
+            a {
+              @include font-size(18);
+            }
+          }
+        }
+      }
+    }
+    // end content area
+  }
+
+}
+// end site footer
+
+.widget-area {
+  // display: flex;
+  // flex-direction: column;
+
+  p {
+    padding-right: 1rem;
+  }
+
+  .wp-block-social-links {
+    // flex-direction: row;
+    // justify-content: flex-start;
+    padding:0 0 3rem 2rem;
+    .wp-social-link {
+      border-radius: 0;
+      svg {
+        width:4rem;
+        height:4rem;
+      }
+    } 
+  }
+
+  @include tablet {
+    // flex-direction: row;
+
+    // .entry-footer {
+    //   width: 50%;
+    // }
+
+    // .entry-footer:first-child {
+    //   width: 20%;
+    // }
+    // .entry-footer:last-child {
+    //   width: 30%;
+    //   padding-top: 1.5rem;
+    // }
+
+    .wp-block-social-links {
+      justify-content: flex-end;
+      padding:0;
+    }
+  }
+}
+
+.logo-footer {
+  padding: 0 2rem 3rem 2rem;
+  width: 100%;
+  height: auto;
+  max-width: 18rem;
+
+  @include large {
+    padding: 1rem 2rem 3rem 0;
+    max-width: 30rem;
+    margin: 0;
+  }
+}

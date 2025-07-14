@@ -1,0 +1,666 @@
+
+/* 
+ESCALA TIPOGRÁFICA
+*/
+
+.modulos-edioriales {
+  .entry-header {
+    padding: 2rem 1.5rem;
+    h1.entry-title {
+    font-family: $fs-regular;
+    @include font-size(30);
+    line-height: 100%;
+    }
+  }
+  h2, h3, h4, h5, h6, p, ul, .wp-block-buttons {
+    padding: 0;
+    margin:0 0 1rem 0;
+    display: block;
+  }
+}
+
+
+
+
+.entry-antetitle {
+  @include font-size(14);
+  line-height:115%;
+  font-family:$fp-regular;
+  margin:2rem 0 1rem;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+
+  &.back {
+    position: relative;
+    padding-left: 2.5rem !important;
+    transition: 0.25s;
+    
+    &:before {
+      content:' ';
+      display: block;
+      width: 2rem;
+      height: 1.5rem;
+      position:absolute;
+      left:0.2rem;
+      top:0.2rem;
+      background: url("../img/more-arrow-left.svg") center left no-repeat;
+    }
+
+  }
+
+  @include tablet {
+    @include font-size(20);
+  }
+
+  @include laptop {
+    @include font-size(20);
+     
+  }
+}
+
+
+h2, h1.entry-title {
+  @include font-size(30);
+  line-height:115%;
+  font-family:$fs-regular;
+  display: block;  
+  a {
+    color:$black;
+    text-decoration: none;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  @include tablet {
+    @include font-size(50);
+  }
+
+  @include laptop {
+    @include font-size(65);
+  }
+
+  @include large {
+    @include font-size(60);
+  }
+
+  @include xlarge {
+    @include font-size(60);
+  }
+}
+
+
+h3 {
+  @include font-size(30);
+  font-family: $fs-regular;
+  line-height: 120%;
+  display: block;
+  color:$black;
+
+  a {
+    color:$black;
+    text-decoration: none;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  @include tablet {
+    @include font-size(34);
+    line-height: 115%;
+  }
+
+  @include laptop {
+    @include font-size(46);
+    line-height: 110%;
+  }
+
+  @include large {
+    @include font-size(50);
+  }
+
+}
+
+h4 {
+  @include font-size(24);
+  font-family: $fs-regular;
+  line-height: 130%;
+  margin: 0;
+  padding: 0;
+
+  @include tablet {
+    @include font-size(28);
+  }
+
+  @include laptop {
+    @include font-size(34);
+  }
+
+  @include large {
+    @include font-size(38);
+  }
+}
+
+h5 {
+  @include font-size(20);
+  font-family:$fp-regular;
+
+  a {
+    color:$black;
+    text-decoration: none;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  @include tablet {
+    @include font-size(24);
+  }
+
+  @include laptop {
+    @include font-size(28);
+  }
+
+  @include large {
+    @include font-size(30);
+  }
+}
+
+h6 {
+  @include font-size(18);
+  font-family: $fs-regular;
+  line-height: 125%;
+  
+  a {
+    color:$black;
+    text-decoration: none;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  @include tablet {
+    @include font-size(20);
+  }
+
+}
+
+/* LIST */
+
+ul {
+  margin:0;
+  li {
+    font-family: $fp-regular;
+    @include font-size(16);
+    line-height:150%;
+  }
+
+  @include tablet {
+    li {
+      @include font-size(18);
+    }
+  }
+
+  @include laptop {
+    li {
+      @include font-size(20);
+    }
+  }
+  &.post-list {
+    li {
+      list-style-type: none;
+    }
+  }
+}
+
+/* PARRAFO */
+
+p {
+   font-family: $fp-light;
+    @include font-size(18);
+    line-height: 150%;
+    display: block;
+    margin:0 0 1rem 0;
+
+    strong {
+      font-family: $fp-semibold;
+      font-weight: 400;
+    }
+
+    @include tablet {
+      @include font-size(18);
+      line-height:140%;
+    }
+
+    @include laptop {
+      @include font-size(20);
+      line-height:150%;
+      margin:0 0 1.5rem 0;
+    }
+
+    @include large {
+      @include font-size(22);
+    }
+}
+
+
+
+
+
+
+/* BOTONES */
+
+.wp-block-buttons {
+  &.is-content-justification-center {
+    display: flex;
+    justify-content: center !important;
+  }
+  .wp-block-button{
+    &.btn-donar {
+      border:0.2rem solid $primary;
+      padding:0.85rem 1.5rem 1rem 1rem;
+
+      a.wp-block-button__link {
+        padding:1rem 1rem 1rem 1.25rem;
+        position: relative;
+        
+        &:after {
+          display: inline-block;
+          width: 2rem;
+          height: 2rem;
+          margin:0.2rem 0 0 1rem;
+          content: ' ';
+          background: url("../img/ico-cuore.svg") center no-repeat;
+          background-size: auto;
+          background-size: 100% 100%;
+        }
+      }
+    }
+
+    a.wp-block-button__link {
+      border-radius: 0.5rem !important;
+      @include font-size(18);
+      line-height:100%;
+      letter-spacing: 0.1rem;
+    }
+
+      @include tablet {
+        a.wp-block-button__link {
+          @include font-size(20);
+        }
+      }
+  
+      @include laptop {
+        a.wp-block-button__link {
+          @include font-size(20);
+        }
+      }
+  
+    }
+  } 
+
+
+  /* LLISTAT */
+
+  ul {
+    margin:1rem 0 0;
+    li {
+      list-style-type: disc;
+      padding-left: 0;
+      margin:0 0 1rem 2rem;
+    } 
+  }
+
+
+/* BOTON PEQUEÑO */
+
+.wp-block-buttons {
+  .wp-block-button{
+    &.btn-pequeno {
+      a.wp-block-button__link {
+        border-radius: 0;
+      @include font-size(12);
+      line-height:100%;
+      letter-spacing: 0.2rem;
+      padding: calc(.667em + 2px) calc(1.333em + 2px) calc(.667em) calc(1.333em + 2px);
+
+      @include tablet {
+        @include font-size(16);
+        
+      }
+  
+      @include laptop {
+        @include font-size(18);
+      }
+      }
+    }
+  } 
+}
+
+/* BOTON MEDIO */
+
+.wp-block-buttons {
+  .wp-block-button{
+    &.btn-medio {
+      a.wp-block-button__link {
+        border-radius: 0;
+        @include font-size(16);
+        line-height:100%;
+        letter-spacing: 0.2rem;
+        padding: calc(.667em + 2px) calc(1.333em + 2px) calc(.667em) calc(1.333em + 2px);
+  
+        @include tablet {
+          @include font-size(20);
+          
+        }
+    
+        @include laptop {
+          @include font-size(24);
+        }
+      }
+    }
+  } 
+}
+
+
+
+.wp-block-buttons {
+	.wp-block-button {
+		a.wp-block-button__link {
+      &.has-primario-background-color { background-color: $primary;}
+      &.has-acundario-background-color { background-color: $secondary;}
+      &.has-terciario-background-color { background-color: $tertiary;}
+      &.has-quaternario-background-color { background-color: $quaternary;}
+      &.has-negro-background-color { background-color: $black;}
+      &.has-gris-background-color { background-color: $gray;}
+      &.has-blanco-background-color { background-color: $white;}
+		}
+	}
+}
+
+
+
+
+/* BOTON GRANDE */
+
+.wp-block-buttons {
+  
+  .wp-block-button{
+    &.btn-grande {
+      a.wp-block-button__link {
+        border-radius: 0;
+        @include font-size(20);
+        line-height:100%;
+        letter-spacing: 0.05rem;
+        padding: calc(.667em + 2px) calc(1.333em + 2px) calc(.667em) calc(1.333em + 2px);
+  
+        @include tablet {
+          @include font-size(24);
+          
+        }
+    
+        @include laptop {
+          @include font-size(28);
+        }
+      }
+    }
+  } 
+}
+
+
+time {
+  @include font-size(16);
+  line-height: 1.42;
+  margin: 2rem auto;
+  padding: 0;
+  display: block;
+  text-align: center;
+  color:$white;
+}
+
+.wp-block-quote {
+
+  position: relative;
+  border-left: 0 solid #000;
+  margin: 6rem auto;
+  padding:4rem 2rem;
+  line-height: 1.25;
+ 
+  &:before {
+    content:' ';
+    display: block;
+    width: 3rem;
+    height: 3rem;
+    background: url('../img/ico-separador.svg') center no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    top:-2rem;
+    left:calc(50% - 1.5rem);
+  }
+
+  &:after {
+    content:' ';
+    display: block;
+    width: 3rem;
+    height: 3rem;
+    background: url('../img/ico-separador.svg') center no-repeat;
+    background-size: 100% 100%;
+    position: absolute;
+    bottom:0;
+    left:calc(50% - 1.5rem);
+  }
+  
+  
+  p { 
+    text-align: left;
+    font-family: $fs-regular;
+    @include font-size(30);
+    line-height: 110%;
+    color:$primary;
+  }
+  
+
+    @include tablet {
+      margin: 4 rem auto;
+      padding:5rem;
+      p { 
+        @include font-size(40);
+      }
+
+      &:after,
+      &:before {
+        left:calc(50% - 25.5rem);
+      }
+    }
+
+    @include large {
+      padding:3rem 6rem;
+      margin: 3rem 0;
+      p { 
+        @include font-size(46);
+      }
+      &:after,
+      &:before {
+        left:calc(50% - 30rem);
+      }     
+    }  
+  }
+
+.entry-list {
+  padding: 0;
+  // margin: 3rem auto 0 -1rem;
+  margin: 3rem 1rem 0 1rem;
+  @include font-size(14);
+  line-height: 1.2;
+  li {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 1rem 1rem 2rem;
+    padding-left: 1rem;
+    line-height: 1.5;
+    color:$gray;
+    &:before {
+       margin:0 1rem 0 -2rem;
+       content: ' ';
+       background: url('../img/blue-bullet.svg') center no-repeat;
+       background-size: 100% 100%;
+        width: 0.75rem;
+        height: 0.75rem;
+       text-align: left;
+       display: inline-block;
+     }
+
+     strong {
+       font-family: $fp-regular;
+     }
+  }
+
+  &.ordered {
+    margin: 5rem 0;
+    counter-reset: item;
+    li {
+      margin-left: -1rem;
+      counter-increment: item;
+      display: table;
+      word-break:break-word;
+
+      &:before {
+        padding-right:1.5rem;
+        vertical-align: top;
+        content: counter(item);
+        @include font-size(25);
+        // font-family:$fp-regular;
+        color: $secondary;
+        text-align: left;
+        display: table-cell;
+      }
+      @include mobileL {
+        margin-left: -3.5rem;
+      }
+    }
+  }
+  @include laptop {
+    margin: 9rem 0 0 0;
+  }
+}
+
+
+/* ORDERED LIST */
+
+ol {
+  margin: 0 auto;
+  display: block;
+  list-style-type: none;
+	counter-reset: li;
+  padding:0 0 0 2rem;
+
+  li {
+    @include font-size(16);
+    position: relative;
+    padding-left: 4rem;
+    margin-bottom: 2rem;
+    word-break:break-word;
+    &:before {
+      font-weight: bold;
+      counter-increment: li;
+      content: counter(li, decimal-leading-zero);
+    	position: absolute;
+      left: 0;
+    }
+  }
+
+  &.no-border {
+    border-left:none;
+  }
+}
+
+
+/* DESTACADO CON IMAGEN */
+
+.destacado-img {
+  padding: 3rem;
+  margin-left: 0 !important;
+  .wp-block-group {
+    &::after{
+      content:'';
+      display: block;
+      height: 3rem;
+      width: 5rem;
+      line-height: 100%;
+      margin-top: 3rem;
+      background: url('../img/COMILLAS_CERRAR.svg') center no-repeat;
+      background-size: auto 3rem;
+    }
+    &::before {
+      content:'';
+      display: block;
+      height: 3rem;
+      width: 5rem;
+      margin-bottom: 3rem;
+      background: url('../img/COMILLAS_ABRRIR.svg') center no-repeat;
+      background-size: auto 3rem;
+    }
+
+    .wp-block-heading {
+      font-size: 2.4rem !important;
+      line-height: 130% !important;
+    }
+    p {
+      font-size: 1.7rem !important;
+      line-height: 130% !important;
+      display: block;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+  }
+}
+
+
+
+/* FRASE CON IMAGEN */
+
+.frase-img {
+  padding: 3rem;
+  margin-left: 0 !important;
+  .wp-block-group {
+    padding-top:0 !important;;
+    padding-bottom:0 !important;;
+    .wp-block-heading {
+      font-size: 2.4rem !important;
+      line-height: 130% !important;
+    }
+    h4 {
+      margin-bottom: 0 !important;
+    }
+    p {
+      font-size: 1.7rem !important;
+      line-height: 130% !important;
+      display: block;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+  }
+}
+
+
+/* DESCARGAR DPCUMENTO */
+
+.descargar-documento {
+  padding: 6rem;
+  max-width: 90rem;
+  
+  .wp-block-media-text__media {
+    padding: 2rem;
+    img {
+      -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+      -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+      box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+    }
+  }
+
+  .wp-block-media-text__content {
+    padding-right: 16% !important;
+  }
+
+}

@@ -1,0 +1,46 @@
+/* BLOCK COLORS */
+
+.has-corporatiu-background-color { background-color: $corporatiu !important;}
+.has-salmo-background-color { background-color: $salmo !important;}
+.has-morat-background-color { background-color: $morat !important;}
+.has-gris-terra-background-color { background-color: $gris-terra !important;}
+.has-blanc-trencat-background-color { background-color: $blanc-trencat !important;}
+.has-crema-background-color { background-color: $crema !important;}
+.has-verd-fosc-background-color { background-color: $verd-fosc !important;}
+.has-verd-background-color { background-color: $verd !important;}
+.has-verd-clar-background-color { background-color: $verd-clar !important;}
+
+.has-negre-background-color { background-color: $black !important;}
+.has-blanc-background-color { background-color: $white !important;}
+
+.has-background {
+
+	&.has-corporatiu-background-color { background-color: $corporatiu !important;}
+	&.has-salmo-background-color { background-color: $salmo !important;}
+	&.has-morat-background-color { background-color: $morat !important;}
+	&.has-gris-terra-background-color { background-color: $gris-terra !important;}
+	&.has-blanc-trencat-background-color { background-color: $blanc-trencat !important;}
+	&.has-crema-background-color { background-color: $crema !important;}
+	&.has-verd-fosc-background-color { background-color: $verd-fosc !important;}
+	&.has-verd-background-color { background-color: $verd !important;}
+	&.has-verd-clar-background-color { background-color: $verd-clar !important;}
+
+	&.has-negre-background-color { background-color: $black !important;}
+	&.has-blanc-background-color { background-color: $white !important;}
+}
+
+
+
+.has-text-color {
+	&.has-corporatiu-color { color: $corporatiu !important;}
+	&.has-salmo-color { color: $salmo !important;}
+	&.has-morat-color { color: $morat !important;}
+	&.has-gris-terra-color { color: $gris-terra !important;}
+	&.has-blanc-trencat-color { color: $blanc-trencat !important;}
+	&.has-crema-color { color: $crema !important;}
+	&.has-verd-fosc-color { color: $verd-fosc !important;}
+	&.has-verd-color { color: $verd !important;}
+	&.has-verd-clar-color { color: $verd-clar !important;}
+	&.has-negre-color { color: $black !important;}
+	&.has-blanc-color { color: $white !important;}
+}

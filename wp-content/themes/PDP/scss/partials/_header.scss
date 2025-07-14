@@ -1,0 +1,263 @@
+
+
+.header {
+  z-index: 10;
+  width: 100%;
+  background: #ffffff;
+  top:0;
+
+
+.btn-mas-notcias {
+    display: block;
+    font-size: 14px;
+    font-size: 1.4rem;
+    transition: 0.35s;
+    border: 1px solid #007FAD;
+    max-width: 14rem;
+    position: absolute;
+    top: 1rem;
+    right: 6.6rem;
+
+    a {
+      padding: 1rem;
+    display: block;
+    color: $primary;
+    }
+  }
+
+  .header-content {
+    .lenguage,
+    .search-nav,
+    .menu-categorias,
+    .menu-menu-nav-container,
+    .menu-menu-nav-cat-container,
+    .menu-menu-nav-eus-container,
+    .menu-menu-nav-gal-container,
+    .menu-menu-nav-hermano-container,
+    .menu-numbers,
+    .menu-menu-nav-contacto-container,
+    hr {
+    // display: none;
+    display: none;
+    }
+  }
+
+  .menu-menu-nav-container,
+  .menu-menu-nav-cat-container,
+    .menu-menu-nav-eus-container,
+    .menu-menu-nav-gal-container {
+    border-top:0.1rem solid $primary;
+    padding: 0;
+    margin-top: 2rem;
+  }
+
+  hr {
+    background-color: $primary;
+  }
+
+  .menu-categorias {
+    dl {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding:1rem 1.5rem 0;
+
+      dt {
+        strong {
+          font-family: $fp-bold;
+          font-weight: 400;
+        }
+      }
+      dt, dd {
+        margin-right: 1rem;
+        color:$primary;
+        @include font-size(16);
+        line-height:150%;
+        a {
+          color:$primary;
+        }
+      }
+    }
+  }
+
+  .site-branding {
+    height: 6rem;
+    width: 100%;
+    padding: 0.5rem;
+    margin:0;
+    left:0;
+    .logo {
+      width: 14.5rem;
+      height: 5rem;
+      z-index: 2;
+      position: relative;
+      margin: 0;
+      a {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+      span { display:none; }
+    }
+  }
+
+
+.site-header {
+  width: 100%;
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: hidden;
+  left:0;
+}
+
+  @include tablet {
+    .header-content {
+      .header-top {
+      flex-direction:row;
+      flex-wrap:wrap;
+      border-bottom: none;
+      .site-branding {
+        width: 22rem;
+        height: 8rem;
+        margin:0;
+        .logo {
+          width: 22rem;
+          height: 7rem;
+          background-size: 100%;
+          background-position: 0 0;
+          margin-left: 0;
+        }
+      }
+
+    .search-lenguage {
+      width: 100%;
+      margin: 0;
+    }
+
+    .menu-categorias {
+      @include font-size(14);
+      line-height: 100%;
+      width: 100%;
+    }
+  }
+    .menu-menu-nav-container,
+    .menu-menu-nav-cat-container,
+    .menu-menu-nav-eus-container,
+    .menu-menu-nav-gal-container {
+      width: 100%;
+      padding: 2rem 0 0 2rem;
+    }
+  }
+}
+
+@include laptop {
+
+  .btn-mas-notcias {
+    @include font-size(16);
+    position:inherit;
+    top: 1rem;
+    right: 6.6rem;
+    // padding: 1rem 1.5rem;
+    max-width: 15rem;
+  }
+
+    
+    .header-content {
+      
+      .header-top {
+        max-width: $max-width;
+        margin:0 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      
+      .lenguage,
+      .search-nav {
+          display: block;
+      }
+
+      .site-branding {
+        width:30%;
+        order:1;
+        .logo {
+          width: 20rem;
+          height: 7rem;
+          background-size: 100%;
+          background-position: 0 0;
+          margin: 0.5rem 0 0 0.5rem;
+        }
+      }
+
+
+        .search-lenguage {
+          order:2;
+          width: 70%;
+          padding-right: 1rem;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          height: 4.2rem;
+          margin-top: 2rem;
+
+          .search-nav {
+            min-width: 300px;
+            order:2;
+          }
+
+          .lenguage {
+            order:3;
+            .wpml-ls-legacy-list-horizontal {
+              padding:12px 7px 7px 20px;
+            }
+          }
+        }
+      }
+
+      hr {
+        max-width: 100%;
+        margin-bottom: 0;
+        background-color: $white;
+        display: none;
+      }
+
+      .menu-menu-nav-container,
+      .menu-menu-nav-cat-container,
+      .menu-menu-nav-eus-container,
+      .menu-menu-nav-gal-container {
+        display: block;
+        margin: 0;
+        padding: 0;
+        background-color: $primary;
+        border-top:0.1rem solid $white;
+        border-bottom:0.1rem solid $white;
+
+        nav.menu-nav {
+          width: 100%;
+          max-width: $max-width;
+          margin: 0 auto;
+        }
+      }
+
+      
+  }
+}
+
+  @include large {
+   .header-content {
+    .header-top {
+      .search-lenguage {
+        padding-right: 0;
+      }
+    } 
+   }
+  }
+}
+// end header
+
+body.active header .btn-mas-notcias,
+.blog header .btn-mas-notcias{
+  display: none;
+}
+

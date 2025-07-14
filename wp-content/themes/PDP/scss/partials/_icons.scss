@@ -1,0 +1,40 @@
+/* ICONS */
+.ico {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.ico-linkdin-coral{
+    background: url('../img/ico-linkdin.svg') center no-repeat;
+    background-size: 100% 100%;
+  }
+
+  &.ico-linkdin{
+    background: url('../img/ico-linkdin.svg') center no-repeat;
+    background-size: 100% 100%;
+  }
+
+  &.ico-medium{
+    background: url('../img/ico-medium.svg') center no-repeat;
+    background-size: 100% 100%;
+  }
+
+  &.ico-twitter{
+    background: url('../img/ico-twitter.svg') center no-repeat;
+    background-size: 100% 100%;
+  }
+
+  &.ico-instagram{
+    background: url('../img/ico-instagram.svg') center no-repeat;
+    background-size: 100% 100%;
+  }
+
+  &.ico-cuore {
+    background: url('../img/ico-cuore.svg') center no-repeat;
+    background-size: 100% 100%;
+  }
+
+}

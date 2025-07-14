@@ -1,0 +1,24 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8
+"
+"Plural-Forms: nplurals=2; plural=(n != 1);
+"
+"Language: en_US
+"
+
+#: template.php:XX
+msgid "Ver publicación"
+msgstr ""
+
+#: template.php:XX
+msgid "No se encontraron noticias."
+msgstr ""
+
+#: template.php:XX
+msgid "Descargar PDF"
+msgstr ""
+
+#: template.php:XX
+msgid "Leer más"
+msgstr ""
