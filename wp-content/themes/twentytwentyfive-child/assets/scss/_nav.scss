@@ -1,0 +1,246 @@
+
+// ICO MENU
+
+body {
+  &.active {
+    position: fixed;
+
+    .menu-content {
+      margin: 0 !important;
+    }
+  }
+}
+
+.wp-block-navigation__responsive-container-close,
+.wp-block-navigation__responsive-container-open{
+  background-color: transparent;
+  padding: 0 2rem;
+  svg {
+    height: 2rem !important;
+    width: 2rem !important;  
+
+    @include large {
+      height: 3rem !important;
+      width: 3rem !important;  
+    }
+  }
+}
+
+/* LENGUAGE NAV */
+
+
+
+
+header.wp-block-template-part {
+.menu-butons{
+  #btn-open,
+  #btn-close {
+    width: 30px;
+    height: 30px;
+  }
+
+  #btn-close {
+    display: none;
+    &:hover {
+      cursor:pointer;
+    }
+    &.active {
+      display: block;
+      z-index: 1;
+      position: absolute;
+      top: 2rem;
+      right: 1rem;
+      justify-content:center;
+      
+    }
+  }
+
+  @include large {
+      #btn-open,
+      #btn-close {
+        width: 0 !important;
+        height: 0 !important;
+        display: none;
+        img {
+          width: 0 !important;
+        }
+      }
+    }
+  }
+}
+
+
+
+.menu-nav {
+  width: 100%;
+  background-color: $primary;
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  top:0;
+  border-radius:0 !important;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content:center;
+  display: none !important;
+
+  &.active {
+    display: flex !important;
+    justify-content: center;
+    text-align: center;
+    overflow-y: auto;
+    width: 100% !important;
+    height: 100vh;
+    margin: 0 !important;
+    gap: 3rem;
+    left:0;
+    right:0;
+    position: fixed;
+
+    .wp-block-buttons.is-content-justification-right {
+      justify-content: center;
+    }
+
+  }
+
+  .wp-block-navigation {
+    display: flex;
+    flex-direction: column !important;
+    
+    .wp-block-navigation-item {
+        list-style: none;
+        margin-top: 0;
+        text-align: left;
+        width: 100% !important;
+        flex-direction: column;
+        a { 
+          font-size:2rem !important; 
+          color:#ffffff !important;  
+          text-align: left !important;
+          display: block;
+        }
+      } 
+  }
+
+  @include large {
+      background-color: transparent;
+      width: auto;
+      position:relative;
+      height: inherit;
+      display: flex !important;
+      flex-direction:row;
+      justify-content:end !important;
+  
+        .wp-block-navigation {
+          display: flex;
+          flex-direction: row !important;
+          width: 100%;
+          
+          .wp-block-navigation-item {
+            list-style: none;
+            text-align: right;
+            width: auto !important;
+            padding: 1.2rem 1rem;
+            a { 
+              font-size:1.4rem !important; 
+              color:$white !important;
+              text-align: right !important;
+              transition: 0.25s;
+              &:hover {
+                text-decoration: none;
+                opacity: 0.8;
+              }
+            }
+
+            &.current-menu-item {
+              background-color: $white;
+              border-radius: 6px;
+              a {
+                font-weight: bold;
+                color:$black !important;
+              }
+            }
+
+            &.wp-block-home-link {
+              display: none;
+            }
+          } 
+        }
+    
+      .menu-butons {
+        width: 0;
+      }
+  }
+
+
+  .wp-block-polylang-language-switcher {
+    width: 100%;
+    text-align: center;
+    margin: 2rem auto;
+
+    .pll-switcher-select {
+      background: transparent;
+      color: $white !important;
+      border: none;
+      font-size: 1.8rem;
+        option {
+          font-family: var(--wp--preset--font-family--albert-sans);
+          font-style: normal;
+          font-weight: 300;
+      }
+    }
+
+    @include large {
+      width: auto !important;
+      text-align: center;
+
+    .pll-switcher-select {
+      color: $white !important;
+      font-size: 1.2rem;
+        option {
+          color:$white;
+        }
+      }
+    }
+  }
+  .wp-block-buttons {
+    text-align: left;
+    padding-right: 0 !important;
+    width: 100%;
+    margin: 0 auto;
+    .wp-block-button {
+      .wp-block-button__link {
+        font-size:1.6rem;
+        border:2px solid $white;
+      }
+    }
+
+    @include large {
+      text-align: center;
+      width: 20rem;
+      .wp-block-button {
+        .wp-block-button__link {
+          border: none;
+        }
+      }
+    }
+  }
+
+}
+
+
+.swiper-pagination {
+  bottom: -3rem !important;
+
+  .swiper-pagination-bullet-active{
+    background-color: $primary !important;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: $white !important;
+  }
+}
+
+

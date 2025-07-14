@@ -1,0 +1,27 @@
+
+.wp-block-list {
+    &.is-style-list-ratllat {
+        display: block;
+        list-style-type: none;
+        border-bottom: 1px solid gray;
+        padding-left: 0;
+        li {
+            padding: 0.35rem 0 0.35rem 0;
+            border-top: 1px solid gray;
+            margin-top: 0;
+        }
+    }
+}
+
+
+.wp-block-list {
+    &.is-style-list-clean {
+        display: block;
+        list-style-type: none;
+        padding-left: 0;
+        li {
+            padding: 0.35rem 0 0.35rem 0;
+            margin-top: 0;
+        }
+    }
+}
