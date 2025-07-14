@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['80916cf4122bf27d0a1925a1008d680c'=>'https://devsjd.lndo.site/ca/solidaritat/obra-social/testimonis/','fc85cee29b6611544cfa766f45f36da0'=>'https://devsjd.lndo.site/ca/solidaritat/obra-social/que-fem-2/','https://devsjd.lndo.site/solidaridad/obra-social/obrasocial-que-hacemos/'=>'https://devsjd.lndo.site/ca/solidaritat/obra-social/que-fem-2/','https://devsjd.lndo.site/solidaridad/obra-social/testimonios/'=>'https://devsjd.lndo.site/ca/solidaritat/obra-social/testimonis/']];

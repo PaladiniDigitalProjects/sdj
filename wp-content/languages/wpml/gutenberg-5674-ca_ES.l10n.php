@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['c09fffc40cb8030a4e3a5d6968836d27'=>'https://devsjd.lndo.site/ca/seccio-comunicacio/comunicacion/logos-corporatius/','f92a5344d8e29d222497a18b3ef9d929'=>'https://devsjd.lndo.site/ca/seccio-comunicacio/notes-de-premsa/','https://devsjd.lndo.site/?page_id=18808'=>'https://devsjd.lndo.site/ca/seccio-comunicacio/comunicacion/logos-corporatius/','https://devsjd.lndo.site/seccion-comunicacion/sala-de-prensa/'=>'https://devsjd.lndo.site/ca/seccio-comunicacio/notes-de-premsa/']];

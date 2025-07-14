@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['2c70ce5ed88c7b94cfa234a5022edc8c'=>'https://devsjd.lndo.site/ca/unica-mirada-possible/','76a6b53e19e12b3c7acac625e016e8fa'=>'https://devsjd.lndo.site/ca/continuitat-socioassistencial-dues-veus/','https://devsjd.lndo.site/continuidad-socioasistencial-a-dos-voces/'=>'https://devsjd.lndo.site/ca/continuitat-socioassistencial-dues-veus/','https://devsjd.lndo.site/la-unica-mirada-posible/'=>'https://devsjd.lndo.site/ca/unica-mirada-possible/']];
