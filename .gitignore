@@ -1,6 +1,6 @@
 # WordPress Core (if you don’t manage core in Git)
 # Uncomment if you pull core with WP-CLI or Composer instead of tracking it
-wp-admin/
+#wp-admin/
 wp-includes/
 .htaccess
 # WordPress Content
