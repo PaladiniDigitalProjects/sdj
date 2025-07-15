@@ -19,7 +19,7 @@ wp-content/object-cache.php
 # Lando, Docker, node_modules, OS files
 .lando.local.yml
 .env.local
-/node_modules/
+node_modules
 /vendor/
 /.dockerignore
 Dockerfile
