@@ -1,13 +1,14 @@
 # WordPress Core (if you don’t manage core in Git)
 # Uncomment if you pull core with WP-CLI or Composer instead of tracking it
-#wp-admin/
-#wp-includes/
+wp-admin/
+wp-includes/
 # WordPress Content
 wp-content/upgrade/
 wp-content/backup-db/
 wp-content/cache/
 wp-content/cache/supercache/
 wp-content/w3tc-cache/
+#wp-content/uploads/**/*
 #wp-content/uploads/**/*
 wp-content/advanced-cache.php
 wp-content/db.php
