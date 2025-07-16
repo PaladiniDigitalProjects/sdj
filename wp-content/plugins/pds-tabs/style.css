@@ -1,15 +1,19 @@
-/* Slide‑in animation */
+/* initial (hidden off to the right) */
 [data-block="gutenberghub-tabs/tab-content"] {
-	opacity: 0;
-	transform: translateX(20px);
-	transition: opacity .5s ease, transform .5s ease;
-	display: none;
+  display: none;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity .5s ease, transform .5s ease;
 }
+
+/* make it participate in layout, but still hidden */
 [data-block="gutenberghub-tabs/tab-content"].is-active {
-	display: block;
-	opacity: 1;
-	transform: translateX(0);
+  display: block;
+  /* keep opacity 0 & translateX(20px) here */
 }
-[data-block="gutenberghub-tabs/tab-content"].slide-in {
-	/* trigger transition only on switch */
+
+/* once “slide-in” is added, animate to visible/position */
+[data-block="gutenberghub-tabs/tab-content"].is-active.slide-in {
+  opacity: 1;
+  transform: translateX(0);
 }

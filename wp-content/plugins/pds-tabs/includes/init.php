@@ -11,29 +11,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_script(
 		'pds-tabs-frontend',
-		plugin_dir_url( __DIR__ ) . 'build/frontend.js',
+		PDS_TABS_URL . 'build/frontend.js',
 		[],
-		filemtime( plugin_dir_path( __DIR__ ) . 'build/frontend.js' ),
+		filemtime( PDS_TABS_DIR_PATH . 'build/frontend.js' ),
 		true
 	);
 
 	wp_enqueue_style(
 		'pds-tabs-style',
-		plugin_dir_url( __DIR__ ) . 'style.css',
+		PDS_TABS_URL . 'style.css',
 		[],
-		filemtime( plugin_dir_path( __DIR__ ) . 'style.css' )
+		filemtime( PDS_TABS_DIR_PATH . 'style.css' )
 	);
 } );
 
 /**
- * Enqueue block editor assets (for user settings like duration and pause-on-hover)
+ * Enqueue block editor assets
  */
 add_action( 'enqueue_block_editor_assets', function () {
 	wp_enqueue_script(
 		'pds-tabs-editor',
-		plugin_dir_url( __DIR__ ) . 'build/editor.js',
+		PDS_TABS_URL . 'build/editor.js',
 		[ 'wp-blocks', 'wp-element', 'wp-components', 'wp-compose', 'wp-data' ],
-		filemtime( plugin_dir_path( __DIR__ ) . 'build/editor.js' ),
+		filemtime( PDS_TABS_DIR_PATH . 'build/editor.js' ),
 		true
 	);
 } );
@@ -42,17 +42,22 @@ add_action( 'enqueue_block_editor_assets', function () {
  * Add data attributes to the tab container markup
  */
 add_filter( 'render_block', function ( $content, $block ) {
-	if ( $block['blockName'] !== 'gutenberghub-tabs/tab-container' ) {
+	if ( $block['blockName'] !== 'ghub/tabs-container' ) {
 		return $content;
 	}
 
-	$attrs          = $block['attrs'] ?? [];
+	$attrs = $block['attrs'] ?? [];
 	$duration       = isset( $attrs['autoSlideDuration'] ) ? intval( $attrs['autoSlideDuration'] ) : 5000;
 	$pause_on_hover = ! empty( $attrs['pauseOnHover'] ) ? 'true' : 'false';
 
+	// Use data-auto-slide-duration and data-pause-on-hover
 	return preg_replace(
-		'/^<([a-zA-Z0-9\-]+)/',
-		sprintf( '<$1 data-auto-duration="%d" data-pause-hover="%s"', $duration, $pause_on_hover ),
+		'/^<(div)([^>]*)>/i',
+		sprintf(
+			'<$1$2 data-auto-slide-duration="%d" data-pause-on-hover="%s">',
+			$duration,
+			$pause_on_hover
+		),
 		$content,
 		1
 	);

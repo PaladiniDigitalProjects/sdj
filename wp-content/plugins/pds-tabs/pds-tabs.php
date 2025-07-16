@@ -20,16 +20,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Check if the main GutenbergHub Tabs plugin is active.
+// Define plugin constants for paths and URLs for consistent use.
+if ( ! defined( 'PDS_TABS_DIR_PATH' ) ) {
+	define( 'PDS_TABS_DIR_PATH', plugin_dir_path( __FILE__ ) );
+}
+
+if ( ! defined( 'PDS_TABS_URL' ) ) {
+	define( 'PDS_TABS_URL', plugin_dir_url( __FILE__ ) );
+}
+
+if ( ! defined( 'PDS_TABS_FILE' ) ) {
+	define( 'PDS_TABS_FILE', __FILE__ );
+}
+
+
+/**
+ * Check for the dependency (GutenbergHub Tabs) and load extension functionality.
+ */
 add_action( 'plugins_loaded', function () {
+	// Check if the main GutenbergHub Tabs plugin's constant is defined.
+	// This ensures GutenbergHub Tabs is active before PDS Tabs tries to extend it.
 	if ( ! defined( 'GUTENBERGHUB_TABS_DIR_PATH' ) ) {
-		// Show admin notice if the dependency is missing.
+		// If dependency is missing, show an admin notice.
 		add_action( 'admin_notices', function () {
 			echo '<div class="notice notice-error"><p><strong>PDS Tabs</strong> requires the <strong>GutenbergHub Tabs</strong> plugin to be installed and active.</p></div>';
 		} );
-		return;
+		return; // Stop execution if the dependency is not met.
 	}
 
-	// Load PDS Tabs extension functionality.
-	require_once plugin_dir_path( __FILE__ ) . 'includes/init.php';
+	// If the dependency is met, load the extension's core functionality.
+	require_once PDS_TABS_DIR_PATH . 'includes/init.php';
 } );

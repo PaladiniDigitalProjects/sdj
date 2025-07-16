@@ -1,4 +1,6 @@
 <?php
+define( 'WP_CACHE', false ); // By Speed Optimizer by SiteGround
+
 $env = getenv('WP_ENV') ?: 'dev';
 
 require_once __DIR__ . '/wp-config.base.php';
