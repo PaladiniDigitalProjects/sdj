@@ -166,6 +166,7 @@ window.addEventListener("load", () => {
         box.classList.add("display-box");
     });
 
+    /* NAVEGACIÓ SUBSECCIONS */
 
     const panel = document.querySelector('[rel="panel"]');
 

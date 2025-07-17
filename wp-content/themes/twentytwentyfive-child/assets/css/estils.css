@@ -5026,3 +5026,42 @@ header.wp-block-template-part .menu-butons #btn-close.active {
   padding: 0.35rem 0 0.35rem 0;
   margin-top: 0;
 }
+
+.listado_noticia {
+  background-color: red;
+}
+.listado_noticia .noticia {
+  position: relative;
+}
+.listado_noticia .noticia .noticia_header {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  border-radius: 0 0 0.3rem 0.3rem;
+}
+.listado_noticia .noticia .taxonomy-category {
+  font-size: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.035rem;
+  line-height: 125%;
+  margin-bottom: 0.5rem;
+}
+@media only screen and (min-width: 1024px) {
+  .listado_noticia .noticia .taxonomy-category {
+    font-size: 11px;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+}
+@media only screen and (min-width: 1240px) {
+  .listado_noticia .noticia .noticia_header {
+    padding: 1.5rem;
+  }
+  .listado_noticia .noticia .taxonomy-category {
+    font-size: 12px;
+    font-size: 1.2rem;
+  }
+}
