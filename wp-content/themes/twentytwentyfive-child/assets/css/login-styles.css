@@ -897,13 +897,13 @@ footer.wp-block-template-part div[submit-success] > .wpforms-confirmation-contai
   padding-left: 0;
   border-radius: 0;
   border: none;
-  border-bottom: 0.1rem solid #565656;
-  color: #565656;
+  border-bottom: 0.1rem solid #787878;
+  color: #787878;
   font-size: 14px;
   font-size: 1.4rem;
 }
 .contact-page .wpforms-container .wpforms-field .wpforms-field-medium::placeholder {
-  color: #565656;
+  color: #787878;
   font-weight: 400;
   font-size: 12px;
   font-size: 1.2rem;
@@ -915,7 +915,7 @@ footer.wp-block-template-part div[submit-success] > .wpforms-confirmation-contai
   background-color: #ffffff !important;
 }
 .contact-page .wpforms-container label.wpforms-field-label-inline {
-  color: #565656;
+  color: #787878;
 }
 .contact-page .wpforms-container .wpforms-submit-container {
   text-align: right;
@@ -928,7 +928,7 @@ footer.wp-block-template-part div[submit-success] > .wpforms-confirmation-contai
 .contact-page div.wpforms-container-full .wpforms-confirmation-container-full,
 .contact-page div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirection-message) {
   background: #ffffff;
-  border: 1px solid #565656;
+  border: 1px solid #787878;
   box-sizing: border-box;
 }
 
@@ -942,7 +942,7 @@ footer.wp-block-template-part div[submit-success] > .wpforms-confirmation-contai
 
 .div.wpforms-container-full .wpforms-confirmation-container-full p,
 div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirection-message) p {
-  color: #343434;
+  color: #000000;
 }
 
 .downloadPager {
@@ -966,7 +966,7 @@ div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirect
   padding-left: 0.5rem;
 }
 .downloadPager .wpforms-container .wpforms-field-label-inline {
-  color: #343434;
+  color: #000000;
 }
 .downloadPager .wpforms-container.display-box {
   border: 1px solid gray;
@@ -1039,7 +1039,7 @@ header.wp-block-template-part .menu-butons #btn-close.active {
 
 .menu-nav {
   width: 100%;
-  background-color: #FF7839;
+  background-color: #007FAD;
   position: absolute;
   top: 0;
   right: 0;
@@ -1122,7 +1122,7 @@ header.wp-block-template-part .menu-butons #btn-close.active {
   }
   .menu-nav .wp-block-navigation .wp-block-navigation-item.current-menu-item a {
     font-weight: bold;
-    color: #343434 !important;
+    color: #000000 !important;
   }
   .menu-nav .wp-block-navigation .wp-block-navigation-item.wp-block-home-link {
     display: none;
@@ -1184,14 +1184,14 @@ header.wp-block-template-part .menu-butons #btn-close.active {
   bottom: -3rem !important;
 }
 .swiper-pagination .swiper-pagination-bullet-active {
-  background-color: #FF7839 !important;
+  background-color: #007FAD !important;
 }
 .swiper-pagination .swiper-pagination-bullet {
   background-color: #ffffff !important;
 }
 
 .login {
-  background-color: #FF7839;
+  background-color: #007FAD;
 }
 .login form {
   margin-top: 0;
@@ -1209,7 +1209,7 @@ header.wp-block-template-part .menu-butons #btn-close.active {
 .login .button-primary {
   background: #ffffff;
   border-color: #ffffff;
-  color: #343434;
+  color: #000000;
   text-decoration: none;
   text-shadow: none;
   text-transform: uppercase;
@@ -1218,8 +1218,8 @@ header.wp-block-template-part .menu-butons #btn-close.active {
 }
 .login .button-primary:hover {
   color: #ffffff !important;
-  background: #FF7839 !important;
-  border-color: #FF7839 !important;
+  background: #007FAD !important;
+  border-color: #007FAD !important;
 }
 .login a {
   color: #ffffff !important;

@@ -76,13 +76,13 @@ add_action( 'init', 'prefix_register_block_styles' );
 /* ADD ADMIN AND LOGIN STYLES */
 
 function wpdocs_enqueue_custom_admin_style() {
-	wp_register_style( 'custom_wp_admin_css', get_template_directory_uri() . '/assets/css/admin-styles.css', false, '1.0.0' );
+	wp_register_style( 'custom_wp_admin_css', get_template_directory_uri() . '-child/assets/css/admin-styles.css', false, '1.0.0' );
 	wp_enqueue_style( 'custom_wp_admin_css' );
 }
 add_action( 'admin_enqueue_scripts', 'wpdocs_enqueue_custom_admin_style' );
 
 function login_stylesheet() {
-    wp_enqueue_style( 'custom-login', get_stylesheet_directory_uri() . '/assets/css/login-styles.css' );
+    wp_enqueue_style( 'custom-login', get_stylesheet_directory_uri() . '-child/assets/css/login-styles.css' );
 }
 add_action( 'login_enqueue_scripts', 'login_stylesheet' );
 
