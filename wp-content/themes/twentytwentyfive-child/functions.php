@@ -1,22 +1,5 @@
 <?php
 
-
-function gtag_dgo_function() { ?>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DR2C8B5HPG"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-DR2C8B5HPG');
-</script>
-<?php }
-add_action('wp_head', 'gtag_dgo_function', 1);
-
-function GTM_dgo_function() {
-	echo '<!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TD9SRBGX" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) -->';
-}
-add_action('wp_body_open', 'GTM_dgo_function', 1);
-
 /* ADD STYLES AND JS */
 
 function my_theme_enqueue_styles() {
@@ -29,7 +12,6 @@ function my_theme_enqueue_styles() {
  );
 
  	wp_enqueue_style('child-estils', get_template_directory_uri() . '-child/assets/css/estils.css',);
-
 	wp_enqueue_script('ajax',  'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js');	
 	wp_enqueue_script('main',  get_template_directory_uri() . '-child/assets/js/main.js', array(), '1.0.0', true);
 }
@@ -108,5 +90,4 @@ function mycontent( $content ) {
 	}
 	return $content;
 }
-
 ?>
