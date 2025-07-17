@@ -1191,7 +1191,7 @@ header.wp-block-template-part .menu-butons #btn-close.active {
 }
 
 .login {
-  background-color: #007FAD;
+  background-color: #ffffff;
 }
 .login form {
   margin-top: 0;
@@ -1204,31 +1204,32 @@ header.wp-block-template-part .menu-butons #btn-close.active {
   box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.04);
 }
 .login label {
-  color: #ffffff;
+  color: #007FAD;
 }
 .login .button-primary {
-  background: #ffffff;
-  border-color: #ffffff;
-  color: #000000;
+  background: #007FAD;
+  border-color: #007FAD;
+  color: #ffffff !important;
   text-decoration: none;
   text-shadow: none;
   text-transform: uppercase;
   font-weight: bold;
   margin-top: 2rem;
+  transition: 0.35ms;
 }
 .login .button-primary:hover {
   color: #ffffff !important;
-  background: #007FAD !important;
-  border-color: #007FAD !important;
+  background: #2FA2B8 !important;
+  border-color: #2FA2B8 !important;
 }
 .login a {
-  color: #ffffff !important;
+  color: #007FAD !important;
   transition-duration: 0.035s;
   transition-timing-function: ease-in-out;
-  text-decoration: underline;
+  text-decoration: none;
 }
 .login a:hover {
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 .login #nav {
@@ -1237,8 +1238,10 @@ header.wp-block-template-part .menu-butons #btn-close.active {
 
 #login h1 a,
 .login h1 a {
-  background-size: 240px auto;
+  background-image: url("https://devsjd.lndo.site/wp-content/uploads/2025/07/LOGO-SJD.svg");
+  background-size: 260px auto;
   background-repeat: no-repeat;
+  background-position: center center;
   padding-bottom: 0;
   margin-bottom: 0;
   display: block;

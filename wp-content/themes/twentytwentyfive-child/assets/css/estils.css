@@ -5040,6 +5040,7 @@ header.wp-block-template-part .menu-butons #btn-close.active {
 }
 .listado_noticia .noticia .noticia_header a {
   transition: 0.3s;
+  text-decoration: none;
 }
 .listado_noticia .noticia .noticia_header a:hover {
   text-decoration: none;

@@ -1,5 +1,5 @@
 /*
-Theme Name: D-GO
+Theme Name: SJD 2025
 Template: twentytwentyfive
 
 Theme URI: https://paladinidigital.com
@@ -15,20 +15,3 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: PDS
 Tags: one-column, custom-colors, custom-menu, custom-logo, editor-style, featured-images, full-site-editing, block-patterns, rtl-language-support, sticky-post, threaded-comments, translation-ready, wide-blocks, block-styles, style-variations, accessibility-ready, blog, portfolio, news
 */
-
-/*----------------- Cambios a partir de aquí -------------------------------*/
-/* Poner los links en naranja */
-a { text-decoration: none; color: #000000; }
-a:hover { text-decoration: underline; }
-
-.hide {
-    display: none;
-}
-
-.site-header {
-    position: fixed;
-    z-index: 100;
-    top:0;
-    right: 0;
-    left:0;
-}

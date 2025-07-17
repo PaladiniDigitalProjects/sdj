@@ -49,18 +49,40 @@ window.addEventListener('load', function() {
 
     /* NAVEGACIÓ SUBSECCIONS */
 
-    const quehacemos = document.querySelector('[rel="menu_que_hacemos"]');
-    const menuquehacemos = document.getElementById('#menu_que_hacemos');
 
-     quehacemos.addEventListener('mouseenter', () => {
-        console.log('IN');
-        menuquehacemos.removeClass('hide');
+    function activarTogglePorRel(relValue, className = 'hide') {
+    const elementos = document.querySelectorAll(`[rel="${relValue}"]`);
+
+    elementos.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+        el.classList.remove(className);
+        });
+
+        el.addEventListener('mouseleave', () => {
+        el.classList.add(className);
+        });
     });
+    }
 
-    // quehacemos.addEventListener('mouseleave', () => {
-    //     console.log('OUT');
-    //     menuquehacemos.addClass('hide');
+    // Llamadas universales:
+    activarTogglePorRel('menu_que_hacemos');        // Activa para todos los que tienen rel="panel"
+    activarTogglePorRel('otro-panel');   // También puedes usarlo para otros tipos
+
+
+
+
+    // const quehacemos = document.querySelector('[rel="menu_que_hacemos"]');
+    // const menuquehacemos = document.getElementById('#menu_que_hacemos');
+
+    //  quehacemos.addEventListener('mouseenter', () => {
+    //     console.log('IN');
+    //     menuquehacemos.removeClass('hide');
     // });
+
+    // // quehacemos.addEventListener('mouseleave', () => {
+    // //     console.log('OUT');
+    // //     menuquehacemos.addClass('hide');
+    // // });
 
 
 

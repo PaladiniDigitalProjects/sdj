@@ -64,7 +64,7 @@ function wpdocs_enqueue_custom_admin_style() {
 add_action( 'admin_enqueue_scripts', 'wpdocs_enqueue_custom_admin_style' );
 
 function login_stylesheet() {
-    wp_enqueue_style( 'custom-login', get_stylesheet_directory_uri() . '-child/assets/css/login-styles.css' );
+    wp_enqueue_style( 'custom-login', get_stylesheet_directory_uri() . '/assets/css/login-styles.css' );
 }
 add_action( 'login_enqueue_scripts', 'login_stylesheet' );
 
@@ -76,6 +76,19 @@ add_filter( 'rest_authentication_errors', function( $result ) {
     }
     return $result;
 });
+
+/* LOGIN H1 URL */
+
+
+function my_login_logo_url() {
+    return home_url();
+}
+add_filter( 'login_headerurl', 'my_login_logo_url' );
+
+function my_login_logo_url_title() {
+    return 'Your Site Name and Info';
+}
+add_filter( 'login_headertext', 'my_login_logo_url_title' );
 
 
 /* EDIT PAGE */

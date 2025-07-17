@@ -4744,6 +4744,7 @@
 }
 .editor-styles-wrapper .listado_noticia .noticia .noticia_header a {
   transition: 0.3s;
+  text-decoration: none;
 }
 .editor-styles-wrapper .listado_noticia .noticia .noticia_header a:hover {
   text-decoration: none;
