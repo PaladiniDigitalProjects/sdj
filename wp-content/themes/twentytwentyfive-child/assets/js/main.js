@@ -166,5 +166,15 @@ window.addEventListener("load", () => {
         box.classList.add("display-box");
     });
 
-});
 
+    const panel = document.querySelector('[rel="panel"]');
+
+    panel.addEventListener('mouseenter', () => {
+    panel.classList.toggle('activo');
+    });
+
+    panel.addEventListener('mouseleave', () => {
+    panel.classList.toggle('activo');
+    });
+
+});
