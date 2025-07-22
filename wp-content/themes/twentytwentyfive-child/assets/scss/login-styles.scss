@@ -4,7 +4,7 @@
 @import './nav.scss';
 
 .login {
-  background-color:$primary;
+  background-color:$white;
 
   form {
     margin-top: 0;
@@ -18,32 +18,33 @@
   }
 
   label {
-    color:$white;
+    color:$primary;
   }
 
   .button-primary {
-    background: $white;
-    border-color: $white;
-    color: $black;
+    background: $primary;
+    border-color: $primary;
+    color: $white !important;
     text-decoration: none;
     text-shadow: none;
     text-transform: uppercase;
     font-weight: bold;
     margin-top: 2rem;
+    transition: 0.35ms;
     
     &:hover {
       color:$white !important;
-      background: $primary !important;
-      border-color: $primary !important;
+      background: $secondary !important;
+      border-color: $secondary !important;
     }
   }
   a {
-    color: $white !important;
+    color: $primary !important;
     transition-duration: .035s;
     transition-timing-function: ease-in-out;
-    text-decoration: underline;
+    text-decoration: none;
     &:hover {
-      text-decoration: none;
+      text-decoration: underline;
     }
   }
 }
@@ -55,9 +56,10 @@
 
 #login h1 a, 
 .login h1 a {
-  // background-image: url('https://mtstech.eu/wp-content/uploads/2023/12/Logo-mts.svg');
-  background-size: 240px auto;
+  background-image: url('https://devsjd.lndo.site/wp-content/uploads/2025/07/LOGO-SJD.svg');
+  background-size: 260px auto;
   background-repeat: no-repeat;
+  background-position: center center;
   padding-bottom: 0;
   margin-bottom: 0;
   display: block;
