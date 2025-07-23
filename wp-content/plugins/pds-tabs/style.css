@@ -7,13 +7,13 @@
 }
 
 /* make it participate in layout, but still hidden */
-[data-block="gutenberghub-tabs/tab-content"].is-active {
+[data-block="gutenberghub-tabs/tab-content"].gutenberghub-active-tab {
   display: block;
   /* keep opacity 0 & translateX(20px) here */
 }
 
 /* once “slide-in” is added, animate to visible/position */
-[data-block="gutenberghub-tabs/tab-content"].is-active.slide-in {
+[data-block="gutenberghub-tabs/tab-content"].gutenberghub-active-tab.slide-in {
   opacity: 1;
   transform: translateX(0);
 }

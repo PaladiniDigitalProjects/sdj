@@ -50,15 +50,12 @@ add_filter( 'render_block', function ( $content, $block ) {
 	$duration       = isset( $attrs['autoSlideDuration'] ) ? intval( $attrs['autoSlideDuration'] ) : 5000;
 	$pause_on_hover = ! empty( $attrs['pauseOnHover'] ) ? 'true' : 'false';
 
-	// Use data-auto-slide-duration and data-pause-on-hover
-	return preg_replace(
-		'/^<(div)([^>]*)>/i',
-		sprintf(
-			'<$1$2 data-auto-slide-duration="%d" data-pause-on-hover="%s">',
-			$duration,
-			$pause_on_hover
-		),
-		$content,
-		1
+	// Inject data attributes into the container
+	$content = preg_replace(
+		'/class="([^"]*gutenberghub-tabs-frontend-container[^"]*)"/',
+		'class="$1" data-auto-slide-duration="' . esc_attr( $duration ) . '" data-pause-hover="' . esc_attr( $pause_on_hover ) . '"',
+		$content
 	);
+
+	return $content;
 }, 10, 2 );
