@@ -1,15 +1,14 @@
 
 .editor-styles-wrapper {
     
-    @import './variables.scss';
-    @import './generics.scss';
-    @import './buttons.scss';
-    @import './animacions.scss';
-    @import './wpforms.scss';
-    @import './nav.scss';
-    @import './listados.scss';
-    @import './noticias.scss';
-    @import './home.scss';
+  @import './variables.scss';
+  @import './generics.scss';
+  @import './header.scss';
+  @import './buttons.scss';
+  @import './animacions.scss';
+  @import './wpforms.scss';
+  @import './nav.scss';
+  @import './listados.scss';
 
   // GENERIC
   background: $white;  

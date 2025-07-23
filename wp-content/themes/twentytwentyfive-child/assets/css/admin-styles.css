@@ -732,6 +732,38 @@
 .editor-styles-wrapper .zoom10:hover {
   transform: scale(1.1);
 }
+.editor-styles-wrapper .wp-block-site-logo {
+  width: 100%;
+  max-width: 8rem;
+}
+@media only screen and (min-width: 768px) {
+  .editor-styles-wrapper .wp-block-site-logo {
+    max-width: 10rem;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper .wp-block-site-logo {
+    max-width: 14rem;
+  }
+}
+@media only screen and (min-width: 1240px) {
+  .editor-styles-wrapper .wp-block-site-logo {
+    max-width: 16rem;
+  }
+}
+.editor-styles-wrapper header.wp-block-template-part {
+  padding: 0 1rem;
+  width: calc(100% - 2rem);
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+.editor-styles-wrapper header.wp-block-template-part .Sub_Menus {
+  position: absolute;
+  z-index: 11;
+  left: 0;
+  right: 0;
+}
 .editor-styles-wrapper .wp-block-button {
   transition: 0.25s;
 }
@@ -4704,32 +4736,6 @@
   .editor-styles-wrapper .listado_noticia .noticia .taxonomy-category {
     font-size: 12px;
     font-size: 1.2rem;
-  }
-}
-@media only screen and (min-width: 1024px) {
-  .editor-styles-wrapper .ghub-query-slider.destacats .swiper-slide:nth-child(2) {
-    max-width: 30rem !important;
-    min-height: 20rem !important;
-  }
-  .editor-styles-wrapper .ghub-query-slider.destacats .swiper-slide:nth-child(4) {
-    max-width: 25rem !important;
-    min-height: 20rem !important;
-  }
-  .editor-styles-wrapper .ghub-query-slider.destacats .swiper-slide:nth-child(3) {
-    min-width: 60rem !important;
-    min-height: 36rem !important;
-  }
-  .editor-styles-wrapper .ghub-query-slider.destacats .swiper-slide:nth-child(7) {
-    max-width: 30rem !important;
-    min-height: 20rem !important;
-  }
-  .editor-styles-wrapper .ghub-query-slider.destacats .swiper-slide:nth-child(8) {
-    max-width: 25rem !important;
-    min-height: 20rem !important;
-  }
-  .editor-styles-wrapper .ghub-query-slider.destacats .swiper-slide:nth-child(9) {
-    min-width: 60rem !important;
-    min-height: 36rem !important;
   }
 }
 .editor-styles-wrapper a {
