@@ -44,48 +44,43 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 window.addEventListener('load', function() {
-    console.log('La página ha terminado de cargarse!!');
 
 
     /* NAVEGACIÓ SUBSECCIONS */
 
 
-    function activarTogglePorRel(relValue, className = 'hide') {
-    const elementos = document.querySelectorAll(`[rel="${relValue}"]`);
+    function activarSubmenusUniversal(triggerSelector = '.submenu > a', className = 'hide') {
+    const triggers = document.querySelectorAll(triggerSelector);
 
-    elementos.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-        el.classList.remove(className);
+    triggers.forEach(trigger => {
+        const targetId = trigger.getAttribute('rel');
+        const panel = document.getElementById(targetId);
+
+        if (!panel) return;
+
+        // Mostrar cuando el mouse entra al trigger
+        trigger.addEventListener('mouseenter', () => {
+        panel.classList.remove(className);
         });
 
-        el.addEventListener('mouseleave', () => {
-        el.classList.add(className);
+        // Ocultar cuando el mouse sale del trigger
+        trigger.addEventListener('mouseleave', () => {
+        panel.classList.add(className);
+        });
+
+        // También ocultar cuando el mouse salga del panel
+        panel.addEventListener('mouseleave', () => {
+        panel.classList.add(className);
+        });
+
+        // (Opcional) mantener visible si el mouse entra al panel
+        panel.addEventListener('mouseenter', () => {
+        panel.classList.remove(className);
         });
     });
     }
-
-    // Llamadas universales:
-    activarTogglePorRel('menu_que_hacemos');        // Activa para todos los que tienen rel="panel"
-    activarTogglePorRel('otro-panel');   // También puedes usarlo para otros tipos
-
-
-
-
-    // const quehacemos = document.querySelector('[rel="menu_que_hacemos"]');
-    // const menuquehacemos = document.getElementById('#menu_que_hacemos');
-
-    //  quehacemos.addEventListener('mouseenter', () => {
-    //     console.log('IN');
-    //     menuquehacemos.removeClass('hide');
-    // });
-
-    // // quehacemos.addEventListener('mouseleave', () => {
-    // //     console.log('OUT');
-    // //     menuquehacemos.addClass('hide');
-    // // });
-
-
-
+    activarSubmenusUniversal();
+    console.log('La página ha terminado de cargarse!!');
 });
 
 
