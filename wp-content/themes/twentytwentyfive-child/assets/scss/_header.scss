@@ -20,37 +20,17 @@
 // HEADER PAGES
 
 header.wp-block-template-part {
-  padding: 0;
+  padding: 0 1rem;
   width: calc(100% - 2rem);
-  position: fixed;
-  z-index: 100;
   margin: 0 auto;
-
-
-  @include tablet{
-    padding: 0;
-    margin: 0 auto;
-  }
-
-  &.headerup {
-    transform: translateY(-10rem);
-  }
-
-  &.fullheader {
-    transition: 0.35s;
-    transform: translateY(0);
-  }
-
-  & + main {
-    padding-top: 0;
-
-    @include tablet{
-      padding-top: 0;
-    }
+  position: relative;
+  z-index: 10;
   
-    @include laptop {
-      padding-top: 0;
-    }
+  .Sub_Menus {
+    position: absolute;
+    z-index: 11;
+    left: 0;
+    right: 0;
   }
 }
 
