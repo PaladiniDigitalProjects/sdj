@@ -1,7 +1,4 @@
 <?php
-define( 'DB_CHARSET', 'utf8' );
-define( 'DB_COLLATE', '' );
-
 
 
 define( 'AUTH_KEY',          '!mtN=8+Tyl:gJHMR%-U}CBm(]uLcw5fa6Mg}6lxu6eONTckv(Y9K.M!)=&$^*6]e' );
