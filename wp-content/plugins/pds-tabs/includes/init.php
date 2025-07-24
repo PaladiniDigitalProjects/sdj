@@ -47,6 +47,7 @@ add_filter( 'render_block', function ( $content, $block ) {
 	}
 
 	$attrs = $block['attrs'] ?? [];
+	$activate = ! empty( $attrs['activate'] ) ? 'true' : 'false';
 	$duration       = isset( $attrs['autoSlideDuration'] ) ? intval( $attrs['autoSlideDuration'] ) : 5000;
 	$pause_on_hover = ! empty( $attrs['pauseOnHover'] ) ? 'true' : 'false';
 
@@ -59,3 +60,4 @@ add_filter( 'render_block', function ( $content, $block ) {
 
 	return $content;
 }, 10, 2 );
+

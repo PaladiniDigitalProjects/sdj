@@ -1,4 +1,6 @@
 # SJD DEV
+lando wp db export ./devsjd.sql -> export base de datos
+
 
 
 

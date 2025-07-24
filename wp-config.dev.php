@@ -87,9 +87,7 @@ $table_prefix = 'pork_';
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
-if ( ! defined( 'WP_DEBUG' ) ) {
-	define( 'WP_DEBUG', false );
-}
+
 
 /* That's all, stop editing! Happy publishing. */
 
