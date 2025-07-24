@@ -1,0 +1,14 @@
+{
+  "apiVersion": 2,
+  "name": "pds/query-categories",
+  "title": "PDS: Listar Categorías Query",
+  "category": "widgets",
+  "icon": "list-view",
+  "description": "Muestra las categorías de los posts del archivo actual.",
+  "attributes": {
+    "taxonomy": { "type": "string", "default": "category" },
+    "style": { "type": "string", "default": "pill" }
+  },
+  "editorScript": "file:./index.js",
+  "render": "pds_render_callback"
+}
