@@ -1,8 +1,7 @@
-@import './partials/variables.scss';
+@import './estils.scss';
 
 .login {
   background-color:$primary;
-  font-family: $fp-regular !important;
 
   form {
     margin-top: 20px;

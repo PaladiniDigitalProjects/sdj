@@ -1,0 +1,158 @@
+{
+    "$schema": "https://json.schemastore.org/block.json",
+    "apiVersion": 2,
+    "name": "ghub/query-taxonomy",
+    "title": "Query Taxonomy",
+    "description": "Query Taxonomy is a powerfull block that allows you to create filterable queries via taxonomy with query loop.",
+    "category": "ghub-products",
+    "keywords": [
+        "taxonomy",
+        "filter",
+        "category",
+        "tags",
+        "query"
+    ],
+    "version": "1.0.0",
+    "textdomain": "gutenberghub-query-taxonomy",
+    "attributes": {
+        "showAll": {
+            "type": "boolean",
+            "default": true
+        },
+        "showAllLabel": {
+            "type": "string",
+            "default": "All"
+        },
+        "height": {
+            "type": "string",
+            "default": ""
+        },
+        "taxonomySlug": {
+            "type": "string",
+            "default": ""
+        },
+        "layout": {
+            "type": "string",
+            "default": "select",
+            "enum": [
+                "select",
+                "menu",
+                "checkbox",
+                "radio"
+            ]
+        },
+        "justification": {
+            "type": "string",
+            "default": "left",
+            "enum": [
+                "left",
+                "center",
+                "right",
+                "space-between"
+            ]
+        },
+        "orientation": {
+            "type": "string",
+            "default": "row",
+            "enum": [
+                "row",
+                "column"
+            ]
+        },
+        "textColor": {
+            "type": "string",
+            "default": ""
+        },
+        "activeTextColor": {
+            "type": "string",
+            "default": ""
+        },
+        "buttonGap": {
+            "type": "string",
+            "default": ""
+        },
+        "buttonPadding": {
+            "type": "object",
+            "default": {}
+        },
+        "background": {
+            "type": "string",
+            "default": ""
+        },
+        "gradientBackground": {
+            "type": "string",
+            "default": ""
+        },
+        "activeBackground": {
+            "type": "string",
+            "default": ""
+        },
+        "activeGradientBackground": {
+            "type": "string",
+            "default": ""
+        },
+        "hideEmpties": {
+            "type": "boolean",
+            "default": true
+        },
+        "displayCount": {
+            "type": "boolean",
+            "default": false
+        },
+        "border": {
+            "type": "object",
+            "default": {}
+        },
+        "borderRadius": {
+            "type": "object",
+            "default": {}
+        }
+    },
+    "supports": {
+        "align": [
+            "full",
+            "wide"
+        ],
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true,
+            "__experimentalFontFamily": true,
+            "__experimentalTextDecoration": true,
+            "__experimentalFontStyle": true,
+            "__experimentalFontWeight": true,
+            "__experimentalLetterSpacing": true,
+            "__experimentalTextTransform": true,
+            "__experimentalDefaultControls": {
+                "fontSize": true
+            }
+        },
+        "position": {
+            "sticky": true
+        },
+        "__experimentalBorder": {
+            "color": true,
+            "radius": true,
+            "width": true
+        },
+        "spacing": {
+            "padding": true,
+            "margin": true
+        },
+        "color": {
+            "background": true,
+            "gradients": true,
+            "text": true
+        }
+    },
+    "ancestor": [
+        "core/query"
+    ],
+    "usesContext": [
+        "query",
+        "queryId"
+    ],
+    "editorStyle": "gutenberghub-query-taxonomy-gutenberg-style",
+    "editorScript": "gutenberghub-query-taxonomy-gutenberg-script",
+    "viewScript": "gutenberghub-query-taxonomy-frontend-script",
+    "style": "gutenberghub-query-taxonomy-frontend-style"
+}

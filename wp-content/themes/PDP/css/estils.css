@@ -93,11 +93,8 @@ table {
 .button {
   text-align: center;
   padding: 0;
-  font-family: "Suisse-Regular", sans-serif;
   border: none;
   border-radius: 0;
-  font-size: 18px;
-  font-size: 1.8rem;
   line-height: 2;
   text-align: center;
   pointer: cursor;
@@ -123,7 +120,6 @@ html {
 }
 
 body {
-  background-color: #ffffff;
   font-family: "Suisse-Regular", sans-serif;
   font-weight: 400;
   color: #000000;
@@ -6983,6 +6979,181 @@ body > .menu-menu-nav-hermano-container {
 }
 .page-template-page-desnudos .desnudos .entry-header .entry-title {
   display: none;
+}
+
+.nutrities .col_apertura {
+  position: relative;
+}
+.nutrities h1.wp-block-post-title {
+  font-family: "TiemposHeadline-Light", serif;
+  line-height: 120%;
+  margin-bottom: 1rem;
+}
+.nutrities h6.antetitol {
+  border-radius: 3px;
+  display: inline-block;
+  text-transform: uppercase;
+  font-family: "Suisse-Light", sans-serif;
+  letter-spacing: 0.2rem;
+  margin-bottom: 2rem;
+}
+.nutrities h6.antetitol.has-background {
+  padding: 0.7rem 1rem 0.5rem 1rem;
+}
+.nutrities .logo-apertura {
+  width: 100%;
+  height: auto;
+  max-width: 26rem;
+  position: absolute;
+  top: 4rem;
+}
+.nutrities .noi {
+  line-height: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.nutrities .wp-block-buttons.secciones {
+  position: relative;
+  z-index: 111;
+  margin: -7rem auto -6rem !important;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button {
+  margin-right: 4rem;
+  width: calc(33.33% - 8rem);
+  position: relative;
+  z-index: 11;
+  transition: 0.35s;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:hover {
+  cursor: pointer;
+  scale: 110%;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button .wp-block-button__link {
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  padding: 0 12rem 0 2rem;
+  font-weight: bold !important;
+  line-height: 120%;
+  height: 10rem;
+  border-radius: 0.5rem 5rem 5rem 0.5rem !important;
+  font-family: "Suisse-Light", sans-serif;
+  letter-spacing: 0.1rem;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:before {
+  content: " ";
+  width: 8rem;
+  height: 8rem;
+  position: absolute;
+  display: block;
+  top: 1rem;
+  right: 1.5rem;
+  border-radius: 4rem;
+  background: url("../img/Recetas.svg") center no-repeat;
+  background-size: 100%;
+  z-index: 1;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:first-child:before {
+  background: url("../img/Capsulas.svg") center no-repeat;
+  background-size: 100%;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:last-child {
+  margin-right: 0;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:last-child:before {
+  background: url("../img/Cocina.svg") center no-repeat;
+  background-size: 100%;
+}
+.nutrities .wp-block-buttons.secciones.is-vertical {
+  position: absolute;
+  margin: 0 !important;
+}
+.nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button {
+  margin: 0 0 2rem 0;
+  width: 100%;
+}
+.nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button .wp-block-button__link {
+  text-align: left;
+  padding: 0 2rem 0 11rem;
+  border-radius: 5rem 0.5rem 0.5rem 5rem !important;
+}
+.nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button:before {
+  left: 1.5rem;
+}
+.nutrities .sponsors {
+  margin: 4rem 0;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  padding: 2rem 4rem;
+}
+.nutrities .sponsors img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 4rem;
+}
+.nutrities img {
+  width: 100%;
+  max-width: 100%;
+}
+.nutrities .listado-recetas ul {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  column-gap: 2rem;
+  row-gap: 2rem;
+  grid-template-columns: auto auto auto;
+}
+.nutrities .listado-recetas ul li {
+  list-style-type: none;
+  margin: 1rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+  transition: 0.25ms;
+}
+.nutrities .listado-recetas ul li img {
+  border-radius: 1rem 1rem 0 0 !important;
+}
+.nutrities .listado-recetas ul li h2 {
+  padding: 2rem 1rem !important;
+  font-family: "Suisse-Regular", sans-serif !important;
+  font-family: "Suisse-Regular", sans-serif !important;
+}
+.nutrities .listado-recetas ul li h2 > a {
+  font-family: "Suisse-Regular", sans-serif !important;
+  font-weight: bold !important;
+  font-size: 2rem !important;
+}
+.nutrities .listado-recetas ul li:hover {
+  transform: scale(110%);
+}
+.nutrities h1 {
+  font-family: "Suisse-Bold", sans-serif !important;
+  font-size: 4rem !important;
+  color: #3f3f3f !important;
+  letter-spacing: 0.05rem;
+}
+.nutrities .ingredientes {
+  border-radius: 1rem;
+  margin-top: 3rem;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+}
+.nutrities .ingredientes .featured > img {
+  border-radius: 1rem 1rem 0 0;
+}
+.nutrities .ingredientes > .wp-block-group {
+  width: 100%;
+  padding: 2rem 2rem 0 2rem;
+}
+.nutrities .ingredientes > .wp-block-group h3 {
+  font-family: "Suisse-Bold", sans-serif !important;
+  font-weight: bold !important;
+  font-size: 2.4rem !important;
+  color: #3f3f3f;
+  letter-spacing: 0.05rem;
+}
+.nutrities .ingredientes > .wp-block-group .btn-descargar {
+  margin-top: 2rem;
 }
 
 .wp-block-slider {

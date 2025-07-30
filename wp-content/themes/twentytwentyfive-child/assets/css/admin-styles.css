@@ -4621,6 +4621,9 @@
   content: " ";
   transform: rotate(180deg);
 }
+.editor-styles-wrapper nav.menu .wp-block-navigation-item.current-menu-item {
+  padding-right: 0;
+}
 .editor-styles-wrapper nav.menu .wp-block-navigation-item.current-menu-item a {
   color: #ffffff !important;
   border-radius: 1rem;
@@ -4647,33 +4650,61 @@
 .editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-centro a {
   font-weight: 500;
   color: #007FAD !important;
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   border: 0.15rem solid #007FAD !important;
-  padding: 0.25rem 1rem 0.2rem;
+  padding: 0.35rem 1rem 0.3rem 2.2rem;
   transition: 0.2s;
 }
 .editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-centro a:hover {
   text-decoration: none;
 }
+.editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-centro a:after {
+  content: " ";
+  background: url("../images/ICO_UBICACION.svg") center right no-repeat;
+  background-size: 90%;
+  position: absolute;
+  display: block;
+  left: 0.7rem;
+  top: 0.4rem;
+  width: 1.2rem;
+  height: 1.4rem;
+}
 .editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-centro:hover a {
   background-color: #007FAD;
   color: #ffffff !important;
 }
+.editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-centro:hover a:after {
+  filter: brightness(0) saturate(100%) invert(98%) sepia(100%) saturate(8%) hue-rotate(166deg) brightness(102%) contrast(104%);
+}
 .editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-donar a {
   font-weight: 500;
   color: #ffffff !important;
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   border: 0.15rem solid #007FAD !important;
-  padding: 0.25rem 1rem 0.2rem;
+  padding: 0.35rem 2.2rem 0.3rem 1rem;
   transition: 0.2s;
   background-color: #007FAD;
 }
 .editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-donar a:hover {
   text-decoration: none;
 }
+.editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-donar a:after {
+  content: " ";
+  background: url("../images/ICO_CORAZON.svg") center right no-repeat;
+  background-size: 100%;
+  position: absolute;
+  display: block;
+  right: 0.65rem;
+  top: 0.5rem;
+  width: 1.2rem;
+  height: 1.2rem;
+}
 .editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-donar:hover a {
   background-color: #ffffff;
   color: #007FAD !important;
+}
+.editor-styles-wrapper nav.menu-contacto .wp-block-navigation-item.btn-donar:hover a:after {
+  filter: brightness(0) saturate(100%) invert(38%) sepia(90%) saturate(3431%) hue-rotate(172deg) brightness(85%) contrast(101%);
 }
 .editor-styles-wrapper .wp-block-list.is-style-list-ratllat {
   display: block;
