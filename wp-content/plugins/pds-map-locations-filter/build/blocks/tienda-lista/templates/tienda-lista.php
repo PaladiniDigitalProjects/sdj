@@ -8,7 +8,7 @@ $attributes    = $attributes ?? []; // Use null coalescing operator
 $title         = $attributes['title'] ?? __('Our Stores', 'pds-map-locations-filter');
 $display_style = $attributes['displayStyle'] ?? 'grid';
 $num_stores    = $attributes['numStores'] ?? 5;
-$post_type     = 'tienda'; // Use the CPT name
+$post_type     = 'location'; // Use the CPT name
 
 // Query stores
 $args = array(

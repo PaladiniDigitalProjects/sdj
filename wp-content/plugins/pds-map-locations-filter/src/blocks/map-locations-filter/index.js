@@ -18,7 +18,7 @@ const EditComponent = ( { attributes, setAttributes } ) => {
 	const { taxonomies } = useSelect(
 		( select ) => ( {
 			taxonomies: select( 'core' ).getTaxonomies( {
-				post_type: 'tienda',
+				post_type: 'location',
 			} ),
 		} ),
 		[]

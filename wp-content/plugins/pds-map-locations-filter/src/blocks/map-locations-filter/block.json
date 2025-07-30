@@ -11,7 +11,7 @@
     "attributes": {
         "title": {
             "type": "string",
-            "default": "Nuestras Tiendas"
+            "default": "Nuestras Ubicaciones"
         },
          "selectedTaxonomies": {
              "type": "array",

@@ -79,7 +79,7 @@ function mlf_get_template_part($template_name, $variables = [], $block_name = nu
 
 // Main Plugin Class
 class PDSMLFPlugin {
-	protected $post_type_name = 'tienda';
+	protected $post_type_name = 'location';
 	protected $option_name = 'pds_mlf_google_maps_api_key';
 	protected $option_group = 'pds_mlf_settings_group';
 	protected $settings_page_slug = 'pds-map-locations-filter-settings';
@@ -134,18 +134,18 @@ class PDSMLFPlugin {
 	// --- CPT Registration ---
 	public function register_custom_post_type() {
 		$labels = [
-			'name'               => __('Tiendas', 'pds-map-locations-filter'),
-			'singular_name'      => __('Tienda', 'pds-map-locations-filter'),
-			'add_new'            => __('Add New Tienda', 'pds-map-locations-filter'),
-			'add_new_item'       => __('Add New Tienda', 'pds-map-locations-filter'),
-			'edit_item'          => __('Edit Tienda', 'pds-map-locations-filter'),
-			'new_item'           => __('New Tienda', 'pds-map-locations-filter'),
-			'all_items'          => __('All Tiendas', 'pds-map-locations-filter'),
-			'view_item'          => __('View Tienda', 'pds-map-locations-filter'),
-			'search_items'       => __('Search Tiendas', 'pds-map-locations-filter'),
-			'not_found'          => __('No Tiendas found', 'pds-map-locations-filter'),
-			'not_found_in_trash' => __('No Tiendas found in Trash', 'pds-map-locations-filter'),
-			'menu_name'          => __('Tiendas', 'pds-map-locations-filter'),
+			'name'               => __('Locations', 'pds-map-locations-filter'),
+			'singular_name'      => __('Location', 'pds-map-locations-filter'),
+			'add_new'            => __('Add New Location', 'pds-map-locations-filter'),
+			'add_new_item'       => __('Add New Location', 'pds-map-locations-filter'),
+			'edit_item'          => __('Edit Location', 'pds-map-locations-filter'),
+			'new_item'           => __('New Location', 'pds-map-locations-filter'),
+			'all_items'          => __('All Locations', 'pds-map-locations-filter'),
+			'view_item'          => __('View Location', 'pds-map-locations-filter'),
+			'search_items'       => __('Search Locations', 'pds-map-locations-filter'),
+			'not_found'          => __('No Locations found', 'pds-map-locations-filter'),
+			'not_found_in_trash' => __('No Locations found in Trash', 'pds-map-locations-filter'),
+			'menu_name'          => __('Locations', 'pds-map-locations-filter'),
 		];
 		$args = [
 			'labels'             => $labels,

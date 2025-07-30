@@ -28,13 +28,13 @@ const MapEdit = ( { attributes, setAttributes } ) => {
 	const { title, selectedTaxonomies = [], initialCenter, zoomLevel } = attributes;
 	const blockProps = useBlockProps();
 
-	// Fetch available taxonomies for the 'tienda' post type
+	
 	const availableTaxonomies = useSelect( ( select ) => {
 		const { getTaxonomies } = select( 'core' );
 		const allTaxonomies = getTaxonomies( { per_page: -1, context: 'view' } ); // Use context: 'view'
 		return allTaxonomies
 			? allTaxonomies.filter( ( tax ) =>
-					tax.types.includes( 'tienda' ) // Ensure 'tienda' is correct CPT slug
+					tax.types.includes( 'location' ) // Ensure 'location' is correct CPT slug
 			  )
 			: [];
 	}, [] );
