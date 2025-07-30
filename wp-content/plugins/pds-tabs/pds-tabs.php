@@ -1,53 +1,66 @@
 <?php
 /**
- * Plugin Name:       PDS Tabs
- * Description:       Extension de GutenbergHub Tabs plugin. Agrega funcionalidades adicionales a gutenberghub tabs
+ * Plugin Name:     PDS Tabs
+ * Description:     Adds auto‑slide controls to GutenbergHub Tabs, static mode.
+ * Version:         1.2.0
  * Requires at least: 6.1
- * Tested up to:      6.2
- * Requires PHP:      7.3
- * Version:           1.0.0
- * Author:            Paladini Digital Solutions
- * Author URI:        https://paladinidigital.com/
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       pds-tabs
- *
- * @package           PDS_Tabs
+ * Requires PHP:    7.3
+ * Author:          Paladini Digital Solutions
+ * Text Domain:     pds-tabs
  */
 
-// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+    exit;
 }
 
-// Define plugin constants for paths and URLs for consistent use.
+// Paths & URLs
 if ( ! defined( 'PDS_TABS_DIR_PATH' ) ) {
-	define( 'PDS_TABS_DIR_PATH', plugin_dir_path( __FILE__ ) );
+    define( 'PDS_TABS_DIR_PATH', plugin_dir_path( __FILE__ ) );
 }
-
 if ( ! defined( 'PDS_TABS_URL' ) ) {
-	define( 'PDS_TABS_URL', plugin_dir_url( __FILE__ ) );
+    define( 'PDS_TABS_URL', plugin_dir_url(  __FILE__ ) );
 }
 
-if ( ! defined( 'PDS_TABS_FILE' ) ) {
-	define( 'PDS_TABS_FILE', __FILE__ );
-}
+// 1️⃣ Register the block.json metadata (static block)
+add_action( 'init', function() {
+    register_block_type( PDS_TABS_DIR_PATH, [
+        'editor_script' => 'pds-tabs-editor',
+        'script'        => 'pds-tabs-frontend',
+        'editor_style'  => 'pds-tabs-editor-style',
+        'style'         => 'pds-tabs-style',
+    ] );
+} );
 
+// 2️⃣ Enqueue editor assets
+add_action( 'enqueue_block_editor_assets', function() {
+    wp_enqueue_script(
+        'pds-tabs-editor',
+        PDS_TABS_URL . 'build/editor.js',
+        [ 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'wp-components', 'wp-compose', 'wp-data', 'wp-hooks' ],
+        filemtime( PDS_TABS_DIR_PATH . 'build/editor.js' ),
+        true
+    );
+    wp_enqueue_style(
+        'pds-tabs-editor-style',
+        PDS_TABS_URL . 'build/editor.css',
+        [],
+        filemtime( PDS_TABS_DIR_PATH . 'build/editor.css' )
+    );
+} );
 
-/**
- * Check for the dependency (GutenbergHub Tabs) and load extension functionality.
- */
-add_action( 'plugins_loaded', function () {
-	// Check if the main GutenbergHub Tabs plugin's constant is defined.
-	// This ensures GutenbergHub Tabs is active before PDS Tabs tries to extend it.
-	if ( ! defined( 'GUTENBERGHUB_TABS_DIR_PATH' ) ) {
-		// If dependency is missing, show an admin notice.
-		add_action( 'admin_notices', function () {
-			echo '<div class="notice notice-error"><p><strong>PDS Tabs</strong> requires the <strong>GutenbergHub Tabs</strong> plugin to be installed and active.</p></div>';
-		} );
-		return; // Stop execution if the dependency is not met.
-	}
-
-	// If the dependency is met, load the extension's core functionality.
-	require_once PDS_TABS_DIR_PATH . 'includes/init.php';
+// 3️⃣ Enqueue front‑end assets
+add_action( 'wp_enqueue_scripts', function() {
+    wp_enqueue_script(
+        'pds-tabs-frontend',
+        PDS_TABS_URL . 'build/frontend.js',
+        [],
+        filemtime( PDS_TABS_DIR_PATH . 'build/frontend.js' ),
+        true
+    );
+    wp_enqueue_style(
+        'pds-tabs-style',
+        PDS_TABS_URL . 'build/style.css',
+        [],
+        filemtime( PDS_TABS_DIR_PATH . 'build/style.css' )
+    );
 } );

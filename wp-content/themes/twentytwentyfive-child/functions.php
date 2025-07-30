@@ -12,7 +12,7 @@ function my_theme_enqueue_styles() {
  );
 
  	wp_enqueue_style('child-estils', get_template_directory_uri() . '-child/assets/css/estils.css',);
-	wp_enqueue_script('ajax',  'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js');	
+	
 	wp_enqueue_script('main',  get_template_directory_uri() . '-child/assets/js/main.js', array(), '1.0.0', true);
 }
 

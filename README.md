@@ -1,7 +1,10 @@
 # SJD DEV
 lando wp db export ./devsjd.sql -> export base de datos
 
-
+wpmigrate
+importar la base de datos por siteground manualmente
+Tener en cuenta modificar .gitingore para subida en Servidor Siteground
+borrar el export cada vez que se use o usar un nombre diferente para evitar problemas de versiones.
 
 
 ## Getting started

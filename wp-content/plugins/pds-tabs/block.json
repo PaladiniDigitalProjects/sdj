@@ -1,0 +1,29 @@
+{
+  "apiVersion": 2,
+  "name": "ghub/tabs-container",
+  "title": "Tabs Container (extended)",
+  "category": "widgets",
+  "icon": "tickets-alt",
+  "description": "Extended GutenbergHub Tabs Container with auto‑slide options.",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "activate": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoSlideDuration": {
+      "type": "number",
+      "default": 5000
+    },
+    "pauseOnHover": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "editorScript": "pds-tabs-editor",
+  "script":       "pds-tabs-frontend",
+  "editorStyle":  "pds-tabs-editor-style",
+  "style":        "pds-tabs-style"
+}
