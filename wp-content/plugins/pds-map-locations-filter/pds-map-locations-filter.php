@@ -104,6 +104,7 @@ class PDSMLFPlugin {
 		add_action('wp_ajax_nopriv_mlf_get_locations_markers', [$this, 'ajax_get_list_locations_markers']);
 
 		// ACF
+		add_action('acf/init', [$this, 'acf_init']);
 		add_filter('acf/fields/google_map/api', [$this, 'acf_google_map_api']);
 		add_filter('acf/load_field/key=mlf_taxonomies_block', [$this, 'populate_acf_options_in_select']);
 
@@ -160,6 +161,41 @@ class PDSMLFPlugin {
 		];
 		register_post_type($this->post_type_name, $args);
 	}
+
+
+	public function acf_init() {
+	if (function_exists('acf_add_local_field_group')) {
+		acf_add_local_field_group([
+			'key' => 'mlf_lat_lng',
+			'title' => 'Position',
+			'fields' => [
+				[
+					'key' => 'mlf_lat',
+					'label' => 'Latitude',
+					'name' => 'latitude',
+					'type' => 'number',
+					'required' => 0,
+				],
+				[
+					'key' => 'mlf_lng',
+					'label' => 'Longitude',
+					'name' => 'longitude',
+					'type' => 'number',
+					'required' => 0,
+				],
+			],
+			'location' => [
+				[
+					[
+						'param' => 'post_type',
+						'operator' => '==',
+						'value' => $this->post_type_name,
+					],
+				],
+			],
+		]);
+	}
+}
 
 	// --- Settings Page ---
 	public function add_plugin_settings_page() {
@@ -404,7 +440,7 @@ class PDSMLFPlugin {
 		$tax_query = [];
 		$posted_taxonomies = isset($_POST[$post_key]) ? json_decode(stripslashes($_POST[$post_key]), true) : [];
 		
-          // ---> ADD THIS DEBUG LINE <---
+      
     error_log('[MLF Debug] Received POST['.$post_key.']: ' . print_r($_POST[$post_key] ?? 'Not set', true));
     error_log('[MLF Debug] Decoded Taxonomies: ' . print_r($posted_taxonomies, true));
     // ---> END DEBUG LINES <---
@@ -445,8 +481,24 @@ class PDSMLFPlugin {
 		return mlf_get_template_part('map-container.php', $template_vars, 'map-locations-filter');
 	}
 
-	public function render_tienda_lista_block($attributes) {
-		 return mlf_get_template_part('tienda-lista.php', ['attributes' => $attributes], 'tienda-lista');
+	public function render_tienda_lista_block($attributes, $content = '', $block = null) {
+		$selected_taxonomies = $attributes['selectedTaxonomies'] ?? [];
+		$nav_taxonomies = [];
+		if (is_array($selected_taxonomies)) {
+			foreach ($selected_taxonomies as $tax_slug) {
+				$taxonomy_object = get_taxonomy(sanitize_key($tax_slug));
+				if ($taxonomy_object && $taxonomy_object->public && $taxonomy_object->show_ui) { 
+					 $nav_taxonomies[$tax_slug] = $taxonomy_object;
+				}
+			}
+		}
+		$template_vars = [
+			'attributes'     => $attributes,
+			'taxonomies'     => $nav_taxonomies,
+			'is_preview'     => isset($block->context['postId']) ? false : true,
+			'block_instance' => $block,
+		];
+		 return mlf_get_template_part('tienda-lista.php', $template_vars, 'tienda-lista');
 	 }
 }
 

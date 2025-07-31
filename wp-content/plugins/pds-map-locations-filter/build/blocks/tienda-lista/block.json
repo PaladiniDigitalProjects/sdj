@@ -7,23 +7,18 @@
   "description": "Display a list of stores.",
   "textdomain": "pds-map-locations-filter",
   "icon": "store",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  },
   "attributes": {
-    "title": {
-      "type": "string",
-      "default": "Our Stores"
-    },
-    "displayStyle": {
-      "type": "string",
-      "enum": ["grid", "list"],
-      "default": "grid"
-    },
-    "numStores": {
-      "type": "number",
-      "default": 5
-    }
+    "title": { "type": "string", "default": "Our Stores" },
+    "displayStyle": { "type": "string", "enum": ["grid", "list"], "default": "grid" },
+    "numStores": { "type": "number", "default": 5 },
+    "selectedTaxonomies": { "type": "array", "items": { "type": "string" }, "default": [] }
   },
   "editorScript": "file:./index.js",
   "style": "file:./style.css",
   "editorStyle": "file:./editor.css",
-  "render": "file:./templates/tienda-lista.php"
+  "render": "file:./tienda-lista.php"
 }
