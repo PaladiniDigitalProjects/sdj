@@ -2,68 +2,94 @@
 /**
  * Template for rendering the map-locations-filter block container.
  * Loaded via the 'render' attribute in block.json.
- * Expects $attributes, $content, $block, $container_id, $taxonomies to be available.
+ * Expects $attributes, $block_instance, $taxonomies (WP_Taxonomy objects) from render_callback.
  */
 
-// Ensure variables are available (passed from render_callback)
 $attributes     = $attributes ?? [];
 $title          = $attributes['title'] ?? __('Our Locations', 'pds-map-locations-filter');
 $initialCenter  = $attributes['initialCenter'] ?? ['lat' => 40.416775, 'lng' => -3.703790];
 $zoomLevel      = $attributes['zoomLevel'] ?? 6;
-$selectedTaxonomies = $attributes['selectedTaxonomies'] ?? []; // Used for filter_data
-$container_id   = $container_id ?? 'pds-map-block-' . bin2hex(random_bytes(4));
-$taxonomies     = $taxonomies ?? []; // Prepared taxonomy info for the nav
+$selectedTaxonomies = $attributes['selectedTaxonomies'] ?? [];
+$taxonomies     = $taxonomies ?? [];
+$is_preview     = $is_preview ?? false;
+$container_id   = $container_id ?? 'pds-map-block-fallback-' . bin2hex(random_bytes(4));
+$filtered_taxonomies = [];
 
-// Prepare data attributes for JavaScript
-$map_options = json_encode([
-    'center' => $initialCenter,
-    'zoom'   => $zoomLevel,
+if (!empty($selectedTaxonomies)) {
+    foreach ($selectedTaxonomies as $slug) {
+        if (isset($taxonomies[$slug])) {
+            $filtered_taxonomies[$slug] = $taxonomies[$slug];
+        }
+    }
+} else {
+    $filtered_taxonomies = $taxonomies;
+}
+
+$block_init_data = json_encode([
+    'blockId'          => $container_id,
+    'nonce'            => wp_create_nonce('mlf_nonce'),
+    'ajaxUrl'          => admin_url('admin-ajax.php'),
+    'initialCenter'    => $initialCenter,
+    'zoomLevel'        => $zoomLevel,
+    'i18n'             => [
+        'loadingMap'           => __('Loading Map...', 'pds-map-locations-filter'),
+        'loadingLocations'     => __('Loading locations...', 'pds-map-locations-filter'),
+        'errorLoadingMap'      => __('Error loading map.', 'pds-map-locations-filter'),
+        'errorLoadingLocations'=> __('Error loading locations. Please try again.', 'pds-map-locations-filter'),
+        'noResults'            => __('Sorry, no locations match your criteria.', 'pds-map-locations-filter'),
+        'viewDetails'          => __('View Details', 'pds-map-locations-filter'),
+        'hideDetails'          => __('Hide Details', 'pds-map-locations-filter'),
+    ],
 ]);
 
-// Pass selected taxonomies to JS *only if needed* for initial state - often filters start empty
-$filter_data = json_encode([
-    'selectedTaxonomies' => $selectedTaxonomies, // Or maybe empty array [] if filters should default to 'all'
-]);
-
-// Add a specific class based on block attributes if needed
 $wrapper_attributes = get_block_wrapper_attributes([
-    'class' => 'pds-map-block',
-    'id' => esc_attr($container_id),
-    'data-map-options' => esc_attr($map_options),
-    'data-filter-options' => esc_attr($filter_data),
+    'class'           => 'pds-map-block-wrapper',
+    'id'              => esc_attr($container_id),
+    'data-block-init' => esc_attr($block_init_data),
 ]);
 
+$args = [
+    'post_type'      => 'location',
+    'posts_per_page' => -1,
+    'post_status'    => 'publish',
+];
+$locations_query = new WP_Query($args);
 ?>
 <div <?php echo $wrapper_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+    <?php if ($title): ?>
+        <h3><?php echo esc_html($title); ?></h3>
+    <?php endif; ?>
 
-    <?php
-    // Render Navigation/Filters
-    echo mlf_get_template_part(
-        'template-mlf-nav.php',
-        [
-            'title'      => $title,
-            'taxonomies' => $taxonomies // Pass the prepared taxonomy objects/info
-        ],
-        'map-locations-filter' // Block name context
-    );
-    ?>
-
-    <div class="mlf-map" style="height: <?php echo esc_attr($attributes['mapHeight'] ?? '60vh'); ?>;">
-        <!-- Map will be initialized here by JavaScript -->
-        <div class="mlf-map-loading" style="display:flex; align-items:center; justify-content:center; height:100%; color:#666;">
-            <?php esc_html_e('Loading Map...', 'pds-map-locations-filter'); ?>
-        </div>
+    <div class="pds-map-toolbar">
+        <?php
+        echo mlf_get_template_part(
+            'template-mlf-nav.php',
+            [
+                'title'        => '',
+                'taxonomies'   => $filtered_taxonomies,
+                'container_id' => $container_id,
+                'is_preview'   => $is_preview,
+            ],
+            'map-locations-filter'
+        );
+        ?>
     </div>
 
-    <?php
-    // Render the locations list container
-    echo mlf_get_template_part(
-        'locations-list-container.php', // Correct filename
-        [
-            'container_id' => $container_id . '-list' // Unique ID for list part
-        ],
-        'map-locations-filter' // Block name context
-    );
-    ?>
-
+    <div class="mlf-content-area">
+        <div class="mlf-map-container">
+            <p class="mlf-loading"><?= esc_html($block_init_data['i18n']['loadingMap'] ?? __('Loading Map...', 'pds-map-locations-filter')); ?></p>
+        </div>
+        <div class="mlf-locations-list-container">
+            <?php
+            echo mlf_get_template_part(
+                'locations-list.php',
+                [
+                    'locations_query' => $locations_query,
+                    'taxonomies'      => $filtered_taxonomies,
+                ],
+                'map-locations-filter'
+            );
+            ?>
+        </div>
+    </div>
 </div>

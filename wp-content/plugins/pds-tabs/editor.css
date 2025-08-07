@@ -1,0 +1,80 @@
+/* src/editor.css */
+
+.tab-content-wrapper {
+  position: relative;
+  overflow: hidden;
+  min-height: 45rem;
+  width: 100%;
+}
+
+[data-block="gutenberghub-tabs/tab-content"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-block="gutenberghub-tabs/tab-content"].gutenberghub-active-tab {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+  height: 45rem;
+}
+
+.sjd_tabs {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+}
+
+.sjd_tabs .wp-block-ghub-tab-buttons-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-end;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 1rem;
+}
+ .sjd_tabs .wp-block-ghub-tab-buttons-container div.gutenberghub-tab-button {
+    width:13rem;
+  }
+@media screen and (max-width: 768px) {
+  .sjd_tabs {
+    flex-direction: column;
+  }
+
+  .sjd_tabs .wp-block-ghub-tab-buttons-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0.5rem;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sjd_tabs .wp-block-ghub-tab-buttons-container > * {
+    flex: 0 0 auto;
+    margin: 0 0.5rem;
+  }
+  .sjd_tabs .wp-block-ghub-tab-buttons-container .gutenberghub-tab-button {
+    width:13rem;
+  }
+  
+
+  .sjd_tabs .tab-content {
+    padding-bottom: 3.5rem;
+  }
+}

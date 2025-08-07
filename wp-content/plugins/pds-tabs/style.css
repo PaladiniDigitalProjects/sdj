@@ -1,19 +1,117 @@
-/* initial (hidden off to the right) */
+/*———————————————
+  Content wrapper & panes
+———————————————*/
+.tab-content-wrapper {
+  position: relative;
+  overflow: hidden;
+  min-height: 30rem;
+  height: 100%;
+  width: 100%;
+}
+
 [data-block="gutenberghub-tabs/tab-content"] {
-  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   opacity: 0;
-  transform: translateX(20px);
-  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* make it participate in layout, but still hidden */
 [data-block="gutenberghub-tabs/tab-content"].gutenberghub-active-tab {
-  display: block;
-  /* keep opacity 0 & translateX(20px) here */
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+  height: 30rem; /* ADD THIS */
+}
+/* keyframes */
+@keyframes slideInFromRight { from{opacity:0; transform:translateX(30px)} to{opacity:1; transform:translateX(0)} }
+@keyframes slideInFromLeft  { from{opacity:0; transform:translateX(-30px)} to{opacity:1; transform:translateX(0)} }
+@keyframes slideOutToLeft   { from{opacity:1; transform:translateX(0)}  to{opacity:0; transform:translateX(-30px)} }
+@keyframes slideOutToRight  { from{opacity:1; transform:translateX(0)}  to{opacity:0; transform:translateX(30px)} }
+
+/* animation helpers */
+.slide-in-right  { animation: slideInFromRight 0.4s ease forwards; }
+.slide-in-left   { animation: slideInFromLeft  0.4s ease forwards; }
+.slide-out-left  { animation: slideOutToLeft   0.4s ease forwards; }
+.slide-out-right { animation: slideOutToRight  0.4s ease forwards; }
+
+
+/*———————————————
+  Desktop tab-buttons
+———————————————*/
+.sjd_tabs {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  height: 30rem;
 }
 
-/* once “slide-in” is added, animate to visible/position */
-[data-block="gutenberghub-tabs/tab-content"].gutenberghub-active-tab.slide-in {
-  opacity: 1;
-  transform: translateX(0);
+.sjd_tabs .wp-block-ghub-tab-buttons-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-end;
+  position: absolute;
+  top: 0; 
+  right: 0; 
+  padding: 1rem;
+  z-index: 999;
+}
+
+  .sjd_tabs .wp-block-ghub-tab-buttons-container .gutenberghub-tab-button {
+    width:13rem;
+  }
+
+/*———————————————
+  Mobile override: horizontal, no wrap, slide-out
+———————————————*/
+@media screen and (max-width: 768px) {
+  .sjd_tabs {
+    flex-direction: column;
+  }
+
+  .sjd_tabs .wp-block-ghub-tab-buttons-container {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;                /* ← prevent wrapping */
+    justify-content: flex-start;
+    align-items: center;
+    overflow-x: auto;                /* ← allow horizontal scroll */
+    white-space: nowrap;
+    padding: 0.5rem;
+    height:92vh;
+    width: 100%;                      /* ← full width, children overflow */
+    z-index: 9999;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+   
+  }
+
+  .sjd_tabs .wp-block-ghub-tab-buttons-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* only on mobile will these slide */
+  .sjd_tabs .wp-block-ghub-tab-buttons-container.slide-out-left {
+    animation: slideOutToLeft 0.4s ease forwards;
+  }
+  .sjd_tabs .wp-block-ghub-tab-buttons-container.slide-out-right {
+    animation: slideOutToRight 0.4s ease forwards;
+  }
+
+  .sjd_tabs .wp-block-ghub-tab-buttons-container > * {
+    flex: 0 0 auto;
+    margin: 0 0.5rem;
+  }
+
+  .sjd_tabs .tab-content {
+    padding-bottom: 3.5rem; /* prevent content under buttons */
+  }
+    .sjd_tabs .wp-block-ghub-tab-buttons-container .gutenberghub-tab-button {
+    width:13rem;
+  }
 }

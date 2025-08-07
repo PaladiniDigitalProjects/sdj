@@ -1,509 +1,657 @@
+
 <?php
 /**
  * Plugin Name:       PDS Map Locations Filter
- * Description:       A PDS map dynamic block for displaying maps with filterable locations.
- * Version:           2.0.6
+ * Description:       A PDS map dynamic block with filterable locations.
+ * Version:           2.0.7
  * Author:            PDS Ricard
  * Text Domain:       pds-map-locations-filter
  * Requires at least: 5.8
  * Requires PHP:      7.4
  */
-if (!defined('ABSPATH')) {
-	exit; // Exit if accessed directly.
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
 }
 
-// Ensure no whitespace before this class definition
-ob_start();
+// Define plugin constants.
+if ( ! defined( 'PDS_MLF_PLUGIN_FILE' ) ) {
+    define( 'PDS_MLF_PLUGIN_FILE', __FILE__ );
+}
+if ( ! defined( 'PDS_MLF_PLUGIN_DIR' ) ) {
+    define( 'PDS_MLF_PLUGIN_DIR', plugin_dir_path( PDS_MLF_PLUGIN_FILE ) );
+}
+if ( ! defined( 'PDS_MLF_PLUGIN_URL' ) ) {
+    define( 'PDS_MLF_PLUGIN_URL', plugin_dir_url( PDS_MLF_PLUGIN_FILE ) );
+}
+if ( ! defined( 'PDS_MLF_VERSION' ) ) {
+    define( 'PDS_MLF_VERSION', '2.0.7' );
+}
 
 /**
- * Helper function to load a template.
+ * Helper function to include template parts.
  *
  * @param string $template_name The name of the template file (e.g., 'map-container.php').
- * @param array  $variables     An array of variables to extract into the template's scope.
- * @param string $block_name    Optional. The name of the block to check specific template folders.
- * @return string The rendered template HTML or an error message.
+ * @param array  $variables     Optional. An associative array of variables to extract for the template.
+ * @param string $block_name    Optional. The slug of the block (e.g., 'map-locations-filter') to look in block-specific template folders.
+ * @return string The rendered template content, or an error message if not found.
  */
-function mlf_get_template_part($template_name, $variables = [], $block_name = null) {
-	$located = '';
-	$plugin_base_path = plugin_dir_path(__FILE__);
+function mlf_get_template_part( $template_name, $variables = [], $block_name = null ) {
+    $base_dir = PDS_MLF_PLUGIN_DIR;
+    $paths    = [
+        locate_template( "pds-map-locations-filter/{$template_name}" ), 
+        $block_name ? "{$base_dir}build/blocks/{$block_name}/templates/{$template_name}" : '', 
+        "{$base_dir}build/blocks/templates/{$template_name}", 
+        "{$base_dir}src/templates/{$template_name}", 
+        $block_name ? "{$base_dir}src/blocks/{$block_name}/templates/{$template_name}" : '', 
+    ];
 
-	// 1. Check theme override folder first.
-	$theme_template = locate_template('pds-map-locations-filter/' . $template_name);
-	if ($theme_template) {
-		$located = $theme_template;
-	} else {
-		// 2. Check block-specific template folder in build/blocks/{block_name}/templates/
-		if ($block_name) {
-			 $block_template_path = $plugin_base_path . 'build/blocks/' . $block_name . '/templates/' . $template_name;
-			 if (file_exists($block_template_path)) {
-				 $located = $block_template_path;
-			 }
-		}
+    foreach ( $paths as $path ) {
+        if ( $path && file_exists( $path ) ) {
 
-		// 3. Check generic template folder in build/templates/
-		if (!$located) {
-			$generic_template_path = $plugin_base_path . 'build/templates/' . $template_name;
-			if (file_exists($generic_template_path)) {
-				$located = $generic_template_path;
-			}
-		}
+            extract( $variables, EXTR_OVERWRITE );
+            ob_start();
+            include $path;
+            return ob_get_clean();
+        }
+    }
 
-		// Fallbacks for development (checking src/) - Remove these for production releases if desired
-		 if (!$located) {
-			$src_template_path = $plugin_base_path . 'src/templates/' . $template_name;
-			if (file_exists($src_template_path)) {
-				 $located = $src_template_path;
-			}
-		 }
-		 if (!$located && $block_name) {
-			 $src_block_template_path = $plugin_base_path . 'src/blocks/' . $block_name . '/templates/' . $template_name;
-			  if (file_exists($src_block_template_path)) {
-				  $located = $src_block_template_path;
-			  }
-		 }
-	}
-
-	if (!$located) {
-		error_log('PDS Map Template Error: Template not found: ' . $template_name . ($block_name ? ' for block ' . $block_name : ''));
-		return '<div class="error">Template Loader Error: ' . esc_html($template_name) . ' not found.</div>';
-	}
-
-	if (!empty($variables)) {
-		extract($variables, EXTR_SKIP);
-	}
-
-	ob_start();
-	include $located;
-	return ob_get_clean();
+    // Log an error if template is not found.
+    error_log( sprintf( 'MLF Template not found: %s (Block: %s)', $template_name, $block_name ?: 'N/A' ) );
+    return sprintf( '<div class="error">%s %s %s.</div>', esc_html__( 'Template', 'pds-map-locations-filter' ), esc_html( $template_name ), esc_html__( 'not found', 'pds-map-locations-filter' ) );
 }
 
-// Main Plugin Class
+
+/**
+ * Main plugin class for PDS Map Locations Filter.
+ */
 class PDSMLFPlugin {
-	protected $post_type_name = 'location';
-	protected $option_name = 'pds_mlf_google_maps_api_key';
-	protected $option_group = 'pds_mlf_settings_group';
-	protected $settings_page_slug = 'pds-map-locations-filter-settings';
+    /**
+     * The custom post type slug for locations.
+     *
+     * @var string
+     */
+    protected $post_type = 'location';
 
-	public function __construct() {
-		register_activation_hook(__FILE__, [$this, 'activate']);
-		register_deactivation_hook(__FILE__, [$this, 'deactivate']);
+    /**
+     * The option name for storing the Google Maps API key.
+     *
+     * @var string
+     */
+    protected $option_name = 'pds_mlf_google_maps_api_key';
 
-		add_action('init', [$this, 'register_custom_post_type']);
-		add_action('wp_enqueue_scripts', [$this, 'enqueue_frontend_assets']);
-		add_action('enqueue_block_assets', [$this, 'enqueue_block_php_assets']);
-		add_action('enqueue_block_editor_assets', [$this, 'enqueue_block_editor_assets']);
+    /**
+     * The settings page slug.
+     *
+     * @var string
+     */
+    protected $settings_slug = 'pds-map-locations-filter-settings';
 
-		// Admin Settings
-		add_action('admin_menu', [$this, 'add_plugin_settings_page']);
-		add_action('admin_init', [$this, 'register_plugin_settings']);
+    /**
+     * Constructor. Sets up all hooks and filters.
+     */
+    public function __construct() {
+        // Activation/Deactivation hooks.
+        register_activation_hook( PDS_MLF_PLUGIN_FILE, [ $this, 'activate' ] );
+        register_deactivation_hook( PDS_MLF_PLUGIN_FILE, [ $this, 'deactivate' ] );
 
-		// Ajax
-		add_action('wp_ajax_mlf_get_locations_html', [$this, 'ajax_get_list_locations_html']);
-		add_action('wp_ajax_nopriv_mlf_get_locations_html', [$this, 'ajax_get_list_locations_html']);
-		add_action('wp_ajax_mlf_get_locations_markers', [$this, 'ajax_get_list_locations_markers']);
-		add_action('wp_ajax_nopriv_mlf_get_locations_markers', [$this, 'ajax_get_list_locations_markers']);
+        // WordPress initialization hooks.
+        add_action( 'init', [ $this, 'register_post_type' ], 0 );
+        add_action( 'init', [ $this, 'register_blocks' ], 10 ); 
 
-		// ACF
-		add_action('acf/init', [$this, 'acf_init']);
-		add_filter('acf/fields/google_map/api', [$this, 'acf_google_map_api']);
-		add_filter('acf/load_field/key=mlf_taxonomies_block', [$this, 'populate_acf_options_in_select']);
+        // Enqueue scripts and styles.
+        add_action( 'wp_enqueue_scripts',          [ $this, 'enqueue_frontend' ] );
+        add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_editor' ] );
 
-		// Register block types AND their render callbacks on init
-		add_action('init', function() {
-			if (file_exists(__DIR__ . '/build/blocks/map-locations-filter/block.json')) {
-				register_block_type( __DIR__ . '/build/blocks/map-locations-filter', [
-					'render_callback' => [$this, 'render_map_locations_filter_block'],
-				]);
-			}
-			 if (file_exists(__DIR__ . '/build/blocks/tienda-lista/block.json')) {
-				 register_block_type( __DIR__ . '/build/blocks/tienda-lista', [
-					 'render_callback' => [$this, 'render_tienda_lista_block'],
-				 ]);
-			 }
-		}, 10);
-	}
+        // Admin settings page.
+        add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
+        add_action( 'admin_init', [ $this, 'register_settings' ] );
 
-	public function activate() {
-		$this->register_custom_post_type();
-		flush_rewrite_rules();
-	}
+        // ACF integrations.
+        add_action( 'acf/init',                  [ $this, 'acf_init' ] );
+        add_filter( 'acf/fields/google_map/api', [ $this, 'acf_google_map_api' ] );
+        add_filter( 'acf/load_field/key=mlf_taxonomies_block', [ $this, 'populate_acf_select' ] );
 
-	public function deactivate() {
-		flush_rewrite_rules();
-	}
+        // AJAX actions.
+        add_action( 'wp_ajax_mlf_get_locations_html',        [ $this, 'ajax_locations_html' ] );
+        add_action( 'wp_ajax_nopriv_mlf_get_locations_html', [ $this, 'ajax_locations_html' ] );
+        add_action( 'wp_ajax_mlf_get_locations_markers',        [ $this, 'ajax_locations_markers' ] );
+        add_action( 'wp_ajax_nopriv_mlf_get_locations_markers', [ $this, 'ajax_locations_markers' ] );
+        add_action( 'wp_ajax_mlf_get_tienda_list_html',        [ $this, 'ajax_tienda_list' ] );
+        add_action( 'wp_ajax_nopriv_mlf_get_tienda_list_html', [ $this, 'ajax_tienda_list' ] );
+    }
 
-	// --- CPT Registration ---
-	public function register_custom_post_type() {
-		$labels = [
-			'name'               => __('Locations', 'pds-map-locations-filter'),
-			'singular_name'      => __('Location', 'pds-map-locations-filter'),
-			'add_new'            => __('Add New Location', 'pds-map-locations-filter'),
-			'add_new_item'       => __('Add New Location', 'pds-map-locations-filter'),
-			'edit_item'          => __('Edit Location', 'pds-map-locations-filter'),
-			'new_item'           => __('New Location', 'pds-map-locations-filter'),
-			'all_items'          => __('All Locations', 'pds-map-locations-filter'),
-			'view_item'          => __('View Location', 'pds-map-locations-filter'),
-			'search_items'       => __('Search Locations', 'pds-map-locations-filter'),
-			'not_found'          => __('No Locations found', 'pds-map-locations-filter'),
-			'not_found_in_trash' => __('No Locations found in Trash', 'pds-map-locations-filter'),
-			'menu_name'          => __('Locations', 'pds-map-locations-filter'),
-		];
-		$args = [
-			'labels'             => $labels,
-			'public'             => true,
-			'has_archive'        => true,
-			'rewrite'            => ['slug' => $this->post_type_name],
-			'menu_position'      => 25, // Adjust position if needed
-			'menu_icon'          => 'dashicons-store',
-			'supports'           => ['title', 'editor', 'thumbnail', 'custom-fields', 'excerpt'],
-			'show_in_rest'       => true,
-			'taxonomies'         => ['category'], // Add others if needed
-		];
-		register_post_type($this->post_type_name, $args);
-	}
+    /**
+     * Runs on plugin activation.
+     */
+    public function activate() {
+        $this->register_post_type();
+        flush_rewrite_rules(); 
+    }
+
+    /**
+     * Runs on plugin deactivation.
+     */
+    public function deactivate() {
+        flush_rewrite_rules(); 
+    }
+
+    /**
+     * Registers the custom post type 'location'.
+     */
+    public function register_post_type() {
+        $labels = [
+            'name'          => __( 'Locations', 'pds-map-locations-filter' ),
+            'singular_name' => __( 'Location', 'pds-map-locations-filter' ),
+            'add_new'       => __( 'Add New Location', 'pds-map-locations-filter' ),
+            'add_new_item'  => __( 'Add New Location', 'pds-map-locations-filter' ),
+            'edit_item'     => __( 'Edit Location', 'pds-map-locations-filter' ),
+            'new_item'      => __( 'New Location', 'pds-map-locations-filter' ),
+            'all_items'     => __( 'All Locations', 'pds-map-locations-filter' ),
+            'view_item'     => __( 'View Location', 'pds-map-locations-filter' ),
+            'search_items'  => __( 'Search Locations', 'pds-map-locations-filter' ),
+            'not_found'     => __( 'No locations found', 'pds-map-locations-filter' ),
+            'not_found_in_trash' => __( 'No locations found in Trash', 'pds-map-locations-filter' ),
+            'parent_item_colon' => '',
+            'menu_name'     => __( 'Locations', 'pds-map-locations-filter' ),
+        ];
+        $args = [
+            'labels'       => $labels,
+            'public'       => true,
+            'has_archive'  => true,
+            'rewrite'      => [ 'slug' => $this->post_type ],
+            'menu_icon'    => 'dashicons-store',
+            'supports'     => [ 'title','editor','thumbnail','custom-fields','excerpt' ],
+            'show_in_rest' => true, 
+        ];
+        register_post_type( $this->post_type, $args );
+    }
+
+    /**
+     * Retrieves taxonomies associated with the 'location' post type.
+     *
+     * @param string $output The output format ('names' or 'objects').
+     * @return array An array of taxonomy names or objects.
+     */
+    public function get_location_taxonomies( $output = 'names' ) {
+        return get_object_taxonomies( $this->post_type, $output );
+    }
+
+    /**
+     * Retrieves terms for all taxonomies associated with a given post ID.
+     *
+     * @param int   $post_id The ID of the post.
+     * @param array $args    Optional. Arguments for get_the_terms.
+     * @return array An associative array where keys are taxonomy names and values are arrays of term names/IDs.
+     */
+    public function get_location_post_terms( $post_id, $args = [] ) {
+        $default_args = [ 'hide_empty' => true, 'fields' => 'name' ];
+        $args         = wp_parse_args( $args, $default_args );
+
+        $taxes = $this->get_location_taxonomies( 'objects' );
+        $map   = [];
+
+        foreach ( $taxes as $tax ) {
+            $terms = get_the_terms( $post_id, $tax->name );
+            if ( is_array( $terms ) && ! is_wp_error( $terms ) ) {
+                $map[ $tax->name ] = wp_list_pluck( $terms, $args['fields'] === 'ids' ? 'term_id' : 'name' );
+            }
+        }
+        return $map;
+    }
+
+    /**
+     * Registers Gutenberg blocks defined in the plugin.
+     */
+    public function register_blocks() {
+        $blocks_dir = PDS_MLF_PLUGIN_DIR . 'build/blocks/';
+
+        // Register Map Locations Filter block.
+        if ( file_exists( $blocks_dir . 'map-locations-filter/block.json' ) ) {
+            register_block_type( $blocks_dir . 'map-locations-filter', [
+                'render_callback' => [ $this, 'render_map_block' ],
+            ] );
+        }
+
+        // Register Tienda Lista block.
+        if ( file_exists( $blocks_dir . 'tienda-lista/block.json' ) ) {
+            register_block_type( $blocks_dir . 'tienda-lista', [
+                'render_callback' => [ $this, 'render_tienda_lista_block' ],
+            ] );
+        }
+    }
+
+    /**
+     * Enqueues frontend scripts and styles.
+     */
+    public function enqueue_frontend() {
+        $build_url  = PDS_MLF_PLUGIN_URL . 'build/';
+        $build_path = PDS_MLF_PLUGIN_DIR . 'build/';
+
+        // Enqueue main stylesheet.
+        if ( file_exists( $build_path . 'style.css' ) ) {
+            wp_enqueue_style( 'pds-mlf-style', $build_url . 'style.css', [], filemtime( $build_path . 'style.css' ) );
+        }
+
+        // Enqueue global frontend script and localize data.
+        if ( file_exists( $build_path . 'global-frontend.js' ) ) {
+            wp_enqueue_script( 'pds-mlf-global', $build_url . 'global-frontend.js', [], filemtime( $build_path . 'global-frontend.js' ), true );
+            wp_localize_script( 'pds-mlf-global', 'mlf_ajax', [
+                'ajax_url'            => admin_url( 'admin-ajax.php' ),
+                'nonce'               => wp_create_nonce( 'mlf_nonce' ),
+                'google_maps_api_key' => get_option( $this->option_name ),
+                'i18n'                => [
+                    'loadingMap'          => __( 'Loading Map...', 'pds-map-locations-filter' ),
+                    'loadingLocations'    => __( 'Loading locations...', 'pds-map-locations-filter' ),
+                    'errorLoadingMap'     => __( 'Error loading map.', 'pds-map-locations-filter' ),
+                    'errorLoadingLocations' => __( 'Error loading locations.', 'pds-map-locations-filter' ),
+                    'noResults'           => __( 'No locations match.', 'pds-map-locations-filter' ),
+                ],
+            ] );
+        }
+    }
+
+    /**
+     * Enqueues scripts and styles for the block editor.
+     */
+    public function enqueue_editor() {
+        $build_url  = PDS_MLF_PLUGIN_URL . 'build/';
+        $build_path = PDS_MLF_PLUGIN_DIR . 'build/';
 
 
-	public function acf_init() {
-	if (function_exists('acf_add_local_field_group')) {
-		acf_add_local_field_group([
-			'key' => 'mlf_lat_lng',
-			'title' => 'Position',
-			'fields' => [
-				[
-					'key' => 'mlf_lat',
-					'label' => 'Latitude',
-					'name' => 'latitude',
-					'type' => 'number',
-					'required' => 0,
-				],
-				[
-					'key' => 'mlf_lng',
-					'label' => 'Longitude',
-					'name' => 'longitude',
-					'type' => 'number',
-					'required' => 0,
-				],
-			],
-			'location' => [
-				[
-					[
-						'param' => 'post_type',
-						'operator' => '==',
-						'value' => $this->post_type_name,
-					],
-				],
-			],
-		]);
-	}
+        if ( file_exists( $build_path . 'index.js' ) ) {
+            wp_enqueue_script( 'pds-mlf-editor', $build_url . 'index.js', [ 'wp-blocks','wp-element','wp-editor','wp-data' ], filemtime( $build_path . 'index.js' ), true );
+        }
+
+        if ( file_exists( $build_path . 'index.css' ) ) {
+            wp_enqueue_style( 'pds-mlf-editor-style', $build_url . 'index.css', [ 'wp-edit-blocks' ], filemtime( $build_path . 'index.css' ) );
+        }
+    }
+
+    /**
+     * Adds the plugin settings page to the WordPress admin menu.
+     */
+    public function add_settings_page() {
+        add_options_page(
+            __( 'PDS Map Locations', 'pds-map-locations-filter' ),
+            __( 'PDS Map Locations', 'pds-map-locations-filter' ),
+            'manage_options',
+            $this->settings_slug,
+            [ $this, 'render_settings' ]
+        );
+    }
+
+    /**
+     * Registers plugin settings.
+     */
+    public function register_settings() {
+        register_setting( $this->settings_slug, $this->option_name );
+    }
+
+    /**
+     * Renders the plugin settings page content.
+     */
+    public function render_settings() {
+        $api_key = get_option( $this->option_name, '' );
+        ?>
+        <div class="wrap">
+            <h1><?php esc_html_e( 'PDS Map Locations', 'pds-map-locations-filter' ); ?></h1>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields( $this->settings_slug );
+                ?>
+                <table class="form-table">
+                    <tbody>
+                        <tr>
+                            <th scope="row"><label for="<?php echo esc_attr( $this->option_name ); ?>"><?php esc_html_e( 'Google Maps API Key', 'pds-map-locations-filter' ); ?></label></th>
+                            <td>
+                                <input type="text" id="<?php echo esc_attr( $this->option_name ); ?>" name="<?php echo esc_attr( $this->option_name ); ?>" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" />
+                                <p class="description">
+                                    <?php
+                                    echo wp_kses_post(
+                                        sprintf(
+                                            
+                                            __( 'Enter your Google Maps API Key. You can get one from the <a href="%s" target="_blank">Google Cloud Console</a>. Ensure Maps JavaScript API is enabled.', 'pds-map-locations-filter' ),
+                                            'https://console.cloud.google.com/apis/credentials'
+                                        )
+                                    );
+                                    ?>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <?php
+                submit_button();
+                ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    /**
+     * Initializes ACF fields for location post type.
+     */
+    public function acf_init() {
+        if ( function_exists( 'acf_add_local_field_group' ) ) {
+            acf_add_local_field_group( [
+                'key'       => 'mlf_latlng',
+                'title'     => __( 'Position', 'pds-map-locations-filter' ),
+                'fields'    => [
+                    [
+                        'key'   => 'field_mlf_latitude',
+                        'label' => __( 'Latitude', 'pds-map-locations-filter' ),
+                        'name'  => 'latitude',
+                        'type'  => 'number',
+                    ],
+                    [
+                        'key'   => 'field_mlf_longitude',
+                        'label' => __( 'Longitude', 'pds-map-locations-filter' ),
+                        'name'  => 'longitude',
+                        'type'  => 'number',
+                    ],
+                ],
+                'location'  => [
+                    [
+                        [
+                            'param'    => 'post_type',
+                            'operator' => '==',
+                            'value'    => $this->post_type,
+                        ],
+                    ],
+                ],
+                'menu_order' => 0,
+                'position'   => 'normal',
+                'style'      => 'default',
+                'label_placement' => 'top',
+                'instruction_placement' => 'label',
+                'active'     => true,
+                'description' => '',
+            ] );
+        }
+    }
+
+    /**
+     * Filters the ACF Google Map API key.
+     *
+     * @param array $api The ACF Google Map API settings.
+     * @return array Modified API settings.
+     */
+    public function acf_google_map_api( $api ) {
+        $api_key = get_option( $this->option_name );
+        if ( $api_key ) {
+            $api['key'] = $api_key;
+        }
+        return $api;
+    }
+
+    /**
+     * Populates ACF select field with available taxonomies for the block.
+     *
+     * @param array $field The ACF field array.
+     * @return array Modified ACF field array.
+     */
+    public function populate_acf_select( $field ) {
+        if ( $field['key'] !== 'mlf_taxonomies_block' ) {
+            return $field;
+        }
+        $field['choices'] = [];
+       
+        foreach ( $this->get_location_taxonomies( 'objects' ) as $tax ) {
+            if ( $tax->public && $tax->show_ui && $tax->show_in_rest ) {
+                $field['choices'][ $tax->name ] = $tax->labels->singular_name;
+            }
+        }
+        return $field;
+    }
+
+    /**
+     * AJAX handler for fetching HTML of locations list.
+     */
+    public function ajax_locations_html() {
+        check_ajax_referer( 'mlf_nonce', 'nonce' );
+
+        $search_query = sanitize_text_field( $_POST['search'] ?? '' );
+        $taxonomies_json = stripslashes( $_POST['taxonomies'] ?? '{}' );
+        $taxonomies_filter = json_decode( $taxonomies_json, true );
+
+        $args = [
+            'post_type'      => $this->post_type,
+            's'              => $search_query,
+            'posts_per_page' => -1, 
+            'post_status'    => 'publish',
+        ];
+
+        if ( is_array( $taxonomies_filter ) && ! empty( $taxonomies_filter ) ) {
+            $tax_query = [];
+            foreach ( $taxonomies_filter as $taxonomy_slug => $term_slug ) {
+                $tax_query[] = [
+                    'taxonomy' => sanitize_key( $taxonomy_slug ),
+                    'field'    => 'slug',
+                    'terms'    => sanitize_key( $term_slug ),
+                ];
+            }
+            if ( ! empty( $tax_query ) ) {
+                $args['tax_query'] = [ 'relation' => 'AND', ...$tax_query ];
+            }
+        }
+
+        $locations_query = new WP_Query( $args );
+
+        ob_start();
+        mlf_get_template_part( 'locations-list.php', [ 'locations_query' => $locations_query ], 'map-locations-filter' );
+        $html = ob_get_clean();
+        wp_reset_postdata(); // Restore original post data.
+
+        wp_send_json_success( [ 'html' => $html ] );
+    }
+
+    /**
+     * AJAX handler for fetching location markers data.
+     */
+    public function ajax_locations_markers() {
+        check_ajax_referer( 'mlf_nonce', 'nonce' );
+
+        $search_query = sanitize_text_field( $_POST['search'] ?? '' );
+        $taxonomies_json = stripslashes( $_POST['taxonomies'] ?? '{}' );
+        $taxonomies_filter = json_decode( $taxonomies_json, true );
+
+        $args = [
+            'post_type'      => $this->post_type,
+            's'              => $search_query,
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'meta_query'     => [ 
+                [
+                    'key'     => 'latitude',
+                    'compare' => 'EXISTS',
+                ],
+                [
+                    'key'     => 'longitude',
+                    'compare' => 'EXISTS',
+                ],
+            ],
+        ];
+
+        if ( is_array( $taxonomies_filter ) && ! empty( $taxonomies_filter ) ) {
+            $tax_query = [];
+            foreach ( $taxonomies_filter as $taxonomy_slug => $term_slug ) {
+                $tax_query[] = [
+                    'taxonomy' => sanitize_key( $taxonomy_slug ),
+                    'field'    => 'slug',
+                    'terms'    => sanitize_key( $term_slug ),
+                ];
+            }
+            if ( ! empty( $tax_query ) ) {
+                $args['tax_query'] = [ 'relation' => 'AND', ...$tax_query ];
+            }
+        }
+
+        $markers_query = new WP_Query( $args );
+        $markers       = [];
+
+        while ( $markers_query->have_posts() ) {
+            $markers_query->the_post();
+            $post_id = get_the_ID();
+            $lat     = get_field( 'latitude', $post_id );
+            $lng     = get_field( 'longitude', $post_id );
+
+            if ( is_numeric( $lat ) && is_numeric( $lng ) ) {
+                ob_start();
+                mlf_get_template_part(
+                    'template-mlf-marker-info-window.php',
+                    [
+                        'title'   => get_the_title(),
+                        'content' => get_the_excerpt(),
+                    ],
+                    'map-locations-filter'
+                );
+                $info_window_content = ob_get_clean();
+
+                $markers[] = [
+                    'id'              => $post_id,
+                    'title'           => get_the_title(),
+                    'position'        => [ 'lat' => floatval( $lat ), 'lng' => floatval( $lng ) ],
+                    'infoWindowContent' => $info_window_content,
+                    'terms'           => $this->get_location_post_terms( $post_id ), // Include terms for potential JS use.
+                ];
+            }
+        }
+        wp_reset_postdata(); // Restore original post data.
+
+        wp_send_json_success( $markers );
+    }
+
+    /**
+     * AJAX handler for fetching tienda list HTML.
+     */
+   public function ajax_tienda_list() {
+    check_ajax_referer( 'mlf_nonce', 'nonce' );
+
+    $search_query = sanitize_text_field( $_POST['search'] ?? '' );
+    $taxonomies_json = stripslashes( $_POST['taxonomies'] ?? '{}' );
+    $taxonomies_filter = json_decode( $taxonomies_json, true );
+    $num_stores_raw = $_POST['numStores'] ?? -1;
+    $num_stores = is_numeric($num_stores_raw) ? intval($num_stores_raw) : -1;
+    $display_style     = sanitize_text_field( $_POST['displayStyle'] ?? 'list' );
+
+    $args = [
+        'post_type'      => $this->post_type,
+        's'              => $search_query,
+        'posts_per_page' => ( $num_stores > 0 ) ? $num_stores : -1,
+        'post_status'    => 'publish',
+    ];
+
+    $tax_query = [];
+
+    if ( is_array( $taxonomies_filter ) && ! empty( $taxonomies_filter ) ) {
+        foreach ( $taxonomies_filter as $taxonomy_slug => $term_slug ) {
+            $term_slug = sanitize_key( $term_slug );
+            if ( $term_slug === 'all' ) {
+                continue;
+            }
+
+            $tax_query[] = [
+                'taxonomy' => sanitize_key( $taxonomy_slug ),
+                'field'    => 'slug',
+                'terms'    => $term_slug,
+            ];
+        }
+    }
+
+    if ( ! empty( $tax_query ) ) {
+        $args['tax_query'] = [ 'relation' => 'AND', ...$tax_query ];
+    }
+
+    $tienda_query = new WP_Query( $args );
+
+    ob_start();
+
+    mlf_get_template_part(
+        'tienda-list-items.php',
+        [
+            'stores_query'   => $tienda_query,
+            'display_style'  => $display_style,
+        ],
+        'tienda-lista'
+    );
+    $html = mlf_get_template_part(
+    'tienda-list-items.php',
+    [
+        'stores_query'  => $tienda_query,
+        'display_style' => $display_style,
+    ],
+    'tienda-lista'
+);
+    wp_reset_postdata();
+
+    wp_send_json_success( [ 'html' => $html, 'count' => $tienda_query->found_posts ] );
 }
 
-	// --- Settings Page ---
-	public function add_plugin_settings_page() {
-		add_options_page(
-			__('PDS Map Locations Settings', 'pds-map-locations-filter'),
-			__('PDS Map Locations', 'pds-map-locations-filter'),
-			'manage_options',
-			$this->settings_page_slug,
-			[$this, 'render_plugin_settings_page']
-		);
-	}
+    /**
+     * Renders the Map Locations Filter block.
+     *
+     * @param array $attrs Block attributes.
+     * @return string Rendered block HTML.
+     */
+    public function render_map_block( $attrs ) {
+        $selected_tax_slugs = $attrs['selectedTaxonomies'] ?? [];
+        $taxonomies_for_template = [];
 
-	public function register_plugin_settings() {
-		register_setting(
-			$this->option_group,
-			$this->option_name,
-			[$this, 'sanitize_api_key']
-		);
-		add_settings_section(
-			'pds_mlf_api_key_section',
-			__('API Key Settings', 'pds-map-locations-filter'),
-			null,
-			$this->settings_page_slug
-		);
-		add_settings_field(
-			'pds_mlf_google_maps_api_key_field',
-			__('Google Maps API Key', 'pds-map-locations-filter'),
-			[$this, 'render_api_key_field'],
-			$this->settings_page_slug,
-			'pds_mlf_api_key_section'
-		);
-	}
+        // Prepare taxonomy objects for the template for dropdowns.
+        foreach ( (array) $selected_tax_slugs as $slug ) {
+            $taxonomy_obj = get_taxonomy( sanitize_key( $slug ) );
+            if ( $taxonomy_obj ) {
+                $taxonomies_for_template[ $slug ] = $taxonomy_obj;
+            }
+        }
 
-	public function sanitize_api_key($input) {
-		return preg_replace('/[^a-zA-Z0-9_\-\s]/', '', sanitize_text_field(trim($input)));
-	}
+        $container_id = 'pds-map-block-' . bin2hex( random_bytes( 4 ) );
 
-	public function render_api_key_field() {
-		$api_key = get_option($this->option_name, '');
-		?>
-		<input type='text'
-			   name='<?php echo esc_attr($this->option_name); ?>'
-			   value='<?php echo esc_attr($api_key); ?>'
-			   class='regular-text'
-			   placeholder='<?php esc_attr_e('Enter your Google Maps API Key', 'pds-map-locations-filter'); ?>' />
-		<p class="description">
-			<?php
-			printf(
-				/* translators: %s: Link to Google Cloud Console */
-				wp_kses_post(__('Get your key from the <a href="%s" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>. Ensure it has permissions for Maps JavaScript API and Geocoding API (if used by ACF).', 'pds-map-locations-filter')),
-				'https://console.cloud.google.com/google/maps-apis/overview'
-			);
-			?>
-		</p>
-		<?php
-	}
+        $variables = [
+            'attributes'   => $attrs,
+            'taxonomies'   => $taxonomies_for_template,
+            'container_id' => $container_id,
+        ];
 
-	public function render_plugin_settings_page() {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-			<form method="post" action="options.php">
-				<?php
-				settings_fields($this->option_group);
-				do_settings_sections($this->settings_page_slug);
-				submit_button(__('Save API Key', 'pds-map-locations-filter'));
-				?>
-			</form>
-		</div>
-		<?php
-	}
+        return mlf_get_template_part( 'map-container.php', $variables, 'map-locations-filter' );
+    }
 
-	// --- API Key Retrieval ---
-	public function get_public_safe_api_key() {
-		 $key = get_option($this->option_name, '');
-		return $key ?: '';
-	}
+    /**
+     * Renders the Tienda Lista block.
+     *
+     * @param array $attrs Block attributes.
+     * @return string Rendered block HTML.
+     */
+   public function render_tienda_lista_block( $attrs, $block_instance ) {
+   
+    $selected_slugs = $attrs['selectedTaxonomies'] ?? [];
+    $taxonomies_for_template = [];
 
-	// --- ACF Integration ---
-	public function acf_google_map_api($api) {
-		 $api_key = $this->get_public_safe_api_key();
-		 if ($api_key) {
-			 $api['key'] = $api_key;
-		 } else {
-			 // Key not set - ACF Map field in admin might not fully work
-			 // Avoid outputting errors directly here unless necessary
-			 error_log('PDS Map Locations: Google Maps API Key not configured in Settings > PDS Map Locations.');
-		 }
-		return $api;
-	}
+    foreach ( (array) $selected_slugs as $slug ) {
+   
+        if ( $tax = get_taxonomy( sanitize_key( $slug ) ) ) {
+            $taxonomies_for_template[ $slug ] = $tax;
+        }
+    }
 
-	public function populate_acf_options_in_select($field) {
-		if ($field['key'] !== 'mlf_taxonomies_block') {
-			 return $field;
-		 }
-		$field['choices'] = [];
-		$taxonomies = get_object_taxonomies(['post_type' => $this->post_type_name], 'objects');
-		if ($taxonomies) {
-			foreach ($taxonomies as $taxonomy) {
-				if (!$taxonomy->public || !$taxonomy->show_ui) continue; // Skip non-public/UI taxonomies
-				$field['choices'][$taxonomy->name] = $taxonomy->label;
-			}
-		}
-		return $field;
-	}
+    $variables = [
+        'attributes'     => $attrs,
+        'taxonomies'     => $taxonomies_for_template,
+        'block_instance' => $block_instance,
+    ];
 
-	// --- Asset Enqueueing ---
-	public function enqueue_frontend_assets() {
-		// Enqueue Frontend Style (style.css)
-		$style_asset_path = plugin_dir_path(__FILE__) . 'build/style.asset.php';
-		$style_handle = 'pds-mlf-frontend-style';
-		if (file_exists($style_asset_path) && file_exists(plugin_dir_path(__FILE__) . 'build/style.css')) {
-			$style_asset = require($style_asset_path);
-			wp_enqueue_style($style_handle, plugin_dir_url(__FILE__) . 'build/style.css', [], $style_asset['version']);
-		} elseif (file_exists(plugin_dir_path(__FILE__) . 'build/style.css')) {
-			wp_enqueue_style($style_handle, plugin_dir_url(__FILE__) . 'build/style.css', [], '2.0.6');
-		}
+    $html = mlf_get_template_part( 'tienda-lista.php', $variables, 'tienda-lista' );
 
-		// Enqueue Frontend Script (view.js)
-		$script_asset_path = plugin_dir_path(__FILE__) . 'build/view.asset.php';
-		$script_handle = 'pds-mlf-view-script';
-		if (file_exists($script_asset_path) && file_exists(plugin_dir_path(__FILE__) . 'build/view.js')) {
-			$script_asset = require($script_asset_path);
-			wp_enqueue_script($script_handle, plugin_dir_url(__FILE__) . 'build/view.js', $script_asset['dependencies'], $script_asset['version'], true);
-
-			wp_localize_script($script_handle, 'mlf_ajax', [
-				'ajax_url' => admin_url('admin-ajax.php'),
-				'nonce'    => wp_create_nonce('mlf_nonce'),
-				'google_maps_api_key' => $this->get_public_safe_api_key(),
-				'i18n' => [
-                    'loadingMap' => __('Loading Map...', 'pds-map-locations-filter'),
-                    'loadingLocations' => __('Loading locations...', 'pds-map-locations-filter'),
-                    'errorLoadingMap' => __('Error loading map.', 'pds-map-locations-filter'),
-                    'errorLoadingLocations' => __('Error loading locations. Please try again.', 'pds-map-locations-filter'),
-                    'noResults' => __('Sorry, no locations match your criteria.', 'pds-map-locations-filter'),
-                    'viewDetails' => __('View Details', 'pds-map-locations-filter'),
-                ]
-			]);
-		}
-	}
-
-	public function enqueue_block_php_assets() {
-		// Generally empty if styles handled by block.json or JS imports
-	}
-
-	public function enqueue_block_editor_assets() {
-		// Enqueue Editor Script (index.js)
-		$script_asset_path = plugin_dir_path(__FILE__) . 'build/index.asset.php';
-		$script_handle = 'pds-mlf-editor-script';
-		if ( file_exists( $script_asset_path ) && file_exists(plugin_dir_path(__FILE__) . 'build/index.js')) {
-			$script_asset = require( $script_asset_path );
-			wp_enqueue_script($script_handle, plugin_dir_url( __FILE__ ) . 'build/index.js', $script_asset['dependencies'], $script_asset['version'], true );
-		}
-
-		// Enqueue Editor Styles (index.css)
-		$style_asset_path = plugin_dir_path(__FILE__) . 'build/index.asset.php'; // Often same asset file as JS
-		$style_handle = 'pds-mlf-editor-style';
-		 if (file_exists($style_asset_path) && file_exists(plugin_dir_path(__FILE__) . 'build/index.css')) {
-			 $style_asset = require($style_asset_path);
-			 wp_enqueue_style($style_handle, plugin_dir_url(__FILE__) . 'build/index.css', ['wp-edit-blocks'], $style_asset['version']);
-		 } elseif (file_exists(plugin_dir_path(__FILE__) . 'build/index.css')) {
-			wp_enqueue_style($style_handle, plugin_dir_url(__FILE__) . 'build/index.css', ['wp-edit-blocks'], '2.0.6');
-		 }
-
-		 // Also enqueue frontend styles in the editor
-		 $frontend_style_handle = 'pds-mlf-frontend-style';
-		 if (wp_style_is($frontend_style_handle, 'registered')) {
-			 wp_enqueue_style($frontend_style_handle);
-		 } else {
-			 $fe_style_asset_path = plugin_dir_path(__FILE__) . 'build/style.asset.php';
-			 if (file_exists($fe_style_asset_path) && file_exists(plugin_dir_path(__FILE__) . 'build/style.css')) {
-				$fe_style_asset = require($fe_style_asset_path);
-				 wp_enqueue_style($frontend_style_handle, plugin_dir_url(__FILE__) . 'build/style.css', [], $fe_style_asset['version']);
-			 } elseif (file_exists(plugin_dir_path(__FILE__) . 'build/style.css')) {
-				wp_enqueue_style($frontend_style_handle, plugin_dir_url(__FILE__) . 'build/style.css', [], '2.0.6');
-			 }
-		 }
-	}
-
-	// --- AJAX Handlers ---
-	public function ajax_get_list_locations_html() {
-		check_ajax_referer('mlf_nonce', 'nonce');
-		$search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-		$tax_query = $this->build_tax_query_from_post('taxonomies');
-		$query_args = [
-			'post_type'      => $this->post_type_name,
-			'posts_per_page' => -1,
-			's'              => $search_term,
-			'tax_query'      => count($tax_query) > 1 ? array_merge(['relation' => 'AND'], $tax_query) : $tax_query,
-		];
-		$locations_query = new WP_Query($query_args);
-		$html = mlf_get_template_part('locations-list.php', ['locations_query' => $locations_query], 'map-locations-filter');
-		wp_send_json_success(['html' => $html]);
-	}
-
-	public function ajax_get_list_locations_markers() {
-		check_ajax_referer('mlf_nonce', 'nonce');
-		$search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-		$tax_query = $this->build_tax_query_from_post('taxonomies');
-		$query_args = [
-			'post_type'      => $this->post_type_name,
-			'posts_per_page' => -1,
-			's'              => $search_term,
-			'tax_query'      => count($tax_query) > 1 ? array_merge(['relation' => 'AND'], $tax_query) : $tax_query,
-			'meta_query'     => [
-				'relation' => 'AND',
-				['key' => 'latitude', 'compare' => 'EXISTS', 'type' => 'NUMERIC'],
-				['key' => 'longitude', 'compare' => 'EXISTS', 'type' => 'NUMERIC'],
-				['key' => 'latitude', 'value' => array('', 0), 'compare' => 'NOT IN'],
-				['key' => 'longitude', 'value' => array('', 0), 'compare' => 'NOT IN'],
-			]
-		];
-		$locations = new WP_Query($query_args);
-		$markers = [];
-		if ($locations->have_posts()) {
-			while ($locations->have_posts()) {
-				$locations->the_post();
-				$lat = get_field('latitude', get_the_ID());
-				$lng = get_field('longitude', get_the_ID());
-				if (is_numeric($lat) && is_numeric($lng) && $lat != 0 && $lng != 0) {
-					$info_window_content = mlf_get_template_part('template-mlf-marker-info-window.php', [
-						'title'     => get_the_title(),
-						'content'   => get_the_excerpt() ?: wp_trim_words(strip_shortcodes(get_the_content()), 20),
-						'id'        => get_the_ID(),
-						'permalink' => get_permalink(),
-					], 'map-locations-filter');
-					$markers[] = [
-						'id'       => get_the_ID(),
-						'title'    => get_the_title(),
-						'position' => ['lat' => (float) $lat, 'lng' => (float) $lng],
-						'infoWindowContent' => $info_window_content,
-					];
-				}
-			}
-			wp_reset_postdata();
-		}
-		wp_send_json_success($markers);
-	}
-
-	// Helper to build tax query from POST data
-	private function build_tax_query_from_post($post_key) {
-		$tax_query = [];
-		$posted_taxonomies = isset($_POST[$post_key]) ? json_decode(stripslashes($_POST[$post_key]), true) : [];
-		
-      
-    error_log('[MLF Debug] Received POST['.$post_key.']: ' . print_r($_POST[$post_key] ?? 'Not set', true));
-    error_log('[MLF Debug] Decoded Taxonomies: ' . print_r($posted_taxonomies, true));
-    // ---> END DEBUG LINES <---
-        
-        if (!is_array($posted_taxonomies)) {
-			$posted_taxonomies = [];
-		}
-		foreach ($posted_taxonomies as $taxonomy => $term_slug) {
-			$taxonomy = sanitize_key($taxonomy);
-			$term_slug = sanitize_title($term_slug);
-			if ($term_slug !== 'all' && taxonomy_exists($taxonomy)) {
-				$tax_query[] = ['taxonomy' => $taxonomy, 'field' => 'slug', 'terms' => $term_slug];
-			}
-		}
-		return $tax_query;
-	}
-
-	// --- Block Rendering Callbacks ---
-	public function render_map_locations_filter_block($attributes, $content = '', $block = null) {
-		$selected_taxonomies = $attributes['selectedTaxonomies'] ?? [];
-		$nav_taxonomies = [];
-		if (is_array($selected_taxonomies)) {
-			foreach ($selected_taxonomies as $tax_slug) {
-				$taxonomy_object = get_taxonomy(sanitize_key($tax_slug));
-				if ($taxonomy_object && $taxonomy_object->public && $taxonomy_object->show_ui) { // Check if usable on frontend
-					 $nav_taxonomies[$tax_slug] = $taxonomy_object;
-				}
-			}
-		}
-		$template_vars = [
-			'attributes'     => $attributes,
-			'title'          => $attributes['title'] ?? __('Locations', 'pds-map-locations-filter'),
-			'taxonomies'     => $nav_taxonomies,
-			'is_preview'     => isset($block->context['postId']) ? false : true,
-			'block_instance' => $block,
-			'container_id'   => 'pds-map-block-' . bin2hex(random_bytes(4)),
-		];
-		return mlf_get_template_part('map-container.php', $template_vars, 'map-locations-filter');
-	}
-
-	public function render_tienda_lista_block($attributes, $content = '', $block = null) {
-		$selected_taxonomies = $attributes['selectedTaxonomies'] ?? [];
-		$nav_taxonomies = [];
-		if (is_array($selected_taxonomies)) {
-			foreach ($selected_taxonomies as $tax_slug) {
-				$taxonomy_object = get_taxonomy(sanitize_key($tax_slug));
-				if ($taxonomy_object && $taxonomy_object->public && $taxonomy_object->show_ui) { 
-					 $nav_taxonomies[$tax_slug] = $taxonomy_object;
-				}
-			}
-		}
-		$template_vars = [
-			'attributes'     => $attributes,
-			'taxonomies'     => $nav_taxonomies,
-			'is_preview'     => isset($block->context['postId']) ? false : true,
-			'block_instance' => $block,
-		];
-		 return mlf_get_template_part('tienda-lista.php', $template_vars, 'tienda-lista');
-	 }
+    return sprintf(
+        '<div class="pds-tienda-block-wrapper" data-block-init="%s">%s</div>',
+        esc_attr( wp_json_encode( $attrs ) ),
+        $html
+    );
 }
 
-// Clean output buffer before instantiation
-ob_end_clean();
+}
 
-// Initialize plugin
+// Initialize the plugin.
 new PDSMLFPlugin();

@@ -1,86 +1,119 @@
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, TextControl, SelectControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-import ServerSideRender from '@wordpress/server-side-render';
-import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
+import {
+  PanelBody,
+  TextControl,
+  SelectControl,
+  CheckboxControl,
+  Notice,
+} from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 
-const EditComponent = ({ attributes, setAttributes }) => {
-	const { title, displayStyle, numStores, selectedTaxonomies } = attributes;
+const TiendaEdit = ({ attributes, setAttributes }) => {
+  const {
+    title,
+    displayStyle,
+    numStores,
+    selectedTaxonomies = [],
+    cptSlug,
+  } = attributes;
 
-	const { taxonomies } = useSelect(
-		(select) => ({
-			taxonomies: select('core').getTaxonomies({ post_type: 'location' }),
-		}),
-		[]
-	);
+  const taxonomies =
+      useSelect(
+        (select) =>
+          select('core').getTaxonomies(
+            { type: cptSlug, per_page: -1 },
+            { context: 'view' }
+          ),
+        [cptSlug]
+      ) || [];
 
-	const blockProps = useBlockProps();
+  const onTaxonomyChange = (checked, slug) => {
+    const next = checked
+      ? [...selectedTaxonomies, slug]
+      : selectedTaxonomies.filter((s) => s !== slug);
+    setAttributes({
+      selectedTaxonomies: Array.from(new Set(next)).sort(),
+    });
+  };
 
-	return (
-		<>
-			<InspectorControls>
-				<PanelBody title={__('List Settings', 'pds-map-locations-filter')}>
-					<TextControl
-						label={__('Block Title', 'pds-map-locations-filter')}
-						value={title}
-						onChange={(newTitle) => setAttributes({ title: newTitle })}
-					/>
-					<SelectControl
-						label={__('Display Style', 'pds-map-locations-filter')}
-						value={displayStyle}
-						options={[
-							{ label: __('Grid', 'pds-map-locations-filter'), value: 'grid' },
-							{ label: __('List', 'pds-map-locations-filter'), value: 'list' },
-						]}
-						onChange={(newStyle) => setAttributes({ displayStyle: newStyle })}
-					/>
-					<TextControl
-						label={__('Number of Stores', 'pds-map-locations-filter')}
-						type="number"
-						value={numStores}
-						onChange={(newNum) =>
-							setAttributes({ numStores: parseInt(newNum, 10) || 5 })
-						}
-						min="1"
-						help={__('Maximum number of stores to display.', 'pds-map-locations-filter')}
-					/>
-					<SelectControl
-						label={__('Filter Taxonomies', 'pds-map-locations-filter')}
-						multiple
-						value={selectedTaxonomies}
-						options={(taxonomies || []).map((taxonomy) => ({
-							label: taxonomy.name || taxonomy.slug,
-							value: taxonomy.slug,
-						}))}
-						onChange={(selected) =>
-							setAttributes({
-								selectedTaxonomies: Array.isArray(selected)
-									? selected
-									: [selected],
-							})
-						}
-					/>
-				</PanelBody>
-			</InspectorControls>
+  return (
+    <>
+      <InspectorControls>
+        <PanelBody title={__('List Settings', 'pds-map-locations-filter')}>
+          <TextControl
+            label={__('Block Title', 'pds-map-locations-filter')}
+            value={title}
+            onChange={(v) => setAttributes({ title: v })}
+          />
+          <SelectControl
+            label={__('Display Style', 'pds-map-locations-filter')}
+            value={displayStyle}
+            options={[
+              { label: __('Grid', 'pds-map-locations-filter'), value: 'grid' },
+              { label: __('List', 'pds-map-locations-filter'), value: 'list' },
+            ]}
+            onChange={(v) => setAttributes({ displayStyle: v })}
+          />
+          <TextControl
+            label={__('Number of Stores', 'pds-map-locations-filter')}
+            type="number"
+            min="1"
+            value={numStores}
+            help={__('Max number to display', 'pds-map-locations-filter')}
+            onChange={(v) => setAttributes({ numStores: parseInt(v, 10) || 5 })}
+          />
+        </PanelBody>
 
-			<div {...blockProps}>
-				<ServerSideRender
-					block="pds-map-locations-filter/tienda-lista"
-					attributes={attributes}
-				/>
-			</div>
-		</>
-	);
+        <PanelBody title={__('Filters', 'pds-map-locations-filter')} initialOpen>
+          {taxonomies.length === 0 ? (
+            <p>
+              {__('No filterable taxonomies found for CPT:', 'pds-map-locations-filter')}{' '}
+              <code>{cptSlug}</code>
+            </p>
+          ) : (
+            taxonomies.map((tax) => (
+              <CheckboxControl
+                key={tax.slug}
+                label={tax.name}
+                checked={selectedTaxonomies.includes(tax.slug)}
+                onChange={(checked) => onTaxonomyChange(checked, tax.slug)}
+              />
+            ))
+          )}
+        </PanelBody>
+      </InspectorControls>
+
+      <div {...useBlockProps()} className="tienda-preview">
+        <h3>{title || __('Tienda Lista Preview', 'pds-map-locations-filter')}</h3>
+        <p>
+          <strong>{__('Style:', 'pds-map-locations-filter')}</strong> {displayStyle}
+        </p>
+        <p>
+          <strong>{__('Stores:', 'pds-map-locations-filter')}</strong> {numStores}
+        </p>
+        {selectedTaxonomies.length > 0 && (
+          <p>
+            <strong>{__('Filters:', 'pds-map-locations-filter')}</strong>{' '}
+            {selectedTaxonomies.join(', ')}
+          </p>
+        )}
+        <Notice status="info" isDismissible={false}>
+          {__(
+            'These filters only preview here — real filtering happens on the front end.',
+            'pds-map-locations-filter'
+          )}
+        </Notice>
+        <div className={`tienda-placeholder ${displayStyle}`}>
+          {Array.from({ length: Math.min(numStores, 3) }).map((_, i) => (
+            <div className="tienda-item" key={i}>
+              {__('Store', 'pds-map-locations-filter')} #{i + 1}
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
 };
-EditComponent.propTypes = {
-	attributes: PropTypes.shape({
-		title: PropTypes.string,
-		displayStyle: PropTypes.string,
-		numStores: PropTypes.number,
-		selectedTaxonomies: PropTypes.arrayOf(PropTypes.string),
-	}).isRequired,
-	setAttributes: PropTypes.func.isRequired,
-};
 
-export default EditComponent;
+export default TiendaEdit;

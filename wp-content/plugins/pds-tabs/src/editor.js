@@ -11,7 +11,7 @@ import {
 
 const BLOCK_NAME = 'ghub/tabs-container';
 
-// 1️⃣ InspectorControls HOC
+
 const withTabsInspectorControls = createHigherOrderComponent(
   ( BlockEdit ) => ( props ) => {
     if ( props.name !== BLOCK_NAME ) {
@@ -33,10 +33,10 @@ const withTabsInspectorControls = createHigherOrderComponent(
             <RangeControl
               label="Duration (ms)"
               help="Time each tab stays visible"
-              value={ autoSlideDuration }
+              value={ autoSlideDuration ?? 5000 }
               onChange={ ( val ) => setAttributes( { autoSlideDuration: val } ) }
               min={ 500 }
-              max={ 20000 }
+              max={ 10000 }
               step={ 500 }
               disabled={ ! activate }
             />
@@ -61,7 +61,7 @@ addFilter(
   withTabsInspectorControls
 );
 
-// 2️⃣ Inject data-* into save output
+
 function addDataAttributes( saveProps, blockType, attributes ) {
   if ( blockType.name !== BLOCK_NAME ) {
     return saveProps;

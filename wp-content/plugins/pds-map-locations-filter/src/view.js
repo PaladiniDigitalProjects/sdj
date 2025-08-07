@@ -43,35 +43,43 @@ class MLFMapHandler {
 		this.init();
 	}
 
-	init() {
-		try {
-			this.mapOptions = JSON.parse(this.container.dataset.mapOptions || '{}');
-			this.initialFilters = JSON.parse(this.container.dataset.filterOptions || '{}');
-		} catch (e) {
-			console.error('MLF Error: Could not parse data attributes.', e);
-		}
+	async init() {
+    // 1) Read block-init JSON (which now includes cptSlug)
+    try {
+        this.blockData = JSON.parse( this.container.dataset.blockInit || '{}' );
+    } catch ( e ) {
+        console.error( 'MLF Error: Could not parse data-block-init.', e );
+        this.blockData = {};
+    }
 
-        // !! IMPORTANT: Get API Key securely. Using localized script data is recommended.
-        // Replace 'YOUR_API_KEY_PLACEHOLDER' with the actual key or variable from wp_localize_script
-        const apiKey = mlf_ajax?.google_maps_api_key || 'YOUR_API_KEY_PLACEHOLDER'; // Use localized data if available
+    // 2) Map options and filters (old behavior)
+    try {
+        this.mapOptions    = JSON.parse( this.container.dataset.mapOptions    || '{}' );
+        this.initialFilters = JSON.parse( this.container.dataset.filterOptions || '{}' );
+    } catch ( e ) {
+        console.error( 'MLF Error: Could not parse other data attributes.', e );
+    }
 
-        if (apiKey === 'YOUR_API_KEY_PLACEHOLDER') {
-             console.warn('MLF Warning: Google Maps API Key not configured. Map may not load.');
-             // Optionally display a user-facing message
-             this.mapElement.innerHTML = '<p>Map cannot be loaded. API key missing.</p>';
-             return; // Stop initialization if key is missing
-         }
+    // 3) Grab the CPT slug to use when fetching taxonomies or AJAX
+    this.cptSlug = this.blockData.cptSlug || 'location';
 
-		this.loader = new Loader({
-			apiKey: apiKey,
-			version: 'weekly',
-			libraries: ['marker'], // Add libraries as needed (places, geometry, etc.)
-		});
+    // 4) Now we can safely initialize the loader, event listeners, etc.
+    const apiKey = mlf_ajax?.google_maps_api_key || 'YOUR_API_KEY_PLACEHOLDER';
+    if ( apiKey === 'YOUR_API_KEY_PLACEHOLDER' ) {
+        this.mapElement.innerHTML = '<p>Map cannot be loaded. API key missing.</p>';
+        return;
+    }
 
-		this.loadMap();
-		this.setupEventListeners();
-		this.fetchLocations(true); // Initial fetch
-	}
+    this.loader = new Loader({
+        apiKey: apiKey,
+        version: 'weekly',
+        libraries: ['marker'],
+    });
+
+    await this.loadMap();
+    this.setupEventListeners();
+    this.fetchLocations( true );
+}
 
 	async loadMap() {
 		try {

@@ -70,7 +70,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
 
+
+
+
 /** Sets up WordPress vars and included files. */
 @include_once('/var/lib/sec/wp-settings-pre.php'); // Added by SiteGround WordPress management system
 require_once ABSPATH . 'wp-settings.php';
 @include_once('/var/lib/sec/wp-settings.php'); // Added by SiteGround WordPress management system
+
+
+// Enable WP debug mode
+define( 'WP_DEBUG', true );
+
+// Log errors to wp-content/debug.log
+define( 'WP_DEBUG_LOG', true );
+
+// Display errors and warnings on-screen
+define( 'WP_DEBUG_DISPLAY', true );
+
+// Ensure PHP displays errors (for some hosts that suppress it)
+@ini_set( 'display_errors', 1 );
+@ini_set( 'display_startup_errors', 1 );
+error_reporting( E_ALL ); // Optional but recommended: show all types of errors

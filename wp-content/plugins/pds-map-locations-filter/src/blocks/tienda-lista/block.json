@@ -12,13 +12,16 @@
     "align": ["wide", "full"]
   },
   "attributes": {
-    "title": { "type": "string", "default": "Our Stores" },
-    "displayStyle": { "type": "string", "enum": ["grid", "list"], "default": "grid" },
-    "numStores": { "type": "number", "default": 5 },
-    "selectedTaxonomies": { "type": "array", "items": { "type": "string" }, "default": [] }
+    "title":               { "type": "string", "default": "Our Stores" },
+    "displayStyle":        { "type": "string", "enum": ["grid", "list"], "default": "grid" },
+    "numStores":           { "type": "number", "default": 5 },
+    "selectedTaxonomies":  { "type": "array",  "items": { "type": "string" }, "default": ["ambito"] },
+    "cptSlug":             { "type": "string",  "default": "location" } 
   },
-  "editorScript": "file:./index.js",
-  "style": "file:./style.css",
-  "editorStyle": "file:./editor.css",
-  "render": "file:./tienda-lista.php"
+  "editorScript":   "file:./index.js",
+  "editorStyle":    "file:./editor.css",
+  "script":         "file:./view.js",    
+  "style":          "file:./style.css",
+  "render": "file:../templates/tienda-lista.php"
+
 }
