@@ -71,6 +71,7 @@
   }
   .sjd_tabs .wp-block-ghub-tab-buttons-container .gutenberghub-tab-button {
     width:13rem;
+    z-index:99999;
   }
   
 
