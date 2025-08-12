@@ -10,30 +10,28 @@ $container_id = $container_id ?? uniqid('mlf-');
 $is_preview   = $is_preview ?? false;
 ?>
 <nav class="pds-map-filters">
-    <?php if ($title): ?>
-        <div class="mlf-title"><?= esc_html($title); ?></div>
-    <?php endif; ?>
+
 
     <div class="mlf-filters">
-        <div class="mlf-search-wrapper">
-            <label for="<?= esc_attr($container_id); ?>-mlf-search-input" class="screen-reader-text">
-                <?= esc_html__('Search Locations', 'pds-map-locations-filter'); ?>
-            </label>
+        <?php if ($title): ?>
+            <div class="mlf-title"><?= esc_html($title); ?></div>
+        <?php endif; ?>
+
+       <!-- <div class="mlf-search-wrapper">
+           
             <input
                 type="text"
                 id="<?= esc_attr($container_id); ?>-mlf-search-input"
                 class="mlf-search"
                 placeholder="<?= esc_attr__('Search...', 'pds-map-locations-filter'); ?>"
             />
-        </div>
+        </div>-->
 
         <?php if (!empty($taxonomies)): ?>
             <?php foreach ($taxonomies as $slug => $taxonomy_object): ?>
                 <?php if ($taxonomy_object instanceof WP_Taxonomy): ?>
                     <div class="mlf-taxonomy">
-                        <label for="<?= esc_attr($container_id); ?>-filter-<?= esc_attr($slug); ?>">
-                            <?= esc_html($taxonomy_object->labels->singular_name); ?>
-                        </label>
+                      
                         <select
                             class="mlf-filters-select"
                             name="<?= esc_attr($slug); ?>"

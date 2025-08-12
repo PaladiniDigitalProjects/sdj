@@ -18,57 +18,65 @@ const TiendaEdit = ({ attributes, setAttributes }) => {
 		cptSlug,
 	} = attributes;
 
-	const taxonomies = useSelect((select) => {
-		const all = select('core').getTaxonomies({ per_page: -1, context: 'view' }) || [];
-		return all.filter(
-			(tax) =>
-				tax.types.includes(cptSlug) &&
-				tax.public &&
-				tax.show_ui
-		);
-	}, [cptSlug]);
-
-	const onTaxonomyChange = (checked, slug) => {
+	  const taxonomies =
+		  useSelect(
+			(select) =>
+			  select('core').getTaxonomies(
+				{ type: cptSlug, per_page: -1 },
+				{ context: 'view' }
+			  ),
+			[cptSlug]
+		  ) || [];
+	
+	  const onTaxonomyChange = (checked, slug) => {
 		const next = checked
-			? [...selectedTaxonomies, slug]
-			: selectedTaxonomies.filter((s) => s !== slug);
-		setAttributes({ selectedTaxonomies: [...new Set(next)] });
-	};
+		  ? [...selectedTaxonomies, slug]
+		  : selectedTaxonomies.filter((s) => s !== slug);
+		setAttributes({
+		  selectedTaxonomies: Array.from(new Set(next)).sort(),
+		});
+	  };
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={__('Map Settings', 'pds-map-locations-filter')}>
-					<TextControl
-						label={__('Block Title', 'pds-map-locations-filter')}
-						value={title}
-						onChange={(v) => setAttributes({ title: v })}
-					/>
-					<TextControl
-						label={__('Zoom Level', 'pds-map-locations-filter')}
-						type="number"
-						value={zoomLevel}
-						onChange={(v) => setAttributes({ zoomLevel: parseInt(v, 10) || 6 })}
-					/>
+				<TextControl
+					label={__('Block Title', 'pds-map-locations-filter')}
+					value={title}
+					onChange={(v) => setAttributes({ title: v })}
+				/>
+				<TextControl
+					label={__('Zoom Level', 'pds-map-locations-filter')}
+					type="number"
+					value={zoomLevel}
+					onChange={(v) => setAttributes({ zoomLevel: parseInt(v, 10) || 6 })}
+				/>
+
+				<CheckboxControl
+					label={__('Show list below map', 'pds-map-locations-filter')}
+					checked={attributes.showList !== false}
+					onChange={(checked) => setAttributes({ showList: !!checked })}
+				/>
 				</PanelBody>
 
-				<PanelBody title={__('Filters', 'pds-map-locations-filter')} initialOpen>
-					{taxonomies.length === 0 ? (
-						<p>
-							{__('No taxonomies found for:', 'pds-map-locations-filter')}{' '}
-							<code>{cptSlug}</code>
-						</p>
-					) : (
-						taxonomies.map((tax) => (
-							<CheckboxControl
+				 <PanelBody title={__('Filters', 'pds-map-locations-filter')} initialOpen>
+						  {taxonomies.length === 0 ? (
+							<p>
+							  {__('No filterable taxonomies found for CPT:', 'pds-map-locations-filter')}{' '}
+							  <code>{cptSlug}</code>
+							</p>
+						  ) : (
+							taxonomies.map((tax) => (
+							  <CheckboxControl
 								key={tax.slug}
 								label={tax.name}
 								checked={selectedTaxonomies.includes(tax.slug)}
 								onChange={(checked) => onTaxonomyChange(checked, tax.slug)}
-							/>
-						))
-					)}
-				</PanelBody>
+							  />
+							))
+						  )}
+						</PanelBody>
 			</InspectorControls>
 
 			<div {...useBlockProps()} className="map-preview">

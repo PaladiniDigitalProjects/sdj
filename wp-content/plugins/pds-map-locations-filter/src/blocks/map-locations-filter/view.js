@@ -37,7 +37,8 @@ class MLFMapHandler {
     this.zoom = 8;
 
     this._readInitData();
-    if (!this.mapEl || !this.listEl) {
+  
+    if (!this.mapEl || (this.showList && !this.listEl)) {
       console.error('MLF: Missing map or list container');
       return;
     }
@@ -68,34 +69,39 @@ class MLFMapHandler {
     this.loader = new Loader({
       apiKey,
       version: 'weekly',
-      libraries: ['marker'],
+      libraries: ['maps', 'marker'], // ✅ Load both maps & marker
       region: this.i18n.region || undefined,
       language: this.i18n.language || undefined,
     });
 
     this.loader
       .importLibrary('maps')
-      .then(({ Map, InfoWindow }) => this._setupMap(Map, InfoWindow))
+      .then(({ Map, InfoWindow }) => {
+        this.loader.importLibrary('marker').then(() => {
+          this._setupMap(Map, InfoWindow);
+          this._bindEvents();
+          this._fetchData(true); // ✅ Fetch only after map init
+        });
+      })
       .catch(err => this._showError(this.mapEl, this.i18n.errorLoadingMap, err));
-
-    this._bindEvents();
-    this._fetchData(true);
   }
 
-    _setupMap(MapConstructor, InfoWindowConstructor) {
-        this.mapEl.innerHTML = ''; 
+  _setupMap(MapConstructor, InfoWindowConstructor) {
+    console.log('Google Maps API loaded, initializing map...');
+    this.mapEl.innerHTML = ''; // Clear placeholder
 
-        this.map = new MapConstructor(this.mapEl, {
-        center: this.center,
-        zoom: this.zoom,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-        mapId: 'PDS_CUSTOM_MAP_ID', 
-        });
-        this.infoWindow = new InfoWindowConstructor();
-        this.cluster = new MarkerClusterer({ map: this.map });
-    }
+    this.map = new MapConstructor(this.mapEl, {
+      center: this.center,
+      zoom: this.zoom,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false,
+      mapId: '9648649d5b5a13afc237a196',
+    });
+
+    this.infoWindow = new InfoWindowConstructor();
+    this.cluster = new MarkerClusterer({ map: this.map });
+  }
 
   _bindEvents() {
     this.filterSelects.forEach(select =>

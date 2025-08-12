@@ -107,7 +107,7 @@ $block_data = [
             [
                 'stores_query'   => $stores_query,
                 'display_style'  => $display_style,
-                'numStores'    => $num_stores,
+                'numStores'     => $num_stores,
                 'taxonomies'   => $filtered_taxonomies,
             ],
             'tienda-lista'

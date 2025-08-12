@@ -1,280 +1,367 @@
 /**
- * External dependencies
+ * src/blocks/map-locations-filter/view.js
+ * Updated to respect `showList` block attribute and to work when the list container is absent.
  */
+
 import { Loader } from '@googlemaps/js-api-loader';
 import domReady from '@wordpress/dom-ready';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
-// Simple debounce function
-function debounce(func, wait) {
-	let timeout;
-	return function executedFunction(...args) {
-		const later = () => {
-			clearTimeout(timeout);
-			func(...args);
-		};
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-	};
-}
+// Debounce helper
+const debounce = (fn, delay) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+};
 
-/**
- * Map and Filter Handler Class
- */
 class MLFMapHandler {
-	constructor(element) {
-		this.container = element;
-		this.mapElement = element.querySelector('.mlf-map');
-		this.locationsListElement = element.querySelector('.mlf-locations');
-		this.placeholderElement = element.querySelector('.mlf-locations-placeholder');
-		this.filters = element.querySelector('.pds-map-filters');
-		this.searchBox = element.querySelector('.mlf-search');
-		this.map = null;
-		this.markers = [];
-		this.infoWindow = null;
-		this.loader = null;
-		this.mapOptions = {};
-		this.initialFilters = {};
+  constructor(root) {
+    this.root = root;
+    this.mapEl = root.querySelector('.mlf-map-container');
+    this.listEl = root.querySelector('.mlf-locations-list-container');
+    this.toolbar = root.querySelector('.pds-map-toolbar');
+    this.searchInput = this.toolbar?.querySelector('.mlf-search') || null;
+    this.filterSelects = this.toolbar
+      ? Array.from(this.toolbar.querySelectorAll('.mlf-filters-select'))
+      : [];
 
-		if (!this.mapElement || !this.locationsListElement || !this.filters) {
-			console.error('MLF Error: Missing required elements within:', element);
-			return;
-		}
+    this.map = null;
+    this.infoWindow = null;
+    this.loader = null;
+    this.cluster = null;
+    this.markers = [];
+    this.i18n = {};
+    this.center = { lat: 0, lng: 0 };
+    this.zoom = 8;
+    this.showList = true; // default; will be overridden by init data
 
-		this.init();
-	}
+    this._readInitData();
 
-	async init() {
-    // 1) Read block-init JSON (which now includes cptSlug)
-    try {
-        this.blockData = JSON.parse( this.container.dataset.blockInit || '{}' );
-    } catch ( e ) {
-        console.error( 'MLF Error: Could not parse data-block-init.', e );
-        this.blockData = {};
+    if (!this.mapEl) {
+      console.error('MLF: Missing map container');
+      return;
     }
 
-    // 2) Map options and filters (old behavior)
-    try {
-        this.mapOptions    = JSON.parse( this.container.dataset.mapOptions    || '{}' );
-        this.initialFilters = JSON.parse( this.container.dataset.filterOptions || '{}' );
-    } catch ( e ) {
-        console.error( 'MLF Error: Could not parse other data attributes.', e );
+    // If init says showList but the DOM has no list container, turn it off to avoid errors.
+    if (this.showList && !this.listEl) {
+      console.warn('MLF: showList enabled but .mlf-locations-list-container not found. Disabling list features for this instance.');
+      this.showList = false;
     }
 
-    // 3) Grab the CPT slug to use when fetching taxonomies or AJAX
-    this.cptSlug = this.blockData.cptSlug || 'location';
+    this._init();
+  }
 
-    // 4) Now we can safely initialize the loader, event listeners, etc.
-    const apiKey = mlf_ajax?.google_maps_api_key || 'YOUR_API_KEY_PLACEHOLDER';
-    if ( apiKey === 'YOUR_API_KEY_PLACEHOLDER' ) {
-        this.mapElement.innerHTML = '<p>Map cannot be loaded. API key missing.</p>';
-        return;
+  _readInitData() {
+    try {
+      const init = JSON.parse(this.root.dataset.blockInit || '{}');
+      if (init.initialCenter) this.center = init.initialCenter;
+      if (init.zoomLevel) this.zoom = init.zoomLevel;
+      if (init.i18n) this.i18n = init.i18n;
+      if (typeof init.showList !== 'undefined') this.showList = !!init.showList;
+    } catch (err) {
+      console.warn('MLF: Invalid blockInit JSON', err);
+    }
+  }
+
+  _init() {
+    const apiKey = window.mlf_ajax?.google_maps_api_key;
+    if (!apiKey) {
+      this._showError(
+        this.mapEl,
+        this.i18n.errorLoadingMap || 'Map cannot be loaded (API key missing).'
+      );
+      return;
     }
 
     this.loader = new Loader({
-        apiKey: apiKey,
-        version: 'weekly',
-        libraries: ['marker'],
+      apiKey,
+      version: 'weekly',
+      libraries: ['marker'],
+      region: this.i18n.region || undefined,
+      language: this.i18n.language || undefined,
     });
 
-    await this.loadMap();
-    this.setupEventListeners();
-    this.fetchLocations( true );
-}
+    // import maps library (Map, InfoWindow constructors)
+    this.loader
+      .importLibrary('maps')
+      .then(({ Map, InfoWindow }) => this._setupMap(Map, InfoWindow))
+      .catch(err => this._showError(this.mapEl, this.i18n.errorLoadingMap || 'Error loading map.', err));
 
-	async loadMap() {
-		try {
-			const { Map, InfoWindow } = await this.loader.importLibrary('maps');
-            const { AdvancedMarkerElement } = await this.loader.importLibrary("marker"); // For advanced markers
+    this._bindEvents();
+    // initial fetch: markers (and list if showList)
+    this._fetchData(true);
+  }
 
-			this.map = new Map(this.mapElement, {
-				center: this.mapOptions.center || { lat: 0, lng: 0 },
-				zoom: this.mapOptions.zoom || 8,
-				mapId: 'PDS_CUSTOM_MAP_ID', // Optional: Add a Map ID for cloud styling
-                // Add other map options: mapTypeControl, streetViewControl, etc.
-                mapTypeControl: false,
-                streetViewControl: false,
-                fullscreenControl: false,
+  _setupMap(MapConstructor, InfoWindowConstructor) {
+    // ensure map container is empty
+    this.mapEl.innerHTML = '';
 
-			});
+    this.map = new MapConstructor(this.mapEl, {
+      center: this.center,
+      zoom: this.zoom,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false,
+      // keep your custom mapId if you use it
+      mapId: '9648649d5b5a13afc237a196',
+    });
 
-			this.infoWindow = new InfoWindow();
+    this.infoWindow = new InfoWindowConstructor();
+    // initialize clusterer (markers will be added after creation)
+    try {
+      this.cluster = new MarkerClusterer({ map: this.map });
+    } catch (err) {
+      // Fallback: some versions of MarkerClusterer expect different args; still safe to continue without cluster.
+      console.warn('MLF: MarkerClusterer init error, continuing without cluster', err);
+      this.cluster = null;
+    }
+  }
 
-		} catch (e) {
-			console.error('MLF Error: Could not load Google Maps API.', e);
-            this.mapElement.innerHTML = `<p>${__( 'Error loading map.', 'pds-map-locations-filter' )}</p>`;
-		}
-	}
+  _bindEvents() {
+    this.filterSelects.forEach(select =>
+      select.addEventListener('change', () => this._fetchData())
+    );
 
-    clearMarkers() {
-        this.markers.forEach(marker => {
-            // For AdvancedMarkerElement, set map to null
-             if (marker.setMap) marker.setMap(null);
-             else marker.map = null; // Fallback or handle default markers differently if needed
-        });
-        this.markers = [];
+    if (this.searchInput) {
+      this.searchInput.addEventListener(
+        'input',
+        debounce(() => this._fetchData(), 400)
+      );
     }
 
-	addMarker(markerData) {
-         if (!this.map || !google?.maps?.marker) return; // Ensure map and library are loaded
+    // Attach list click handler only if list is present and enabled
+    if (this.showList && this.listEl) {
+      this.listEl.addEventListener('click', e => this._onListClick(e));
+    }
+  }
 
-         const { AdvancedMarkerElement } = google.maps.marker; // Destructure here
+  _onListClick(event) {
+    const item = event.target.closest('.mlf-location-item');
+    if (!item || !item.dataset.locationId) return;
+    const id = parseInt(item.dataset.locationId, 10);
+    const marker = this.markers.find(m => m.mlfId === id);
+    if (marker && this.map) {
+      // pan to marker and open info window
+      this.map.panTo(marker.position);
+      this.map.setZoom(15);
+      // trigger click on the marker to open infoWindow if bound
+      if (typeof google?.maps?.event?.trigger === 'function') {
+        google.maps.event.trigger(marker, 'click');
+      }
+    }
+  }
 
-         const marker = new AdvancedMarkerElement({
-            map: this.map,
-            position: markerData.position,
-            title: markerData.title,
-            // You can customize the marker appearance here
-             // Example: content: document.createElement('div')...
+  _fetchData(initial = false) {
+    this._showLoading();
+
+    const filters = this._getFilters();
+    const base = new URLSearchParams();
+    // Use localized values from PHP
+    base.set('nonce', window.mlf_ajax.nonce);
+    base.set('search', filters.search);
+    base.set('taxonomies', JSON.stringify(filters.taxonomies));
+
+    // Marker request (always)
+    const markerReq = fetch(window.mlf_ajax.ajax_url, {
+      method: 'POST',
+      body: (() => { const p = new URLSearchParams(base); p.set('action', 'mlf_get_locations_markers'); return p; })(),
+    }).then(r => r.json());
+
+    // List request (only if list is enabled)
+    let listReq = Promise.resolve(null);
+    if (this.showList) {
+      listReq = fetch(window.mlf_ajax.ajax_url, {
+        method: 'POST',
+        body: (() => { const p = new URLSearchParams(base); p.set('action', 'mlf_get_locations_html'); return p; })(),
+      }).then(r => r.json());
+    }
+
+    Promise.all([listReq, markerReq])
+      .then(([list, markers]) => {
+        if (this.showList) {
+          this._handleList(list);
+        }
+        this._handleMarkers(markers);
+      })
+      .catch(err => {
+        console.error('MLF: Fetch error', err);
+        if (this.showList && this.listEl) {
+          this._showError(this.listEl, this.i18n.errorLoadingLocations || 'Error loading locations.');
+        }
+        this._clearMarkers();
+      })
+      .finally(() => this._hideLoading());
+  }
+
+  _getFilters() {
+    const tax = {};
+    this.filterSelects.forEach(sel => {
+      if (sel.value && sel.value !== 'all') tax[sel.name] = sel.value;
+    });
+    return { taxonomies: tax, search: this.searchInput?.value.trim() || '' };
+  }
+
+  _handleList(response) {
+    if (!this.showList || !this.listEl) return;
+
+    if (response && response.success && response.data && response.data.html) {
+      this.listEl.innerHTML = response.data.html;
+    } else {
+      this._showError(this.listEl, this.i18n.noResults || 'No locations found.');
+    }
+  }
+
+  _handleMarkers(response) {
+    if (response && response.success && Array.isArray(response.data)) {
+      this._renderMarkers(response.data);
+    } else {
+      console.error('MLF: Invalid marker data', response);
+      this._clearMarkers();
+    }
+  }
+
+  _renderMarkers(data) {
+    this._clearMarkers();
+
+    data.forEach(d => {
+      // AdvancedMarkerElement provides custom content. Use fallback to classic Marker if needed.
+      try {
+        const m = new google.maps.marker.AdvancedMarkerElement({
+          map: this.map,
+          position: d.position,
+          title: d.title,
+          content: this._createMarkerContent(d),
+        });
+
+        m.mlfId = d.id;
+
+        if (d.infoWindowContent) {
+          m.addListener('click', () => {
+            this.infoWindow.setContent(d.infoWindowContent);
+            // Opening InfoWindow anchored to marker — AdvancedMarkerElement works as anchor in many setups.
+            this.infoWindow.open(this.map, m);
           });
-
-        // Add InfoWindow listener
-        if (markerData.infoWindowContent && this.infoWindow) {
-             marker.addListener('click', () => {
-                this.infoWindow.close(); // Close existing window
-                this.infoWindow.setContent(markerData.infoWindowContent);
-                this.infoWindow.open(this.map, marker);
-
-                 // Optional: Pan map to center the marker when info window opens
-                 // this.map.panTo(markerData.position);
-             });
         }
 
-         this.markers.push(marker);
-    }
-
-
-	setupEventListeners() {
-		 // Filter change handler
-         this.filters.querySelectorAll('select.filters').forEach(select => {
-            select.addEventListener('change', () => {
-                console.log('Filter changed:', select.name, select.value); // <-- ADD THIS
-                this.fetchLocations();
-            });
+        this.markers.push(m);
+      } catch (err) {
+        // AdvancedMarkerElement might not be available in older builds — fallback to classic Marker
+        console.warn('MLF: AdvancedMarkerElement not available, falling back to classic Marker', err);
+        const marker = new google.maps.Marker({
+          map: this.map,
+          position: d.position,
+          title: d.title,
         });
-    
-        // Search input handler (debounced)
-        if (this.searchBox) {
-            this.searchBox.addEventListener('input', debounce(() => {
-                console.log('Search input:', this.searchBox.value); // <-- ADD THIS
-                this.fetchLocations();
-            }, 500));
+        marker.mlfId = d.id;
+        if (d.infoWindowContent) {
+          marker.addListener('click', () => {
+            this.infoWindow.setContent(d.infoWindowContent);
+            this.infoWindow.open(this.map, marker);
+          });
         }
+        this.markers.push(marker);
+      }
+    });
 
-        // Clicking on a list item might highlight/open the map marker
-        this.locationsListElement.addEventListener('click', (event) => {
-            const locationDiv = event.target.closest('.mlf-location');
-            if (locationDiv && locationDiv.dataset.locationId) {
-                const locationId = parseInt(locationDiv.dataset.locationId, 10);
-                const correspondingMarker = this.markers.find(m => m.content?.dataset?.locationId == locationId); // Find marker by ID (assuming content has ID)
-
-                 if (correspondingMarker && this.map && this.infoWindow) {
-                     this.map.panTo(correspondingMarker.position);
-                     this.map.setZoom(15); // Zoom in on the marker
-                     // Trigger the marker click to open info window
-                     google.maps.event.trigger(correspondingMarker, 'click');
-                 }
-            }
-         });
-	}
-
-    getCurrentFilters() {
-        const taxonomyFilters = {};
-        this.filters.querySelectorAll('select.filters').forEach(select => {
-            if (select.value !== 'all') {
-                taxonomyFilters[select.name] = select.value;
-            }
-        });
-
-        const searchTerm = this.searchBox ? this.searchBox.value.trim() : '';
-
-        return {
-             taxonomies: taxonomyFilters,
-             search: searchTerm,
-         };
+    if (this.cluster && typeof this.cluster.addMarkers === 'function') {
+      try {
+        this.cluster.addMarkers(this.markers);
+      } catch (err) {
+        console.warn('MLF: cluster.addMarkers failed', err);
+      }
     }
 
-	async fetchLocations(isInitialLoad = false) {
-        if (this.placeholderElement) this.placeholderElement.style.display = 'block';
-        if (this.locationsListElement) this.locationsListElement.innerHTML = ''; // Clear previous results
+    this._fitBounds();
+  }
 
-        const filters = this.getCurrentFilters();
-         console.log('AJAX Request - Sending Filters:', filters);
-        const formData = new FormData();
-        formData.append('action', 'mlf_get_locations_html');
-        formData.append('nonce', mlf_ajax.nonce);
-        formData.append('search', filters.search);
-        // Send taxonomies as a JSON string if your PHP expects it, or loop and append
-        formData.append('taxonomies', JSON.stringify(filters.taxonomies));
+  _createMarkerContent(d) {
+    const el = document.createElement('div');
+    el.className = 'mlf-marker';
+    el.dataset.locationId = d.id;
+    // Optionally you can include simple visuals (small dot) but avoid changing structure.
+    return el;
+  }
 
+  _clearMarkers() {
+    // Clear cluster and markers
+    if (this.cluster && typeof this.cluster.clearMarkers === 'function') {
+      try {
+        this.cluster.clearMarkers();
+      } catch (err) {
+        console.warn('MLF: cluster.clearMarkers failed', err);
+      }
+    }
 
-        const markerFormData = new FormData();
-        markerFormData.append('action', 'mlf_get_locations_markers');
-        markerFormData.append('nonce', mlf_ajax.nonce);
-        markerFormData.append('search', filters.search);
-        markerFormData.append('taxonomies', JSON.stringify(filters.taxonomies));
-
+    // Remove markers from map if classic markers used
+    if (this.markers && this.markers.length) {
+      this.markers.forEach(m => {
         try {
-            const [listResponse, markerResponse] = await Promise.all([
-                fetch(mlf_ajax.ajax_url, { method: 'POST', body: formData }),
-                fetch(mlf_ajax.ajax_url, { method: 'POST', body: markerFormData })
-            ]);
+          if (typeof m.setMap === 'function') {
+            m.setMap(null);
+          }
+        } catch (err) {
+          // ignore
+        }
+      });
+    }
 
-            // --- Handle List Response ---
-                if (!listResponse.ok) {
-                    throw new Error(`HTTP error! status: ${listResponse.status}`);
-                }
-                // const listHtml = await listResponse.text(); // OLD
-                const listJson = await listResponse.json(); // NEW: Expect JSON
-                if (listJson.success && listJson.data.html) { // NEW: Check success and get HTML
-                    if (this.locationsListElement) this.locationsListElement.innerHTML = listJson.data.html;
-                } else {
-                    throw new Error('Invalid HTML list response from server.');
-                }
+    this.markers = [];
+  }
 
-            // --- Handle Marker Response ---
-             if (!markerResponse.ok) {
-                 throw new Error(`HTTP error! status: ${markerResponse.status}`);
-            }
-             const markerData = await markerResponse.json();
-             this.clearMarkers();
+  _fitBounds() {
+    if (!this.markers.length || !this.map) return;
 
-             if (markerData.success && Array.isArray(markerData.data)) {
-                 markerData.data.forEach(markerInfo => this.addMarker(markerInfo));
+    const bounds = new google.maps.LatLngBounds();
+    this.markers.forEach(m => {
+      // m.position may be LatLngLiteral or LatLng; both should work with extend
+      try {
+        bounds.extend(m.position);
+      } catch (err) {
+        // fallback if AdvancedMarkerElement stores position differently
+        try {
+          const pos = m.getPosition ? m.getPosition() : null;
+          if (pos) bounds.extend(pos);
+        } catch (innerErr) {
+          // ignore
+        }
+      }
+    });
 
-                 // Optional: Adjust map bounds based on new markers
-                 if (markerData.data.length > 0 && this.map) {
-                     const bounds = new google.maps.LatLngBounds();
-                     markerData.data.forEach(m => bounds.extend(m.position));
-                     this.map.fitBounds(bounds);
-                      // Don't zoom in too far if there's only one result
-                      if (markerData.data.length === 1) {
-                         this.map.setZoom(Math.min(this.map.getZoom(), 15)); // Max zoom level 15 for single result
-                      }
-                 } else if (!isInitialLoad && this.map) {
-                     // No results, maybe reset to initial view?
-                     this.map.setCenter(this.mapOptions.center || { lat: 0, lng: 0 });
-                     this.map.setZoom(this.mapOptions.zoom || 8);
-                 }
-             } else {
-                 console.error('MLF Error: Invalid marker data received.', markerData);
-             }
+    try {
+      this.map.fitBounds(bounds);
+      if (this.markers.length === 1) {
+        this.map.setZoom(Math.min(this.map.getZoom(), 15));
+      }
+    } catch (err) {
+      // ignore fitErrors
+      console.warn('MLF: fitBounds failed', err);
+    }
+  }
 
+  _showLoading() {
+    if (this.showList && this.listEl) {
+      const loadingText = this.i18n.loadingLocations || 'Loading locations...';
+      this.listEl.innerHTML = `<p class="mlf-loading">${loadingText}</p>`;
+    }
+    this.root.classList.add('is-loading');
+  }
 
-		} catch (error) {
-			console.error('MLF Error fetching locations:', error);
-            if (this.locationsListElement) {
-                this.locationsListElement.innerHTML = `<p>${__('Error loading locations. Please try again.', 'pds-map-locations-filter')}</p>`;
-            }
-		} finally {
-            if (this.placeholderElement) this.placeholderElement.style.display = 'none';
-		}
-	}
+  _hideLoading() {
+    this.root.classList.remove('is-loading');
+  }
+
+  _showError(el, msg, err) {
+    if (err) console.error(err);
+    if (!el) return;
+    el.innerHTML = `<p class="mlf-error">${msg}</p>`;
+  }
 }
 
-// Initialize map handlers when the DOM is ready
+// Initialize when DOM ready
 domReady(() => {
-	const mapContainers = document.querySelectorAll('.pds-map-block');
-	mapContainers.forEach(container => {
-		new MLFMapHandler(container);
-	});
+  document
+    .querySelectorAll('.pds-map-block-wrapper')
+    .forEach(wrapper => new MLFMapHandler(wrapper));
 });

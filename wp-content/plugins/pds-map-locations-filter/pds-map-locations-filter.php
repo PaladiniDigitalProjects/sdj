@@ -406,35 +406,44 @@ class PDSMLFPlugin {
         return $field;
     }
 
-    /**
+   /**
      * AJAX handler for fetching HTML of locations list.
      */
     public function ajax_locations_html() {
         check_ajax_referer( 'mlf_nonce', 'nonce' );
 
-        $search_query = sanitize_text_field( $_POST['search'] ?? '' );
-        $taxonomies_json = stripslashes( $_POST['taxonomies'] ?? '{}' );
+        $search_query      = sanitize_text_field( $_POST['search'] ?? '' );
+        $taxonomies_json   = stripslashes( $_POST['taxonomies'] ?? '{}' );
         $taxonomies_filter = json_decode( $taxonomies_json, true );
-
+        $num_stores_raw = $_POST['numStores'] ?? -1;
+        $num_stores = is_numeric($num_stores_raw) ? intval($num_stores_raw) : -1;
         $args = [
             'post_type'      => $this->post_type,
             's'              => $search_query,
-            'posts_per_page' => -1, 
+            'posts_per_page' => ( $num_stores > 0 ) ? $num_stores : -1,
             'post_status'    => 'publish',
         ];
 
+        // Apply taxonomy filters if present
         if ( is_array( $taxonomies_filter ) && ! empty( $taxonomies_filter ) ) {
             $tax_query = [];
             foreach ( $taxonomies_filter as $taxonomy_slug => $term_slug ) {
-                $tax_query[] = [
-                    'taxonomy' => sanitize_key( $taxonomy_slug ),
-                    'field'    => 'slug',
-                    'terms'    => sanitize_key( $term_slug ),
-                ];
+                if ( ! empty( $term_slug ) ) {
+                    $tax_query[] = [
+                        'taxonomy' => sanitize_key( $taxonomy_slug ),
+                        'field'    => 'slug',
+                        'terms'    => sanitize_key( $term_slug ),
+                    ];
+                }
             }
             if ( ! empty( $tax_query ) ) {
                 $args['tax_query'] = [ 'relation' => 'AND', ...$tax_query ];
             }
+        }
+
+        // If it's the initial load (no search, no filters) → random order
+        if ( empty( $search_query ) && empty( $args['tax_query'] ) ) {
+            $args['orderby'] = 'rand';
         }
 
         $locations_query = new WP_Query( $args );
@@ -442,10 +451,11 @@ class PDSMLFPlugin {
         ob_start();
         mlf_get_template_part( 'locations-list.php', [ 'locations_query' => $locations_query ], 'map-locations-filter' );
         $html = ob_get_clean();
-        wp_reset_postdata(); // Restore original post data.
+        wp_reset_postdata();
 
         wp_send_json_success( [ 'html' => $html ] );
     }
+    
 
     /**
      * AJAX handler for fetching location markers data.
@@ -563,7 +573,9 @@ class PDSMLFPlugin {
     if ( ! empty( $tax_query ) ) {
         $args['tax_query'] = [ 'relation' => 'AND', ...$tax_query ];
     }
-
+    if ( empty( $search_query ) && empty( $args['tax_query'] ) ) {
+                $args['orderby'] = 'rand';
+            }
     $tienda_query = new WP_Query( $args );
 
     ob_start();
@@ -595,28 +607,43 @@ class PDSMLFPlugin {
      * @param array $attrs Block attributes.
      * @return string Rendered block HTML.
      */
-    public function render_map_block( $attrs ) {
-        $selected_tax_slugs = $attrs['selectedTaxonomies'] ?? [];
-        $taxonomies_for_template = [];
+   public function render_map_block( $attrs ) {
+    $selected_tax_slugs = $attrs['selectedTaxonomies'] ?? [];
+    $taxonomies_for_template = [];
 
-        // Prepare taxonomy objects for the template for dropdowns.
+    // If there are explicit selected slugs, include those taxonomy objects.
+    if ( ! empty( $selected_tax_slugs ) ) {
         foreach ( (array) $selected_tax_slugs as $slug ) {
             $taxonomy_obj = get_taxonomy( sanitize_key( $slug ) );
             if ( $taxonomy_obj ) {
                 $taxonomies_for_template[ $slug ] = $taxonomy_obj;
             }
         }
-
-        $container_id = 'pds-map-block-' . bin2hex( random_bytes( 4 ) );
-
-        $variables = [
-            'attributes'   => $attrs,
-            'taxonomies'   => $taxonomies_for_template,
-            'container_id' => $container_id,
-        ];
-
-        return mlf_get_template_part( 'map-container.php', $variables, 'map-locations-filter' );
+    } else {
+        // No explicit selection → include all relevant taxonomies for the post type.
+        $all = $this->get_location_taxonomies( 'objects' );
+        foreach ( (array) $all as $tax ) {
+            if ( $tax instanceof WP_Taxonomy ) {
+                $taxonomies_for_template[ $tax->name ] = $tax;
+            } else {
+                // fallback: try to fetch taxonomy object by name
+                $t = get_taxonomy( $tax );
+                if ( $t ) $taxonomies_for_template[ $tax ] = $t;
+            }
+        }
     }
+
+    $container_id = 'pds-map-block-' . bin2hex( random_bytes( 4 ) );
+
+    $variables = [
+        'attributes'   => $attrs,
+        'taxonomies'   => $taxonomies_for_template,
+        'container_id' => $container_id,
+    ];
+
+    return mlf_get_template_part( 'map-container.php', $variables, 'map-locations-filter' );
+}
+
 
     /**
      * Renders the Tienda Lista block.

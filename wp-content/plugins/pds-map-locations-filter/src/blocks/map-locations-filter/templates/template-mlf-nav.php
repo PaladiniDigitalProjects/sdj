@@ -33,7 +33,7 @@ $is_preview   = $is_preview ?? false; // Default to false if not passed
                     $select_id = esc_attr($container_id) . '-filter-' . esc_attr($slug);
                 ?>
                     <div class="mlf-taxonomy">
-                        <label for="<?= $select_id ?>"><?= esc_html($taxonomy_object->labels->singular_name); ?></label>
+                        
                         <select class="mlf-filters-select" name="<?= esc_attr($slug); ?>" id="<?= $select_id ?>">
                             <option value="all"><?= sprintf(esc_html__('All %s', 'pds-map-locations-filter'), esc_html($taxonomy_object->labels->name)); ?></option>
                             <?php

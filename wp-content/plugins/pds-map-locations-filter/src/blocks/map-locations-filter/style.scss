@@ -9,62 +9,62 @@
 .gm-style {
 	.gm-style-iw-c {
 	  background-color: rgb(209, 243, 255);
-	  border-radius: 0 !important;
-	  padding: 0 !important;
+	  border-radius: 0  ;
+	  padding: 0  ;
 	}
 
 	.gm-style-iw {
-	  top: 0 !important;
-	  left: 0 !important;
-	  width: 25rem !important;
-	  /* height: 21rem !important; */ /* Let height be auto based on content */
+	  top: 0  ;
+	  left: 0  ;
+	  width: 25rem  ;
+	  /* height: 21rem  ; */ /* Let height be auto based on content */
       max-width: 90vw; /* Prevent excessive width on small screens */
-	  display: block !important;
-	  border-radius: 0 !important;
-	  padding: 0 !important;
+	  display: block  ;
+	  border-radius: 0  ;
+	  padding: 0  ;
 	  overflow: hidden;
       box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility */
 	}
 
    .gm-style-iw-t::after {
-	  background: linear-gradient(45deg,rgb(238, 252, 255) 50%,rgba(255,255,255,0) 51%,rgba(255,255,255,0) 100%) !important;
+	  background: linear-gradient(45deg,rgb(238, 252, 255) 50%,rgba(255,255,255,0) 51%,rgba(255,255,255,0) 100%)  ;
 	}
 
 	button.gm-ui-hover-effect {
-	  top: 5px !important;
-	  right: 5px !important; /* Adjusted right position */
+	  top: 5px  ;
+	  right: 5px  ; /* Adjusted right position */
       opacity: 0.7;
-      background: white !important; /* Ensure close button is visible */
+      background: white  ; /* Ensure close button is visible */
       border-radius: 2px;
-      padding: 5px !important; /* Ensure click target is sufficient */
-      width: auto !important;
-      height: auto !important;
+      padding: 5px  ; /* Ensure click target is sufficient */
+      width: auto  ;
+      height: auto  ;
 	}
     button.gm-ui-hover-effect span {
-        margin: 0 !important; /* Reset margin for icon */
+        margin: 0  ; /* Reset margin for icon */
     }
     .gm-style-iw-d { /* Content container */
-        overflow: auto !important; /* Ensure content scrolls if needed */
-        padding: 10px !important; /* Add padding inside */
+        overflow: auto  ; /* Ensure content scrolls if needed */
+        padding: 10px  ; /* Add padding inside */
         max-height: 300px; /* Limit height */
     }
 }
 
 /* Info Window Content Specific Styles (within .gm-style-iw-d) */
 .pds-marker-info-window {
-    font-family: sans-serif;
+    
     padding: 10px;
     line-height: 1.4;
 }
 .pds-marker-info-window b {
-    font-size: 1.1em;
+   // font-size: 1.1em;
     display: block;
     margin-bottom: 5px;
     color: #333;
 }
 .pds-marker-info-window p {
     margin: 0 0 10px 0;
-    font-size: 0.9em;
+   // font-size: 0.9em;
     color: #555;
 }
 .pds-marker-info-window a {
@@ -78,8 +78,8 @@
 
   /* Single Tienda Styles - Keep or move to theme? */
   .store-title{
-	display:block !important;
-	font-size: 4rem;
+	display:block  ;
+	//font-size: 4rem;
 	font-weight: 700;
 
   }
@@ -136,7 +136,7 @@
 		  }
 
 		  span {
-			font-size:1.3rem;
+			//font-size:1.3rem;
 			line-height: 100%;
 			font-weight: bold;
 			text-align: center;
@@ -194,7 +194,7 @@
 	  flex-direction: row;
 	  gap: 2rem;
 	  img {
-		margin-top: 0 !important;
+		margin-top: 0  ;
 	  }
 	}
 
@@ -218,7 +218,7 @@
 		margin: 0 0 4rem 0;
 		td{
 		  padding: 0 0 2rem 2rem;
-		  font-size:20px;
+		  //font-size:20px;
 		}
 	  }
 	}
@@ -226,7 +226,7 @@
 	  flex-direction: row;
 	  .entry-description {  width: 65%; }
 	  .info-store {
-		width: 53% !important;
+		width: 53%  ;
 		margin: 5rem 0 0 5rem;
 	  }
 	}
@@ -257,13 +257,16 @@
 
 
   /* MAP Block specific styles */
-  .pds-map-block-wrapper { /* Using the main block wrapper class */
-      .mlf-map { /* Styles for the map div itself */
-        width: 100%;
-        min-height:85vh;
+  .mlf-content-area {
+    width: 100vw  ;
+    min-height: 85vh  ;
+
+    .mlf-map-container { /* Styles for the map div itself */
+        width: 100vw;
+        min-height: 85vh;
         background-color: #e0e0e0; /* Placeholder color */
         margin-bottom: 0;
-        height:80vh;
+        height: 80vh;
         border: 1px solid #ccc;
       }
 
@@ -276,7 +279,7 @@
           gap: 1rem; /* Add gap between elements */
 
           .mlf-title {
-            font-size: 1.25em; /* Use relative units */
+           // font-size: 1.25em; /* Use relative units */
             font-family: inherit;
             line-height: 1.2;
             margin: 0; /* Remove default margins */
@@ -301,7 +304,7 @@
             .mlf-search {
               border: 1px solid #ccc;
               padding: 0.5em;
-              font-size: 1em;
+             // font-size: 1em;
               flex-grow: 1; /* Allow search to take space */
               min-width: 150px;
             }
@@ -309,7 +312,7 @@
             select.filters {
               border: 1px solid #ccc;
               padding: 0.5em;
-              font-size: 1em;
+             // font-size: 1em;
               background-color: white;
               min-width: 150px;
             }
@@ -325,7 +328,7 @@
           display: grid;
           grid-template-columns: 1fr; /* Start with one column */
           gap: 1.5rem; /* Use relative units for gap */
-          margin-top: 1rem;
+          margin-top: 1.5rem;
 
           .mlf-location {
             background-color: #f5e7d3;
@@ -368,7 +371,7 @@
               flex-direction: column;
 
                 .mlf-location-title {
-                    font-size: 1.2em;
+                  //  font-size: 1.2em;
                     font-weight: bold;
                     margin-top: 0.5rem;
                     margin-bottom: 0.5rem;
@@ -377,19 +380,19 @@
                 }
 
                 .mlf-location-description {
-                    font-size: 0.9em;
+                  //  font-size: 0.9em;
                     color: #555;
                     flex-grow: 1; /* Push link to bottom */
                  }
                    .mlf-location-phone {
-                    font-size: 0.9em;
+                   // font-size: 0.9em;
                     color: #555;
                     flex-grow: 1; /* Push link to bottom */
                     padding: 0rem 0.5rem;
 
                  }
                    .mlf-location-address {
-                    font-size: 0.9em;
+                   // font-size: 0.9em;
                     color: #555;
                     padding: 0rem 0.5rem;
                     flex-grow: 1; /* Push link to bottom */
@@ -454,7 +457,7 @@
 
       @media (min-width: 1368px) {
           nav .mlf-filters .mlf-taxonomy {
-              display: block !important; 
+              display: block  ; 
               align-items: flex-end;
            }
            .mlf-locations {
@@ -475,7 +478,7 @@
 .pds-tiendas h3 {
     margin-top: 0;
     margin-bottom: 1rem;
-    font-size: 1.3em;
+   // font-size: 1.3em;
 }
 
 .pds-tiendas ul {

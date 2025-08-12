@@ -1,4 +1,3 @@
-<?php var_dump($attributes['displayStyle']); ?>
 <?php
 /**
  * Template for the Tienda Lista block.
@@ -72,11 +71,12 @@ $block_data = [
      class="pds-tiendas pds-tiendas-wrapper <?= esc_attr('align' . ($attributes['align'] ?? 'wide')); ?> <?= esc_attr($display_style); ?>"
      data-block-init='<?= esc_attr(json_encode($block_data)); ?>'>
 
-    <?php if ($title): ?>
-        <h3><?= esc_html($title); ?></h3>
-    <?php endif; ?>
+ 
 
     <div class="pds-tiendas-toolbar">
+           <?php if ($title): ?>
+                <h3><?= esc_html($title); ?></h3>
+            <?php endif; ?>
         <?php
         echo mlf_get_template_part(
             'template-mlf-nav.php',
@@ -92,10 +92,10 @@ $block_data = [
         ?>
         <div class="pds-view-switcher">
             <button type="button" class="mlf-view-btn<?= $display_style === 'grid' ? ' active' : ''; ?>" data-view="grid">
-                <?= esc_html__('Grid View', 'pds-map-locations-filter'); ?>
+                <?= esc_html__('Tabla', 'pds-map-locations-filter'); ?>
             </button>
             <button type="button" class="mlf-view-btn<?= $display_style === 'list' ? ' active' : ''; ?>" data-view="list">
-                <?= esc_html__('List View', 'pds-map-locations-filter'); ?>
+                <?= esc_html__('Lista', 'pds-map-locations-filter'); ?>
             </button>
         </div>
     </div>
