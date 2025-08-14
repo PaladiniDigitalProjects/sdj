@@ -16,11 +16,12 @@ $is_preview   = $is_preview ?? false; // Default to false if not passed
 
 ?>
 <nav class="pds-map-filters">
-    <?php if ($title): ?>
-        <div class="mlf-title"><?= esc_html($title); ?></div>
-    <?php endif; ?>
+  
 
     <div class="mlf-filters">
+          <?php if ($title): ?>
+                <div class="mlf-title"><?= esc_html($title); ?></div>
+            <?php endif; ?>
         <div class="mlf-search-wrapper">
             <label for="<?= esc_attr($container_id); ?>-mlf-search-input" class="screen-reader-text"><?php esc_html_e('Search Locations', 'pds-map-locations-filter'); ?></label>
             <input type="text" id="<?= esc_attr($container_id); ?>-mlf-search-input" class="mlf-search" placeholder="<?= esc_attr__('Search...', 'pds-map-locations-filter'); ?>" />

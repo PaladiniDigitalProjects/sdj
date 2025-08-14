@@ -565,6 +565,7 @@ class PDSMLFPlugin {
             $tax_query[] = [
                 'taxonomy' => sanitize_key( $taxonomy_slug ),
                 'field'    => 'slug',
+                'post_status'    => 'publish',
                 'terms'    => $term_slug,
             ];
         }
@@ -580,14 +581,7 @@ class PDSMLFPlugin {
 
     ob_start();
 
-    mlf_get_template_part(
-        'tienda-list-items.php',
-        [
-            'stores_query'   => $tienda_query,
-            'display_style'  => $display_style,
-        ],
-        'tienda-lista'
-    );
+
     $html = mlf_get_template_part(
     'tienda-list-items.php',
     [

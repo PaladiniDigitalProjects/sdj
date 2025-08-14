@@ -1,94 +1,129 @@
 /* src/blocks/tienda-lista/style.scss */
 
-/* Base block wrapper */
+/* --- variables --- */
+$pds-primary: #007fad;
+$pds-border: #ddd;
+$pds-bg-header: #f9f9f9;
+
+/* --- block --- */
 .pds-tiendas {
   border: none !important;
-
-  /* ensure anchors inside the block are unstyled */
+  display: flex;
+  flex-direction: column;
   a {
-    text-decoration: none !important;
-    color: inherit !important;
-  }
+    color: $pds-primary;
+    text-decoration: none;
 
-  /* grid variant (works if .pds-tiendas has .grid or if there's a child .grid) */
-  &.grid,
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1em;
-
-    .wp-post-image {
-      width: 294px;
-      height: auto;
-      object-fit: cover;
-      display: block;
+    &:hover {
+      color: #007fad;
     }
   }
 
-  /* list-specific nested helper rules for anchor styling inside titles/paragraphs */
+  /* result list wrapper */
   .pds-tiendas-list {
-    h3 {
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-    }
-
-    p {
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-    }
-
-    /* blanket rule to prevent link decoration in nested content */
-    * {
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-    }
-  }
-
-  /* core list/grid container (use gap instead of negative margin to avoid overflow) */
-  .pds-tiendas-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em; /* replaces negative margin technique */
-    transition: opacity 0.3s ease-in-out; /* For loading state */
     width: 100%;
-    margin: 0; /* avoid horizontal overflow on mobile */
+    transition: opacity 0.3s ease-in-out; /* For loading state */
+
+    /* ---------- GRID MODE ---------- */
+    &.grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin: 0;
+
+      .pds-tiendas-row {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid $pds-border;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .pds-column {
+        padding: 0.75rem;
+      }
+
+      .pds-col-title {
+        font-weight: bold;
+      }
+
+      .pds-col-thumb {
+        padding: 0;
+        .wp-post-image,
+        .attachment-thumbnail,
+        img {
+          width: 100% !important;
+          height: auto;
+          aspect-ratio: 4 / 3;
+          object-fit: cover;
+          display: block;
+        }
+      }
+    }
+
+    /* ---------- LIST MODE ---------- */
+    &.list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+
+      .pds-tiendas-row {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        border-bottom: 1px solid $pds-border;
+        padding-bottom: 0.75rem;
+        align-items: center;
+      }
+
+      .pds-column {
+        padding: 0;
+      }
+
+      .pds-col-title {
+        font-weight: bold;
+      }
+
+      .pds-col-thumb {
+        .wp-post-image,
+        .attachment-thumbnail,
+        img {
+          width: 100% !important;
+          height: auto;
+          aspect-ratio: 4 / 3;
+          object-fit: cover;
+          border-radius: 6px;
+        }
+      }
+    }
   }
 
-  /* Loading state for the block */
-  &-wrapper {
-    &.is-loading {
-      .pds-tiendas-list {
-        opacity: 0.5;
-        pointer-events: none; /* Prevent interaction while loading */
-      }
-      .pds-tiendas-loading {
-        display: block;
-        text-align: center;
-        padding: 20px;
-        color: #555;
-      }
+  /* loading / error states */
+  .pds-tiendas-wrapper.is-loading {
+    .pds-tiendas-list {
+      opacity: 0.5;
+      pointer-events: none; /* Prevent interaction while loading */
+    }
+
+    .pds-tiendas-loading {
+      display: block;
+      text-align: center;
+      padding: 20px;
+      color: #555;
     }
   }
 
   .pds-tiendas-loading,
   .pds-tiendas-error,
   .pds-tiendas-no-results {
-    display: none; /* Hidden by default; show via JS/HTML when needed */
+    display: none; /* Hidden by default, toggled via JS/HTML when needed */
   }
 
-  /* Styles for loading/error messages when displayed */
-  .pds-tiendas-results-container {
-    > .pds-tiendas-loading,
-    > .pds-tiendas-error,
-    > .pds-tiendas-no-results {
-      display: block;
-    }
+  .pds-tiendas-results-container > .pds-tiendas-loading,
+  .pds-tiendas-results-container > .pds-tiendas-error,
+  .pds-tiendas-results-container > .pds-tiendas-no-results {
+    display: block;
   }
 
   .pds-tiendas-row {
@@ -103,103 +138,14 @@
     }
   }
 
-  /* List view */
-  &.list {
-    .pds-tiendas-list {
-      flex-direction: column;
-      gap: 0; /* rows already have padding */
-    }
-
-    .pds-col-thumb {
-      .attachment-thumbnail {
-        max-width: 100%;
-        height: auto;
-        width: 294px;
-        display: block;
-      }
-    }
-
-    .pds-tiendas-row {
-      display: flex;
-      border-bottom: 1px solid #ddd;
-      align-items: center;
-    }
-
-    .pds-tiendas-header {
-      .pds-column {
-        font-weight: bold;
-        background: #f9f9f9;
-      }
-    }
-
-    .pds-column {
-      flex: 1;
-      padding: 0.5em;
-    }
-
-    /* utility: when a row has .pds-col-1 */
-    .pds-column.pds-col-1 {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-  } /* end &.list */
-
-  /* Grid view */
-  &.grid {
-    .pds-tiendas-list {
-      /* we use grid for this variant; if you prefer flex, you can adjust */
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 1em;
-      width: 100%;
-    }
-
-    .pds-tiendas-grid-item {
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .pds-col-thumb {
-      .attachment-thumbnail {
-        max-width: 100%;
-        height: auto;
-        width: 294px;
-        display: block;
-
-        .wp-post-image {
-          width: 294px;
-          height: auto;
-          object-fit: cover;
-        }
-      }
-    }
-
-    .pds-tiendas-row {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      margin: 0;
-      border-radius: 4px;
-    }
-
-    .pds-column {
-      padding: 0.5em;
-    }
-
-    .pds-col-title {
-      font-weight: bold;
-    }
-  } /* end &.grid */
-
-  /* Toolbar styles */
+  /* ---------- Toolbar / Filters ---------- */
   .pds-tiendas-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1em;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    gap: 1em; /* Space between items */
+    flex-wrap: wrap;
+    gap: 1em;
   }
 
   .pds-map-filters {
@@ -209,8 +155,8 @@
   }
 
   .mlf-search-wrapper {
-    flex-grow: 1; /* Allow search input to take available space */
-    min-width: 150px; /* Minimum width for search */
+    flex-grow: 1;
+    min-width: 150px;
   }
 
   .mlf-search {
@@ -224,11 +170,11 @@
     display: flex;
     flex-direction: column;
     min-width: 120px;
-    label {
-      /* font-size: 0.8em; // commented original */
-      margin-bottom: 5px;
-      color: #666;
-    }
+  }
+
+  .mlf-taxonomy label {
+    margin-bottom: 5px;
+    color: #666;
   }
 
   .mlf-filters {
@@ -242,7 +188,7 @@
   .mlf-filters-select {
     padding: 8px;
     border-radius: 45px;
-    background-color: #007fad;
+    background-color: $pds-primary;
     color: #fff;
     border: none;
     cursor: pointer;
@@ -257,182 +203,120 @@
     padding: 8px 12px;
     border: none;
     border-radius: 45px;
-    background-color: #007fad;
+    background-color: $pds-primary;
     color: #fff;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    &.active {
-      background-color: #fff;
-      color: #007fad;
-    }
-    &:hover:not(.active) {
-      background-color: #fff;
-      color: #007fad;
+  }
+
+  .mlf-view-btn.active {
+    background-color: #fff;
+    color: $pds-primary;
+  }
+
+  .mlf-view-btn:hover:not(.active) {
+    background-color: #fff;
+    color: $pds-primary;
+  }
+
+  /* nested rules for headings/links inside list items */
+  .pds-tiendas-list {
+    .pds-tiendas-list-item {
+      h3 {
+        a { text-decoration: none; color: inherit; }
+      }
+      p {
+        a { text-decoration: none; color: inherit; }
+      }
+      * {
+        a { text-decoration: none; color: inherit; }
+      }
     }
   }
 
-  /* loading / error states fallback */
-  &-wrapper.is-loading {
-    .pds-tiendas-loading {
-      display: block;
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1024px) {
+    .pds-tiendas-list.grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .pds-tiendas-list.list .pds-tiendas-row {
+      grid-template-columns: 140px 1fr;
     }
   }
-} /* end .pds-tiendas */
 
-/* --------------------------
-   Mobile (SCSS-friendly)
-   Paste at the end of your file
-   -------------------------- */
-@media (max-width: 767px) {
-  .pds-tiendas {
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-
-    /* make grid single-column (works whether .grid is on same element or a child) */
-    &.grid,
-    .grid {
-      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
-      gap: 0.6em;
+  @media (max-width: 767px) {
+    /* Grid goes single column */
+    .pds-tiendas-list.grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
     }
 
-    /* avoid negative-margin overflow & stack items */
-    .pds-tiendas-list {
-      margin: 0 !important;
-      padding: 0.25em 0 !important;
-      flex-direction: column !important;
-      gap: 0.6em;
-      width: 100%;
-      display: block; /* in grid variant this will be overridden by grid display */
+    /* List becomes stacked cards */
+    .pds-tiendas-list.list .pds-tiendas-row {
+      display: grid;
+       grid-template-columns: 160px 1fr; /* desktop/tablet: thumb left, info right */
+      grid-template-columns: 1fr; /* stack vertically */
+      gap: 0.6rem;
+      align-items: start;
+    }
+    .pds-tiendas-list.list .pds-col-thumb {
+      margin-bottom: 0.5rem;
     }
 
-    /* each item becomes full width */
-    .pds-tiendas-grid-item,
-    .pds-tiendas-row {
-      width: 100% !important;
-      box-sizing: border-box;
-      margin: 0 !important;
-      padding: 0.5em !important;
-      border-radius: 6px;
-      background: transparent;
-    }
-
-    /* make images truly responsive */
-    .wp-post-image,
-    .attachment-thumbnail,
-    .pds-col-thumb .attachment-thumbnail {
-      width: 100% !important;
-      max-width: 100% !important;
-      height: auto !important;
-      object-fit: cover !important;
-      display: block !important;
-    }
-
-    /* columns adjustments */
-    .pds-column {
-      padding: 0.35em 0 !important;
-      font-size: 0.95em;
-    }
-    .pds-column:not(.pds-col-title) {
-      font-size: 0.9em;
-    }
-
-    /* LIST MODE: side-by-side on small tablets, stacked on phones */
-    &.list {
-      .pds-tiendas-row {
-        display: flex !important;
-        align-items: center;
-        gap: 0.75rem;
-        border-bottom: 1px solid #eee;
-        padding: 0.45em 0 !important;
-      }
-      .pds-col-thumb {
-        flex: 0 0 36%;
-        max-width: 36%;
-        box-sizing: border-box;
-        float: none; /* avoid float issues */
-      }
-      .pds-col-thumb .attachment-thumbnail {
-        width: 100% !important;
-        height: auto !important;
-        display: block !important;
-      }
-      .pds-column:not(.pds-col-thumb) {
-        flex: 1 1 64%;
-      }
-    } /* end &.list */
-
-    /* GRID MODE: card layout */
-    &.grid {
-      .pds-tiendas-row {
-        display: flex;
-        flex-direction: column;
-        padding: 0.45em !important;
-      }
-    }
-
-    /* toolbar & filters */
     .pds-tiendas-toolbar {
       flex-direction: column !important;
       align-items: stretch !important;
       gap: 0.5em !important;
       margin-bottom: 0.8em !important;
     }
-    .pds-map-filters,
-    .mlf-filters,
-    .pds-view-switcher {
+
+    .pds-map-filters {
       width: 100%;
-      display: flex;
+      justify-content: space-between;
       gap: 0.5em;
-      flex-wrap: wrap;
-      align-items: center;
     }
+
     .mlf-search-wrapper {
+      flex-grow: 0;
       width: 100% !important;
       min-width: 0;
     }
+
     .mlf-search {
       width: 100% !important;
       box-sizing: border-box;
     }
+
+    .mlf-filters {
+      width: 100%;
+      justify-content: space-between;
+      margin-right: 0;
+      gap: 0.5em;
+    }
+
     .mlf-filters-select,
     .mlf-view-btn {
-      flex: 1 1 auto;
-      min-width: 0;
-      padding: 10px 12px !important;
+      width: 100% !important;
+      padding: 10px !important;
       border-radius: 12px !important;
       box-sizing: border-box;
     }
+
+    .pds-view-switcher {
+      display: flex !important;
+      gap: 0.5em;
+    }
+
     .pds-view-switcher .mlf-view-btn {
       flex: 1 1 0;
     }
 
-    /* loading / error */
     .pds-tiendas-wrapper.is-loading .pds-tiendas-loading,
     .pds-tiendas-results-container > .pds-tiendas-loading,
     .pds-tiendas-results-container > .pds-tiendas-error,
     .pds-tiendas-results-container > .pds-tiendas-no-results {
-      padding: 12px !important;
+      padding: 14px !important;
       font-size: 0.95em;
     }
-  } /* end .pds-tiendas */
-}
-
-/* Very small phones: stack thumbnail above content */
-@media (max-width: 420px) {
-  .pds-tiendas {
-    &.list {
-      .pds-tiendas-row {
-        flex-direction: column !important;
-        align-items: stretch;
-        gap: 0.45rem;
-      }
-      .pds-col-thumb {
-        max-width: 100%;
-        flex-basis: auto;
-      }
-      .pds-column {
-        padding-left: 0 !important;
-      }
-    }
-  }
-}
+  } /* end media */
+} /* end .pds-tiendas */

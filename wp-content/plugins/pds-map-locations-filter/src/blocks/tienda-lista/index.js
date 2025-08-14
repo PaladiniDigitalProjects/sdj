@@ -61,7 +61,7 @@ const TiendaEdit = ({ attributes, setAttributes }) => {
             min="1"
             value={numStores}
             help={__('Max number to display', 'pds-map-locations-filter')}
-            onChange={(v) => setAttributes({ numStores: parseInt(v, 10) || 5 })}
+            onChange={(v) => setAttributes({ numStores: parseInt(v, 10) || 8 })}
           />
         </PanelBody>
 

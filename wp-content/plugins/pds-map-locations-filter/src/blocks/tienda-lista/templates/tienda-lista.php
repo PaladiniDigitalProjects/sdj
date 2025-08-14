@@ -68,7 +68,7 @@ $block_data = [
 ];
 ?>
 <div id="<?= esc_attr($container_id); ?>"
-     class="pds-tiendas pds-tiendas-wrapper <?= esc_attr('align' . ($attributes['align'] ?? 'wide')); ?> <?= esc_attr($display_style); ?>"
+     class="pds-tiendas pds-tiendas-wrapper <?= esc_attr('align' . ($attributes['align'] ?? 'wide')); ?> "
      data-block-init='<?= esc_attr(json_encode($block_data)); ?>'>
 
  

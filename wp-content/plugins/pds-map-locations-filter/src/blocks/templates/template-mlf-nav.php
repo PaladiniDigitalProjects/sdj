@@ -16,11 +16,12 @@ $is_preview   = $is_preview ?? false; // Default to false if not passed
 
 ?>
 <nav class="pds-map-filters">
-    <?php if ($title): ?>
-        <div class="mlf-title"><?= esc_html($title); ?></div>
-    <?php endif; ?>
+  
 
     <div class="mlf-filters">
+          <?php if ($title): ?>
+                <div class="mlf-title"><?= esc_html($title); ?></div>
+            <?php endif; ?>
         <div class="mlf-search-wrapper">
             <label for="<?= esc_attr($container_id); ?>-mlf-search-input" class="screen-reader-text"><?php esc_html_e('Search Locations', 'pds-map-locations-filter'); ?></label>
             <input type="text" id="<?= esc_attr($container_id); ?>-mlf-search-input" class="mlf-search" placeholder="<?= esc_attr__('Search...', 'pds-map-locations-filter'); ?>" />
@@ -33,7 +34,7 @@ $is_preview   = $is_preview ?? false; // Default to false if not passed
                     $select_id = esc_attr($container_id) . '-filter-' . esc_attr($slug);
                 ?>
                     <div class="mlf-taxonomy">
-                        <label for="<?= $select_id ?>"><?= esc_html($taxonomy_object->labels->singular_name); ?></label>
+                        
                         <select class="mlf-filters-select" name="<?= esc_attr($slug); ?>" id="<?= $select_id ?>">
                             <option value="all"><?= sprintf(esc_html__('All %s', 'pds-map-locations-filter'), esc_html($taxonomy_object->labels->name)); ?></option>
                             <?php
@@ -51,7 +52,7 @@ $is_preview   = $is_preview ?? false; // Default to false if not passed
                     </div>
                 <?php endif; ?>
             <?php endforeach; ?>
-        <?php elseif ($is_preview && current_user_can('edit_posts')): // Show message ONLY in editor preview if no taxonomies are selected in block settings ?>
+        <?php elseif ($is_preview && current_user_can('edit_posts')):  ?>
              <p class="mlf-no-filters-selected"><?php esc_html_e('No filterable taxonomies selected in block settings.', 'pds-map-locations-filter'); ?></p>
         <?php endif; ?>
     </div>

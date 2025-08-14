@@ -11,8 +11,7 @@ define( 'LOGGED_IN_SALT',    '`w$&X@>XQW;CP8C-+b+?sIQi<*UY^O80@@jv9./#N[+?Zt;`1U
 define( 'NONCE_SALT',        '`6FvjlT~Q+;eWhRWQi.EqW3D#]_CwApy;pG|@=`M|rp8+DR`YriO>1Q}ZJG{#)}T' );
 define( 'WP_CACHE_KEY_SALT', '%l2>K;86&[$ucV5i+$9jWR3?#|RI}Ikb!d;dZAU$qItA19mn{}sAsu-*,p3RnhV&' );
 
-define( 'WP_DEBUG_DISPLAY', false );
-@ini_set( 'display_errors', 0 );
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );

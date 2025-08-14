@@ -14,7 +14,7 @@
   "attributes": {
     "title":               { "type": "string", "default": "Our Stores" },
     "displayStyle":        { "type": "string", "enum": ["grid", "list"], "default": "grid" },
-    "numStores":           { "type": "number", "default": 5 },
+    "numStores":           { "type": "number", "default": 8 },
     "selectedTaxonomies":  { "type": "array",  "items": { "type": "string" }, "default": ["ambito"] },
     "cptSlug":             { "type": "string",  "default": "location" } 
   },
