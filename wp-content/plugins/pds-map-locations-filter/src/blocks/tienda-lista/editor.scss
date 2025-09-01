@@ -1,6 +1,161 @@
-/* src/blocks/tienda-lista/editor.css */
-.wp-block-pds-map-locations-filter-tienda-lista { /* More specific selector */
-    border: 1px dashed #ddd;
-    padding: 15px;
-    background-color: #f8f8f8;
+/* src/blocks/tienda-lista/style.css */
+
+.pds-tiendas {
+    /* Your existing wrapper styles */
+}
+
+.pds-tiendas-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -0.5em;
+    transition: opacity 0.3s ease-in-out; /* For loading state */
+}
+
+/* Loading state for the block */
+.pds-tiendas-wrapper.is-loading .pds-tiendas-list {
+    opacity: 0.5;
+    pointer-events: none; /* Prevent interaction while loading */
+}
+.pds-tiendas-wrapper.is-loading .pds-tiendas-loading {
+    display: block;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #555;
+}
+.pds-tiendas-loading, .pds-tiendas-error, .pds-tiendas-no-results {
+    display: none; /* Hide by default, show via JS/HTML when needed */
+}
+
+/* Styles for loading/error messages when displayed */
+.pds-tiendas-results-container > .pds-tiendas-loading,
+.pds-tiendas-results-container > .pds-tiendas-error,
+.pds-tiendas-results-container > .pds-tiendas-no-results {
+    display: block;
+}
+
+
+.pds-tiendas-row {
+    box-sizing: border-box;
+    padding: 0.5em;
+}
+
+/* reduce non-title text */
+.pds-tiendas .pds-column:not(.pds-col-title) {
+    font-size: 50%;
+}
+
+/* List view */
+.pds-tiendas.list .pds-tiendas-list {
+    flex-direction: column;
+}
+.pds-tiendas.list .pds-col-thumb .attachment-thumbnail{
+    max-width:150px;
+    height:auto;
+}
+.pds-tiendas.list .pds-tiendas-row {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+}
+.pds-tiendas.list .pds-tiendas-header .pds-column {
+    font-weight: bold;
+    background: #f9f9f9;
+}
+.pds-tiendas.list .pds-column {
+    flex: 1;
+    padding: 0.5em;
+}
+
+/* Grid view */
+.pds-tiendas.grid .pds-tiendas-list {
+    /* default wrap */
+}
+.pds-tiendas.grid .pds-col-thumb .attachment-thumbnail{
+    max-width:100%;
+    height:auto;
+}
+.pds-tiendas.grid .pds-tiendas-row {
+    display: flex;
+    flex-direction: column;
+    width: calc(33.333% - 1em);
+    margin: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.pds-tiendas.grid .pds-column {
+    padding: 0.5em;
+}
+.pds-tiendas.grid .pds-col-title { font-weight: bold; }
+
+/* Toolbar styles */
+.pds-tiendas-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 1em; /* Space between items */
+}
+
+.pds-map-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.mlf-search-wrapper {
+    flex-grow: 1; /* Allow search input to take available space */
+    min-width: 150px; /* Minimum width for search */
+}
+
+.mlf-search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.mlf-taxonomy {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+.mlf-taxonomy label {
+    font-size: 0.8em;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.mlf-filters-select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.pds-view-switcher {
+    display: flex;
+    gap: 5px;
+}
+
+.mlf-view-btn {
+    padding: 8px 12px;
+    border: 1px solid #0073aa;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #0073aa;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.mlf-view-btn.active {
+    background-color: #0073aa;
+    color: #fff;
+}
+
+.mlf-view-btn:hover:not(.active) {
+    background-color: #f0f0f0;
 }

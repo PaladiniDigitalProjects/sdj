@@ -2,21 +2,46 @@
 
 /* ADD STYLES AND JS */
 
-function my_theme_enqueue_styles() {
-	$parent_style = 'parent-style'; // Estos son los estilos del tema padre recogidos por el tema hijo.
-	wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
-	wp_enqueue_style( 'child-style',
-	get_stylesheet_directory_uri() . '/style.css',
-	array( $parent_style ),
-	wp_get_theme()->get('Version')
- );
+function my_theme_enqueue_assets() {
+    // Parent theme stylesheet.
+    $parent_handle = 'parent-style';
+    wp_enqueue_style(
+        $parent_handle,
+        get_template_directory_uri() . '/style.css',
+        [],
+        wp_get_theme( get_template() )->get( 'Version' )
+    );
 
- 	wp_enqueue_style('child-estils', get_template_directory_uri() . '-child/assets/css/estils.css',);
-	
-	wp_enqueue_script('main',  get_template_directory_uri() . '-child/assets/js/main.js', array(), '1.0.0', true);
+    // Child theme stylesheet.
+    wp_enqueue_style(
+        'child-style',
+        get_stylesheet_directory_uri() . '/style.css',
+        [ $parent_handle ],
+        wp_get_theme()->get( 'Version' )
+    );
+
+    // Extra child CSS (estils.css).
+    wp_enqueue_style(
+        'child-estils',
+        get_stylesheet_directory_uri() . '/assets/css/estils.css',
+        [ 'child-style' ],
+        wp_get_theme()->get( 'Version' )
+    );
+
+    // Ensure jQuery is available.
+    wp_enqueue_script( 'jquery' );
+
+    // Main JS, loaded in footer, depends on jQuery.
+    wp_enqueue_script(
+        'child-main-js',
+        get_stylesheet_directory_uri() . '/assets/js/main.js',
+        [ 'jquery' ],
+        '1.0.0',
+        true
+    );
 }
+add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_assets' );
 
-add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
 
 /* REGISTER NEWS STYLE */
 

@@ -70,7 +70,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }
 
+
+
+
 /** Sets up WordPress vars and included files. */
 @include_once('/var/lib/sec/wp-settings-pre.php'); // Added by SiteGround WordPress management system
 require_once ABSPATH . 'wp-settings.php';
 @include_once('/var/lib/sec/wp-settings.php'); // Added by SiteGround WordPress management system
+
+
+
+

@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"@googlemaps/js-api-loader": "^1.16.8",
+		"@googlemaps/markerclusterer": "^2.6.2",
 		"@wordpress/api-fetch": "^7.9.0",
 		"@wordpress/block-editor": "^14.4.0",
 		"@wordpress/blocks": "^13.9.0",
