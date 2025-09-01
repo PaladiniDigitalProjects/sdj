@@ -114,7 +114,7 @@ $show_max                = 100; // Max number of items to show.
 							<div class="shortcode-builder--fields">
 								<div class="inner">
 									<select name="template-select" class="alm_element">
-										<optgroup label="<?php _e( 'Custom Repeaters', 'ajax-load-more' ); ?>">
+										<optgroup label="<?php _e( 'Repeater Templates', 'ajax-load-more' ); ?>">
 											<option name="default" value="default"><?php _e( 'Default', 'ajax-load-more' ); ?></option>
 											<?php
 											if ( has_action( 'alm_get_custom_repeaters' ) ) {
@@ -128,7 +128,7 @@ $show_max                = 100; // Max number of items to show.
 										<?php
 										// Theme Repeaters
 										if ( has_action( 'alm_list_theme_repeaters' ) ) {
-											echo '<optgroup label="' . __( 'Theme Repeaters', 'ajax-load-more' ) . '">';
+											echo '<optgroup label="' . __( 'Theme Templates', 'ajax-load-more' ) . '">';
 											do_action( 'alm_list_theme_repeaters' );
 											echo '</optgroup>';
 										}
