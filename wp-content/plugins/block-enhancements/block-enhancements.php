@@ -1,13 +1,14 @@
 <?php
 /**
  * Plugin Name:       Block Enhancements
- * Description:       Enhance Gutenberg blocks with practical features such as icons, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
+ * Description:       Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
  * Requires at least: 6.5
  * Requires PHP:      7.0
- * Version:           1.2.6
+ * Version:           1.2.7
  * Author:            Phi Phan
  * Author URI:        https://boldblocks.net
  * Plugin URI:        https://boldblocks.net?utm_source=BE&utm_campaign=visit+site&utm_medium=link&utm_content=Plugin+URI
+ * License:           GPL-3.0
  *
  * @package   BlockEnhancements
  * @copyright Copyright(c) 2022, Phi Phan
@@ -29,7 +30,7 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 		 *
 		 * @var String
 		 */
-		protected $version = '1.2.6';
+		protected $version = '1.2.7';
 
 		/**
 		 * Components
@@ -141,9 +142,6 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 		 * @return void
 		 */
 		public function run() {
-			// Load translations.
-			add_action( 'plugins_loaded', [ $this, 'load_textdomain' ] );
-
 			// Main hooks.
 			add_action( 'init', [ $this, 'init' ], 5 );
 
@@ -286,6 +284,16 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 					[ 'name' => 'core/post-title' ],
 					[ 'name' => 'core/site-title' ],
 				],
+				'withPosition'      => [
+					[ 'name' => 'core/group' ],
+					[ 'name' => 'core/columns' ],
+					[ 'name' => 'core/column' ],
+					[ 'name' => 'core/image' ],
+					[ 'name' => 'core/heading' ],
+					[ 'name' => 'core/paragraph' ],
+					[ 'name' => 'core/buttons' ],
+					[ 'name' => 'core/button' ],
+				],
 			];
 		}
 
@@ -391,6 +399,16 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 					),
 					'allowedDefault'  => $default_allowed_blocks['withTypography'],
 				],
+				'withPosition'      => [
+					'availableBlocks' => apply_filters(
+						'block_enhancements_get_available_blocks_by_feature',
+						[
+							[ 'name' => '.*' ],
+						],
+						'withPosition'
+					),
+					'allowedDefault'  => $default_allowed_blocks['withPosition'],
+				],
 			];
 		}
 
@@ -413,7 +431,7 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 				$support_features[ $feature_name ] = [ 'availableBlocks' => $feature['availableBlocks'] ];
 
 				$allowed_blocks_by_feature = false;
-				if ( is_array( $allowed_blocks ) && count( $allowed_blocks ) > 0 ) {
+				if ( is_array( $allowed_blocks ) ) {
 					foreach ( $allowed_blocks as  $allowed_block ) {
 						// @codingStandardsIgnoreLine WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 						if ( isset( $allowed_block['featureName'] ) && $allowed_block['featureName'] === $feature_name ) {
@@ -432,19 +450,6 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 			}
 
 			return $support_features;
-		}
-
-		/**
-		 * Load text domain
-		 *
-		 * @return void
-		 */
-		public function load_textdomain() {
-			load_plugin_textdomain(
-				'block-enhancements',
-				false,
-				plugin_basename( realpath( __DIR__ . '/languages' ) )
-			);
 		}
 
 		/**

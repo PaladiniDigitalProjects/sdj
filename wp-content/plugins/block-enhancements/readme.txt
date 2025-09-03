@@ -1,19 +1,19 @@
-=== Block Enhancements - Add practical features to Gutenberg blocks ===
+=== Block Enhancements - Add icon, color, shadow, transition, transform, responsive typography, alignment, hover style ===
 Contributors:      Mr2P
-Tags:              Gutenberg, blocks, responsive, button, icon
+Tags:              blocks, responsive, button, icon, hover
 Requires PHP:      7.0.0
 Requires at least: 6.5
 Tested up to:      6.8
-Stable tag:        1.2.6
+Stable tag:        1.2.7
 License:           GPL-3.0
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 Donate link:       https://boldblocks.net?utm_source=wp.org&utm_campaign=readme&utm_medium=link&utm_content=BE+Donate
 
-Enhance Gutenberg blocks with practical features such as icons, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
+Enhance Gutenberg blocks with features such as icon, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
 
 == Description ==
 
-Enhance Gutenberg blocks with practical features such as icons, color, shadow, transform, transition, responsive typography, responsive text alignment, hover style, etc.
+Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive typography, responsive text alignment, hover style, CSS position.
 Unlike other similar plugins, this plugin is fast, lightweight and clean. It only loads what you need. You can choose which features to apply to specific blocks through the settings page.
 
 *It works with all themes, however, the with-icon feature uses the CSS pseudo `::before` to add icons with the `mask-image` CSS property. It may conflict with other plugins or themes that use the same technique.*
@@ -28,6 +28,7 @@ Unlike other similar plugins, this plugin is fast, lightweight and clean. It onl
 * Add responsive text alignment. It's useful for 'container' blocks such as 'core/group', 'core/columns', 'core/column' and/or you want for example text-align center on mobile but text-align left on the desktop
 * Add transition
 * Add responsive font size, font weight, line height, and letter spacing based on media queries
+* Add CSS position
 
 ☐ More features will be added soon.
 
@@ -106,6 +107,13 @@ It is probably because you added an inline element such as bold, italic, highlig
 11. Add an icon to categories
 
 == Changelog ==
+
+= 1.2.7 =
+*Release Date - 11 August 2025*
+
+* Added    - The new with-position feature. Thanks to @hozefasmile for the suggestion.
+* Fixed    - Issue where the icon on the left for the core "Read More" block was not working.
+* Improved - Added the 'block_enhancements_get_breakpoints' hook to change the breakpoints beside getting the value from the Content Blocks Builder plugin.
 
 = 1.2.6 =
 *Release Date - 24 October 2024*

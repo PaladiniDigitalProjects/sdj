@@ -66,6 +66,9 @@
   font-weight: 600;
   margin-top: 16px;
 }
+.accordion__pattern_list_wrapper .accordion_list_item_footer > div {
+  text-transform: capitalize;
+}
 .accordion__pattern_list_wrapper .accordion_list_item_footer .components-button.is-primary {
   border-radius: 4px;
 }

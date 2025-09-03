@@ -50,6 +50,7 @@ if ( ! class_exists( IconLibrary::class ) ) :
 
 			// Bail if ther is no icons-version.json.
 			if ( \file_exists( $icons_version_file ) ) {
+				// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 				$icons_version = \file_get_contents( $icons_version_file );
 				$icons_version = \json_decode( $icons_version, true );
 
@@ -139,6 +140,7 @@ if ( ! class_exists( IconLibrary::class ) ) :
 
 			if ( $images ) {
 				foreach ( $images as $image ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 					$icon = file_get_contents( get_attached_file( $image->ID ) );
 					if ( $icon ) {
 						$media_svgs[] = [

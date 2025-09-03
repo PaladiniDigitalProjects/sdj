@@ -63,7 +63,10 @@ add_filter('wpswiper_frontend_js_register_args', function($args) {
     $args['deps'] = ['wpswiper-bundle', 'jquery', 'your-custom-dependency'];
 
     // Specify an additional loading strategy, such as async or defer
-    $args['args'] = ['in_footer' => false, 'strategy' => 'defer']; // Options: 'async' or 'defer'
+    $args['args'] = [
+		'in_footer' => false, 
+		'strategy' => 'defer'
+	]; // Options: 'async' or 'defer'
 
     return $args;
 });
@@ -115,6 +118,10 @@ Alternatively, you can install the plugin manually by downloading the plugin fro
 
 
 == Changelog ==
+
+= 1.2.18 =
+* Added support for the strategy parameter (async / defer) when registering frontend scripts.
+* The wpswiper_frontend_js_register_args filter now allows modifying deps, in_footer, and strategy.
 
 = 1.2.17 =
 * Fix breakpoints for custom swipers

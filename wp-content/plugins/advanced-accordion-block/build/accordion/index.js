@@ -21,9 +21,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/disable-qa-button */ "./src/utils/disable-qa-button.js");
-/* harmony import */ var _utils_get_border_style__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/get-border-style */ "./src/utils/get-border-style.js");
-
+/* harmony import */ var _utils_get_border_style__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/get-border-style */ "./src/utils/get-border-style.js");
 
 
 
@@ -82,12 +80,11 @@ const saveDep = props => {
     bodyBorder
   } = attributes;
   const aab_premium = aagb_local_object.licensing;
-  const headingBorderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_6__.getBorderStyle)(headingBorder);
+  const headingBorderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_5__.getBorderStyle)(headingBorder);
   const calculatedHeaderBg = QaStyle && headerBg.toLowerCase() === "#bcb6b638" ? "transparent" : headerBg;
   let subheadingPlaceholder = "";
-  if (!aab_premium) (0,_utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_5__["default"])();
-  const borderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_6__.getBorderStyle)(border);
-  const bodyBorderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_6__.getBorderStyle)(bodyBorder);
+  const borderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_5__.getBorderStyle)(border);
+  const bodyBorderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_5__.getBorderStyle)(bodyBorder);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
     className: "custom-css-block"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("style", null, `#aab_accordion_${uniqueId} { ${customCSS} }`, anchorLinkShow && headingColor && aab_premium && `
@@ -287,6 +284,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utils/disable-qa-button */ "./src/utils/disable-qa-button.js");
 /* harmony import */ var _editor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./editor */ "./src/accordion/editor/index.js");
 /* harmony import */ var _utils_global_settings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../utils/global-settings */ "./src/utils/global-settings.js");
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../utils/constants */ "./src/utils/constants.js");
 
 
 /* eslint-disable react/jsx-no-target-blank */
@@ -294,6 +292,7 @@ __webpack_require__.r(__webpack_exports__);
 /* eslint-disable @wordpress/no-unsafe-wp-apis */
 
  // For syntax highlighting style
+
 
 
 
@@ -332,8 +331,20 @@ const Edit = props => {
     fetchGlobalSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  // Check if aab_premium is true
-  const aab_premium = aagb_local_object.licensing;
+
+  // Only call disableQAButton once when component mounts if premium is false
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
+    if (!_utils_constants__WEBPACK_IMPORTED_MODULE_10__.isPro) {
+      (0,_utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_7__["default"])();
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (!_utils_constants__WEBPACK_IMPORTED_MODULE_10__.isPro) {
+        (0,_utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_7__.cleanupQAButtonObserver)();
+      }
+    };
+  }, []);
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__.useBlockProps)();
   const hasQaStyle = blockProps.className?.includes('is-style-qa');
   const {
@@ -393,7 +404,6 @@ const Edit = props => {
       });
     }
   }, [hasQaStyle, attributes.QaStyle]);
-  if (!aab_premium) (0,_utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_7__["default"])();
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_editor__WEBPACK_IMPORTED_MODULE_8__["default"].Styles, props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_editor__WEBPACK_IMPORTED_MODULE_8__["default"].Settings, props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_output__WEBPACK_IMPORTED_MODULE_6__["default"], (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({
     isEditor: true
   }, props)));
@@ -1223,9 +1233,7 @@ function AccordionStylesPanel({
   } = attributes;
   const onChangeBorder = border => {
     setAttributes({
-      border
-    });
-    setAttributes({
+      border,
       bodyBorder: {
         "top": {
           "color": border.color,
@@ -1234,6 +1242,10 @@ function AccordionStylesPanel({
         }
       }
     });
+  };
+  const normalizePx = value => {
+    if (typeof value === 'string' && value.endsWith('px')) return value;
+    return `${parseInt(value, 10)}px`;
   };
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
     initialOpen: false,
@@ -1277,8 +1289,8 @@ function AccordionStylesPanel({
     onChange: newValue => setAttributes({
       ...margins,
       margins: {
-        top: newValue.top,
-        bottom: newValue.bottom
+        top: normalizePx(newValue.top),
+        bottom: normalizePx(newValue.bottom)
       }
     })
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalToolsPanelItem, {
@@ -1301,10 +1313,10 @@ function AccordionStylesPanel({
     onChange: newValue => setAttributes({
       ...paddings,
       paddings: {
-        top: newValue.top,
-        left: newValue.left,
-        right: newValue.right,
-        bottom: newValue.bottom
+        top: normalizePx(newValue.top),
+        left: normalizePx(newValue.left),
+        right: normalizePx(newValue.right),
+        bottom: normalizePx(newValue.bottom)
       }
     })
   }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalToolsPanel, {
@@ -1834,7 +1846,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function AccordionBody(props) {
-  var _getAttrDeep, _getAttrDeep2, _getAttrDeep3, _getAttrDeep4, _paddings$left, _paddings$left2;
+  var _getAttrDeep, _getAttrDeep2, _getAttrDeep3, _getAttrDeep4;
   const {
     isEditor,
     attributes
@@ -1861,44 +1873,38 @@ function AccordionBody(props) {
   const bodyBorder = (_getAttrDeep3 = getAttrDeep('bodyBorder')) !== null && _getAttrDeep3 !== void 0 ? _getAttrDeep3 : null;
   const borderRadius = (_getAttrDeep4 = getAttrDeep('borderRadius')) !== null && _getAttrDeep4 !== void 0 ? _getAttrDeep4 : null;
   const bodyBorderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_5__.getBorderStyle)(bodyBorder);
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `aab__accordion_body ${makeActive ? `aab__accordion_body--show` : ``} ${makeActive ? `active__accordion_${uniqueId}` : ''}`,
-    role: "region",
-    style: {
-      ...(bodyBg && {
-        backgroundColor: bodyBg
-      }),
-      display: makeActive ? 'block' : 'none',
-      ...(borderRadius && {
-        borderRadius: `0 0 ${borderRadius}px ${borderRadius}px`
-      }),
-      ...bodyBorderStyle,
-      ...(!QaStyle ? {
-        ...(Object.values(paddings).some(val => val) && {
-          padding: `${paddings.top} ${paddings.left} ${paddings.bottom} ${paddings.right}`
-        })
-      } : QaStyle && iconPosition === "aab_left_icon" ? {
-        borderTop: 'none !important',
-        paddingTop: `0`,
-        ...(paddings.bottom && {
-          paddingBottom: paddings.bottom
-        }),
-        ...(paddings.right && {
-          paddingRight: paddings.right
-        }),
-        paddingLeft: `calc(${(_paddings$left = paddings.left) !== null && _paddings$left !== void 0 ? _paddings$left : '15px'} + 140px)`
-      } : {
-        borderTop: 'none !important',
-        paddingTop: `0`,
-        ...(paddings.bottom && {
-          paddingBottom: paddings.bottom
-        }),
-        ...(paddings.right && {
-          paddingRight: paddings.right
-        }),
-        paddingLeft: `calc(${(_paddings$left2 = paddings.left) !== null && _paddings$left2 !== void 0 ? _paddings$left2 : '15px'} + 90px)`
-      })
+  const accordionBodyClassName = `aab__accordion_body ${makeActive ? 'aab__accordion_body--show' : ''} ${makeActive ? `active__accordion_${uniqueId}` : ''}`;
+  const accordionBodyStyle = {
+    display: makeActive ? 'block' : 'none',
+    ...(bodyBg ? {
+      backgroundColor: bodyBg
+    } : {}),
+    ...(borderRadius ? {
+      borderRadius: `0 0 ${borderRadius}px ${borderRadius}px`
+    } : {}),
+    ...bodyBorderStyle
+  };
+
+  // Padding logic
+  const hasPadding = Object.values(paddings).some(val => val);
+  if (!QaStyle) {
+    if (hasPadding) {
+      accordionBodyStyle.padding = `${paddings.top} ${paddings.left} ${paddings.bottom} ${paddings.right}`;
     }
+  } else {
+    var _paddings$left;
+    accordionBodyStyle.borderTop = 'none !important';
+    accordionBodyStyle.paddingTop = '0';
+    if (paddings.bottom) accordionBodyStyle.paddingBottom = paddings.bottom;
+    if (paddings.right) accordionBodyStyle.paddingRight = paddings.right;
+    const leftPad = (_paddings$left = paddings.left) !== null && _paddings$left !== void 0 ? _paddings$left : '15px';
+    const offset = iconPosition === 'aab_left_icon' ? '140px' : '90px';
+    accordionBodyStyle.paddingLeft = `calc(${leftPad} + ${offset})`;
+  }
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: accordionBodyClassName,
+    role: "region",
+    style: accordionBodyStyle
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "aab__accordion_component"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(InnerBlocks, {
@@ -1950,6 +1956,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _utils_get_border_style__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../utils/get-border-style */ "./src/utils/get-border-style.js");
 /* harmony import */ var _utils_global_settings__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../utils/global-settings */ "./src/utils/global-settings.js");
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils/constants */ "./src/utils/constants.js");
+
 
 
 
@@ -1977,8 +1985,14 @@ function AccordionHead({
     showHeadingIcon,
     accessibilityOn
   } = attributes;
-  const aab_premium = aagb_local_object.licensing;
-  let subheadingPlaceholder = aab_premium ? "Write some subheading" : "Subheading Available on Pro";
+  const iconClassesMap = {
+    "plus-alt": "dismiss",
+    "plus-alt2": "minus",
+    "arrow-down": "arrow-up",
+    "arrow-down-alt2": "arrow-up-alt2",
+    "insert": "remove"
+  };
+  let subheadingPlaceholder = _utils_constants__WEBPACK_IMPORTED_MODULE_6__.isPro ? "Write some subheading" : "Subheading Available on Pro";
   if (!isEditor) subheadingPlaceholder = "";
   const getAttrDeep = (0,_utils_global_settings__WEBPACK_IMPORTED_MODULE_5__.createAttrGetter)(attributes);
   const anchorLinkShow = (_getAttrDeep = getAttrDeep('anchorLinkShow')) !== null && _getAttrDeep !== void 0 ? _getAttrDeep : false;
@@ -2002,18 +2016,26 @@ function AccordionHead({
   const borderRadius = (_getAttrDeep19 = getAttrDeep('borderRadius')) !== null && _getAttrDeep19 !== void 0 ? _getAttrDeep19 : null;
   const headingBorderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_4__.getBorderStyle)(headingBorder);
   const calculatedHeaderBg = QaStyle && headerBg?.toLowerCase() === "#bcb6b638" ? "transparent" : headerBg;
+  const currentIconClass = makeActive ? iconClassesMap[iconClass] : iconClass;
+  const accordionHeadClassName = `aab__accordion_head ${iconPosition} ${makeActive ? 'active' : ''}`;
+  const accordionHeadStyle = {
+    backgroundColor: calculatedHeaderBg,
+    ...headingBorderStyle
+  };
+
+  // Add border radius if provided
+  if (borderRadius) {
+    accordionHeadStyle.borderRadius = `${borderRadius}px ${borderRadius}px 0 0`;
+  }
+
+  // Add padding if any padding value is set
+  const hasPadding = Object.values(paddings).some(val => val);
+  if (hasPadding) {
+    accordionHeadStyle.padding = `${paddings.top} ${paddings.left} ${paddings.bottom} ${paddings.right}`;
+  }
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `aab__accordion_head ${iconPosition} ${makeActive ? 'active' : ''} `,
-    style: {
-      ...(borderRadius && {
-        borderRadius: `0 0 ${borderRadius}px ${borderRadius}px`
-      }),
-      backgroundColor: calculatedHeaderBg,
-      ...(Object.values(paddings).some(val => val) && {
-        padding: `${paddings.top} ${paddings.left} ${paddings.bottom} ${paddings.right}`
-      }),
-      ...headingBorderStyle
-    }
+    className: accordionHeadClassName,
+    style: accordionHeadStyle
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `aab__accordion_heading ${iconPosition} ${anchorPosition}`
   }, showHeadingIcon && headingIconImageUrl && !QaStyle && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -2021,7 +2043,7 @@ function AccordionHead({
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
     src: headingIconImageUrl,
     alt: headingIconAlt || (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_3__.__)('Heading Icon', 'advanced-accordion-block')
-  })), QaStyle && aab_premium && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })), QaStyle && _utils_constants__WEBPACK_IMPORTED_MODULE_6__.isPro && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "icon-container"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "icon-q",
@@ -2050,25 +2072,25 @@ function AccordionHead({
       margin: 0,
       color: headingColor
     }
-  }), anchorLinkShow && aab_premium && isEditor && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
+  }), anchorLinkShow && _utils_constants__WEBPACK_IMPORTED_MODULE_6__.isPro && isEditor && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
     tabIndex: accessibilityOn ? 0 : -1,
     className: "anchorjs-link",
     href: "#"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("i", {
     className: "dashicons dashicons-admin-links"
-  }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(RichText, {
+  }))), _utils_constants__WEBPACK_IMPORTED_MODULE_6__.isPro && (isEditor || !isEditor && subheading !== '') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(RichText, {
     className: "aab__accordion_subheading",
     tagName: "p",
     placeholder: subheadingPlaceholder,
-    value: aab_premium ? subheading : '',
+    value: _utils_constants__WEBPACK_IMPORTED_MODULE_6__.isPro ? subheading : '',
     onChange: value => {
       setAttributes({
         subheading: value
       });
     },
     onFocus: e => {
-      if (!aab_premium) {
-        e.target.blur(); // Prevent focus if aab_premium is false
+      if (!_utils_constants__WEBPACK_IMPORTED_MODULE_6__.isPro) {
+        e.target.blur(); // Prevent focus if isPro is false
       }
     },
     style: {
@@ -2090,7 +2112,7 @@ function AccordionHead({
       })
     }
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
-    className: `aab__icon dashicons dashicons-${iconClass}`,
+    className: `aab__icon dashicons dashicons-${currentIconClass}`,
     style: {
       fontSize: iconFontSize ? iconFontSize + 'px' : ''
     }
@@ -2118,14 +2140,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _accordion_head__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./accordion-head */ "./src/accordion/output/accordion-head.js");
-/* harmony import */ var _accordion_body__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./accordion-body */ "./src/accordion/output/accordion-body.js");
-/* harmony import */ var _utils_get_border_style__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils/get-border-style */ "./src/utils/get-border-style.js");
-/* harmony import */ var _utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../utils/disable-qa-button */ "./src/utils/disable-qa-button.js");
-/* harmony import */ var _utils_global_settings__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../utils/global-settings */ "./src/utils/global-settings.js");
-
+/* harmony import */ var _accordion_head__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./accordion-head */ "./src/accordion/output/accordion-head.js");
+/* harmony import */ var _accordion_body__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./accordion-body */ "./src/accordion/output/accordion-body.js");
+/* harmony import */ var _utils_get_border_style__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../utils/get-border-style */ "./src/utils/get-border-style.js");
+/* harmony import */ var _utils_global_settings__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../utils/global-settings */ "./src/utils/global-settings.js");
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../utils/constants */ "./src/utils/constants.js");
 
 
 
@@ -2150,44 +2169,45 @@ function Output(props) {
     accessibilityOn,
     focusOutlineColor
   } = attributes;
-  const aab_premium = aagb_local_object.licensing;
-  if (!aab_premium) (0,_utils_disable_qa_button__WEBPACK_IMPORTED_MODULE_8__["default"])();
-  const getAttrDeep = (0,_utils_global_settings__WEBPACK_IMPORTED_MODULE_9__.createAttrGetter)(attributes);
+  const getAttrDeep = (0,_utils_global_settings__WEBPACK_IMPORTED_MODULE_7__.createAttrGetter)(attributes);
   const anchorLinkShow = (_getAttrDeep = getAttrDeep('anchorLinkShow')) !== null && _getAttrDeep !== void 0 ? _getAttrDeep : false;
   const border = (_getAttrDeep2 = getAttrDeep('border')) !== null && _getAttrDeep2 !== void 0 ? _getAttrDeep2 : {
     width: '1px',
     color: '#bcb6b638',
     style: 'solid'
   };
-  const borderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_7__.getBorderStyle)(border);
+  const borderStyle = (0,_utils_get_border_style__WEBPACK_IMPORTED_MODULE_6__.getBorderStyle)(border);
   const margins = (_getAttrDeep3 = getAttrDeep('margins')) !== null && _getAttrDeep3 !== void 0 ? _getAttrDeep3 : null;
   const borderRadius = (_getAttrDeep4 = getAttrDeep('borderRadius')) !== null && _getAttrDeep4 !== void 0 ? _getAttrDeep4 : null;
   const headingColor = (_getAttrDeep5 = getAttrDeep('headingColor')) !== null && _getAttrDeep5 !== void 0 ? _getAttrDeep5 : null;
+  const accordionClassName = `aab__accordion_container ${disableAccordion ? 'aab__accordion_disabled' : ''} ${accessibilityOn ? 'accessibilityOn' : ''} ${makeActive ? `active__accordion_container_${uniqueId}` : ''}`;
+  const accordionStyle = {
+    marginTop: (_margins$top = margins?.top) !== null && _margins$top !== void 0 ? _margins$top : '0px',
+    marginBottom: (_margins$bottom = margins?.bottom) !== null && _margins$bottom !== void 0 ? _margins$bottom : '15px',
+    ...(borderRadius ? {
+      borderRadius: `${borderRadius}px`
+    } : {}),
+    ...borderStyle
+  };
+  const blockProps = useBlockProps({
+    className: accordionClassName
+  });
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
     className: "custom-css-block"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("style", null, `#aab_accordion_${uniqueId} { ${customCSS} }`, anchorLinkShow && headingColor && aab_premium && `
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("style", null, `#aab_accordion_${uniqueId} { ${customCSS} }`, anchorLinkShow && headingColor && _utils_constants__WEBPACK_IMPORTED_MODULE_8__.isPro && `
                             #aab_accordion_${uniqueId} .aab__accordion_heading .anchorjs-link { 
                               color: ${headingColor};
                             }
                           `, accessibilityOn && focusOutlineColor !== "#C2DBFE" && `#aab_accordion_${uniqueId}:focus-visible {
                               outline: 2px solid ${focusOutlineColor};
                             }
-                          `)), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, useBlockProps({
-    className: `aab__accordion_container ${disableAccordion ? 'aab__accordion_disabled' : ''} ${accessibilityOn && 'accessibilityOn'} ${makeActive ? `active__accordion_container_${uniqueId}` : ''}`
-  }), {
-    style: {
-      marginTop: (_margins$top = margins?.top) !== null && _margins$top !== void 0 ? _margins$top : '0px',
-      marginBottom: (_margins$bottom = margins?.bottom) !== null && _margins$bottom !== void 0 ? _margins$bottom : '15px',
-      ...(borderRadius && {
-        borderRadius: `${borderRadius}px`
-      }),
-      ...borderStyle // Spread shorthand or individual border values
-    },
+                          `)), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, blockProps, {
+    style: accordionStyle,
     id: `aab_accordion_${uniqueId}`,
     role: "button",
     "aria-expanded": makeActive,
     tabIndex: accessibilityOn ? 0 : -1
-  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_accordion_head__WEBPACK_IMPORTED_MODULE_5__["default"], props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_accordion_body__WEBPACK_IMPORTED_MODULE_6__["default"], props)), anchorLinkShow === true && aab_premium && !isEditor && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("script", null, `
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_accordion_head__WEBPACK_IMPORTED_MODULE_4__["default"], props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_accordion_body__WEBPACK_IMPORTED_MODULE_5__["default"], props)), anchorLinkShow === true && _utils_constants__WEBPACK_IMPORTED_MODULE_8__.isPro && !isEditor && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("script", null, `
 								 document.addEventListener("DOMContentLoaded", () => {
                                         var Anchor1 = new AnchorJS();
                                         Anchor1.add('#aab_accordion_${uniqueId} .aab__accordion_heading .title_wrapper');
@@ -2659,6 +2679,21 @@ const tags = [{
 
 /***/ }),
 
+/***/ "./src/utils/constants.js":
+/*!********************************!*\
+  !*** ./src/utils/constants.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isPro: () => (/* binding */ isPro)
+/* harmony export */ });
+const isPro = !!aagb_local_object.licensing;
+
+/***/ }),
+
 /***/ "./src/utils/disable-qa-button.js":
 /*!****************************************!*\
   !*** ./src/utils/disable-qa-button.js ***!
@@ -2668,27 +2703,91 @@ const tags = [{
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   cleanupQAButtonObserver: () => (/* binding */ cleanupQAButtonObserver),
 /* harmony export */   "default": () => (/* binding */ disableQAButton)
 /* harmony export */ });
+// Singleton pattern to ensure only one observer runs
+let qaButtonObserver = null;
+let isObserverActive = false;
+
+// Debounce function to limit how often the disable operation runs
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// The actual disable operation
+function disableQAButtons() {
+  const qaButtons = document.querySelectorAll('.block-editor-block-styles__variants button[aria-label="aab-style-pro-checked"]');
+  qaButtons.forEach(button => {
+    if (!button.hasAttribute('disabled')) {
+      button.setAttribute('disabled', 'disabled');
+      const panelBody = button.closest('.components-panel__body');
+      if (panelBody && !panelBody.classList.contains('aab-pro-element')) {
+        panelBody.classList.add('aab-pro-element');
+      }
+    }
+  });
+}
+
+// Debounced version with 100ms delay
+const debouncedDisableQAButtons = debounce(disableQAButtons, 100);
 function disableQAButton() {
-  const observer = new MutationObserver(mutations => {
+  // If observer is already active, just run the disable operation once and return
+  if (isObserverActive) {
+    disableQAButtons();
+    return;
+  }
+
+  // Mark observer as active
+  isObserverActive = true;
+
+  // Initial disable
+  disableQAButtons();
+
+  // Create observer only once
+  qaButtonObserver = new MutationObserver(mutations => {
+    let shouldProcess = false;
     mutations.forEach(mutation => {
       if (mutation.addedNodes.length) {
         mutation.addedNodes.forEach(node => {
-          // Find the button for the "Q A" style and disable it
-          jQuery('.block-editor-block-styles__variants button[aria-label=aab-style-pro-checked]').attr('disabled', 'disabled');
-          // add class parent .components-panel__body.is-opened
-          jQuery('.block-editor-block-styles__variants button[aria-label=aab-style-pro-checked]').closest('.components-panel__body').addClass('aab-pro-element');
+          // Only process if the added node is an element and contains relevant classes
+          if (node.nodeType === Node.ELEMENT_NODE && (node.classList?.contains('block-editor-block-styles__variants') || node.querySelector?.('.block-editor-block-styles__variants'))) {
+            shouldProcess = true;
+          }
         });
       }
     });
+    if (shouldProcess) {
+      debouncedDisableQAButtons();
+    }
   });
 
-  // Start observing the editor for changes
-  observer.observe(document.body, {
+  // Start observing with more specific options
+  qaButtonObserver.observe(document.body, {
     childList: true,
-    subtree: true
+    subtree: true,
+    attributes: false,
+    attributeOldValue: false,
+    characterData: false,
+    characterDataOldValue: false
   });
+}
+
+// Cleanup function to disconnect observer when needed
+function cleanupQAButtonObserver() {
+  if (qaButtonObserver) {
+    qaButtonObserver.disconnect();
+    qaButtonObserver = null;
+    isObserverActive = false;
+  }
 }
 
 /***/ }),

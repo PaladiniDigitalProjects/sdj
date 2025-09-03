@@ -68,10 +68,10 @@ if ( ! class_exists( Settings::class ) ) :
 			if ( 'settings_page_be-settings' === $screen->id ) {
 				?>
 				<div class="bb-settings-header be-settings-header">
-					<h1><strong><?php printf( __( 'Block Enhancements' ) ); ?></strong> <code><?php echo esc_html( $this->the_plugin_instance->get_plugin_version() ); ?></code></h1>
+					<h1><strong><?php echo esc_html( 'Block Enhancements' ); ?></strong> <code><?php echo esc_html( $this->the_plugin_instance->get_plugin_version() ); ?></code></h1>
 					<ul>
-						<li><a href="https://wordpress.org/support/plugin/block-enhancements/" target="_blank"><span class="dashicons dashicons-editor-help"></span> <?php printf( __( 'Help & Support', 'block-enhancements' ) ); ?></a></li>
-						<li><a href="https://wordpress.org/support/plugin/block-enhancements/reviews/#new-post" target="_blank"><span class="dashicons dashicons-star-filled"></span> <?php printf( __( 'Review', 'block-enhancements' ) ); ?></a></li>
+						<li><a href="https://wordpress.org/support/plugin/block-enhancements/" target="_blank"><span class="dashicons dashicons-editor-help"></span> <?php esc_html_e( 'Help & Support', 'block-enhancements' ); ?></a></li>
+						<li><a href="https://wordpress.org/support/plugin/block-enhancements/reviews/#new-post" target="_blank"><span class="dashicons dashicons-star-filled"></span> <?php esc_html_e( 'Review', 'block-enhancements' ); ?></a></li>
 					</ul>
 				</div>
 				<?php
@@ -85,8 +85,8 @@ if ( ! class_exists( Settings::class ) ) :
 		 */
 		public function add_admin_page() {
 			$this->hook_suffix = add_options_page(
-				__( 'Block Enhancements' ),
-				__( 'Block Enhancements' ),
+				'Block Enhancements',
+				'Block Enhancements',
 				'manage_options',
 				'be-settings',
 				function () {
@@ -234,6 +234,10 @@ if ( ! class_exists( Settings::class ) ) :
 							'featureName'   => 'withTypography',
 							'allowedBlocks' => $default_allowed_blocks['withTypography'],
 						],
+						[
+							'featureName'   => 'withPosition',
+							'allowedBlocks' => $default_allowed_blocks['withPosition'],
+						],
 					],
 				]
 			);
@@ -319,7 +323,9 @@ if ( ! class_exists( Settings::class ) ) :
 
 			// Redirect to the getting started page, ignore bulk activation.
 			if (
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			! ( ( isset( $_REQUEST['action'] ) && 'activate-selected' === $_REQUEST['action'] ) &&
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
 			( isset( $_POST['checked'] ) && count( $_POST['checked'] ) > 1 ) ) ) {
 				add_option( 'block_enhancements_activation_redirect', wp_get_current_user()->ID );
 			}
@@ -512,7 +518,7 @@ if ( ! class_exists( Settings::class ) ) :
 			// Get current screen.
 			$current_screen = get_current_screen();
 			if ( 'settings_page_be-settings' === $current_screen->id ) {
-				$footer_text = '<i><strong>Block Enhancements</strong> <code>' . esc_html__( $this->the_plugin_instance->get_plugin_version() ) . '</code>. Please <a target="_blank" href="https://wordpress.org/support/plugin/block-enhancements/reviews/#new-post" title="Rate the plugin" style="text-decoration:none">rate the plugin <span style="color:#ffb900">★★★★★</span></a> to help us spread the word. Thank you from the <a href="https://boldblocks.net/?utm_source=Block+Enhancements&utm_campaign=Block+Enhancements+visit+site&utm_medium=link&utm_content=footer-text" target="_blank" title="' . __( 'Visit the Plugin website', 'block-enhancements' ) . '" style="text-decoration:none"><strong>BoldBlocks</strong></a> team!</i>';
+				$footer_text = '<i><strong>Block Enhancements</strong> <code>' . esc_html( $this->the_plugin_instance->get_plugin_version() ) . '</code>. Please <a target="_blank" href="https://wordpress.org/support/plugin/block-enhancements/reviews/#new-post" title="Rate the plugin" style="text-decoration:none">rate the plugin <span style="color:#ffb900">★★★★★</span></a> to help us spread the word. Thank you from the <a href="https://boldblocks.net/?utm_source=Block+Enhancements&utm_campaign=Block+Enhancements+visit+site&utm_medium=link&utm_content=footer-text" target="_blank" title="' . esc_attr__( 'Visit the Plugin website', 'block-enhancements' ) . '" style="text-decoration:none"><strong>BoldBlocks</strong></a> team!</i>';
 			}
 
 			return $footer_text;

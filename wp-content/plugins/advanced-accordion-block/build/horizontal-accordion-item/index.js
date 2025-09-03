@@ -403,10 +403,11 @@ function Output(props) {
     const activeBlockExists = siblingBlocks?.some(block => block?.clientId === activeItemsClientId);
     if (!activeBlockExists) activateAccordion(siblingBlocks?.[0]?.clientId);
   }, [activeItemsClientId, siblingBlocks]);
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", useBlockProps({
-    className: `${isActive ? 'active' : ''}`,
+  const blockProps = useBlockProps({
+    className: isActive ? 'active' : '',
     onClick: () => activateAccordion(clientId)
-  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_accordion_head__WEBPACK_IMPORTED_MODULE_3__["default"], props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_accordion_body__WEBPACK_IMPORTED_MODULE_4__["default"], props));
+  });
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", blockProps, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_accordion_head__WEBPACK_IMPORTED_MODULE_3__["default"], props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_accordion_body__WEBPACK_IMPORTED_MODULE_4__["default"], props));
 }
 
 /***/ }),
@@ -613,7 +614,7 @@ function _extends() {
   \**************************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":2,"name":"aab/horizontal-accordion-item","version":"0.0.1","title":"Horizontal Accordion Item","category":"accordion-block","description":"Accordion Item for Horizontal Accordion","parent":["aab/horizontal-accordion"],"supports":{"spacing":{"padding":true,"margin":true},"color":{"color":true,"background":true}},"attributes":{"iconUrl":{"type":"string"},"heading":{"type":"string"},"subheading":{"type":"string"}},"textdomain":"advanced-accordion-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":["file:./style-index.css"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":2,"name":"aab/horizontal-accordion-item","version":"0.0.1","title":"Horizontal Accordion Item","category":"accordion-block","description":"Accordion Item for Horizontal Accordion","parent":["aab/horizontal-accordion"],"supports":{"spacing":{"padding":true,"margin":true},"color":{"color":true,"background":true}},"attributes":{"iconUrl":{"type":"string"},"heading":{"type":"string"},"subheading":{"type":"string"}},"textdomain":"advanced-accordion-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":["aahb-horizontal-accordion-item"]}');
 
 /***/ })
 

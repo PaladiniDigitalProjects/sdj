@@ -273,7 +273,7 @@ img.no-responsive,
 }
 
 .hide {
-  display: none;
+  display: none !important;
 }
 
 .alignwide {
@@ -300,10 +300,6 @@ img.no-responsive,
   float: right;
   margin: 2rem 1rem 0 0;
   cursor: pointer;
-}
-
-.redondeado {
-  border-radius: 1rem;
 }
 
 /* IMG FOR MOBILE */
@@ -553,7 +549,6 @@ ul.category-list li.entry-categories:before {
   }
 }
 
-/* PAGINATION */
 /* VIDEO */
 .embed-container {
   position: relative;
@@ -795,6 +790,10 @@ button.btn:hover {
 }
 button.btn.btn-descargar {
   background-color: #ffffff;
+}
+
+.redondeado {
+  border-radius: 1rem;
 }
 
 /* REDES SOCIALES COMUNICACIÓN */
@@ -1251,56 +1250,98 @@ main.la-casa-de-todos .is-layout-grid {
 .radio1 {
   border-radius: 0.1rem;
 }
+.radio1 > img {
+  border-radius: 0.1rem;
+}
 
 .radio2 {
+  border-radius: 0.2rem;
+}
+.radio2 > img {
   border-radius: 0.2rem;
 }
 
 .radio3 {
   border-radius: 0.3rem;
 }
+.radio3 > img {
+  border-radius: 0.3rem;
+}
 
 .radio4 {
+  border-radius: 0.4rem;
+}
+.radio4 > img {
   border-radius: 0.4rem;
 }
 
 .radio5 {
   border-radius: 0.5rem;
 }
+.radio5 > img {
+  border-radius: 0.5rem;
+}
 
 .radio6 {
+  border-radius: 0.6rem;
+}
+.radio6 > img {
   border-radius: 0.6rem;
 }
 
 .radio7 {
   border-radius: 0.7rem;
 }
+.radio7 > img {
+  border-radius: 0.7rem;
+}
 
 .radio8 {
+  border-radius: 0.8rem;
+}
+.radio8 > img {
   border-radius: 0.8rem;
 }
 
 .radio9 {
   border-radius: 0.9rem;
 }
+.radio9 > img {
+  border-radius: 0.9rem;
+}
 
 .radio10 {
+  border-radius: 1rem;
+}
+.radio10 > img {
   border-radius: 1rem;
 }
 
 .radio16 {
   border-radius: 1.6rem;
 }
+.radio16 > img {
+  border-radius: 1.6rem;
+}
 
 .radio22 {
+  border-radius: 2.2rem;
+}
+.radio22 > img {
   border-radius: 2.2rem;
 }
 
 .radio34 {
   border-radius: 3.4rem;
 }
+.radio34 > img {
+  border-radius: 3.4rem;
+}
 
 .radio46 {
+  border-radius: 4.6rem;
+}
+.radio46 > img {
   border-radius: 4.6rem;
 }
 
@@ -6981,11 +7022,37 @@ body > .menu-menu-nav-hermano-container {
   display: none;
 }
 
+.nutrities p {
+  padding-right: 0 !important;
+}
+.nutrities p strong {
+  font-family: "Suisse-Semi-Bold", sans-serif;
+}
 .nutrities .col_apertura {
   position: relative;
 }
+.nutrities .col_apertura .wp-block-column {
+  order: 1;
+}
+.nutrities .col_apertura .wp-block-column:first-child {
+  order: 2;
+}
+.nutrities .col_apertura .wp-block-column:last-child {
+  order: 3;
+}
+@media only screen and (min-width: 768px) {
+  .nutrities .col_apertura .wp-block-column {
+    order: 2;
+  }
+  .nutrities .col_apertura .wp-block-column:first-child {
+    order: 1;
+  }
+  .nutrities .col_apertura .wp-block-column:last-child {
+    order: 3;
+  }
+}
 .nutrities h1.wp-block-post-title {
-  font-family: "TiemposHeadline-Light", serif;
+  font-family: "Suisse-Semi-Bold", sans-serif;
   line-height: 120%;
   margin-bottom: 1rem;
 }
@@ -7013,13 +7080,12 @@ body > .menu-menu-nav-hermano-container {
   margin: 0 !important;
 }
 .nutrities .wp-block-buttons.secciones {
-  position: relative;
-  z-index: 111;
-  margin: -7rem auto -6rem !important;
+  position: inherit;
+  flex-direction: column;
+  background-color: #F9F8FF;
 }
 .nutrities .wp-block-buttons.secciones .wp-block-button {
-  margin-right: 4rem;
-  width: calc(33.33% - 8rem);
+  width: calc(100% - 4rem);
   position: relative;
   z-index: 11;
   transition: 0.35s;
@@ -7032,12 +7098,12 @@ body > .menu-menu-nav-hermano-container {
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   text-align: left;
   padding: 0 12rem 0 2rem;
-  font-weight: bold !important;
   line-height: 120%;
   height: 10rem;
   border-radius: 0.5rem 5rem 5rem 0.5rem !important;
-  font-family: "Suisse-Light", sans-serif;
-  letter-spacing: 0.1rem;
+  font-family: "Suisse-Regular", sans-serif;
+  letter-spacing: 0;
+  font-size: 2.2rem !important;
 }
 .nutrities .wp-block-buttons.secciones .wp-block-button:before {
   content: " ";
@@ -7063,8 +7129,25 @@ body > .menu-menu-nav-hermano-container {
   background: url("../img/Cocina.svg") center no-repeat;
   background-size: 100%;
 }
+@media only screen and (min-width: 1024px) {
+  .nutrities .wp-block-buttons.secciones .wp-block-button {
+    margin-right: 2rem;
+    width: calc(33.33% - 8rem);
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .nutrities .wp-block-buttons.secciones {
+    background-color: transparent;
+    z-index: 111;
+    margin: -7rem auto -6rem !important;
+    flex-direction: row;
+  }
+  .nutrities .wp-block-buttons.secciones.colum {
+    flex-direction: column !important;
+  }
+}
 .nutrities .wp-block-buttons.secciones.is-vertical {
-  position: absolute;
+  position: relative;
   margin: 0 !important;
 }
 .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button {
@@ -7089,7 +7172,9 @@ body > .menu-menu-nav-hermano-container {
 .nutrities .sponsors img {
   width: 100%;
   height: auto;
-  margin-bottom: 4rem;
+}
+.nutrities .sponsors.minH {
+  min-height: 39.5rem;
 }
 .nutrities img {
   width: 100%;
@@ -7113,19 +7198,24 @@ body > .menu-menu-nav-hermano-container {
 }
 .nutrities .listado-recetas ul li img {
   border-radius: 1rem 1rem 0 0 !important;
+  height: 280px;
 }
 .nutrities .listado-recetas ul li h2 {
-  padding: 2rem 1rem !important;
-  font-family: "Suisse-Regular", sans-serif !important;
-  font-family: "Suisse-Regular", sans-serif !important;
+  padding: 2rem 1.5rem !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
+  border-radius: 0 0 1rem 1rem;
+  background-color: #a6bb00;
 }
 .nutrities .listado-recetas ul li h2 > a {
-  font-family: "Suisse-Regular", sans-serif !important;
-  font-weight: bold !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
   font-size: 2rem !important;
+  color: #ffffff;
 }
 .nutrities .listado-recetas ul li:hover {
   transform: scale(110%);
+}
+.nutrities .listado-recetas.utensilios ul li h2 {
+  background-color: #FFAA00;
 }
 .nutrities h1 {
   font-family: "Suisse-Bold", sans-serif !important;
@@ -7154,6 +7244,40 @@ body > .menu-menu-nav-hermano-container {
 }
 .nutrities .ingredientes > .wp-block-group .btn-descargar {
   margin-top: 2rem;
+}
+.nutrities .capsulaFormativa {
+  border-radius: 1rem;
+  background-color: #ffffff;
+}
+.nutrities .capsulaFormativa .wp-block-heading {
+  padding: 0;
+  margin: 0;
+  font-family: "Suisse-Regular", sans-serif;
+  color: #007FAD;
+}
+.nutrities .capsulaFormativa p {
+  padding: 0;
+  margin: 0;
+  font-family: "Suisse-Regular", sans-serif;
+  color: #3f3f3f;
+}
+.nutrities .capsulaFormativa .wp-block-group.is-vertical {
+  margin: 2rem !important;
+}
+
+.ColumnRight .wp-block-column:first-child {
+  order: 2;
+}
+.ColumnRight .wp-block-column:last-child {
+  order: 1;
+}
+@media only screen and (min-width: 1024px) {
+  .ColumnRight .wp-block-column:first-child {
+    order: 1;
+  }
+  .ColumnRight .wp-block-column:last-child {
+    order: 2;
+  }
 }
 
 .wp-block-slider {

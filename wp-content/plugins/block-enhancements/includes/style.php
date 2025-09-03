@@ -146,6 +146,7 @@ if ( ! class_exists( Style::class ) ) :
 		 * @return void
 		 */
 		public function register_block_enhancements_style() {
+			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			wp_register_style( $this->style_handle, '' );
 		}
 
@@ -156,7 +157,7 @@ if ( ! class_exists( Style::class ) ) :
 		 * @return void
 		 */
 		public function enqueue_style_for_the_editor( $editor_settings ) {
-			$feature_names = [ 'with-icon', 'with-color', 'with-shadow', 'with-text-shadow', 'with-transform', 'with-transition', 'with-text-alignment', 'with-typography' ];
+			$feature_names = [ 'with-icon', 'with-color', 'with-shadow', 'with-text-shadow', 'with-transform', 'with-transition', 'with-text-alignment', 'with-typography', 'with-position' ];
 			foreach ( $feature_names as $feature_name ) {
 				$this->get_feature_style( $feature_name );
 			}
@@ -380,6 +381,23 @@ if ( ! class_exists( Style::class ) ) :
 			if ( $has_text_alignment ) {
 				$this->get_feature_style( 'with-text-alignment' );
 				$features['with-text-alignment'] = [ 'with-text-alignment' ];
+			}
+
+			// With position.
+			$has_position = $this->get_with_position_style(
+				[
+					'data'        => $block['attrs']['boldblocks'],
+					'selector'    => $selector,
+					'block'       => $block,
+					'breakpoints' => $breakpoints,
+				],
+				$style_array,
+				$responsive_style_array
+			);
+
+			if ( $has_position ) {
+				$this->get_feature_style( 'with-position' );
+				$features['with-position'] = $has_position;
 			}
 
 			// With typography.
@@ -608,12 +626,15 @@ if ( ! class_exists( Style::class ) ) :
 				}
 
 				if ( $is_supported_position ) {
+					// We need zero for core-read-more icon left.
+					$position_value = $is_grid_layout ? 1 : 0;
+
 					// Grid column.
-					$icon_grid_column = 'left' === $icon_position ? 1 : 2;
+					$icon_grid_column = 'left' === $icon_position ? $position_value : 2;
 					$icon_style[]     = "--be--with-icon--icon-column:{$icon_grid_column};";
 
 					// Nested variables.
-					$text_grid_column = 'left' === $icon_position ? 2 : 1;
+					$text_grid_column = 'left' === $icon_position ? 2 : $position_value;
 					$nested_style[]   = "--be--with-icon--text-column:{$text_grid_column};";
 
 					if ( 'right' === $icon_position ) {
@@ -1475,6 +1496,215 @@ if ( ! class_exists( Style::class ) ) :
 		}
 
 		/**
+		 * Build position style
+		 *
+		 * @param array  $args {
+		 *   @param array  $data
+		 *   @param string $sesector
+		 *   @param array  $block
+		 *   @param array  $devices
+		 * }
+		 * @param array  &$style_array
+		 * @param array  &$responsive_style_array
+		 * @return void
+		 */
+		private function get_with_position_style( $args, &$style_array, &$responsive_style_array ) {
+			$data = $args['data'] ?? [];
+
+			// Block name.
+			$block_name = $args['block']['blockName'] ?? '';
+
+			// Has no feature.
+			if ( ! $this->has_feature( 'withPosition', $block_name ) ) {
+				return '';
+			}
+
+			// No value.
+			if ( empty( $data['withPosition']['position'] ) ) {
+				return '';
+			}
+
+			// Get selector.
+			$selector = $args['selector'] ?? '';
+
+			// Custom style.
+			return $this->build_custom_style(
+				array_merge(
+					$args,
+					[
+						'selector'         => $selector,
+						'setting_value'    => $data['withPosition'],
+						'func_build_style' => [ $this, 'build_with_position_style' ],
+					]
+				),
+				$style_array,
+				$responsive_style_array
+			);
+		}
+
+		/**
+		 * Build position style
+		 *
+		 * @param array $args
+		 * @param array &$style_array
+		 * @param array &$responsive_style_array
+		 * @return void
+		 */
+		private function build_with_position_style( $args, &$style_array, &$responsive_style_array ) {
+			$setting_value = $args['setting_value'];
+
+			// Responsive style.
+			$position_style = $this->build_responsive_style(
+				array_merge(
+					$args,
+					[
+						'setting_value'    => $setting_value['position'] ?? [],
+						'setting_variable' => '--be--position',
+						'func_build_style' => [ $this, 'build_position_css_value' ],
+					]
+				),
+				$style_array,
+				$responsive_style_array
+			);
+
+			if ( $position_style ) {
+				$position_style .= $this->build_responsive_style(
+					array_merge(
+						$args,
+						[
+							'setting_value'    => $setting_value['inset'] ?? [],
+							'position'         => $setting_value['position'] ?? [],
+							'func_build_style' => [ $this, 'build_inset_css_value' ],
+						]
+					),
+					$style_array,
+					$responsive_style_array
+				);
+
+				$position_style .= $this->build_responsive_style(
+					array_merge(
+						$args,
+						[
+							'setting_value'    => $setting_value['zIndex'] ?? [],
+							'setting_variable' => '--be--z-index',
+							'position'         => $setting_value['position'] ?? [],
+							'func_build_style' => [ $this, 'build_zindex_css_value' ],
+						]
+					),
+					$style_array,
+					$responsive_style_array
+				);
+			}
+
+			return $position_style ? [ 'with-position' ] : false;
+		}
+
+		/**
+		 * The list of position that support inset
+		 *
+		 * @return array
+		 */
+		private function with_position_support_inset() {
+			return [ 'absolute', 'relative', 'fixed', 'relative' ];
+		}
+
+		/**
+		 * Build CSS value for position
+		 *
+		 * @param array $args
+		 * @return string
+		 */
+		private function build_position_css_value( $args = [] ) {
+			$value = $args['value'] ?? '';
+
+			return $value ? $value : '';
+		}
+
+		/**
+		 * Build CSS value for the inset attribute
+		 *
+		 * @param array $args
+		 * @return string
+		 */
+		private function build_inset_css_value( $args = [] ) {
+			$value = $args['value'] ?? [];
+			if ( ! $value || ! is_array( $value ) ) {
+				return '';
+			}
+
+			$breakpoint     = $args['breakpoint'] ?? '';
+			$position       = $args['position'] ?? [];
+			$position_value = $position[ $breakpoint ]['value'] ?? '';
+			if ( ! $position_value ) {
+				$inherit        = $position[ $breakpoint ]['inherit'] ?? '';
+				$position_value = $position[ $inherit ]['value'] ?? '';
+			}
+
+			if ( ! in_array( $position_value, $this->with_position_support_inset(), true ) ) {
+				return '';
+			}
+
+			$top    = $value['top'] ?? '';
+			$right  = $value['right'] ?? '';
+			$bottom = $value['bottom'] ?? '';
+			$left   = $value['left'] ?? '';
+
+			// Default to 'auto' if one of the pair is set but the other is not.
+			if ( $top || $bottom ) {
+				$top    = $top ?? 'auto';
+				$bottom = $bottom ?? 'auto';
+			}
+			if ( $left || $right ) {
+				$left  = $left ?? 'auto';
+				$right = $right ?? 'auto';
+			}
+
+			// Build style string only for defined values.
+			$styles = [];
+			if ( $top ) {
+				$styles[] = "--be--top:{$top}";
+			}
+			if ( $right ) {
+				$styles[] = "--be--right:{$right}";
+			}
+			if ( $bottom ) {
+				$styles[] = "--be--bottom:{$bottom}";
+			}
+			if ( $left ) {
+				$styles[] = "--be--left:{$left}";
+			}
+
+			return implode( ';', $styles );
+		}
+
+		/**
+		 * Build CSS value for the z-index attribute
+		 *
+		 * @param array $args
+		 * @return string
+		 */
+		private function build_zindex_css_value( $args = [] ) {
+			$value = $args['value'] ?? '';
+			if ( ! $value ) {
+				return '';
+			}
+
+			$breakpoint     = $args['breakpoint'] ?? '';
+			$position       = $args['position'] ?? [];
+			$position_value = $position[ $breakpoint ]['value'] ?? '';
+			if ( ! $position_value ) {
+				$inherit        = $position[ $breakpoint ]['inherit'] ?? '';
+				$position_value = $position[ $inherit ]['value'] ?? '';
+			}
+
+			if ( ! in_array( $position_value, $this->with_position_support_inset(), true ) ) {
+				return '';
+			}
+
+			return $value;
+		}
+
+		/**
 		 * Build custom style
 		 *
 		 * @param array $args
@@ -1517,13 +1747,9 @@ if ( ! class_exists( Style::class ) ) :
 				return '';
 			}
 
-			$setting_variable = $args['setting_variable'] ?? [];
-			if ( empty( $setting_variable ) ) {
-				return '';
-			}
-
-			$breakpoints = $args['breakpoints'];
-			$selector    = $args['selector'];
+			$setting_variable = $args['setting_variable'] ?? '';
+			$breakpoints      = $args['breakpoints'];
+			$selector         = $args['selector'];
 
 			$setting_styles = [];
 			if ( is_array( $setting_value ) && ! empty( $setting_value ) ) {
@@ -1535,9 +1761,17 @@ if ( ! class_exists( Style::class ) ) :
 						$value = $setting_value[ $value_by_breakpoint['inherit'] ]['value'] ?? [];
 					}
 
-					$style_by_breakpoint = $func_build_style( array_merge( $args, [ 'value' => $value ] ) );
+					$style_by_breakpoint = $func_build_style(
+						array_merge(
+							$args,
+							[
+								'value'      => $value,
+								'breakpoint' => $breakpoint,
+							]
+						)
+					);
 					if ( $style_by_breakpoint ) {
-						$setting_styles[ $breakpoint ] = "{$setting_variable}:{$style_by_breakpoint};";
+						$setting_styles[ $breakpoint ] = empty( $setting_variable ) ? $style_by_breakpoint : "{$setting_variable}:{$style_by_breakpoint};";
 					}
 				}
 			}
@@ -1728,6 +1962,7 @@ if ( ! class_exists( Style::class ) ) :
 			if ( ! isset( $this->feature_style_array[ $feature_name ] ) ) {
 				$feature_file_path = $this->the_plugin_instance->get_file_path( '/build/' . $feature_name . '.css' );
 				if ( \file_exists( $feature_file_path ) ) {
+					// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 					$this->feature_style_array[ $feature_name ] = \file_get_contents( $feature_file_path );
 				}
 			}
@@ -1789,7 +2024,7 @@ if ( ! class_exists( Style::class ) ) :
 				}
 
 				// Cache the result.
-				$this->breakpoints = $breakpoints;
+				$this->breakpoints = apply_filters( 'block_enhancements_get_breakpoints', $breakpoints );
 			}
 
 			return $this->breakpoints;

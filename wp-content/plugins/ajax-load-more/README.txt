@@ -1,11 +1,11 @@
-=== WordPress Infinite Scroll - Ajax Load More ===
+=== Ajax Load More - Infinite Scroll ===
 Contributors: dcooney, connekthq
 Donate link: https://connekthq.com/donate/
 Tags: infinite scroll, load more, lazy load, endless scroll, ajax load more
 Requires at least: 5.0
 Requires PHP: 5.6
 Tested up to: 6.8
-Stable tag: 7.5.0
+Stable tag: 7.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,9 +13,9 @@ The ultimate infinite scroll and lazy load solution for your WordPress powered w
 
 == Description ==
 
-Ajax Load More is the ultimate WordPress infinite scroll plugin for lazy loading posts, single posts, pages, comments and more with Ajax powered queries.
+Ajax Load More is the ultimate plugin for infinite scrolling and lazy loading posts, single posts, pages, comments, and more with Ajax powered queries.
 
-Build complex custom WordPress queries with the Ajax Load More shortcode builder then add the generated shortcode to your page via the content editor or directly into your template files.
+Build complex custom WordPress queries with the Ajax Load More query builder then add the generated shortcode to your page via the content editor, Ajax Load More Block or directly into your template files.
 
 Ajax Load More is compatible for endless scrolling with popular eCommerce plugins such as WooCommerce and Easy Digital Downloads.
 
@@ -267,6 +267,17 @@ How to install Ajax Load More.
 5. Implementation: Insert the Ajax Load More shortcode directly into the WordPress block editor or a theme template file.
 
 == Changelog ==
+
+= 7.6.0 - August 18, 2025 =
+* NOTICE: This Ajax Load More update includes to the button animations and loading styles. It's possible that your existing loading style may have be affected.
+* NEW: Modernized the Load More button and Infinite Scroll styles/animations with new SVG based spinners.
+* UPDATE: Removed `button_loading_label` and `prev_button_loading_label` parameters as these are no longer in used with the new loader styles.
+* UPDATE: Automatically set `pause_override` to true if loading style is infinite.
+* UPDATE: Removed `.more` classname from Ajax Load More button.
+* UPDATE: Modernized and cleaned up CSS for various other ALM elements and features.
+* FIX: Fixed issue with Query Loop add-on loading standard Ajax Load More in Block Editor due to changes in the Block Editor.
+* FIX: Fixed accessibility issue when moving user focus with Preloaded active.
+* FIX: Fixed issue with new Templates add-on throwing a PHP error if a template does not exist.
 
 = 7.5.0 - July 23, 2025 =
 * NEW: Added required updates for the new Templates add-on.

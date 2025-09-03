@@ -17,6 +17,26 @@
     }
   },
   "attributes": {
+    "progressBarActiveColor": {
+      "type": "string",
+      "default": "#0866ff"
+    },
+    "progressBarBgColor": {
+      "type": "string",
+      "default": "#e0e0e0"
+    },
+    "autoPlay": {
+      "type": "boolean",
+      "default": false
+    },
+    "duration": {
+      "type": "number",
+      "default": 3000
+    },
+    "progressBarDirection": {
+      "type": "string",
+      "default": "horizontal"
+    },
     "QaStyle": {
       "type": "boolean",
       "default": false
@@ -195,6 +215,29 @@
     },
     "defaultStyles": {
       "type": "object"
+    },
+    "featureImageUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "featureImageAlt": {
+      "type": "string",
+      "default": ""
+    },
+    "isFeatureImg": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoNumbering": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoNumberingColor": {
+      "type": "string"
+    },
+    "progressBarOn": {
+      "type": "boolean",
+      "default": false
     }
   },
   "textdomain": "advanced-accordion-block",

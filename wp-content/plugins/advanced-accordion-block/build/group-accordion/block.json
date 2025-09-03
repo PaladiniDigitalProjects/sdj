@@ -15,6 +15,7 @@
     }
   },
   "providesContext": {
+    "aagb/accordion-autoPlay": "autoPlay",
     "aagb/accordion-step": "step",
     "aagb/accordion-QaStyle": "QaStyle",
     "aagb/accordion-faqSchema": "faqSchema",
@@ -48,9 +49,29 @@
     "aagb/accordion-labelsGlobalBgColor": "labelsGlobalBgColor",
     "aagb/accordion-accessibilityOn": "accessibilityOn",
     "aagb/accordion-focusOutlineColor": "focusOutlineColor",
-    "aagb/accordion-anchorLinksShow": "anchorLinksShow"
+    "aagb/accordion-anchorLinksShow": "anchorLinksShow",
+    "aagb/accordion-progressBarActiveColor": "progressBarActiveColor",
+    "aagb/accordion-progressBarBgColor": "progressBarBgColor",
+    "aagb/accordion-duration": "duration",
+    "aagb/accordion-progressBarDirection": "progressBarDirection",
+    "aagb/accordion-isFeatureImg": "isFeatureImg",
+    "aagb/accordion-autoNumbering": "autoNumbering",
+    "aagb/accordion-autoNumberingColor": "autoNumberingColor",
+    "aagb/accordion-progressBarOn": "progressBarOn"
   },
   "attributes": {
+    "autoPlay": {
+      "type": "boolean",
+      "default": false
+    },
+    "duration": {
+      "type": "number",
+      "default": 3000
+    },
+    "progressBarDirection": {
+      "type": "string",
+      "default": "horizontal"
+    },
     "anchorLinksShow": {
       "type": "boolean"
     },
@@ -280,6 +301,53 @@
     },
     "defaultStyles": {
       "type": "object"
+    },
+    "progressBarActiveColor": {
+      "type": "string",
+      "default": "#0866ff"
+    },
+    "progressBarBgColor": {
+      "type": "string",
+      "default": "#f0f0f0"
+    },
+    "isFeatureImg": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoNumbering": {
+      "type": "boolean",
+      "default": false
+    },
+    "autoNumberingColor": {
+      "type": "string"
+    },
+    "stepProgress": {
+      "type": "boolean",
+      "default": false
+    },
+    "stepProgressText": {
+      "type": "string",
+      "default": "Complete Step"
+    },
+    "stepProgressActiveColor": {
+      "type": "string",
+      "default": "#dfd2d2"
+    },
+    "stepProgressBgColor": {
+      "type": "string",
+      "default": "#1570ec"
+    },
+    "featureImgDirection": {
+      "type": "string",
+      "default": "right"
+    },
+    "autoNumberingMargin": {
+      "type": "number",
+      "default": 10
+    },
+    "progressBarOn": {
+      "type": "boolean",
+      "default": false
     }
   },
   "styles": [

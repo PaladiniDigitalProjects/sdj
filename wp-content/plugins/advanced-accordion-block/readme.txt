@@ -1,9 +1,9 @@
-=== Advanced Accordion Gutenberg Block ===
+=== Advanced Accordion Gutenberg Block – Easy FAQ & Content Accordion Plugin ===
 Contributors: spiderdevs, mdjwel, freemius
 Tags: accordion block, FAQ, FAQs, Accordion, FAQ block
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 5.0.4
+Stable tag: 5.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -90,6 +90,12 @@ Advanced Accordion Gutenberg Block - is a custom Gutenberg Block that allows you
 
 - **Labelling Option:** User can add custom text label beside the Single accordion title, making it easier to highlight key information and categorize content effectively.
 
+- **Autoplay Functionality:** Enable automatic section switching in Group Accordion blocks. Accordions will rotate between sections without user clicks, improving engagement and saving time.
+
+- **Feature Image Support:** Add a custom image to each Group Accordion block for a more visually appealing and easily recognizable layout.
+
+- **Auto-Numbering with Color Support:** Automatically number accordion items with customizable colors, giving your content a cleaner and more organized appearance.
+
 [See All Features](https://spider-themes.net/advanced-accordion-block/features).
 
 ### Creating an Accordion FAQ with Advanced Accordion
@@ -142,6 +148,13 @@ It's really easy and super simple to install **Quick Edit** plugin.
 
 == Changelog ==
 
+
+= 5.1.0  (14 August 2025) =
+Fixed: Editor slow performance issue
+Fixed: Accordion style options spacing control issue (Margin & Padding)
+Tweaked: Replaced inline styles with class-based styling
+Updated: Accordion block Patterns
+Updated: Freemius SDK to version 2.12.1
 
 = 5.0.4  (05 June 2025) =
 New: Added Global Style settings (Set a global design for all accordions from one place. Just click the AAB icon in the editor toolbar to style them all at once)

@@ -252,11 +252,12 @@ function Output({
     uniqueId,
     activatorEvent
   } = props.attributes;
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", useBlockProps({
-    className: ``,
+  const blockProps = useBlockProps({
+    className: '',
     id: `horizontal-accordion-${uniqueId}`,
     'data-activator-event': activatorEvent
-  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(InnerBlocks, {
+  });
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", blockProps, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(InnerBlocks, {
     allowedBlocks: ['aab/horizontal-accordion-item'],
     template: [['aab/horizontal-accordion-item'], ['aab/horizontal-accordion-item'], ['aab/horizontal-accordion-item']]
   })));
@@ -402,7 +403,7 @@ function _extends() {
   \*********************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":2,"name":"aab/horizontal-accordion","version":"0.0.1","title":"Horizontal Accordion","category":"accordion-block","description":"Build unique and modern horizontal style accordions","supports":{"spacing":{"padding":true,"margin":true},"color":{"color":true,"background":true}},"attributes":{"activatorEvent":{"type":"string","default":"hover"},"activeItemsClientId":{"type":"string"}},"providesContext":{"aahb/accordion-activeItemsClientId":"activeItemsClientId"},"textdomain":"advanced-accordion-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":["file:./style-index.css"],"viewScript":["aahb-horizontal-accordion"]}');
+module.exports = /*#__PURE__*/JSON.parse('{"apiVersion":2,"name":"aab/horizontal-accordion","version":"0.0.1","title":"Horizontal Accordion","category":"accordion-block","description":"Build unique and modern horizontal style accordions","supports":{"spacing":{"padding":true,"margin":true},"color":{"color":true,"background":true}},"attributes":{"activatorEvent":{"type":"string","default":"hover"},"activeItemsClientId":{"type":"string"}},"providesContext":{"aahb/accordion-activeItemsClientId":"activeItemsClientId"},"textdomain":"advanced-accordion-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":["aahb-horizontal-accordion"],"viewScript":["aahb-horizontal-accordion"]}');
 
 /***/ })
 

@@ -115,28 +115,37 @@ class AAB_Block_Register {
 			$handle     = 'aagb-' . $attributes['uniqueId'];
 			$custom_css = '';
 			// container
-			$custom_css .= '.aagb_accordion_' . $attributes['uniqueId'] . ' > .aagb__accordion_container.aagb__accordion_active{ '
-			               . $container_border_color . ' border-width: ' . $attributes['activeAccordionBorder']['width']
-			               . '!important; ' . $container_border_style . $container_background_color . ' }';
+			$active_accordion_border_width = $attributes['activeAccordionBorder']['width'] ?? '';
+			if ( ! empty( $active_accordion_border_width ) ) {
+				$custom_css .= '.aagb_accordion_' . ($attributes['uniqueId'] ?? '') . ' > .aagb__accordion_container.aagb__accordion_active{ '
+							   . $container_border_color . ' border-width: ' . $active_accordion_border_width
+							   . '!important; ' . $container_border_style . $container_background_color . ' }';
+			}
 			// body
-			$custom_css .= '.aagb_accordion_' . $attributes['uniqueId'] . ' > .aagb__accordion_body--show{ '
-			               . $body_border_color . ' border-top-width: '
-			               . $attributes['activeAccordionBorder']['width']
-			               . '!important; ' . $body_border_style . ' }';
+			if ( ! empty( $active_accordion_border_width ) ) {
+				$custom_css .= '.aagb_accordion_' . ($attributes['uniqueId'] ?? '') . ' > .aagb__accordion_body--show{ '
+							   . $body_border_color . ' border-top-width: '
+							   . $active_accordion_border_width
+							   . '!important; ' . $body_border_style . ' }';
+			}
 
-			$this->render_inline_css( $handle, $custom_css );
+			if ( ! empty( $custom_css ) ) {
+				$this->render_inline_css( $handle, $custom_css );
+			}
 		}
 
 		return $content;
 	}
-	
+
 	// Horizontal accordion render callback
 	public function render_horizontal_accordion( $attributes, $content ) {
+		wp_register_style( 'aahb-horizontal-accordion', plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion/index.css' );
 		return $content;
 	}
 
 	// Horizontal accordion item render callback
 	public function render_horizontal_accordion_item( $attributes, $content ) {
+		wp_register_style( 'aahb-horizontal-accordion-item', plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion-item/index.css' );
 		return $content;
 	}
 }

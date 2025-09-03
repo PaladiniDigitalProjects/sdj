@@ -176,7 +176,7 @@ img.no-responsive,
 .left { text-align: left; }
 .right { text-align: right; }
 
-.hide { display: none; }
+.hide { display: none !important; }
 
 .alignwide {
   margin: 0 auto !important;
@@ -197,10 +197,6 @@ img.no-responsive,
   float: right;
   margin: 2rem 1rem 0 0;
   cursor:pointer;
-}
-
-.redondeado {
-  border-radius:1rem ;
 }
 
 
@@ -268,18 +264,6 @@ img.no-responsive,
      background: darkgreen;
    }
  }
-
-
-// .sr-only {
-//   position: absolute;
-//   width: 1px;
-//   height: 1px;
-//   padding: 0;
-//   margin: -1px;
-//   overflow: hidden;
-//   clip: rect(0,0,0,0);
-//   border: 0;
-// }
 
 
 /* FLEX */
@@ -488,58 +472,6 @@ ul.category-list {
     }
   } 
 }
-
-
-
-/* PAGINATION */
-
-// .pagination {
-//   display: flex;
-//   flex-direction: row;
-//   text-align: center;
-//   justify-content: center;
-//   padding: 4rem 0;
-// 	text-align: center;
-//   @include font-size(18);
-
-//   .button {
-//     a {
-//       border-radius: 15rem;
-//       border:0.1rem solid $black;
-//       width: 15rem;
-//       margin: 1rem;
-//       text-decoration: none;
-//       padding:1rem 3rem 1rem;
-//       color:$verd;
-//       text-transform: uppercase;
-//     }
-
-//     &:hover {
-//       a {
-//         background: $black;
-//         text-transform: uppercase;
-//         color:$white;
-//       }
-//     }
-
-//   }
-
-//   .current {
-//     color:$silver;
-//   }
-// }
-
-// .page-pagination {
-//   padding-top: 4rem;
-//   .wp-block-column {
-//     flex-basis: 50%!important;
-//     p {
-//       margin-bottom: 0;
-//     }
-//   }
-// }
-
-
 
 
 
@@ -814,6 +746,12 @@ button.btn {
        background-color: $white;
   }
 }
+
+
+.redondeado {
+  border-radius: 1rem;
+}
+
 
 /* REDES SOCIALES COMUNICACIÓN */
 
@@ -1329,20 +1267,50 @@ border:0px solid red;
   text-align: left;
 }
 
-.radio1 {border-radius:0.1rem;}
-.radio2 {border-radius:0.2rem;}
-.radio3 {border-radius:0.3rem;}
-.radio4 {border-radius:0.4rem;}
-.radio5 {border-radius:0.5rem;}
-.radio6 {border-radius:0.6rem;}
-.radio7 {border-radius:0.7rem;}
-.radio8 {border-radius:0.8rem;}
-.radio9 {border-radius:0.9rem;}
-.radio10 {border-radius:1rem;}
-.radio16 {border-radius:1.6rem;}
-.radio22 {border-radius:2.2rem;}
-.radio34 {border-radius:3.4rem;}
-.radio46 {border-radius:4.6rem;}
+.radio1 {
+  border-radius:0.1rem;
+  > img {border-radius:0.1rem;}
+}
+.radio2 {border-radius:0.2rem;
+  > img {border-radius:0.2rem;}
+}
+.radio3 {border-radius:0.3rem;
+  > img {border-radius:0.3rem;}
+}
+.radio4 {border-radius:0.4rem;
+  > img {border-radius:0.4rem;}
+}
+.radio5 {border-radius:0.5rem;
+  > img {border-radius:0.5rem;}
+}
+.radio6 {border-radius:0.6rem;
+  > img {border-radius:0.6rem;}
+}
+.radio7 {border-radius:0.7rem;
+  > img {border-radius:0.7rem;}
+}
+.radio8 {border-radius:0.8rem;
+  > img {border-radius:0.8rem;}
+}
+.radio9 {border-radius:0.9rem;
+  > img {border-radius:0.9rem;}
+}
+.radio10 {border-radius:1rem;
+  > img {border-radius:1rem;}
+}
+.radio16 {border-radius:1.6rem;
+  > img {border-radius:1.6rem;}
+}
+.radio22 {border-radius:2.2rem;
+  > img {border-radius:2.2rem;}
+}
+.radio34 {border-radius:3.4rem;
+  > img {border-radius:3.4rem;}
+}
+.radio46 {border-radius:4.6rem;
+  > img {border-radius:4.6rem;}
+}
+
 
 .y25 {transform:translateY(25px);}
 .y50 {transform:translateY(50px);}

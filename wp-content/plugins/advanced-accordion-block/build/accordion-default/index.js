@@ -368,9 +368,7 @@ function AccordionStylesPanel({
   } = attributes;
   const onChangeBorder = border => {
     setAttributes({
-      border
-    });
-    setAttributes({
+      border,
       bodyBorder: {
         "top": {
           "color": border.color,
@@ -379,6 +377,10 @@ function AccordionStylesPanel({
         }
       }
     });
+  };
+  const normalizePx = value => {
+    if (typeof value === 'string' && value.endsWith('px')) return value;
+    return `${parseInt(value, 10)}px`;
   };
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
     initialOpen: false,
@@ -422,8 +424,8 @@ function AccordionStylesPanel({
     onChange: newValue => setAttributes({
       ...margins,
       margins: {
-        top: newValue.top,
-        bottom: newValue.bottom
+        top: normalizePx(newValue.top),
+        bottom: normalizePx(newValue.bottom)
       }
     })
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalToolsPanelItem, {
@@ -446,10 +448,10 @@ function AccordionStylesPanel({
     onChange: newValue => setAttributes({
       ...paddings,
       paddings: {
-        top: newValue.top,
-        left: newValue.left,
-        right: newValue.right,
-        bottom: newValue.bottom
+        top: normalizePx(newValue.top),
+        left: normalizePx(newValue.left),
+        right: normalizePx(newValue.right),
+        bottom: normalizePx(newValue.bottom)
       }
     })
   }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.__experimentalToolsPanel, {

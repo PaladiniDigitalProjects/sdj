@@ -9,7 +9,6 @@
   /* TAG LIST */
   /* LOAD MORE BUTTON */
   /* IMAGE LIGBOX GALLERY AJUSTMENT */
-  /* PAGINATION */
   /* VIDEO */
   /* IFRAME MAPS */
   /* BLOCKS */
@@ -263,7 +262,7 @@
   text-align: right;
 }
 .editor-styles-wrapper .hide {
-  display: none;
+  display: none !important;
 }
 .editor-styles-wrapper .alignwide {
   margin: 0 auto !important;
@@ -285,9 +284,6 @@
   float: right;
   margin: 2rem 1rem 0 0;
   cursor: pointer;
-}
-.editor-styles-wrapper .redondeado {
-  border-radius: 1rem;
 }
 .editor-styles-wrapper .for-mobile {
   display: none;
@@ -732,6 +728,9 @@
 .editor-styles-wrapper button.btn.btn-descargar {
   background-color: #ffffff;
 }
+.editor-styles-wrapper .redondeado {
+  border-radius: 1rem;
+}
 .editor-styles-wrapper .tabla-redessociales {
   width: 100%;
 }
@@ -1137,43 +1136,85 @@
 .editor-styles-wrapper .radio1 {
   border-radius: 0.1rem;
 }
+.editor-styles-wrapper .radio1 > img {
+  border-radius: 0.1rem;
+}
 .editor-styles-wrapper .radio2 {
+  border-radius: 0.2rem;
+}
+.editor-styles-wrapper .radio2 > img {
   border-radius: 0.2rem;
 }
 .editor-styles-wrapper .radio3 {
   border-radius: 0.3rem;
 }
+.editor-styles-wrapper .radio3 > img {
+  border-radius: 0.3rem;
+}
 .editor-styles-wrapper .radio4 {
+  border-radius: 0.4rem;
+}
+.editor-styles-wrapper .radio4 > img {
   border-radius: 0.4rem;
 }
 .editor-styles-wrapper .radio5 {
   border-radius: 0.5rem;
 }
+.editor-styles-wrapper .radio5 > img {
+  border-radius: 0.5rem;
+}
 .editor-styles-wrapper .radio6 {
+  border-radius: 0.6rem;
+}
+.editor-styles-wrapper .radio6 > img {
   border-radius: 0.6rem;
 }
 .editor-styles-wrapper .radio7 {
   border-radius: 0.7rem;
 }
+.editor-styles-wrapper .radio7 > img {
+  border-radius: 0.7rem;
+}
 .editor-styles-wrapper .radio8 {
+  border-radius: 0.8rem;
+}
+.editor-styles-wrapper .radio8 > img {
   border-radius: 0.8rem;
 }
 .editor-styles-wrapper .radio9 {
   border-radius: 0.9rem;
 }
+.editor-styles-wrapper .radio9 > img {
+  border-radius: 0.9rem;
+}
 .editor-styles-wrapper .radio10 {
+  border-radius: 1rem;
+}
+.editor-styles-wrapper .radio10 > img {
   border-radius: 1rem;
 }
 .editor-styles-wrapper .radio16 {
   border-radius: 1.6rem;
 }
+.editor-styles-wrapper .radio16 > img {
+  border-radius: 1.6rem;
+}
 .editor-styles-wrapper .radio22 {
+  border-radius: 2.2rem;
+}
+.editor-styles-wrapper .radio22 > img {
   border-radius: 2.2rem;
 }
 .editor-styles-wrapper .radio34 {
   border-radius: 3.4rem;
 }
+.editor-styles-wrapper .radio34 > img {
+  border-radius: 3.4rem;
+}
 .editor-styles-wrapper .radio46 {
+  border-radius: 4.6rem;
+}
+.editor-styles-wrapper .radio46 > img {
   border-radius: 4.6rem;
 }
 .editor-styles-wrapper .y25 {
@@ -4013,11 +4054,37 @@
 .editor-styles-wrapper .page-template-page-desnudos .desnudos .entry-header .entry-title {
   display: none;
 }
+.editor-styles-wrapper .nutrities p {
+  padding-right: 0 !important;
+}
+.editor-styles-wrapper .nutrities p strong {
+  font-family: "Suisse-Semi-Bold", sans-serif;
+}
 .editor-styles-wrapper .nutrities .col_apertura {
   position: relative;
 }
+.editor-styles-wrapper .nutrities .col_apertura .wp-block-column {
+  order: 1;
+}
+.editor-styles-wrapper .nutrities .col_apertura .wp-block-column:first-child {
+  order: 2;
+}
+.editor-styles-wrapper .nutrities .col_apertura .wp-block-column:last-child {
+  order: 3;
+}
+@media only screen and (min-width: 768px) {
+  .editor-styles-wrapper .nutrities .col_apertura .wp-block-column {
+    order: 2;
+  }
+  .editor-styles-wrapper .nutrities .col_apertura .wp-block-column:first-child {
+    order: 1;
+  }
+  .editor-styles-wrapper .nutrities .col_apertura .wp-block-column:last-child {
+    order: 3;
+  }
+}
 .editor-styles-wrapper .nutrities h1.wp-block-post-title {
-  font-family: "TiemposHeadline-Light", serif;
+  font-family: "Suisse-Semi-Bold", sans-serif;
   line-height: 120%;
   margin-bottom: 1rem;
 }
@@ -4045,13 +4112,12 @@
   margin: 0 !important;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones {
-  position: relative;
-  z-index: 111;
-  margin: -7rem auto -6rem !important;
+  position: inherit;
+  flex-direction: column;
+  background-color: #F9F8FF;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button {
-  margin-right: 4rem;
-  width: calc(33.33% - 8rem);
+  width: calc(100% - 4rem);
   position: relative;
   z-index: 11;
   transition: 0.35s;
@@ -4064,12 +4130,12 @@
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   text-align: left;
   padding: 0 12rem 0 2rem;
-  font-weight: bold !important;
   line-height: 120%;
   height: 10rem;
   border-radius: 0.5rem 5rem 5rem 0.5rem !important;
-  font-family: "Suisse-Light", sans-serif;
-  letter-spacing: 0.1rem;
+  font-family: "Suisse-Regular", sans-serif;
+  letter-spacing: 0;
+  font-size: 2.2rem !important;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:before {
   content: " ";
@@ -4095,8 +4161,25 @@
   background: url("../img/Cocina.svg") center no-repeat;
   background-size: 100%;
 }
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button {
+    margin-right: 2rem;
+    width: calc(33.33% - 8rem);
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper .nutrities .wp-block-buttons.secciones {
+    background-color: transparent;
+    z-index: 111;
+    margin: -7rem auto -6rem !important;
+    flex-direction: row;
+  }
+  .editor-styles-wrapper .nutrities .wp-block-buttons.secciones.colum {
+    flex-direction: column !important;
+  }
+}
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones.is-vertical {
-  position: absolute;
+  position: relative;
   margin: 0 !important;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button {
@@ -4121,7 +4204,9 @@
 .editor-styles-wrapper .nutrities .sponsors img {
   width: 100%;
   height: auto;
-  margin-bottom: 4rem;
+}
+.editor-styles-wrapper .nutrities .sponsors.minH {
+  min-height: 39.5rem;
 }
 .editor-styles-wrapper .nutrities img {
   width: 100%;
@@ -4145,19 +4230,24 @@
 }
 .editor-styles-wrapper .nutrities .listado-recetas ul li img {
   border-radius: 1rem 1rem 0 0 !important;
+  height: 280px;
 }
 .editor-styles-wrapper .nutrities .listado-recetas ul li h2 {
-  padding: 2rem 1rem !important;
-  font-family: "Suisse-Regular", sans-serif !important;
-  font-family: "Suisse-Regular", sans-serif !important;
+  padding: 2rem 1.5rem !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
+  border-radius: 0 0 1rem 1rem;
+  background-color: #a6bb00;
 }
 .editor-styles-wrapper .nutrities .listado-recetas ul li h2 > a {
-  font-family: "Suisse-Regular", sans-serif !important;
-  font-weight: bold !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
   font-size: 2rem !important;
+  color: #ffffff;
 }
 .editor-styles-wrapper .nutrities .listado-recetas ul li:hover {
   transform: scale(110%);
+}
+.editor-styles-wrapper .nutrities .listado-recetas.utensilios ul li h2 {
+  background-color: #FFAA00;
 }
 .editor-styles-wrapper .nutrities h1 {
   font-family: "Suisse-Bold", sans-serif !important;
@@ -4186,6 +4276,39 @@
 }
 .editor-styles-wrapper .nutrities .ingredientes > .wp-block-group .btn-descargar {
   margin-top: 2rem;
+}
+.editor-styles-wrapper .nutrities .capsulaFormativa {
+  border-radius: 1rem;
+  background-color: #ffffff;
+}
+.editor-styles-wrapper .nutrities .capsulaFormativa .wp-block-heading {
+  padding: 0;
+  margin: 0;
+  font-family: "Suisse-Regular", sans-serif;
+  color: #007FAD;
+}
+.editor-styles-wrapper .nutrities .capsulaFormativa p {
+  padding: 0;
+  margin: 0;
+  font-family: "Suisse-Regular", sans-serif;
+  color: #3f3f3f;
+}
+.editor-styles-wrapper .nutrities .capsulaFormativa .wp-block-group.is-vertical {
+  margin: 2rem !important;
+}
+.editor-styles-wrapper .ColumnRight .wp-block-column:first-child {
+  order: 2;
+}
+.editor-styles-wrapper .ColumnRight .wp-block-column:last-child {
+  order: 1;
+}
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper .ColumnRight .wp-block-column:first-child {
+    order: 1;
+  }
+  .editor-styles-wrapper .ColumnRight .wp-block-column:last-child {
+    order: 2;
+  }
 }
 .editor-styles-wrapper .wp-block-slider {
   background-color: #ededed;
