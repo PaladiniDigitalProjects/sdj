@@ -1,4 +1,5 @@
 <?php
+define( 'WP_CACHE', false ); // By Speed Optimizer by SiteGround
 $env = getenv('WP_ENV') ?: 'dev';
 
 require_once __DIR__ . '/wp-config.base.php';
@@ -23,9 +24,7 @@ if (
 define('FORCE_SSL_ADMIN', true);
 
 
-// quitar para local y pro
-define('WP_HOME', 'https://dev.sjd.es');
-define('WP_SITEURL', 'https://dev.sjd.es');
+
 
 // Cargar WordPress una sola vez
 require_once ABSPATH . 'wp-settings.php';
