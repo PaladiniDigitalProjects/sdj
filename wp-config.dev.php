@@ -59,33 +59,3 @@ define( 'DB_COLLATE', '' );
  */
 $table_prefix = 'pork_';
 
-
-/* Add any custom values between this line and the "stop editing" line. */
-
-
-
-/**
- * For developers: WordPress debugging mode.
- *
- * Change this to true to enable the display of notices during development.
- * It is strongly recommended that plugin and theme developers use WP_DEBUG
- * in their development environments.
- *
- * For information on other constants that can be used for debugging,
- * visit the documentation.
- *
- * @link https://wordpress.org/support/article/debugging-in-wordpress/
- */
-
-
-/* That's all, stop editing! Happy publishing. */
-
-/** Absolute path to the WordPress directory. */
-if ( ! defined( 'ABSPATH' ) ) {
-	define( 'ABSPATH', __DIR__ . '/' );
-}
-
-/** Sets up WordPress vars and included files. */
-@include_once('/var/lib/sec/wp-settings-pre.php'); // Added by SiteGround WordPress management system
-require_once ABSPATH . 'wp-settings.php';
-@include_once('/var/lib/sec/wp-settings.php'); // Added by SiteGround WordPress management system
