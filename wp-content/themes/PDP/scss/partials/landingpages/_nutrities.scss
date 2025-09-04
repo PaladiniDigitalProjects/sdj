@@ -1,5 +1,4 @@
 .nutrities {
-    border-top:1rem solid lime;
     p {
         padding-right: 0 !important;
         strong {
@@ -231,10 +230,7 @@
                 }
             }
         }
-
     }
-
-  
 
     h1 {
         font-family: $fp-bold !important;
@@ -244,29 +240,123 @@
     }
 
     .ingredientes {
+        margin: 1.5rem;
+        border-radius:1rem;
+        background-color: #eaede8;
 
-        border-radius: 1rem;
-        margin-top: 3rem;
-        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.2);
-
-        .featured > img{
-            border-radius: 1rem 1rem 0 0; 
+        &:not(:first-child) {
+            margin-left: 1.5rem !important;
         }
 
-        > .wp-block-group {
+        .featured > img{
+            border-radius: 1rem; 
+        }
+
+        .wp-block-heading {
+            color: $gray;
+            font-family: $fp-semibold;
+            font-size: 2.4rem !important;
+            width: calc(100% - 4rem);
+            margin: 2rem 2rem 0 2rem;
+        }
+
+        ul.wp-block-list {
+                margin: 0 2rem;
+                width: calc(100% - 4rem);
+                color:$gray;
+            li {
+                font-size: 2rem;
+                &::marker {
+                    color:$primary !important;
+                }
+            } 
+        }
+
+        .wp-block-group {
             width: 100%;
             padding: 2rem 2rem 0 2rem;
-             h3 {
-                font-family: $fp-bold !important;
-                font-weight: bold !important;
-                font-size: 2.4rem !important;
-                color:$gray;
-                letter-spacing: 0.05rem;
-            }
+
 
             .btn-descargar {
-                margin-top: 2rem;
+                margin: 2rem auto;
+                transition: 0.35s;
+                &:hover {
+                    transform: scale(110%);
+                }
             }
+        }
+
+        .wp-block-buttons {
+            margin: 2rem 2rem 0 2rem;
+        }
+    }
+
+    .pasopaso {
+        margin: 1.5rem;
+        background-color: #eaede8;
+        padding: 2rem;
+        border-radius: 1rem;
+
+        h1 {
+            font-family: $fp-bold !important;
+            font-size: 4rem !important;
+            color:$primary;
+            letter-spacing: 0.05rem;
+            max-width: 440px;
+            margin-left: 2rem;
+        }    
+
+        .wp-block-heading {
+            color: $gray !important;
+            font-family: $fp-semibold !important;
+            font-size: 2.4rem !important;
+            width: calc(100% - 4rem);
+            margin: 2rem 2rem 2rem 2rem;
+        }
+
+        ul, ol {
+            li {
+                font-size: 2rem;
+                &::before {
+                    color:$primary;
+                    font-family: $fp-semibold;
+                }
+            }    
+        }
+
+        .ico-pasopaso {
+            width: 100%;
+            text-align: left;
+            justify-content: flex-start;
+            column-gap: 3rem;
+            padding: 0 2rem;
+            
+            figure {
+                width: 30%;
+            }
+            .wp-block-group {
+                width: 70%;
+            }
+        }
+        @include tablet {
+            margin-left: 0;
+        }
+    }
+
+    .relacionados {
+        .wp-block-heading {
+            color: $primary !important;
+            font-family: $fp-semibold !important;
+            font-size: 2.4rem !important;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .wp-block-post {
+            color:$white !important;
+            font-size: 2.4rem !important;
+            letter-spacing: 0.05rem;
+            background-color: #a6bb00;
         }
     }
 
@@ -292,6 +382,8 @@
             }
         }
     }
+
+
 
 }
 

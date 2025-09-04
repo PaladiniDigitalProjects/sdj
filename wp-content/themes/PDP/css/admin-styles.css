@@ -4054,9 +4054,6 @@
 .editor-styles-wrapper .page-template-page-desnudos .desnudos .entry-header .entry-title {
   display: none;
 }
-.editor-styles-wrapper .nutrities {
-  border-top: 1rem solid lime;
-}
 .editor-styles-wrapper .nutrities p {
   padding-right: 0 !important;
 }
@@ -4259,26 +4256,106 @@
   letter-spacing: 0.05rem;
 }
 .editor-styles-wrapper .nutrities .ingredientes {
+  margin: 1.5rem;
   border-radius: 1rem;
-  margin-top: 3rem;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+  background-color: #eaede8;
+}
+.editor-styles-wrapper .nutrities .ingredientes:not(:first-child) {
+  margin-left: 1.5rem !important;
 }
 .editor-styles-wrapper .nutrities .ingredientes .featured > img {
-  border-radius: 1rem 1rem 0 0;
+  border-radius: 1rem;
 }
-.editor-styles-wrapper .nutrities .ingredientes > .wp-block-group {
+.editor-styles-wrapper .nutrities .ingredientes .wp-block-heading {
+  color: #3f3f3f;
+  font-family: "Suisse-Semi-Bold", sans-serif;
+  font-size: 2.4rem !important;
+  width: calc(100% - 4rem);
+  margin: 2rem 2rem 0 2rem;
+}
+.editor-styles-wrapper .nutrities .ingredientes ul.wp-block-list {
+  margin: 0 2rem;
+  width: calc(100% - 4rem);
+  color: #3f3f3f;
+}
+.editor-styles-wrapper .nutrities .ingredientes ul.wp-block-list li {
+  font-size: 2rem;
+}
+.editor-styles-wrapper .nutrities .ingredientes ul.wp-block-list li::marker {
+  color: #007FAD !important;
+}
+.editor-styles-wrapper .nutrities .ingredientes .wp-block-group {
   width: 100%;
   padding: 2rem 2rem 0 2rem;
 }
-.editor-styles-wrapper .nutrities .ingredientes > .wp-block-group h3 {
-  font-family: "Suisse-Bold", sans-serif !important;
-  font-weight: bold !important;
-  font-size: 2.4rem !important;
-  color: #3f3f3f;
-  letter-spacing: 0.05rem;
+.editor-styles-wrapper .nutrities .ingredientes .wp-block-group .btn-descargar {
+  margin: 2rem auto;
+  transition: 0.35s;
 }
-.editor-styles-wrapper .nutrities .ingredientes > .wp-block-group .btn-descargar {
-  margin-top: 2rem;
+.editor-styles-wrapper .nutrities .ingredientes .wp-block-group .btn-descargar:hover {
+  transform: scale(110%);
+}
+.editor-styles-wrapper .nutrities .ingredientes .wp-block-buttons {
+  margin: 2rem 2rem 0 2rem;
+}
+.editor-styles-wrapper .nutrities .pasopaso {
+  margin: 1.5rem;
+  background-color: #eaede8;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+.editor-styles-wrapper .nutrities .pasopaso h1 {
+  font-family: "Suisse-Bold", sans-serif !important;
+  font-size: 4rem !important;
+  color: #007FAD;
+  letter-spacing: 0.05rem;
+  max-width: 440px;
+  margin-left: 2rem;
+}
+.editor-styles-wrapper .nutrities .pasopaso .wp-block-heading {
+  color: #3f3f3f !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
+  font-size: 2.4rem !important;
+  width: calc(100% - 4rem);
+  margin: 2rem 2rem 2rem 2rem;
+}
+.editor-styles-wrapper .nutrities .pasopaso ul li, .editor-styles-wrapper .nutrities .pasopaso ol li {
+  font-size: 2rem;
+}
+.editor-styles-wrapper .nutrities .pasopaso ul li::before, .editor-styles-wrapper .nutrities .pasopaso ol li::before {
+  color: #007FAD;
+  font-family: "Suisse-Semi-Bold", sans-serif;
+}
+.editor-styles-wrapper .nutrities .pasopaso .ico-pasopaso {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  column-gap: 3rem;
+  padding: 0 2rem;
+}
+.editor-styles-wrapper .nutrities .pasopaso .ico-pasopaso figure {
+  width: 30%;
+}
+.editor-styles-wrapper .nutrities .pasopaso .ico-pasopaso .wp-block-group {
+  width: 70%;
+}
+@media only screen and (min-width: 768px) {
+  .editor-styles-wrapper .nutrities .pasopaso {
+    margin-left: 0;
+  }
+}
+.editor-styles-wrapper .nutrities .relacionados .wp-block-heading {
+  color: #007FAD !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
+  font-size: 2.4rem !important;
+  padding-left: 1rem;
+  margin-bottom: 2rem;
+}
+.editor-styles-wrapper .nutrities .relacionados .wp-block-post {
+  color: #ffffff !important;
+  font-size: 2.4rem !important;
+  letter-spacing: 0.05rem;
+  background-color: #a6bb00;
 }
 .editor-styles-wrapper .nutrities .capsulaFormativa {
   border-radius: 1rem;
