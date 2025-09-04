@@ -1,7 +1,7 @@
 # WordPress Core (if you don’t manage core in Git)
 # Uncomment if you pull core with WP-CLI or Composer instead of tracking it
-wp-admin/
-wp-includes/
+#wp-admin/
+#wp-includes/
 # WordPress Content
 wp-content/upgrade/
 wp-content/backup-db/
@@ -21,7 +21,7 @@ wp-content/uploads/wp-migrate-db/
 wp-content/uploads/wpallexport/
 wp-content/uploads/wpo/
 wp-content/uploads/wpo-plugins-tables-list.json
-wp-content/themes/*
+#wp-content/themes/*
 !wp-content/themes/twentytwentyfive-child/
 wp-content/uploads/sgs_encrypt_key.php
 wp-content/advanced-cache.php
