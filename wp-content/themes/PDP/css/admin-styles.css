@@ -4377,6 +4377,9 @@
 .block-editor-writing-flow .nutrities .capsulaFormativa .wp-block-group.is-vertical {
   margin: 2rem !important;
 }
+.block-editor-writing-flow .nutrities .wp-block-ghub-tab-button > p {
+  padding-bottom: 0 !important;
+}
 .block-editor-writing-flow .ColumnRight .wp-block-column:first-child {
   order: 2;
 }

@@ -7345,6 +7345,9 @@ body > .menu-menu-nav-hermano-container {
 .nutrities .capsulaFormativa .wp-block-group.is-vertical {
   margin: 2rem !important;
 }
+.nutrities .wp-block-ghub-tab-button > p {
+  padding-bottom: 0 !important;
+}
 
 .ColumnRight .wp-block-column:first-child {
   order: 2;
