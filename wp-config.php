@@ -11,19 +11,19 @@ if ($env === 'local' && file_exists(__DIR__ . '/wp-config.local.php')) {
 
 @include_once('/var/lib/sec/wp-settings-pre.php');
 
-// Forzar HTTPS si viene de proxy
-if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+if (
+    (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+    (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on')
+) {
     $_SERVER['HTTPS'] = 'on';
-    $_SERVER['SERVER_PORT'] = 443;
 }
+
 
 // Configuración de cookies
 define('FORCE_SSL_ADMIN', true);
-define('COOKIE_DOMAIN', '');
-define('COOKIEPATH', '/');
-define('SITECOOKIEPATH', '/');
 
-// Opcional: definir URLs explícitamente si la base de datos no está correcta
+
+// quitar para local y pro
 define('WP_HOME', 'https://dev.sjd.es');
 define('WP_SITEURL', 'https://dev.sjd.es');
 
