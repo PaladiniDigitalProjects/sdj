@@ -13,7 +13,7 @@
 	<link rel="profile" href="http://gmpg.org/xfn/11">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<?php wp_head(); ?>
-	<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="3a28165c-8ecc-4b8c-874e-c2fdb7b0624b" data-blockingmode="auto" type="text/javascript"></script>
+	<!-- <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="3a28165c-8ecc-4b8c-874e-c2fdb7b0624b" data-blockingmode="auto" type="text/javascript"></script> -->
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S65SCT3ECC"></script>
