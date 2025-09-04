@@ -20,9 +20,22 @@ deploy_to_siteground:
     - ssh-keyscan -p "$SG_PORT" "$SG_HOST" >> ~/.ssh/known_hosts
   script:
     - |
+      # Rsync seguro: excluye wp-admin, wp-includes, uploads y drop-ins
       rsync -az --delete \
         --exclude='.git/' \
-        --exclude='wp-content/uploads/*' \
+        --exclude='wp-admin/' \
+        --exclude='wp-includes/' \
+        --exclude='wp-content/uploads/' \
+        --exclude='wp-content/advanced-cache.php' \
+        --exclude='wp-content/db.php' \
+        --exclude='wp-content/object-cache.php' \
         -e "ssh -i ~/.ssh/id_rsa -p $SG_PORT" ./ $SG_USER@$SG_HOST:$SG_PATH
+    - |
+      # Ajustar permisos solo en wp-content y archivos propios
+      ssh -i ~/.ssh/id_rsa -p $SG_PORT $SG_USER@$SG_HOST "
+        echo 'Ajustando permisos de carpetas a 755 y archivos a 644...'
+        find $SG_PATH/wp-content -type d -exec chmod 755 {} \;
+        find $SG_PATH/wp-content -type f -exec chmod 644 {} \;
+      "
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
