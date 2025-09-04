@@ -19,6 +19,13 @@ deploy_to_siteground:
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -p "$SG_PORT" "$SG_HOST" >> ~/.ssh/known_hosts
   script:
-    - rsync -az --delete --exclude='.git/' -e "ssh -i ~/.ssh/id_rsa -p $SG_PORT" ./ $SG_USER@$SG_HOST:$SG_PATH
+  - |
+    rsync -az --delete \
+      --exclude='.git/' \
+      --exclude='wp-content/uploads/' \
+      --exclude='wp-content/advanced-cache.php' \
+      --exclude='wp-content/db.php' \
+      --exclude='wp-content/object-cache.php' \
+      -e "ssh -i ~/.ssh/id_rsa -p $SG_PORT" ./ $SG_USER@$SG_HOST:$SG_PATH
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
