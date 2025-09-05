@@ -4,7 +4,6 @@
 *
 * PATERNS */
 
-
 add_action('init', function() {
 	remove_theme_support('core-block-patterns');
 });
@@ -34,4 +33,3 @@ add_action('init', function() {
 
 // add_action( 'init', 'my_register_block_patterns' );
 
-?>
