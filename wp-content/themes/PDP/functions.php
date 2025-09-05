@@ -1,8 +1,7 @@
 <?php
-
 /* PATTERNS */
-
 require get_template_directory() . '/inc/patterns.php';
+
 
 /* LOGO */
 
