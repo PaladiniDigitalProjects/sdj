@@ -1,7 +1,4 @@
 <?php
-
-/* ADD STYLES AND JS */
-
 function my_theme_enqueue_assets() {
     // Parent theme stylesheet.
     $parent_handle = 'parent-style';
@@ -128,4 +125,3 @@ function mycontent( $content ) {
 	}
 	return $content;
 }
-?>
