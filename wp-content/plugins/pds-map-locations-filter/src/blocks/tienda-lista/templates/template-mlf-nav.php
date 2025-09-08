@@ -47,7 +47,9 @@ $is_preview   = $is_preview ?? false;
                             ]);
                             if (!is_wp_error($terms) && !empty($terms)):
                                 foreach ($terms as $term): ?>
-                                    <option value="<?= esc_attr($term->slug); ?>"><?= esc_html($term->name); ?></option>
+                                    <option value="<?= esc_attr($term->slug); ?>">
+                                        <?= esc_html(__($term->name, 'pds-map-locations-filter')); ?>
+                                    </option>
                                 <?php endforeach;
                             endif;
                             ?>

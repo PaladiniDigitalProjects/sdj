@@ -19,12 +19,15 @@ $pds-bg-header: #f9f9f9;
     }
   }
 
+
   /* result list wrapper */
   .pds-tiendas-list {
     width: 100%;
     transition: opacity 0.3s ease-in-out; /* For loading state */
 
-    /* ---------- GRID MODE ---------- */
+
+   
+        /* ---------- GRID MODE ---------- */
     &.grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -230,6 +233,14 @@ $pds-bg-header: #f9f9f9;
       }
       * {
         a { text-decoration: none; color: inherit; }
+      }
+         .pds-provincia{
+    font-weight: bold !important;
+      
+      }
+      .pds-ambito{
+        font-weight: bold !important;
+
       }
     }
   }
