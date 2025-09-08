@@ -261,6 +261,17 @@ body {
   height: auto;
 }
 
+/* MAX WHITH */
+
+.max50 {width: 100%; max-width: 5rem !important; }
+.max100 {width: 100%; max-width: 10rem !important; }
+.max150 {width: 100%; max-width: 15rem !important; }
+.max200 {width: 100%; max-width: 20rem !important; }
+.max250 {width: 100%; max-width: 25rem !important; }
+.max300 {width: 100%; max-width: 30rem !important; }
+.max350 {width: 100%; max-width: 35rem !important; }
+
+
 /* CAPTION */
 
 .wp-block-image figcaption {
@@ -397,7 +408,6 @@ body {
 /* NEGATIVE */
 
 @include laptop {
-
 .marginT-1{margin-top:-1rem !important;}
 .marginT-2{margin-top:-2rem !important;}
 .marginT-3{margin-top:-3rem !important;}
@@ -442,7 +452,6 @@ body {
 .marginR-8{margin-right:-8rem;}
 .marginR-9{margin-right:-9rem;}
 .marginR-10{margin-right:-10rem;}
-
 }
 // end media query fot Laptop
 
@@ -468,3 +477,4 @@ body {
     transform: scale(1.10); 
   }
 }
+

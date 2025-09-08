@@ -245,6 +245,42 @@ body {
   height: auto;
 }
 
+/* MAX WHITH */
+.max50 {
+  width: 100%;
+  max-width: 5rem !important;
+}
+
+.max100 {
+  width: 100%;
+  max-width: 10rem !important;
+}
+
+.max150 {
+  width: 100%;
+  max-width: 15rem !important;
+}
+
+.max200 {
+  width: 100%;
+  max-width: 20rem !important;
+}
+
+.max250 {
+  width: 100%;
+  max-width: 25rem !important;
+}
+
+.max300 {
+  width: 100%;
+  max-width: 30rem !important;
+}
+
+.max350 {
+  width: 100%;
+  max-width: 35rem !important;
+}
+
 /* CAPTION */
 .wp-block-image figcaption {
   text-align: left;
