@@ -1,24 +1,255 @@
-.wp-block-media-text {
-  .wp-block-media-text__content,
-  .wp-block-media-text__media {
-    padding: 1rem;
-    @include laptop {
-      padding: 0 1.5rem;
-    } 
+/* SJD TABS */
 
-    @include large {
-      padding: 0 1rem;
+.sjd_tabs {
+  height: auto;
+  min-height: 30rem;
+  .wp-block-ghub-tab-buttons-container {
+    height: 100%;
+    z-index: 1;
+    .wp-block-ghub-tab-button {
+      padding: 0.5rem !important;
+      border-radius: 0.5rem;
+      border:0.2rem solid $white;
+
+      &.gutenberghub-active-tab {
+        border-radius: 0.5rem;
+        border:0.2rem solid $primary;
+        box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
+        -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
+        -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
+      }
+    }
+  }
+  .gutenberghub-tab-content {
+    .wp-block-cover, .wp-block-cover-image {
+      min-height: 480px;
     }
   }
 }
 
-// .alignwide {
-//   padding: 1rem;
-//   @include laptop {
-//     padding: 0 1.5rem;
-//   } 
 
-//   @include large {
-//     padding: 0 0;
-//   }
-// }
+/* FILTER MAPS */
+
+.pds-tiendas {
+  padding: 0;
+  margin: 0;
+
+      .pds-tiendas-toolbar {
+        width: 100%;
+        margin-bottom: 2rem;
+        justify-content: left;
+        align-items: center;
+        gap: 0;
+
+        h3 {
+          width: 20%;
+          font-size: var(--wp--preset--font-size--large) !important;
+          color:$primary;
+          font-style: normal;
+          font-weight: 600;
+          margin-bottom: 0;
+        }
+        .pds-map-filters {
+          width: 60%;
+          .mlf-filters-select {
+            font-weight: bold;
+            padding: 0.5rem 2rem;
+          }
+        }
+
+        .pds-view-switcher {
+          width: 20%;
+          display: flex;
+          flex-direction: row-reverse;
+          align-content:flex-end;
+        }
+
+      }
+      
+      .pds-tiendas-list {
+          padding: 0;
+         
+          &.list {
+            .pds-tiendas-row {
+              padding: 0 0 .5rem 0;
+              border-bottom: 1px solid $primary;
+            
+            .pds-col-1 {
+              display: flex;
+              flex-direction: row;
+              width: 40%;
+              .pds-col-thumb {
+                width: 100%;
+                max-width: 8rem;
+                line-height: 0;
+                > img {
+                  border-radius: 0.2rem;
+                }
+              }
+              .pds-col-text {
+                width: 100%;
+                padding:0 3rem 0 1rem;
+                .pds-title {
+                  font-size: 1.5rem;
+                  line-height: 1.2;
+                }
+              }
+            }
+            .pds-col-2 {
+              width: 30%;
+              p {
+                margin: 0 0 0.5rem 0;
+              }
+            }
+            .pds-col-3 {
+              width: 30%;
+            }
+          }
+        }
+
+        &.grid {
+          gap: 2rem;
+          .pds-tiendas-row {
+            border:0;
+            padding:0;
+            background-color: transparent;
+
+            .pds-col-thumb {
+              margin-bottom: 1rem;
+              > img {
+                border-radius: .5rem;
+              }
+            }
+
+            .pds-title {
+              font-size: 1.5rem;
+              line-height: 1.2;
+              color: $primary;
+            }
+
+            p {
+              margin: 0 0 0.5rem 0;
+              color: $primary;
+            }
+
+            .pds-col-1,
+            .pds-col-2,
+            .pds-col-3 {
+              color: $primary;
+            }
+
+            .pds-col-2,
+            .pds-col-3 {
+              display: none;
+            }
+          }
+        } 
+      }
+
+  }
+
+  /* MAPA */
+
+  .wp-block-pds-map-locations-filter-map-locations-filter {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    h3 {
+      width: 20%;
+      font-size: var(--wp--preset--font-size--large) !important;
+      color:$primary;
+      font-style: normal;
+      font-weight: 600;
+      margin:0 0 2rem 0;
+    }
+
+    .pds-map-toolbar {
+      width: 80%;
+    }
+
+    .mlf-content-area {
+      width: 100%;
+    }
+
+    .mlf-filters {
+      width: 100%;
+      .mlf-search-wrapper {
+        margin-right: 10rem;
+      }
+    }
+
+    .pds-map-filters {
+      .mlf-filters-select {
+        font-weight: bold;
+        padding: 0.5rem 2rem;
+      }
+    }
+
+  }
+
+  /* EVENTS */
+
+  .tribe-events-widget-events-list__events {
+    display: flex;
+    flex-direction: row;
+    gap: 5rem;
+    .tribe-events-widget-events-list__event-row {
+      width: 50%;
+      color:$primary;
+
+      .tribe-events-widget-events-list__event-date-tag-datetime {
+        width: 100% !important;
+        border-right: 1px solid $primary !important;
+        padding-right: 0.5rem !important;
+        margin-right: 0.5rem !important;
+      }
+      .tribe-events-widget-events-list__event-wrapper {
+        width: 70% !important;
+      }
+
+      .tribe-events-widget-events-list__event-datetime,
+      .tribe-events-widget-events-list__event-title-link,
+      .tribe-events-widget-events-list__event-date-tag-daynum,
+      .tribe-events-widget-events-list__event-date-tag-month {
+        color:$primary !important;
+      }
+
+      .tribe-events-widget-events-list__event-date-tag-daynum {
+        font-size: 3.2rem !important;
+        font-weight:200;
+      }
+
+      .tribe-events-widget-events-list__event-date-tag-month {
+        font-size: 1.25rem;
+      }
+
+      .tribe-events-widget-events-list__event-datetime {
+        font-size: 1rem;
+      }
+
+      .tribe-events-widget-events-list__event-header {
+        padding-left: 1rem;
+        .tribe-events-widget-events-list__event-title-link {
+          font-size: 2rem;
+          line-height: 1.2;
+          font-weight:500;
+          padding-left: 0;
+          margin-top: 0.5rem;
+          &:hover {
+            color:$primary;
+          }
+        }
+      }
+
+
+      
+    }
+  }
+
+  .tribe-events-widget-events-list__view-more {
+    display: none;
+  }
+
+
+
