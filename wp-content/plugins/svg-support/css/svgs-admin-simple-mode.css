@@ -1,1 +1,6 @@
-.svgs-advanced{display:none}
+/**
+ * Hide advanced features
+ */
+.svgs-advanced {
+  display: none;
+}

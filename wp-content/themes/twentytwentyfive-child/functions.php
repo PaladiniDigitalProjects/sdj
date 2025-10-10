@@ -125,3 +125,20 @@ function mycontent( $content ) {
 	}
 	return $content;
 }
+
+/* EXCLUDE HSOJD CATEGORY */
+
+add_filter('get_the_terms', 'ocultar_categoria_ohsjd', 10, 3);
+
+function ocultar_categoria_ohsjd($terms, $post_id, $taxonomy) {
+    if (!empty($terms) && is_array($terms)) {
+        foreach ($terms as $key => $term) {
+            if ($term->slug === 'ohsjd' || $term->name === 'OHSJD') {
+                unset($terms[$key]);
+            }
+        }
+        
+        $terms = array_values($terms);
+    }
+    return $terms;
+}

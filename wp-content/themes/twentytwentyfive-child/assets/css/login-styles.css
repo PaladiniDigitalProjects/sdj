@@ -11,6 +11,8 @@
 /* REM FONT SIZE */
 :root {
   --wp--preset--color--base:#ffffff;
+  --wp--style--root--padding-top:0;
+  --wp--style--root--padding-bottom:0;
 }
 
 *:focus {
@@ -25,7 +27,35 @@ body {
   cursor: pointer;
 }
 
+/* CAPTION */
+figure.featured {
+  margin-bottom: 3rem;
+}
+figure.featured .wp-caption-text {
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+figcaption.wp-element-caption {
+  font-size: 1rem;
+  font-weight: 200;
+  margin: 0.5rem 0 0 0;
+}
+figcaption.wp-element-caption strong {
+  font-size: 1rem;
+  font-weight: 200;
+}
+
+/* STAKI ITEMS */
+.is-position-sticky {
+  z-index: 1;
+}
+
 /* RESETS */
+.wp-site-blocks {
+  padding: 0;
+}
+
 :root {
   --swiper-navigation-color: #ffffff;
   --swiper-topheme-color:#ffffff;
