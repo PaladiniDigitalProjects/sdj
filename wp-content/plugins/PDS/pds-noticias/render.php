@@ -95,7 +95,7 @@ if (!$use_manual) {
               <?php if ('tribe_events' == get_post_type()) : ?>
                 <li class="entry-categories"><i class="ico-evento"></i><?php _e('Evento', 'PDP');?></li>
               <?php endif; ?>
-              <?php foreach ( $categoriesLoop as $cat ) { echo '<li class="entry-categories">#'.$cat->name.'</li> '; } ?>
+              <?php foreach ( $categoriesLoop as $cat ) { echo '<li class="entry-categories">'.$cat->name.'</li> '; } ?>
               </ul>
             <?php endif; ?>
 

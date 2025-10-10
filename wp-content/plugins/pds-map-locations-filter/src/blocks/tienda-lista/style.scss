@@ -19,7 +19,12 @@ $pds-bg-header: #f9f9f9;
     }
   }
 
-
+h4{ 
+  font-weight: 500 !important;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size:1.1rem;
+}
   /* result list wrapper */
   .pds-tiendas-list {
     width: 100%;
@@ -77,12 +82,26 @@ $pds-bg-header: #f9f9f9;
         gap: 1rem;
         border-bottom: 1px solid $pds-border;
         padding-bottom: 0.75rem;
-        align-items: center;
+        align-items: stretch;
+
+
+            .pds-column {
+            padding: 0;
+
+            &.pds-col-1 {
+              width:auto;
+              flex: 0 0 auto;
+            }
+
+            &.pds-col-3 {
+              p{
+                margin:0.15rem 0rem;
+              }
+            }
+          }
       }
 
-      .pds-column {
-        padding: 0;
-      }
+     
 
       .pds-col-title {
         font-weight: bold;
@@ -93,7 +112,7 @@ $pds-bg-header: #f9f9f9;
         .attachment-thumbnail,
         img {
           width: 100% !important;
-          height: auto;
+          height: 120px;
           aspect-ratio: 4 / 3;
           object-fit: cover;
           border-radius: 6px;
@@ -132,6 +151,9 @@ $pds-bg-header: #f9f9f9;
   .pds-tiendas-row {
     box-sizing: border-box;
     padding: 0.5em;
+  color: var(--wp--preset--color--accent-1);
+//#007fad
+
   }
 
   /* reduce non-title text */
@@ -268,7 +290,7 @@ $pds-bg-header: #f9f9f9;
        grid-template-columns: 160px 1fr; /* desktop/tablet: thumb left, info right */
       grid-template-columns: 1fr; /* stack vertically */
       gap: 0.6rem;
-      align-items: start;
+      align-items: stretch;
     }
     .pds-tiendas-list.list .pds-col-thumb {
       margin-bottom: 0.5rem;
