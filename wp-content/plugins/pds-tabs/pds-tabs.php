@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-
+// Paths & URLs
 if ( ! defined( 'PDS_TABS_DIR_PATH' ) ) {
     define( 'PDS_TABS_DIR_PATH', plugin_dir_path( __FILE__ ) );
 }
@@ -21,7 +21,7 @@ if ( ! defined( 'PDS_TABS_URL' ) ) {
     define( 'PDS_TABS_URL', plugin_dir_url(  __FILE__ ) );
 }
 
-
+// 1️⃣ Register the block.json metadata (static block)
 add_action( 'init', function() {
     register_block_type( PDS_TABS_DIR_PATH, [
         'editor_script' => 'pds-tabs-editor',
@@ -31,7 +31,7 @@ add_action( 'init', function() {
     ] );
 } );
 
-
+// 2️⃣ Enqueue editor assets
 add_action( 'enqueue_block_editor_assets', function() {
     wp_enqueue_script(
         'pds-tabs-editor',
@@ -42,13 +42,13 @@ add_action( 'enqueue_block_editor_assets', function() {
     );
     wp_enqueue_style(
         'pds-tabs-editor-style',
-        PDS_TABS_URL . '/editor.css',
+        PDS_TABS_URL . 'build/editor.css',
         [],
-        filemtime( PDS_TABS_DIR_PATH . '/editor.css' )
+        filemtime( PDS_TABS_DIR_PATH . 'build/editor.css' )
     );
 } );
 
-
+// 3️⃣ Enqueue front‑end assets
 add_action( 'wp_enqueue_scripts', function() {
     wp_enqueue_script(
         'pds-tabs-frontend',
@@ -59,8 +59,8 @@ add_action( 'wp_enqueue_scripts', function() {
     );
     wp_enqueue_style(
         'pds-tabs-style',
-        PDS_TABS_URL . '/style.css',
+        PDS_TABS_URL . 'build/style.css',
         [],
-        filemtime( PDS_TABS_DIR_PATH . '/style.css' )
+        filemtime( PDS_TABS_DIR_PATH . 'build/style.css' )
     );
 } );

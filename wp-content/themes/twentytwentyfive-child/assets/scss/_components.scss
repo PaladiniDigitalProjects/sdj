@@ -191,6 +191,7 @@
   /* EVENTS */
 
   .tribe-events-widget-events-list__events {
+    width: 100%;
     display: flex;
     flex-direction: row;
     gap: 5rem;
@@ -251,5 +252,89 @@
     display: none;
   }
 
+/* TAGS */
+
+.taxonomy-category {
+  a[rel="tag"] {
+      background-color: $white;
+      border:0.1rem solid $primary;
+      padding: 0.5rem 1rem 0.45rem 1rem;
+      line-height: 100%;
+      margin: 0.5rem 0.5rem 0 0;
+      border-radius: 2rem;
+      text-decoration: none;
+      transition: 0.35s;
+      font-weight: 500;
+      display: inline-block;
+      &:hover {
+          background-color: $primary;
+          color:$white;
+      }
+  }
+
+  .wp-block-post-terms__separator {
+    text-indent: -900rem;
+    display: inline-block;
+  }
+}
+
+/* BLOQUE LISTADO DE CATEGORIAS */
+
+.wp-block-categories-list {
+  list-style-type: none;
+  display: flex;
+  flex-wrap:wrap;
+  flex-direction:row;
+  padding-left: 0;
+  .cat-item {
+      background-color: $white;
+      border:0 solid $primary;
+      padding: 0.5rem 1rem 0.45rem 1rem;
+      line-height: 100%;
+      margin: 0.65rem 0.5rem 0 0;
+      border-radius: 2rem;
+      text-decoration: none;
+      transition: 0.35s;
+      font-weight: 500;
+      display: inline-block;
+      a {
+          color:$primary;
+          text-decoration: none;
+      }
+      &:hover {
+          background-color: $primary;
+          color:$white;
+          a {
+              color:$white;
+              text-decoration: none;
+          }
+      }
+  }
+}
+
+/* TAGS LISTADO DE NOTICIAS */
+
+.noticia .taxonomy-category {
+    a[rel="tag"] {
+        background-color: transparent;
+        border:none;
+        padding: 0;
+        margin: 0.5rem 1rem 0 0;
+        border-radius: 0;
+        text-decoration: none;
+        transition: 0.35s;
+        font-weight: 600;
+        display: inline-block;
+        color:$white;
+        transition: 0.35s;
+        &:hover {
+            background-color: transparent;
+            color: $white;
+            border-bottom: 0.1rem solid $white;
+            opacity: 1;
+        }
+    }
+  }
+  
 
 

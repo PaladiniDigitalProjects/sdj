@@ -16,14 +16,14 @@
  * Plugin Name:       WP Swiper
  * Plugin URI:        https://digitalapps.com/wp-swiper/
  * Description:       Swiper JS as a Gutenberg Block.
- * Version:           1.2.18
+ * Version:           1.3.4
  * Author:            Digital Apps
  * Author URI:        https://digitalapps.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       wpswiper
  * Domain Path:       /languages
- * Tested up to:      6.8.1
+ * Tested up to:      6.8.2
  */
 
 // If this file is called directly, abort.
@@ -31,16 +31,18 @@ if ( ! defined( 'WPINC' ) ) {
     die;
 }
 
-define( 'DAWPS_PLUGIN_VERSION', '1.2.18' );
-define( 'DAWPS_BUNDLE_VERSION', '11.1.14' );
+define( 'DAWPS_PLUGIN_VERSION', '1.3.4' );
+define( 'DAWPS_BUNDLE_VERSION', '12.0.2' );
+define( 'DAWPS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'DAWPS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 function activate_wpswiper() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-swiper-activator.php';
+    require_once plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper-activator.php';
     WP_Swiper_Activator::activate();
 }
 
 function deactivate_wpswiper() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/class-wp-swiper-deactivator.php';
+    require_once plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper-deactivator.php';
     WP_Swiper_Deactivator::deactivate();
 }
 
@@ -51,7 +53,7 @@ register_deactivation_hook( __FILE__, 'deactivate_wpswiper' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-wp-swiper.php';
+require plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper.php';
 
 /**
  * Begins execution of the plugin.

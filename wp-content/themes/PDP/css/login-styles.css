@@ -1907,6 +1907,11 @@ main.la-casa-de-todos .is-layout-grid {
   max-width: 60rem !important;
 }
 
+.max1000 {
+  width: 100%;
+  max-width: 100% !important;
+}
+
 /* GRID */
 .grid {
   display: grid;
@@ -7097,13 +7102,13 @@ body > .menu-menu-nav-hermano-container {
 .nutrities .wp-block-buttons.secciones .wp-block-button .wp-block-button__link {
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   text-align: left;
-  padding: 0 12rem 0 2rem;
+  padding: 0 10rem 0 2rem;
   line-height: 120%;
   height: 10rem;
-  border-radius: 0.5rem 5rem 5rem 0.5rem !important;
-  font-family: "Suisse-Regular", sans-serif;
+  border-radius: 1rem 5rem 5rem 1rem !important;
+  font-family: "Suisse-Bold", sans-serif;
   letter-spacing: 0;
-  font-size: 2.2rem !important;
+  font-size: 2rem !important;
 }
 .nutrities .wp-block-buttons.secciones .wp-block-button:before {
   content: " ";
@@ -7126,13 +7131,26 @@ body > .menu-menu-nav-hermano-container {
   margin-right: 0;
 }
 .nutrities .wp-block-buttons.secciones .wp-block-button:last-child:before {
+  background: url("../img/IcoSeguridad.svg") center no-repeat;
+  background-size: 100%;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n) {
+  margin-right: 0;
+}
+.nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n):before {
   background: url("../img/Cocina.svg") center no-repeat;
   background-size: 100%;
 }
 @media only screen and (min-width: 1024px) {
   .nutrities .wp-block-buttons.secciones .wp-block-button {
     margin-right: 2rem;
-    width: calc(33.33% - 8rem);
+    width: calc(50% - 2rem);
+  }
+}
+@media only screen and (min-width: 1240px) {
+  .nutrities .wp-block-buttons.secciones .wp-block-button {
+    margin: 0 1rem;
+    width: calc(24% - 2rem);
   }
 }
 @media only screen and (min-width: 1024px) {
@@ -7192,7 +7210,7 @@ body > .menu-menu-nav-hermano-container {
 .nutrities .listado-recetas ul li {
   list-style-type: none;
   margin: 1rem;
-  background-color: #a6bb00;
+  background-color: #557f00;
   border-radius: 1rem;
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   transition: 0.25ms;
@@ -7205,7 +7223,7 @@ body > .menu-menu-nav-hermano-container {
   padding: 2rem 1.5rem !important;
   font-family: "Suisse-Semi-Bold", sans-serif !important;
   border-radius: 0 0 1rem 1rem;
-  background-color: #a6bb00;
+  background-color: #557f00;
 }
 .nutrities .listado-recetas ul li h2 > a {
   font-family: "Suisse-Semi-Bold", sans-serif !important;
@@ -7216,7 +7234,7 @@ body > .menu-menu-nav-hermano-container {
   transform: scale(110%);
 }
 .nutrities .listado-recetas.utensilios ul li h2 {
-  background-color: #FFAA00;
+  background-color: #FF8600;
 }
 .nutrities h1 {
   font-family: "Suisse-Bold", sans-serif !important;
@@ -7324,7 +7342,7 @@ body > .menu-menu-nav-hermano-container {
   color: #ffffff !important;
   font-size: 2.4rem !important;
   letter-spacing: 0.05rem;
-  background-color: #a6bb00;
+  background-color: #557f00;
 }
 .nutrities .capsulaFormativa {
   border-radius: 1rem;
@@ -7347,6 +7365,13 @@ body > .menu-menu-nav-hermano-container {
 }
 .nutrities .wp-block-ghub-tab-button > p {
   padding-bottom: 0 !important;
+}
+.nutrities .wp-block-image {
+  padding: 0 !important;
+}
+.nutrities .gutenberghub-query-taxonomy-menu button.wp-element-button {
+  font-family: "Suisse-Bold", sans-serif !important;
+  letter-spacing: 0.025rem !important;
 }
 
 .ColumnRight .wp-block-column:first-child {

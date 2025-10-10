@@ -11,6 +11,8 @@
 /* REM FONT SIZE */
 :root {
   --wp--preset--color--base:#ffffff;
+  --wp--style--root--padding-top:0;
+  --wp--style--root--padding-bottom:0;
 }
 
 *:focus {
@@ -25,7 +27,35 @@ body {
   cursor: pointer;
 }
 
+/* CAPTION */
+figure.featured {
+  margin-bottom: 3rem;
+}
+figure.featured .wp-caption-text {
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+figcaption.wp-element-caption {
+  font-size: 1rem;
+  font-weight: 200;
+  margin: 0.5rem 0 0 0;
+}
+figcaption.wp-element-caption strong {
+  font-size: 1rem;
+  font-weight: 200;
+}
+
+/* STAKI ITEMS */
+.is-position-sticky {
+  z-index: 1;
+}
+
 /* RESETS */
+.wp-site-blocks {
+  padding: 0;
+}
+
 :root {
   --swiper-navigation-color: #ffffff;
   --swiper-topheme-color:#ffffff;
@@ -875,8 +905,23 @@ header.wp-block-template-part {
   padding: 0 1rem;
   width: calc(100% - 2rem);
   margin: 0 auto;
-  position: relative;
+  position: fixed;
   z-index: 10;
+  top: 0;
+}
+header.wp-block-template-part.headerup {
+  transform: translateY(-13rem);
+}
+header.wp-block-template-part.fullheader {
+  transition: 0.35s;
+  transform: translateY(0);
+  background-color: rgb(255, 255, 255) !important;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 127, 173, 0.6);
+  box-shadow: 0px 0px 10px 0px rgba(0, 127, 173, 0.6);
+}
+header.wp-block-template-part + main {
+  padding-top: 0;
+  top: 6.6rem;
 }
 header.wp-block-template-part .Sub_Menus {
   position: absolute;
@@ -5050,6 +5095,36 @@ nav.menu-contacto .wp-block-navigation-item.btn-donar:hover a:after {
   }
 }
 
+.single main {
+  position: relative;
+  margin-top: 0 !important;
+}
+.single main p > a {
+  color: #007FAD;
+  text-decoration: none;
+  transition: 0.35s;
+}
+.single main p > a:hover {
+  border-bottom: 0.1rem solid #007FAD;
+}
+
+.gutenberghub-query-taxonomy-menu {
+  width: 75%;
+  text-align: right;
+  height: 2rem;
+}
+.gutenberghub-query-taxonomy-menu a.wp-block-button,
+.gutenberghub-query-taxonomy-menu button.wp-element-button {
+  opacity: 0;
+}
+.gutenberghub-query-taxonomy-menu a.wp-block-button:nth-child(1), .gutenberghub-query-taxonomy-menu a.wp-block-button:nth-child(2), .gutenberghub-query-taxonomy-menu a.wp-block-button:nth-child(3), .gutenberghub-query-taxonomy-menu a.wp-block-button:nth-child(4),
+.gutenberghub-query-taxonomy-menu button.wp-element-button:nth-child(1),
+.gutenberghub-query-taxonomy-menu button.wp-element-button:nth-child(2),
+.gutenberghub-query-taxonomy-menu button.wp-element-button:nth-child(3),
+.gutenberghub-query-taxonomy-menu button.wp-element-button:nth-child(4) {
+  opacity: 1;
+}
+
 .nutrities p {
   padding-right: 0 !important;
 }
@@ -5537,6 +5612,7 @@ nav.menu-contacto .wp-block-navigation-item.btn-donar:hover a:after {
 
 /* EVENTS */
 .tribe-events-widget-events-list__events {
+  width: 100%;
   display: flex;
   flex-direction: row;
   gap: 5rem;
@@ -5586,4 +5662,147 @@ nav.menu-contacto .wp-block-navigation-item.btn-donar:hover a:after {
 
 .tribe-events-widget-events-list__view-more {
   display: none;
+}
+
+/* TAGS */
+.taxonomy-category a[rel=tag] {
+  background-color: #ffffff;
+  border: 0.1rem solid #007FAD;
+  padding: 0.5rem 1rem 0.45rem 1rem;
+  line-height: 100%;
+  margin: 0.5rem 0.5rem 0 0;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: 0.35s;
+  font-weight: 500;
+  display: inline-block;
+}
+.taxonomy-category a[rel=tag]:hover {
+  background-color: #007FAD;
+  color: #ffffff;
+}
+.taxonomy-category .wp-block-post-terms__separator {
+  text-indent: -900rem;
+  display: inline-block;
+}
+
+/* BLOQUE LISTADO DE CATEGORIAS */
+.wp-block-categories-list {
+  list-style-type: none;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding-left: 0;
+}
+.wp-block-categories-list .cat-item {
+  background-color: #ffffff;
+  border: 0 solid #007FAD;
+  padding: 0.5rem 1rem 0.45rem 1rem;
+  line-height: 100%;
+  margin: 0.65rem 0.5rem 0 0;
+  border-radius: 2rem;
+  text-decoration: none;
+  transition: 0.35s;
+  font-weight: 500;
+  display: inline-block;
+}
+.wp-block-categories-list .cat-item a {
+  color: #007FAD;
+  text-decoration: none;
+}
+.wp-block-categories-list .cat-item:hover {
+  background-color: #007FAD;
+  color: #ffffff;
+}
+.wp-block-categories-list .cat-item:hover a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* TAGS LISTADO DE NOTICIAS */
+.noticia .taxonomy-category a[rel=tag] {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0.5rem 1rem 0 0;
+  border-radius: 0;
+  text-decoration: none;
+  transition: 0.35s;
+  font-weight: 600;
+  display: inline-block;
+  color: #ffffff;
+  transition: 0.35s;
+}
+.noticia .taxonomy-category a[rel=tag]:hover {
+  background-color: transparent;
+  color: #ffffff;
+  border-bottom: 0.1rem solid #ffffff;
+  opacity: 1;
+}
+
+.tribe-events-single > .tribe_events {
+  position: static;
+}
+
+#tribe-events-footer,
+.tribe-events-back,
+.tribe-events-before-html {
+  display: none;
+}
+
+.tribe-events-pg-template {
+  margin: 0 auto;
+  width: 100% !important;
+  max-width: 1420px !important;
+}
+
+.tribe-events-single {
+  color: #007FAD;
+  background-color: #ffffff;
+  position: relative !important;
+  width: 100% !important;
+  padding: 0 0 2rem 2rem;
+}
+.tribe-events-single .tribe-events-back,
+.tribe-events-single .tribe-events-single-event-title,
+.tribe-events-single .tribe-events-schedule,
+.tribe-events-single .tribe-events-single-section-title,
+.tribe-events-single .tribe-events-c-subscribe-dropdown__container {
+  width: 46% !important;
+  padding: 2rem 0 0 0;
+  margin: 0;
+  color: #007FAD !important;
+}
+.tribe-events-single .tribe-events-event-categories a,
+.tribe-events-single .tribe-events-event-url a {
+  color: #007FAD;
+}
+.tribe-events-single .tribe-event-date-start,
+.tribe-events-single .tribe-event-date-end {
+  font-weight: bold;
+  font-size: 2rem;
+  line-height: 100%;
+  order: 1;
+  margin-top: 1rem;
+}
+.tribe-events-single .tribe-events-event-meta.primary,
+.tribe-events-single .tribe-events-event-meta.secondary {
+  width: 46%;
+}
+.tribe-events-single .tribe-events-meta-group dt, .tribe-events-single .tribe-events-meta-group dd {
+  width: 50%;
+}
+.tribe-events-single .tribe-events-meta-group dt {
+  font-weight: 600;
+  margin-top: 1rem;
+}
+.tribe-events-single .tribe-events-event-image {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  width: 50% !important;
+}
+.tribe-events-single .tribe-events-event-image img {
+  width: 100%;
+  height: auto;
 }

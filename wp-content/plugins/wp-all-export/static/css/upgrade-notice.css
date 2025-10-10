@@ -2,12 +2,14 @@
   text-align: center;
   padding: 60px 20px 20px 20px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice h1 {
   font-size: 32px;
   font-weight: 700;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice a.custom-close {
-  content: "";
+  content: '';
   height: 12px;
   width: 12px;
   position: absolute;
@@ -17,6 +19,7 @@
   top: 25px;
   right: 35px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade h2 {
   font-size: 20px;
   color: #41515F;
@@ -25,16 +28,19 @@
   margin: auto;
   line-height: 1.2;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks {
   display: flex;
   justify-content: center;
   margin: 40px 0;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li {
   padding: 0;
   list-style-type: none;
   padding: 0 20px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li > span {
   display: flex;
   flex-direction: column;
@@ -44,8 +50,9 @@
   font-weight: 900;
   color: #02182B;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li > span:before {
-  content: "";
+  content: '';
   display: inline-flex;
   height: 64px;
   width: 64px;
@@ -53,42 +60,51 @@
   background-repeat: no-repeat;
   padding-bottom: 15px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li > small {
   font-size: 14px;
   color: #41515F;
   line-height: 1.5;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li.guarantee > span:before {
   background-image: url("../img/upgrade-notice/guarantee.svg");
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li.updates > span:before {
   background-image: url("../img/upgrade-notice/updates.svg");
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li.support > span:before {
   background-image: url("../img/upgrade-notice/support.svg");
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .perks > li.license > span:before {
   background-image: url("../img/upgrade-notice/license.svg");
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .features {
   display: flex;
   justify-content: center;
   padding: 35px 0;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .features .column {
   width: 40%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .features .column.list > span {
   display: flex;
   align-items: center;
   margin: 6px 0;
   font-size: 16px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .features .column.list > span:before {
-  content: "";
+  content: '';
   display: inline-flex;
   height: 16px;
   width: 16px;
@@ -96,27 +112,33 @@
   background-size: 16px;
   margin-right: 12px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .features .column.cta {
   justify-content: flex-end;
   align-items: center;
   padding-bottom: 10px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade > .features .column.cta > span {
   color: #41515F;
   font-size: 13px;
   margin-top: 10px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade .trusted {
   display: block;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade p.already-have {
   margin: 0;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade p.already-have a {
   color: rgba(65, 81, 95, 0.61);
   font-size: 13px;
   cursor: pointer;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .upgrade .upgrade-button {
   display: flex;
   align-items: center;
@@ -130,18 +152,20 @@
   height: 64px;
   border: none;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .install {
   display: none;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .install p {
   margin-top: 30px;
   font-size: 16px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .install a {
   font-size: 16px;
 }
+
 .wpallexport-plugin .wpallexport-upgrade-notice .wp-pointer-buttons {
   display: none;
 }
-
-/*# sourceMappingURL=upgrade-notice.css.map */
