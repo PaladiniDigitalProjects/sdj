@@ -7,36 +7,40 @@ class Mlf {
   }
   infoWindow = new google.maps.InfoWindow()
 
-  constructor() {
-    this.map = new google.maps.Map(
-      document.querySelector('.mlf-map'),
-      {
-        center: { lat: 40.1909526, lng: -5.9609863 },
-        zoom: 6,
-      }
-    )
-    const _this = this
-    jQuery('.mlf-container nav .filters').on('change', function (e) {
-      _this.filters['taxonomies'][e.target.name] = e.target.value
-      _this.getLocations()
-    })
-
-    jQuery('.mlf-container nav .mlf-search').on('keyup', function (e) {
-      if (_this.timeoutSearch) {
-        clearTimeout(_this.timeoutSearch)
-      }
-      _this.timeoutSearch = setTimeout(() => {
-        _this.filters['search'] = e.target.value
-        _this.getLocations()
-      }, 400);
-    })
-
-    this.getLocations()
-
-    this.map.addListener('bounds_changed', () => {
-      this.showLocationsInBounds()
-    })
+ constructor() {
+  const mapDiv = document.querySelector('.mlf-map')
+  if (!mapDiv) {
+    console.warn("No se encontró el contenedor '.mlf-map'")
+    return
   }
+
+  this.map = new google.maps.Map(mapDiv, {
+    center: { lat: 40.1909526, lng: -5.9609863 },
+    zoom: 6,
+  })
+
+  const _this = this
+  jQuery('.mlf-container nav .filters').on('change', function (e) {
+    _this.filters['taxonomies'][e.target.name] = e.target.value
+    _this.getLocations()
+  })
+
+  jQuery('.mlf-container nav .mlf-search').on('keyup', function (e) {
+    if (_this.timeoutSearch) {
+      clearTimeout(_this.timeoutSearch)
+    }
+    _this.timeoutSearch = setTimeout(() => {
+      _this.filters['search'] = e.target.value
+      _this.getLocations()
+    }, 400);
+  })
+
+  this.getLocations()
+
+  this.map.addListener('bounds_changed', () => {
+    this.showLocationsInBounds()
+  })
+}
 
   setZoomAndPositionMap() {
     const bounds = new google.maps.LatLngBounds()

@@ -101,16 +101,18 @@ if ($stores_query->have_posts()): ?>
                     </div>
                     <div class="pds-col-2">
                         <?php if ($telefono): ?>
-                            <p><strong><?php esc_html_e( 'Teléfono:', 'pds-map-locations-filter' ); ?></strong> <?= esc_html($telefono); ?></p>
+                            <p><strong><?php esc_html_e( 'Teléfono:', 'pds-map-locations-filter' ); ?> <?= esc_html($telefono); ?></strong></p>
                         <?php endif; ?>
                         <?php if ($web): ?>
-                            <p><strong><?php esc_html_e( 'Sitio Web:', 'pds-map-locations-filter' ); ?></strong> 
+                            <p><strong><?php esc_html_e( 'Sitio Web:', 'pds-map-locations-filter' ); ?>
                                 <a href="<?= esc_url($web); ?>" target="_blank" rel="noopener"><?= esc_html($web); ?></a>
+                            </strong>
                             </p>
                         <?php endif; ?>
                         <?php if ($email): ?>
-                            <p><strong><?php esc_html_e( 'Correo electrónico:', 'pds-map-locations-filter' ); ?></strong> 
+                            <p><strong><?php esc_html_e( 'Correo electrónico:', 'pds-map-locations-filter' ); ?>
                                 <a href="mailto:<?= esc_attr($email); ?>"><?= esc_html($email); ?></a>
+                            </strong>
                             </p>
                         <?php endif; ?>
                     </div>
