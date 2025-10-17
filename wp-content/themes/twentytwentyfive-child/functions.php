@@ -21,9 +21,26 @@ function my_theme_enqueue_assets() {
     wp_enqueue_style(
         'child-estils',
         get_stylesheet_directory_uri() . '/assets/css/estils.css',
-        [ 'child-style' ],
+        [ $parent_handle ],
         wp_get_theme()->get( 'Version' )
     );
+
+    // OWL STILS
+
+    wp_enqueue_style(
+        'owl-css', 
+        get_template_directory_uri() . '-child/assets/css/owl.carousel.min.css',
+
+        true
+    );
+
+	wp_enqueue_style(
+        'owl-theme',
+        get_template_directory_uri() . '-child/assets/css/owl.theme.default.min.css',
+        true
+    );
+
+
 
     // Ensure jQuery is available.
     wp_enqueue_script( 'jquery' );
@@ -36,6 +53,14 @@ function my_theme_enqueue_assets() {
         '1.0.0',
         true
     );
+
+    // Carrusell Antic OWL.
+    wp_enqueue_script(
+        'owl-carrousell',
+        get_stylesheet_directory_uri() . '/assets/js/owl.carousel.js',
+        true
+    );
+
 }
 add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_assets' );
 
@@ -142,3 +167,215 @@ function ocultar_categoria_ohsjd($terms, $post_id, $taxonomy) {
     }
     return $terms;
 }
+
+/* BLOCKS */
+
+add_action('acf/init', 'my_acf_init');
+function my_acf_init() {
+
+	// check function exists
+	if( function_exists('acf_register_block') ) {
+
+    // register related content
+    acf_register_block(array(
+      'name'				=> 'related',
+      'title'				=> __('Related'),
+      'description'			=> __('Related content'),
+      'render_callback'		=> 'my_acf_block_render_callback',
+      'category'			=> 'formatting',
+      'icon'				=> 'welcome-add-page',
+      'keywords'			=> array( 'Content', 'Related', 'Sponsors' ),
+    ));
+
+	// register a editorial block.
+	acf_register_block_type(array(
+        'name'              => 'block',
+        'title'             => __('Editorial Block'),
+        'description'       => __('A custom Editorial block.'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'button',
+        'align'				=> 'full',
+	  ));
+	  
+	// register a editorial block Slider FP.
+	acf_register_block_type(array(
+        'name'              => 'blockslider',
+        'title'             => __('Editorial Block FP Slider'),
+        'description'       => __('A custom Editorial block with.'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'arrow-right-alt',
+        'align'				=> 'full',
+	  ));
+
+		  
+	// register carrusel.
+	acf_register_block_type(array(
+        'name'              => 'carussel',
+        'title'             => __('Carussel'),
+        'description'       => __('Carussel slides.'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'button',
+        'align'				=> 'full',
+	  ));
+	
+	// register a Slider.
+	acf_register_block_type(array(
+        'name'              => 'Slider',
+        'title'             => __('Slider Block'),
+        'description'       => __('Custom Banner / Slider.'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'dashicons-button',
+		'keywords'			=> array( 'Content', 'Related', 'Sponsors' ),
+      ));
+
+	// register  contact block.
+	acf_register_block_type(array(
+        'name'              => 'contact',
+        'title'             => __('Contact Block'),
+        'description'       => __('Contact'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'phone',
+		'keywords'			=> array( 'Contact' ),
+      ));
+
+
+	// register  team block.
+	acf_register_block_type(array(
+        'name'              => 'team',
+        'title'             => __('Team'),
+        'description'       => __('Team image'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'admin-users',
+		'keywords'			=> array('Team image'),
+      ));
+
+	// register  team list.
+	acf_register_block_type(array(
+        'name'              => 'teamlist',
+        'title'             => __('Team list'),
+        'description'       => __('Team persons list'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'admin-users',
+		'keywords'			=> array('Team'),
+      ));
+
+
+	  // register  projects slider.
+	acf_register_block_type(array(
+        'name'              => 'projects-slider',
+        'title'             => __('Projects slider'),
+        'description'       => __('Projects slider'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'slides',
+		'keywords'			=> array('Projects, Slider'),
+      ));
+
+
+        // register  events list.
+	acf_register_block_type(array(
+        'name'              => 'events',
+        'title'             => __('Events list'),
+        'description'       => __('Event list'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'formatting',
+        'icon' 				=> 'calendar-alt',
+		'keywords'			=> array('Events'),
+      ));
+
+
+    // register  events list.
+	acf_register_block_type(array(
+        'name'              => 'ticker',
+        'title'             => __('Ticker list'),
+        'description'       => __('Ticker list'),
+        'render_callback'	=> 'my_acf_block_render_callback',
+        'category'          => 'Banner',
+        'icon' 				=> 'sticky',
+		'keywords'			=> array('Ticker'),
+      ));
+
+    
+    // register related content slider
+    acf_register_block(array(
+        'name'				=> 'noticias',
+        'title'				=> __('Noticias relacionadas'),
+        'description'			=> __('Noticias relacionadas'),
+        'render_callback'		=> 'my_acf_block_render_callback',
+        'category'			=> 'formatting',
+        'icon'				=> 'media-spreadsheet',
+        'keywords'			=> array( 'Content', 'Related' ),
+      ));
+
+      // Contenidos relacionados
+    acf_register_block(array(
+        'name'				=> 'relacionado',
+        'title'				=> __('Contenidos relacionados'),
+        'description'			=> __('Contenidos relacionados'),
+        'render_callback'		=> 'my_acf_block_render_callback',
+        'category'			=> 'formatting',
+        'icon'				=> 'pressthis',
+        'keywords'			=> array( 'Content', 'Relacionado' ),
+      ));
+
+    // Validacion CP
+    
+    acf_register_block(array(
+        'name'				=> 'donaciones',
+        'title'				=> __('Quiero Donar'),
+        'description'			=> __('Donaciones'),
+        'render_callback'		=> 'my_acf_block_render_callback',
+        'category'			=> 'formatting',
+        'icon'				=> 'pressthis',
+        'keywords'			=> array( 'Donaciones', 'Código postal' ),
+      ));
+
+    // REDES SOCIALES
+    
+    acf_register_block(array(
+        'name'				=> 'redes-sociales',
+        'title'				=> __('Redes Sociales'),
+        'description'			=> __('Archivos para descargar'),
+        'render_callback'		=> 'my_acf_block_render_callback',
+        'category'			=> 'formatting',
+        'icon'				=> 'pressthis',
+        'keywords'			=> array( 'Redes sociales', 'Social' ),
+      ));
+	
+
+
+    
+    // DESCARGAS
+    
+    acf_register_block(array(
+        'name'				=> 'descargas',
+        'title'				=> __('Descargas'),
+        'description'			=> __('Archivos para descargar'),
+        'render_callback'		=> 'my_acf_block_render_callback',
+        'category'			=> 'formatting',
+        'icon'				=> 'pressthis',
+        'keywords'			=> array( 'Descargas', 'PDF' ),
+      ));
+	
+	}
+
+  acf_update_setting('google_api_key', 'AIzaSyDacDNyKQJywprc8azrpouCDgMonQSlbmY');
+}
+
+add_theme_support( 'wp-block-styles' );
+
+function my_acf_block_render_callback( $block ) {
+	$slug = str_replace('acf/', '', $block['name']);
+	// include a template part from within the "template-parts/block" folder
+	if( file_exists( get_theme_file_path("/template-parts/block/content-{$slug}.php") ) ) {
+		include( get_theme_file_path("/template-parts/block/content-{$slug}.php") );
+	}
+}
+

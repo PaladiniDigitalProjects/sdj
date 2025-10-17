@@ -29,6 +29,7 @@ header.wp-block-template-part {
   position: fixed;
   z-index: 10;
   top:0;
+  background-color: $white;
 
   &.headerup {
     transform: translateY(-13rem);
@@ -37,9 +38,7 @@ header.wp-block-template-part {
   &.fullheader {
     transition: 0.35s;
     transform: translateY(0);
-    background-color: rgba(255, 255, 255) !important;
-    -webkit-box-shadow: 0px 0px 10px 0px rgba(0,127,173,0.6); 
-    box-shadow: 0px 0px 10px 0px rgba(0,127,173,0.6);
+    border-bottom: 0.1rem solid $primary;
     // &:before {
     //   position: absolute;
     //   bottom:0;

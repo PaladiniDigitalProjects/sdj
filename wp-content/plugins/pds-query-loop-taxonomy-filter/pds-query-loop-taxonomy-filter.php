@@ -3,8 +3,8 @@
  * Plugin Name: PDS Query Loop Taxonomy Filter
  * Plugin URI: https://example.com
  * Description: Extiende el Query Loop Block para filtrar por las etiquetas primero, y si no hay por categorías, respetando la configuración del bloque.
- * Version: 1.2.0
- * Author: Tu Nombre
+ * Version: 1.2.1
+ * Author:  RicardPDS
  * License: GPL v2 or later
  * Text Domain: query-loop-taxonomy-filter
  */
@@ -104,7 +104,7 @@ class Query_Loop_Taxonomy_Filter {
 
     /**
      * Obtiene la taxonomía según prioridad:
-     * 1. post_tag (todas las etiquetas)
+     * 1. ambito (todas las etiquetas)
      * 2. category (todas las categorías)
      */
     private function get_taxonomy_priority() {
@@ -130,11 +130,11 @@ class Query_Loop_Taxonomy_Filter {
         if (!in_array($post->post_type, $enabled_types)) return null;
 
         // 1️⃣ Intentar primero con todas las etiquetas
-        $tags = wp_get_post_terms($post->ID, 'post_tag');
+        $tags = wp_get_post_terms($post->ID, 'ambito');
         if (!empty($tags) && !is_wp_error($tags)) {
             $tag_ids = wp_list_pluck($tags, 'term_id');
             return array(
-                'taxonomy' => 'post_tag',
+                'taxonomy' => 'ambito',
                 'terms' => $tag_ids
             );
         }

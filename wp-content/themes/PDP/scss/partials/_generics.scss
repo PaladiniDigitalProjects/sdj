@@ -1511,6 +1511,12 @@ border:0px solid red;
   max-width: 100% !important;
 }
 
+.nomax {
+  img {
+    max-width: inherit !important;
+  }
+}
+
 
 /* GRID */
 
@@ -1553,20 +1559,20 @@ border:0px solid red;
     
     @include tablet {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap:1.5rem;
-      row-gap:1.5rem;
+      column-gap:1.5rem !important;
+      row-gap:1.5rem !important;
     }
   
     @include laptop {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      column-gap:2rem;
-      row-gap:2rem;
+      column-gap:2rem !important;
+      row-gap:2rem !important;
     }
   
     @include large {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      column-gap:2.5rem;
-      row-gap:2.5rem;
+      column-gap:2.5rem !important;
+      row-gap:2.5rem !important;
     }
   }  
 
