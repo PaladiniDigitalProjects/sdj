@@ -28,7 +28,7 @@ function register_tienda_block_assets() {
         'tienda-block-editor-style',
         plugins_url('build/index.css', __FILE__),
         array(),
-        filemtime(plugin_dir_path(__FILE__) . 'build/index.css')
+        filemtime(plugin_dir_path(__FILE__) . 'build/style-index.css')
     );
 
     // Enqueue block front-end styles.

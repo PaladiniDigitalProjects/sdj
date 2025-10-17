@@ -47,13 +47,7 @@ define( 'DB_COLLATE', '' );
  */
 $table_prefix = 'pork_';
 
-ini_set('log_errors','on');
-ini_set('display_errors','off');
-ini_set('error_reporting', E_ALL );
 
-define('WP_DEBUG', false);
-define('WP_DEBUG_LOG', true);
-define('WP_DEBUG_DISPLAY', false);
 
 
 

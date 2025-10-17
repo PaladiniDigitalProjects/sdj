@@ -6,7 +6,7 @@
   "title": "Tienda Block",
   "category": "widgets",
   "icon": "store",
-  "description": "Example block scaffolded with Create Block tool.",
+  "description": "Location detail block.",
   "example": {},
   "supports": {
     "html": false,
