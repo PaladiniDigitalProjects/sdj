@@ -21,7 +21,7 @@ $relatedCTA = get_field('PDS_block_relacionado_CTA');
 $term = get_field('PDS_block_relacionado_categoria');
 $selected_post_types = get_field('PDS_block_relacionado_tipos');
 if (!$selected_post_types || !is_array($selected_post_types)) {
-    $selected_post_types = array('post', 'publicaciones'); 
+    $selected_post_types = array('post', 'publicaciones', ''); 
 }
 // Check if manual selection is used
 $use_manual = !empty($related_manual_content);
@@ -63,8 +63,6 @@ if (!$use_manual) {
         <header class="section-header alignwide">
             <h3 class="section-title"><?php echo esc_html($related_title); ?></h3>
         </header>
-    <?php else: ?>
-        <br /><br /><br />
     <?php endif; ?>
 
     <div id="<?php echo esc_attr($id); ?>" class="post-list owl-carousel owl-theme alignwide">

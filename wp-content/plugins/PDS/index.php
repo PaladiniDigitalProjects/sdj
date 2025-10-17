@@ -60,6 +60,7 @@ add_action( 'acf/include_fields', function() {
 					'page' => 'Page',
 					'tribe_events' => 'Events',
 					'publicaciones' => 'Publicaciones',
+					'capitulo' => 'Capitulo 2026',
 				),
 				'allow_custom' => 0,
 				'default_value' => array('post', 'publicaciones'),
