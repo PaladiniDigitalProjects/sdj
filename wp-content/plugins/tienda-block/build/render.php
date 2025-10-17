@@ -1,74 +1,124 @@
-<?php  
-   $telefono =get_field( 'ce_telefono');
-   $direccion =get_field('ce_direccion');
-   $correo = get_field('ce_email');
-   $web= get_field('ce_web');
-$google_maps_link = get_field('ce_google_maps');
+<?php
+/**
+ * Tienda Block Render — Hero + Map layout
+ */
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+global $post;
+$post_id = isset( $post->ID ) ? $post->ID : get_the_ID();
+
+$telefono  = get_field( 'ce_telefono', $post_id );
+$direccion = get_field( 'ce_direccion', $post_id );
+$correo    = get_field( 'ce_email', $post_id );
+$web       = get_field( 'ce_web', $post_id );
+$gm_field  = get_field( 'ce_google_maps', $post_id );
+$latitude  = get_field( 'latitude', $post_id );
+$longitude = get_field( 'longitude', $post_id );
+$imagen    = get_the_post_thumbnail_url( $post_id, 'full' );
+
+$map_zoom  = 14;
+if ( ! empty( $latitude ) && ! empty( $longitude ) ) {
+    $embed_src = "https://www.google.com/maps?q={$latitude},{$longitude}&z={$map_zoom}&output=embed";
+    $google_maps_link = "https://www.google.com/maps?q={$latitude},{$longitude}";
+} elseif ( ! empty( $gm_field ) ) {
+    $embed_src = "https://www.google.com/maps?q=" . rawurlencode( $gm_field ) . "&z={$map_zoom}&output=embed";
+    $google_maps_link = esc_url_raw( $gm_field );
+} else {
+    $embed_src = '';
+    $google_maps_link = '';
+}
+
+$comunidad = get_the_terms( $post_id, 'comunidad_autonoma' );
+$ambitos   = get_the_terms( $post_id, 'ambito' );
+
+$wrapper_attrs = function_exists( 'get_block_wrapper_attributes' )
+    ? get_block_wrapper_attributes( array( 'class' => 'tienda-block site-main' ) )
+    : 'class="tienda-block site-main"';
 ?>
-	<div <?php echo get_block_wrapper_attributes(); ?> class="site-main" role="main"> <div>	
-		
-		<?php// $comarca = get_the_terms( $post->ID , 'comarca'); ?>
-			<?php //$caractersticas = get_the_terms( $post->ID , 'caracteristica'); ?>
-			<article class="entry entry-single tienda_single">
-				<div class="entry-content <?php if($comarca):?><?php foreach ($comarca as $c):?> <?php echo $c->slug;?><?php endforeach;?><?php endif;?>">
-					
-						
-					<div class="post-content-tienda">
-					<div class="content-tenda ">
-						
-						<?php
-						//$comarca = get_the_terms( $post->ID , 'comarca');
-						//$caracts = get_the_terms( $post->ID , 'caracteristica');
-						?>
 
-						<div class="entry-description">
-						<div class="section-header">
-							<?php if( $comarca ): ?>
-								<h3 class="section-title"><?php foreach ($comarca as $ci):?><?php echo $ci->name;?><?php endforeach; ?></h3>
-							<?php endif;?>
-							<h1 class="store-title" ><?php the_title(); ?></h1>
-						</div>
-						<!-- end section header -->	
-						<div class="content">
-							<?php the_content(); ?>	
-							<?php if ($caracts) {
-								// Check if tags are found
-								if (!empty($caracts)) {
-									// Output each tag
-									echo '<ul class="caracteristicas">';
-									foreach ($caracts as $caract) {
-										echo '<li class="caracteristica">
-											<img src="'. z_taxonomy_image_url($caract->term_id) .'" />
-											<span>'. $caract->name .'</span>
-											</li>';
-									}
-									echo '</ul>';
-								} else {
-									echo 'No tags found for the term "caracteristicas".';
-								}
-							} else {
-								echo 'Sin características';
-							}
-							?>
-							</div>
-							<!-- end entry description -->
-						</div>
-						<!-- end content -->
-							<div class='flex-v info-store'>
-						
-								
-								<div class="data"><a href=" <?php echo $google_maps_link ;?> " target="_blank" title="<?php the_title(); ?>"><img src="https://veritas.es/wp-content/uploads/2024/03/LOCATION.png" width="26px" height="36.45px" alt="<?php _e('Dirección: ', 'PDP');?>" /></a><p><a href=" <?php echo $google_maps_link ;?> " target="_blank" title="<?php the_title(); ?>"><?php echo $direccion ;?></a></p></div>
-								<div class="data"><a href="tel:<?php echo $telefono;?>"><img src="https://veritas.es/wp-content/uploads/2024/03/TELEFON.png" alt="<?php _e('Teléfono: ', 'PDP');?>" width="36px" height="36px" /></a><p><?php echo $telefono ;?></p></div>
-							
-							</div>
-						<!-- end info-store -->
-					</div>
-					
+<div <?php echo $wrapper_attrs; ?> role="main">
 
-					
-				</div>
-				<!-- end post content -->
-			</div>
-			<!-- end entry content -->
-		</article>
-					</div><!-- #main -->
+    <!-- HERO SECTION
+    <section class="tienda-hero" style="background-image:url('<?php echo esc_url( $imagen ); ?>');">
+        <div class="tienda-hero-overlay">
+            <?php if ( ! empty( $comunidad ) ): ?>
+                <p class="tienda-hero-subtitle">
+                    <?php echo esc_html( implode( ', ', wp_list_pluck( $comunidad, 'name' ) ) ); ?>
+                </p>
+            <?php endif; ?>
+
+            <h1 class="tienda-hero-title"><?php the_title(); ?></h1>
+
+            <?php if ( ! empty( $ambitos ) ): ?>
+                <p class="tienda-hero-tax">
+                    Ámbitos de actuación:
+                    <strong><?php echo esc_html( implode( ', ', wp_list_pluck( $ambitos, 'name' ) ) ); ?></strong>
+                </p>
+            <?php endif; ?>
+        </div>
+    </section>
+ -->
+    <!-- CONTENT + MAP -->
+    <section class="tienda-content-section">
+        <div class="tienda-content">
+            <?php the_content(); ?>
+
+            <div class="info-store">
+                <?php if ( $web ): ?>
+                    <div class="data">
+						<span class="icon">
+    <img src="<?php echo plugin_dir_url( __FILE__ ) . 'assets/ico_web.svg'; ?>" alt="Web icon" width="16" height="16">
+</span>
+                        <a href="<?php echo esc_url( $web ); ?>" target="_blank"><?php echo esc_html( $web ); ?></a>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ( $correo ): ?>
+                    <div class="data">
+						<span class="icon">
+    <img src="<?php echo plugin_dir_url( __FILE__ ) . 'assets/ico_email.svg'; ?>" alt="Mail icon" width="16" height="16">
+</span>
+                        <a href="mailto:<?php echo antispambot( $correo ); ?>"><?php echo esc_html( $correo ); ?></a>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ( $telefono ): ?>
+                    <div class="data">
+						<span class="icon">
+    <img src="<?php echo plugin_dir_url( __FILE__ ) . 'assets/ico_direccion.svg'; ?>" alt="Phone icon" width="16" height="16">
+</span>
+                        <a href="tel:<?php echo esc_attr( preg_replace( '/\s+/', '', $telefono ) ); ?>"><?php echo esc_html( $telefono ); ?></a>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ( $direccion ): ?>
+                    <div class="data">
+						<span class="icon">
+    <img src="<?php echo plugin_dir_url( __FILE__ ) . 'assets/ico_direccion.svg'; ?>" alt="Location icon" width="16" height="16">
+</span>
+                        <?php echo esc_html( $direccion ); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if ( ! empty( $comunidad ) ): ?>
+                    <div class="data">
+						
+                        <?php echo esc_html( implode( ', ', wp_list_pluck( $comunidad, 'name' ) ) ); ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if ( $embed_src ): ?>
+            <aside class="tienda-map">
+                <iframe src="<?php echo esc_url( $embed_src ); ?>" loading="lazy" allowfullscreen></iframe>
+                <?php if ( $google_maps_link ): ?>
+                    <a href="<?php echo esc_url( $google_maps_link ); ?>" target="_blank" class="map-button">
+                        Cómo llegar →
+                    </a>
+                <?php endif; ?>
+            </aside>
+        <?php endif; ?>
+    </section>
+</div>

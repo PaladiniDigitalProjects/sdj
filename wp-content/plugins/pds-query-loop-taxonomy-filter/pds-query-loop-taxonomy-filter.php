@@ -2,9 +2,9 @@
 /**
  * Plugin Name: PDS Query Loop Taxonomy Filter
  * Plugin URI: https://example.com
- * Description: Extiende el Query Loop Block para filtrar por las etiquetas primero, y si no hay por categorías, respetando la configuración del bloque.
- * Version: 1.2.0
- * Author: Tu Nombre
+ * Description: Extiende el Query Loop Block para filtrar por la taxonomía 'ámbito' primero, y si no hay, por categorías, respetando la configuración del bloque. Muestra un indicador visual del estado del filtro.
+ * Version: 1.3.0
+ * Author: RicardPDS
  * License: GPL v2 or later
  * Text Domain: query-loop-taxonomy-filter
  */
@@ -20,8 +20,11 @@ class Query_Loop_Taxonomy_Filter {
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'register_settings'));
 
-        // Filtro para modificar el Query Loop
+        // Filtro del Query Loop
         add_filter('query_loop_block_query_vars', array($this, 'filter_query_loop'), 10, 2);
+
+        // Indicador global en la barra de administración
+        add_action('admin_bar_menu', array($this, 'add_admin_bar_indicator'), 100);
     }
 
     /**
@@ -53,12 +56,23 @@ class Query_Loop_Taxonomy_Filter {
     }
 
     /**
-     * Página de administración
+     * Página de administración del plugin
      */
     public function admin_page() {
+        $is_active = get_option('qltf_enable_filter', 1);
         ?>
         <div class="wrap">
             <h1><?php _e('Query Loop Taxonomy Filter - Configuración', 'query-loop-taxonomy-filter'); ?></h1>
+
+            <!-- Indicador de estado -->
+            <div style="margin: 10px 0; padding: 10px; border-left: 4px solid <?php echo $is_active ? '#46b450' : '#dc3232'; ?>; background: #fff;">
+                <?php if ($is_active): ?>
+                    <strong style="color:#46b450;">✅ <?php _e('Filtrado de taxonomías activo', 'query-loop-taxonomy-filter'); ?></strong>
+                <?php else: ?>
+                    <strong style="color:#dc3232;">❌ <?php _e('Filtrado de taxonomías desactivado', 'query-loop-taxonomy-filter'); ?></strong>
+                <?php endif; ?>
+            </div>
+
             <form method="post" action="options.php">
                 <?php settings_fields('qltf_settings'); ?>
                 <table class="form-table">
@@ -67,8 +81,8 @@ class Query_Loop_Taxonomy_Filter {
                         <td>
                             <label>
                                 <input type="checkbox" name="qltf_enable_filter" value="1"
-                                    <?php checked(get_option('qltf_enable_filter', 1), 1); ?> />
-                                <?php _e('Filtrar Query Loop blocks por etiquetas o categorías del post actual', 'query-loop-taxonomy-filter'); ?>
+                                    <?php checked($is_active, 1); ?> />
+                                <?php _e('Filtrar Query Loop blocks por "ámbito" o categorías del post actual', 'query-loop-taxonomy-filter'); ?>
                             </label>
                         </td>
                     </tr>
@@ -103,8 +117,32 @@ class Query_Loop_Taxonomy_Filter {
     }
 
     /**
+     * Indicador global en la barra de administración
+     */
+    public function add_admin_bar_indicator($wp_admin_bar) {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $is_active = get_option('qltf_enable_filter', 1);
+        $color = $is_active ? '#46b450' : '#dc3232';
+        $text = $is_active
+            ? '✅ Filtrado taxonomías activo'
+            : '❌ Filtrado taxonomías desactivado';
+
+        $args = array(
+            'id'    => 'qltf_status',
+            'title' => '<span style="color:' . esc_attr($color) . '; font-weight:bold;">' . esc_html($text) . '</span>',
+            'href'  => admin_url('options-general.php?page=query-loop-taxonomy-filter'),
+            'meta'  => array('class' => 'qltf-status-indicator')
+        );
+
+        $wp_admin_bar->add_node($args);
+    }
+
+    /**
      * Obtiene la taxonomía según prioridad:
-     * 1. post_tag (todas las etiquetas)
+     * 1. ámbito (todas las etiquetas)
      * 2. category (todas las categorías)
      */
     private function get_taxonomy_priority() {
@@ -129,12 +167,12 @@ class Query_Loop_Taxonomy_Filter {
 
         if (!in_array($post->post_type, $enabled_types)) return null;
 
-        // 1️⃣ Intentar primero con todas las etiquetas
-        $tags = wp_get_post_terms($post->ID, 'post_tag');
+        // 1️⃣ Intentar primero con todas las etiquetas "ámbito"
+        $tags = wp_get_post_terms($post->ID, 'ambito');
         if (!empty($tags) && !is_wp_error($tags)) {
             $tag_ids = wp_list_pluck($tags, 'term_id');
             return array(
-                'taxonomy' => 'post_tag',
+                'taxonomy' => 'ambito',
                 'terms' => $tag_ids
             );
         }
@@ -180,7 +218,7 @@ class Query_Loop_Taxonomy_Filter {
             $query['post__not_in'][] = $post->ID;
         }
 
-        // Añadir el filtro de taxonomía detectado (todas las etiquetas o categorías)
+        // Añadir el filtro de taxonomía detectado
         $query['tax_query'][] = array(
             'taxonomy' => $taxonomy_data['taxonomy'],
             'field' => 'term_id',
@@ -194,3 +232,27 @@ class Query_Loop_Taxonomy_Filter {
 
 // Inicializar el plugin
 new Query_Loop_Taxonomy_Filter();
+
+
+/**
+ * 🔍 Show console message for logged-in users (frontend only)
+ */
+add_action('wp_footer', function() {
+    // Show only to logged-in users, and not in admin
+    if (!is_user_logged_in() || is_admin()) {
+        return;
+    }
+
+    $is_active = get_option('qltf_enable_filter', 1);
+
+    $message = $is_active
+        ? '✅ [PDS Query Loop Filter] Taxonomy filtering is ACTIVE.'
+        : '❌ [PDS Query Loop Filter] Taxonomy filtering is INACTIVE.';
+
+    $color = $is_active ? 'green' : 'red';
+    ?>
+    <script>
+        console.log('%c<?php echo esc_js($message); ?>', 'color: <?php echo esc_js($color); ?>; font-weight:bold;');
+    </script>
+    <?php
+});

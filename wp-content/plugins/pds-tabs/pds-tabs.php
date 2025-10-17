@@ -2,10 +2,10 @@
 /**
  * Plugin Name:     PDS Tabs
  * Description:     Adds auto‑slide controls to GutenbergHub Tabs, static mode.
- * Version:         1.2.0
+ * Version:         1.3.0
  * Requires at least: 6.1
  * Requires PHP:    7.3
- * Author:          Paladini Digital Solutions
+ * Author:          Ricard Paladini Digital Solutions
  * Text Domain:     pds-tabs
  */
 
@@ -59,8 +59,8 @@ add_action( 'wp_enqueue_scripts', function() {
     );
     wp_enqueue_style(
         'pds-tabs-style',
-        PDS_TABS_URL . 'build/style.css',
+        PDS_TABS_URL . 'build/style-style.css',
         [],
-        filemtime( PDS_TABS_DIR_PATH . 'build/style.css' )
+        filemtime( PDS_TABS_DIR_PATH . 'build/style-style.css' )
     );
 } );
