@@ -69,64 +69,57 @@
         flex-direction: column;
         background-color: #F9F8FF;
         .wp-block-button {
+            margin: 0;
             width: calc(100% - 4rem);
             position: relative;
-            z-index: 11;
+            z-index: 1;
             transition: 0.35s;
+            background-image: url('../img/Recetas.svg'), url('../img/white.png');
+            background-position: right center, left bottom;
+            background-repeat: no-repeat, repeat;
+            background-size: 10rem 10rem, 100% 100%;
+            border-radius: 1rem 5rem 5rem 1rem !important;
+            
             &:hover {
                 cursor: pointer;
                 scale: 110%;
             }
 
+            &:first-child {
+                background-image: url('../img/Capsulas.svg'), url('../img/white.png');
+                background-position: right center, left bottom;
+                background-repeat: no-repeat, repeat;
+                background-size: 10rem 10rem, 100% 100%;
+            }
+
+            &:last-child {
+                background-image: url('../img/Seguridad.svg'), url('../img/white.png');
+                background-position: right center, left bottom;
+                background-repeat: no-repeat, repeat;
+                background-size: 10rem 10rem, 100% 100%;
+            }
+
+            &:nth-child(3n) {
+                background-image: url('../img/Cocina.svg'), url('../img/white.png');
+                background-position: right center, left bottom;
+                background-repeat: no-repeat, repeat;
+                background-size: 10rem 10rem, 100% 100%;
+            }
+
             .wp-block-button__link {
                 box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.2);
                 text-align: left;
-                padding:0 10rem 0 2rem;
+                padding:0;
                 line-height: 120%;
                 height: 10rem;
                 border-radius: 1rem 5rem 5rem 1rem !important;
                 font-family: $fp-bold;
                 letter-spacing: 0;
                 font-size: 2rem !important;
-            }
-
-            &:before {
-                content:' ';
-                width: 8rem;
-                height: 8rem;
-                position: absolute;
+                padding: 0 10rem 0 2rem;
                 display: block;
-                top: 1rem;
-                right: 1.5rem;
-                border-radius: 4rem;
-                background: url('../img/Recetas.svg') center no-repeat;
-                background-size: 100%;
-                z-index: 1;
-            }
-
-            &:first-child {
-                &:before {
-                    background: url('../img/Capsulas.svg') center no-repeat;
-                    background-size: 100%;
-                }
-            }
-
-
-            &:last-child {
-                margin-right: 0;
-                &:before {
-                    background: url('../img/IcoSeguridad.svg') center no-repeat;
-                    background-size: 100%;
-                }
-            }
-
-            &:nth-child(3n) {
-                margin-right: 0;
-                &:before {
-                    background: url('../img/Cocina.svg') center no-repeat;
-                    background-size: 100%;
-                }
-            }
+                background-color: transparent !important;
+            }            
 
             @include laptop {
                 margin-right: 2rem;
@@ -134,14 +127,13 @@
             }
             
             @include large {
-                margin:0 1rem;
-                width: calc(24% - 2rem);
+                margin-right: 2rem;
+                width: calc(25% - 4rem);
             }
         }
 
         @include laptop {
             background-color: transparent;
-            
             z-index: 111;
             margin:-7rem auto -6rem !important;
             flex-direction: row;
@@ -152,27 +144,22 @@
             }
         }
        
-
         &.is-vertical {
             position: relative;
             margin:0 !important;
-        
             .wp-block-button {
                 margin:0 0 2rem 0;
                 width: 100%;
-
+                border-radius: 1rem 5rem 5rem 1rem !important;
+                
                 .wp-block-button__link {
                     text-align: left;
-                    padding:0 2rem 0 11rem;
-                    border-radius: 5rem 0.5rem 0.5rem 5rem !important;
-                }
-                
-                &:before {
-                    left: 1.5rem;
+                    width: 100%;
+                    padding: 1rem 10rem 1rem 2rem;
+                    border-radius: 1rem 5rem 5rem 1rem !important;
                 }
             }
         }
-        
     }
 
     .sponsors {

@@ -1,32 +1,32 @@
 /* SJD TABS */
 
-.sjd_tabs {
-  height: auto;
-  min-height: 30rem;
-  .wp-block-ghub-tab-buttons-container {
-    height: 100%;
+
+.wp-block-ghub-tabs-container {
+  position: relative;
+  .gutenberghub-tab-buttons-container {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 100%;
     z-index: 1;
+
     .wp-block-ghub-tab-button {
-      padding: 0.5rem !important;
+      width: 100%;
+      max-width: 15rem;
       border-radius: 0.5rem;
       border:0.2rem solid $white;
-
-      &.gutenberghub-active-tab {
-        border-radius: 0.5rem;
-        border:0.2rem solid $primary;
-        box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
-        -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
-        -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
+      padding: 0.5rem;
+        &.gutenberghub-active-tab {
+          border:0.2rem solid $primary;
+          border-radius: 0.5rem;
+          padding: 0.5rem;
+          box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
+          -webkit-box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
+          -moz-box-shadow: 0 0 10px 0 rgba(0,0,0,0.65);
       }
     }
   }
-  .gutenberghub-tab-content {
-    .wp-block-cover, .wp-block-cover-image {
-      min-height: 480px;
-    }
-  }
 }
-
 
 /* FILTER MAPS */
 
@@ -333,6 +333,43 @@
             border-bottom: 0.1rem solid $white;
             opacity: 1;
         }
+    }
+  }
+
+
+  /* CARRUSEL NOTICIAS */
+
+
+  .wp-block-noticias {
+    background-color: transparent !important;
+    width: 100% !important;
+    max-width: $max-width;
+    padding: 0 !important;
+    .owl-item {
+      border:none !important;
+      .entry-tarja {
+        background-color: $white !important;
+        .entry-image {
+          padding-bottom: 150%;
+        }
+      }
+      .entry-content {
+        background-color: $white !important;
+        .entry-title {
+          color:$primary !important;
+          padding-left: 0.5rem;
+          font-size: 1.4rem !important;
+          line-height: 130% !important;
+        }
+        button.btn {
+          margin: 1rem 1rem 1rem 1rem !important;
+          padding: 0.5rem 1.5rem;
+          border: none !important;
+          border-radius:2rem;
+          background-color: $primary;
+          color:$white;
+        }
+      }
     }
   }
   

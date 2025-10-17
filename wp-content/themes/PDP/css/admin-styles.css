@@ -1703,6 +1703,9 @@
   width: 100%;
   max-width: 100% !important;
 }
+.block-editor-writing-flow .nomax img {
+  max-width: inherit !important;
+}
 .block-editor-writing-flow .grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -1757,25 +1760,21 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     -webkit-column-gap: 1.5rem;
        -moz-column-gap: 1.5rem;
-            column-gap: 1.5rem;
-    row-gap: 1.5rem;
+            column-gap: 1.5rem !important;
+    row-gap: 1.5rem !important;
   }
 }
 @media only screen and (min-width: 1024px) {
   .block-editor-writing-flow .grid.grid3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    -webkit-column-gap: 2rem;
-       -moz-column-gap: 2rem;
-            column-gap: 2rem;
+    column-gap: 2rem;
     row-gap: 2rem;
   }
 }
 @media only screen and (min-width: 1240px) {
   .block-editor-writing-flow .grid.grid3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    -webkit-column-gap: 2.5rem;
-       -moz-column-gap: 2.5rem;
-            column-gap: 2.5rem;
+    column-gap: 2.5rem;
     row-gap: 2.5rem;
   }
 }
@@ -4311,58 +4310,53 @@
   background-color: #F9F8FF;
 }
 .block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button {
+  margin: 0;
   width: calc(100% - 4rem);
   position: relative;
   z-index: 11;
-  -webkit-transition: 0.35s;
   transition: 0.35s;
+  background-image: url("../img/Recetas.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+  border-radius: 1rem 5rem 5rem 1rem !important;
 }
 .block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:hover {
   cursor: pointer;
   scale: 110%;
 }
+.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:first-child {
+  background-image: url("../img/Capsulas.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+}
+.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:last-child {
+  background-image: url("../img/Seguridad.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+}
+.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n) {
+  background-image: url("../img/Cocina.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+}
 .block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button .wp-block-button__link {
   -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
           box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   text-align: left;
-  padding: 0 10rem 0 2rem;
+  padding: 0;
   line-height: 120%;
   height: 10rem;
   border-radius: 1rem 5rem 5rem 1rem !important;
   font-family: "Suisse-Bold", sans-serif;
   letter-spacing: 0;
   font-size: 2rem !important;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:before {
-  content: " ";
-  width: 8rem;
-  height: 8rem;
-  position: absolute;
+  padding: 0 10rem 0 2rem;
   display: block;
-  top: 1rem;
-  right: 1.5rem;
-  border-radius: 4rem;
-  background: url("../img/Recetas.svg") center no-repeat;
-  background-size: 100%;
-  z-index: 1;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:first-child:before {
-  background: url("../img/Capsulas.svg") center no-repeat;
-  background-size: 100%;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:last-child {
-  margin-right: 0;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:last-child:before {
-  background: url("../img/IcoSeguridad.svg") center no-repeat;
-  background-size: 100%;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n) {
-  margin-right: 0;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n):before {
-  background: url("../img/Cocina.svg") center no-repeat;
-  background-size: 100%;
+  background-color: transparent !important;
 }
 @media only screen and (min-width: 1024px) {
   .block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button {
@@ -4372,8 +4366,8 @@
 }
 @media only screen and (min-width: 1240px) {
   .block-editor-writing-flow .nutrities .wp-block-buttons.secciones .wp-block-button {
-    margin: 0 1rem;
-    width: calc(24% - 2rem);
+    margin-right: 2rem;
+    width: calc(25% - 4rem);
   }
 }
 @media only screen and (min-width: 1024px) {
@@ -4403,14 +4397,13 @@
 .block-editor-writing-flow .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button {
   margin: 0 0 2rem 0;
   width: 100%;
+  border-radius: 1rem 5rem 5rem 1rem !important;
 }
 .block-editor-writing-flow .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button .wp-block-button__link {
   text-align: left;
-  padding: 0 2rem 0 11rem;
-  border-radius: 5rem 0.5rem 0.5rem 5rem !important;
-}
-.block-editor-writing-flow .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button:before {
-  left: 1.5rem;
+  width: 100%;
+  padding: 1rem 10rem 1rem 2rem;
+  border-radius: 1rem 5rem 5rem 1rem !important;
 }
 .block-editor-writing-flow .nutrities .sponsors {
   margin: 4rem 0;
@@ -4637,6 +4630,42 @@
         -ms-flex-order: 2;
             order: 2;
   }
+}
+.block-editor-writing-flow .wp-block-noticias.noticiasCapitulo {
+  background-color: #ffffff !important;
+}
+.block-editor-writing-flow .wp-block-noticias.noticiasCapitulo .section-header .section-title {
+  font-family: "Suisse-Bold", sans-serif;
+  text-align: left !important;
+  font-size: 2.4rem;
+}
+.block-editor-writing-flow .wp-block-cover.destacadoSimple {
+  border-radius: 0.5rem !important;
+  margin-left: 0 !important;
+}
+.block-editor-writing-flow .wp-block-cover.destacadoSimple img {
+  border-radius: 0.5rem !important;
+}
+.block-editor-writing-flow .wp-block-cover.destacadoSimple .wp-block-heading {
+  display: block;
+  padding: 0 1rem !important;
+  margin: 1rem 0 !important;
+  font-family: "Suisse-Semi-Bold", sans-serif !important;
+}
+.block-editor-writing-flow .capitulo2026 .section-header {
+  line-height: 0;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block;
+  margin: 0 auto 6rem;
+  background-color: #00AAE5;
+  text-align: center;
+}
+.block-editor-writing-flow .capitulo2026 .section-header img {
+  max-width: 1420px;
+  width: 100%;
+  margin: 0 auto;
 }
 .block-editor-writing-flow .wp-block-slider {
   background-color: #ededed;
