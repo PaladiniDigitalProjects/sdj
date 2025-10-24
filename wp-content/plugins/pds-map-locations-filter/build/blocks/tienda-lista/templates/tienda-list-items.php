@@ -22,13 +22,13 @@ if ($stores_query->have_posts()): ?>
             $web        = function_exists('get_field') ? get_field('ce_web') : '';
             $thumb_html = has_post_thumbnail() ? get_the_post_thumbnail(get_the_ID(), 'thumbnail', ['class' => 'wp-post-image']) : '';
             
-            // Process taxonomy terms into comma-separated strings
+            // Process taxonomy terms 
             $provincia_names = !is_wp_error($provincia_terms) && !empty($provincia_terms)
-                ? implode(', ', wp_list_pluck($provincia_terms, 'name'))
+                ? implode(' · ', wp_list_pluck($provincia_terms, 'name'))
                 : '';
 
             $ambitos_names = !is_wp_error($ambitos_terms) && !empty($ambitos_terms)
-                ? implode(', ', wp_list_pluck($ambitos_terms, 'name'))
+                ? implode(' · ', wp_list_pluck($ambitos_terms, 'name'))
                 : '';
         ?>
 
@@ -46,13 +46,13 @@ if ($stores_query->have_posts()): ?>
                     <div class="pds-column pds-col-2">
                         <div class="pds-col-text">
                             <?php if ($provincia_names): ?>
-                                <span class="pds-provincia"><?= esc_html($provincia_names); ?></span>
+                               <strong> <span class="pds-provincia"><?= esc_html($provincia_names); ?></span> </strong>
                             <?php endif; ?>
                             <h3 class="pds-title">
                                 <a href="<?= esc_url(get_permalink()); ?>"><?= esc_html(get_the_title()); ?></a>
                             </h3>
                             <?php if ($ambitos_names): ?>
-                                <span class="pds-ambitos"><?= esc_html($ambitos_names); ?></span>
+                               <strong>  <span class="pds-ambitos"><?= esc_html($ambitos_names); ?></span></strong>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -90,13 +90,13 @@ if ($stores_query->have_posts()): ?>
                     </div>
                     <div class="pds-col-text">
                         <?php if ($provincia_names): ?>
-                            <span class="pds-provincia"><?= esc_html($provincia_names); ?></span>
+                           <strong> <span class="pds-provincia"><?= esc_html($provincia_names); ?></span>  </strong>
                         <?php endif; ?>
                         <h3 class="pds-title">
                             <a href="<?= esc_url(get_permalink()); ?>"><?= esc_html(get_the_title()); ?></a>
                         </h3>
                         <?php if ($ambitos_names): ?>
-                            <span class="pds-ambitos"><?= esc_html($ambitos_names); ?></span>
+                          <strong>   <span class="pds-ambitos"><?= esc_html($ambitos_names); ?></span> </strong>
                         <?php endif; ?>
                     </div>
                     <div class="pds-col-2">

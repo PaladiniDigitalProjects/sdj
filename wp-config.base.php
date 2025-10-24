@@ -12,7 +12,9 @@ define( 'NONCE_SALT',        '`6FvjlT~Q+;eWhRWQi.EqW3D#]_CwApy;pG|@=`M|rp8+DR`Yr
 define( 'WP_CACHE_KEY_SALT', '%l2>K;86&[$ucV5i+$9jWR3?#|RI}Ikb!d;dZAU$qItA19mn{}sAsu-*,p3RnhV&' );
 
 
-
+// Evita que els warnings es mostrin en resposta REST
+ini_set( 'display_errors', 0 );
+define( 'WP_DEBUG_DISPLAY', false );
 if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', __DIR__ . '/' );
 }

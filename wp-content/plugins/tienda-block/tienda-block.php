@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Tienda Block
- * Description: A custom Gutenberg block for tienda posts.
- * Version: 1.0.0
- * Author: Your Name
+ * Description: Block de detalle de Localitzaciones, Centros o Tiendas
+ * Version: 1.1.0
+ * Author: Ricard PDS
  */
 
 defined('ABSPATH') || exit;
