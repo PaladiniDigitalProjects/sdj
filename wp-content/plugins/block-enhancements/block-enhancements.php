@@ -4,7 +4,7 @@
  * Description:       Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
  * Requires at least: 6.5
  * Requires PHP:      7.0
- * Version:           1.2.7
+ * Version:           1.2.8
  * Author:            Phi Phan
  * Author URI:        https://boldblocks.net
  * Plugin URI:        https://boldblocks.net?utm_source=BE&utm_campaign=visit+site&utm_medium=link&utm_content=Plugin+URI
@@ -30,7 +30,7 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 		 *
 		 * @var String
 		 */
-		protected $version = '1.2.7';
+		protected $version = '1.2.8';
 
 		/**
 		 * Components
@@ -219,6 +219,18 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 					[ 'name' => 'core/list' ],
 					[ 'name' => 'core/heading' ],
 				],
+				'withDimension'     => [
+					[ 'name' => 'core/group' ],
+					[ 'name' => 'core/columns' ],
+					[ 'name' => 'core/column' ],
+					[ 'name' => 'core/media-text' ],
+					[ 'name' => 'core/cover' ],
+					[ 'name' => 'core/heading' ],
+					[ 'name' => 'core/paragraph' ],
+					[ 'name' => 'core/buttons' ],
+					[ 'name' => 'core/button' ],
+					[ 'name' => 'core/spacer' ],
+				],
 				'withTextAlignment' => [
 					[ 'name' => 'core/group' ],
 					[ 'name' => 'core/columns' ],
@@ -328,6 +340,16 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 						'withIcon'
 					),
 					'allowedDefault'  => $default_allowed_blocks['withIcon'],
+				],
+				'withDimension'     => [
+					'availableBlocks' => apply_filters(
+						'block_enhancements_get_available_blocks_by_feature',
+						[
+							[ 'name' => '.*' ],
+						],
+						'withDimension'
+					),
+					'allowedDefault'  => $default_allowed_blocks['withDimension'],
 				],
 				'withTextAlignment' => [
 					'availableBlocks' => apply_filters(

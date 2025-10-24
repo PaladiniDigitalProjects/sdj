@@ -1,36 +1,55 @@
-=== Block Enhancements - Add icon, color, shadow, transition, transform, responsive typography, alignment, hover style ===
+=== Gutenberg Block Enhancements - Icon, Responsive Spacing, Typography, Alignment, Shadow, Transform, Transition, Hover Style ===
 Contributors:      Mr2P
 Tags:              blocks, responsive, button, icon, hover
 Requires PHP:      7.0.0
 Requires at least: 6.5
 Tested up to:      6.8
-Stable tag:        1.2.7
+Stable tag:        1.2.8
 License:           GPL-3.0
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 Donate link:       https://boldblocks.net?utm_source=wp.org&utm_campaign=readme&utm_medium=link&utm_content=BE+Donate
 
-Enhance Gutenberg blocks with features such as icon, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
+Add icon, responsive spacing, typography, alignment, shadow, transform, transition, color, hover style to blocks. Lightweight, fast, and clean.
 
 == Description ==
 
-Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive typography, responsive text alignment, hover style, CSS position.
-Unlike other similar plugins, this plugin is fast, lightweight and clean. It only loads what you need. You can choose which features to apply to specific blocks through the settings page.
+**Block Enhancements** adds powerful design options to core Gutenberg blocks, so you don't need to install heavy custom block libraries.
+It's the easiest way to make your existing blocks more flexible and responsive while keeping your site fast and clean. All dynamic styles are rendered in the document head instead of inline styles.
+Unlike other similar plugins, this plugin is lightweight. It only loads what you need. You can enable or disable individual features per block type from the plugin's settings page.
 
-*It works with all themes, however, the with-icon feature uses the CSS pseudo `::before` to add icons with the `mask-image` CSS property. It may conflict with other plugins or themes that use the same technique.*
+*It works with all Gutenberg-ready themes, however, the with-icon feature uses the CSS pseudo `::before` to add icons with the `mask-image` CSS property. It may conflict with other plugins or themes that use the same technique.*
 
 === Key Features ===
 
-* Add an icon to button, heading, list, list item, navigation, etc. from a library with more than 3000 icons, or upload your custom SVG image.
-* Add box-shadow
-* Add text-shadow
-* Add 2D transform (translate, rotate, skew, scale)
-* Add hover state style for shadow, transform, text-color, background-color
-* Add responsive text alignment. It's useful for 'container' blocks such as 'core/group', 'core/columns', 'core/column' and/or you want for example text-align center on mobile but text-align left on the desktop
-* Add transition
-* Add responsive font size, font weight, line height, and letter spacing based on media queries
-* Add CSS position
+* Add icons to buttons, headings, lists, navigation blocks (built-in 3000+ icon library or custom SVGs).
+* Set responsive dimensions: padding, margin, and block spacing per device.
+* Adjust responsive typography: font size, weight, line height, letter spacing per device.
+* Apply 2D transforms (translate, rotate, skew, scale) per device with hover styles.
+* Add box-shadow and text-shadow with hover state styles.
+* Customize text and background colors with hover styles.
+* Control responsive text alignment for Group, Columns, and Column blocks.
+* Use transitions for smooth hover style changes.
+* Define responsive CSS positions (relative, absolute, sticky, static) with custom offsets.
 
-☐ More features will be added soon.
+=== Common use cases ===
+
+1. Add icons to blocks (button, heading, list, navigation).
+2. Change spacing (padding, margin, block spacing) for button, group, row, grid, columns, gallery blocks per device.
+3. Change typography (font size, font weight, line-height, letter spacing) per device.
+4. Change text-alignment for group blocks per device. For example text-align center on mobile but text-align left on the desktop.
+6. Add 2D transforms with hover styles.
+7. Add box-shadow, text-shadow with hover styles.
+8. Change text color, background color on mouse hover.
+
+=== How to use a feature ===
+
+1. Select the block in the Block Editor.
+2. Choose the style tab from the inspector settings.
+3. Click on the plus (+) icon of the Block Enhancements panel to choose the feature and input your settings.
+4. If the feature does not show up, go to the setting page (Settings → Block Enhancements) to add the feature to your block type.
+5. To input settings for responsive features, you have to switch to between device mode (Desktop/Tablet/Mobile).
+6. The responsive text alignment settings is on the block toolbar not in the inspector settings.
+7. See the video tutorials and the screenshots for more details.
 
 === Video tutorials ===
 
@@ -44,7 +63,7 @@ If this plugin is useful for you, please do a quick review and [rate it](https:/
 
 Please check out my other plugins if you're interested:
 
-- **[Content Blocks Builder](https://wordpress.org/plugins/content-blocks-builder)** - This plugin turns the Block Editor into a powerful page builder by allowing you to create blocks, variations, and patterns directly in the Block Editor without needing a code editor.
+- **[Content Blocks Builder](https://wordpress.org/plugins/content-blocks-builder)** - Build custom layouts and blocks visually in the Block Editor without needing a code editor, using only core blocks and native Gutenberg features.
 - **[Meta Field Block](https://wordpress.org/plugins/display-a-meta-field-as-block)** - A block to display custom fields as blocks on the front end. It supports custom fields for posts, terms, users, and setting fields. It can also be used in the Query Loop block.
 - **[SVG Block](https://wordpress.org/plugins/svg-block)** - A block to display SVG images as blocks. Useful for images, icons, dividers, and buttons. It allows you to upload SVG images and load them into the icon library.
 - **[Icon separator](https://wordpress.org/plugins/icon-separator)** - A tiny block just like the core/separator block but with the ability to add an icon.
@@ -64,19 +83,27 @@ The plugin is developed using @wordpress/scripts.
 
 = What problem does this plugin solve? =
 
-It adds more features to make core blocks fit more real-world use cases.
+It adds advanced styling controls to Gutenberg core blocks, so you can customize existing core blocks further without heavy block libraries.
 
-= When should we use this plugin? =
+= When should I use this plugin? =
 
-When you want more advanced features on core blocks, but don’t want any third-party blocks from a heavy block library.
+When you want more advanced features on core blocks, without installing new ones.
 
-= Why do you need this plugin? =
+= Does it affect performance? =
 
-It’s super easy to use and lightweight. It only loads what you need.
+No. Each feature loads only when used, keeping your site fast, light, and clean.
 
-= Who needs this plugin? =
+= Who can use it? =
 
-Anyone can use this plugin.
+Anyone — designers, developers, or content creators familiar with the Block Editor.
+
+= Is it compatible with Full Site Editing? =
+
+Yes. It works perfectly in the Site Editor and with all block themes.
+
+= Does it support my theme? =
+
+It supports any Gutenberg-ready theme.
 
 = Why does the text of the block break when I add an icon to it? =
 
@@ -107,6 +134,11 @@ It is probably because you added an inline element such as bold, italic, highlig
 11. Add an icon to categories
 
 == Changelog ==
+
+= 1.2.8 =
+*Release Date - 15 October 2025*
+
+* Added - responsive padding, margin, and block spacing options to blocks for better tablet/mobile design control.
 
 = 1.2.7 =
 *Release Date - 11 August 2025*

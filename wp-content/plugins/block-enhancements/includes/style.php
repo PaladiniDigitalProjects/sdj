@@ -125,7 +125,7 @@ if ( ! class_exists( Style::class ) ) :
 			add_action( 'init', [ $this, 'register_block_enhancements_style' ] );
 
 			// Get block style.
-			add_filter( 'render_block', [ $this, 'render_block_style' ], 10, 2 );
+			add_filter( 'render_block', [ $this, 'render_block_style' ], 10, 3 );
 
 			// Enqueue styles for the iframe editor.
 			add_filter( 'block_editor_settings_all', [ $this, 'enqueue_style_for_the_editor' ] );
@@ -157,7 +157,7 @@ if ( ! class_exists( Style::class ) ) :
 		 * @return void
 		 */
 		public function enqueue_style_for_the_editor( $editor_settings ) {
-			$feature_names = [ 'with-icon', 'with-color', 'with-shadow', 'with-text-shadow', 'with-transform', 'with-transition', 'with-text-alignment', 'with-typography', 'with-position' ];
+			$feature_names = [ 'with-icon', 'with-dimension', 'with-color', 'with-shadow', 'with-text-shadow', 'with-transform', 'with-transition', 'with-text-alignment', 'with-typography', 'with-position' ];
 			foreach ( $feature_names as $feature_name ) {
 				$this->get_feature_style( $feature_name );
 			}
@@ -181,11 +181,12 @@ if ( ! class_exists( Style::class ) ) :
 		/**
 		 * Render style for all supported blocks
 		 *
-		 * @param string $block_content
-		 * @param array  $block
+		 * @param string   $block_content
+		 * @param array    $block
+		 * @param WP_Block $block_instance
 		 * @return string
 		 */
-		public function render_block_style( $block_content, $block ) {
+		public function render_block_style( $block_content, $block, $block_instance ) {
 			// Bail if the block has no style.
 			if ( ! $this->has_style( $block ) ) {
 				return $block_content;
@@ -195,7 +196,7 @@ if ( ! class_exists( Style::class ) ) :
 			$selector = $this->generate_selector( $block['blockName'], '' );
 
 			// Get custom style.
-			$block_styles = $this->get_block_style( $block, '.' . $selector );
+			$block_styles = $this->get_block_style( $block, '.' . $selector, $block_instance );
 			if ( empty( $block_styles['style'] ?? '' ) ) {
 				return $block_content;
 			}
@@ -260,11 +261,12 @@ if ( ! class_exists( Style::class ) ) :
 		/**
 		 * Get block custom style
 		 *
-		 * @param array  $block
-		 * @param string $selector
+		 * @param array    $block
+		 * @param string   $selector
+		 * @param WP_Block $block_instance
 		 * @return string
 		 */
-		private function get_block_style( $block, $selector ) {
+		private function get_block_style( $block, $selector, $block_instance ) {
 			$style    = '';
 			$features = [];
 
@@ -287,6 +289,24 @@ if ( ! class_exists( Style::class ) ) :
 			if ( $has_with_icon ) {
 				$this->get_feature_style( 'with-icon' );
 				$features['with-icon'] = $has_with_icon;
+			}
+
+			// With dimension.
+			$dimensions = $this->get_with_dimension_style(
+				[
+					'data'           => $block['attrs']['boldblocks'],
+					'selector'       => $selector,
+					'block'          => $block,
+					'breakpoints'    => $breakpoints,
+					'block_instance' => $block_instance,
+				],
+				$style_array,
+				$responsive_style_array
+			);
+
+			if ( $dimensions ) {
+				$this->get_feature_style( 'with-dimension' );
+				$features['with-dimension'] = $dimensions;
 			}
 
 			// With color.
@@ -707,6 +727,226 @@ if ( ! class_exists( Style::class ) ) :
 			}
 
 			return $block_class;
+		}
+
+		/**
+		 * Build dimension style
+		 *
+		 * @param array  $args {
+		 *   @param array  $data
+		 *   @param string $sesector
+		 *   @param array  $block
+		 *   @param array  $devices
+		 * }
+		 * @param array  &$style_array
+		 * @param array  &$responsive_style_array
+		 * @return void
+		 */
+		private function get_with_dimension_style( $args, &$style_array, &$responsive_style_array ) {
+			$data = $args['data'] ?? [];
+
+			// Block name.
+			$block_name = $args['block']['blockName'] ?? '';
+
+			// Has no feature.
+			if ( ! $this->has_feature( 'withDimension', $block_name ) ) {
+				return '';
+			}
+
+			// No value.
+			if ( ! isset( $data['withDimension'] ) ) {
+				return '';
+			}
+
+			$padding   = $data['withDimension']['padding'] ?? [];
+			$margin    = $data['withDimension']['margin'] ?? [];
+			$block_gap = $data['withDimension']['blockGap'] ?? [];
+
+			// No value.
+			if ( ! $padding && ! $margin && ! $block_gap ) {
+				return '';
+			}
+
+			// Get selector.
+			$selector = $args['selector'] ?? '';
+
+			if ( 'core/button' === $block_name ) {
+				$args['selector'] = $selector . ' > .wp-block-button__link';
+			}
+
+			// Feature classes.
+			$feature_classes = [];
+
+			// Padding style.
+			$padding_style = $this->build_responsive_style(
+				array_merge(
+					$args,
+					[
+						'setting_value'    => $padding,
+						'func_build_style' => [ $this, 'build_dimension_css_value' ],
+						'attribute'        => 'p',
+					]
+				),
+				$style_array,
+				$responsive_style_array
+			);
+
+			if ( $padding_style ) {
+				if ( strpos( $padding_style, '--be--pbs' ) !== false ) {
+					$feature_classes[] = 'with-pbs';
+				}
+
+				if ( strpos( $padding_style, '--be--pbe' ) !== false ) {
+					$feature_classes[] = 'with-pbe';
+				}
+
+				if ( strpos( $padding_style, '--be--pis' ) !== false ) {
+					$feature_classes[] = 'with-pis';
+				}
+
+				if ( strpos( $padding_style, '--be--pie' ) !== false ) {
+					$feature_classes[] = 'with-pie';
+				}
+			}
+
+			// Margin style.
+			$margin_style = $this->build_responsive_style(
+				array_merge(
+					$args,
+					[
+						'setting_value'    => $margin,
+						'func_build_style' => [ $this, 'build_dimension_css_value' ],
+						'attribute'        => 'm',
+					]
+				),
+				$style_array,
+				$responsive_style_array
+			);
+
+			if ( $margin_style ) {
+				if ( strpos( $margin_style, '--be--mbs' ) !== false ) {
+					$feature_classes[] = 'with-mbs';
+				}
+
+				if ( strpos( $margin_style, '--be--mbe' ) !== false ) {
+					$feature_classes[] = 'with-mbe';
+				}
+
+				if ( strpos( $margin_style, '--be--mis' ) !== false ) {
+					$feature_classes[] = 'with-mis';
+				}
+
+				if ( strpos( $margin_style, '--be--mie' ) !== false ) {
+					$feature_classes[] = 'with-mie';
+				}
+			}
+
+			// Block gap style.
+			$block_gap_style = $this->build_responsive_style(
+				array_merge(
+					$args,
+					[
+						'setting_value'    => $block_gap,
+						'func_build_style' => [ $this, 'build_block_gap_css_value' ],
+					]
+				),
+				$style_array,
+				$responsive_style_array
+			);
+
+			if ( $block_gap_style ) {
+				// Grid layout.
+				$is_grid_gap = in_array( $args['block']['attrs']['layout']['type'] ?? '', [ 'flex', 'grid' ], true );
+
+				// Block gap support.
+				$is_flex_gap = is_array( $args['block_instance']->block_type->supports['spacing']['blockGap'] ?? false );
+
+				$has_gap = strpos( $block_gap_style, '--be--gap' ) !== false;
+				if ( $has_gap ) {
+					if ( $is_grid_gap ) {
+						$feature_classes[] = 'with-grid-gap';
+					} elseif ( $is_flex_gap ) {
+						$feature_classes[] = 'with-flex-gap';
+						if ( strpos( $block_gap_style, '--be--gap-h' ) !== false ) {
+							$feature_classes[] = 'with-flex-gap-h';
+						}
+					} else {
+						$feature_classes[] = 'with-gap';
+					}
+				}
+			}
+
+			return $feature_classes;
+		}
+
+		/**
+		 * Build dimension style
+		 *
+		 * @param array $args
+		 * @return void
+		 */
+		private function build_dimension_css_value( $args ) {
+			$value     = $args['value'] ?? [];
+			$attribute = $args['attribute'] ?? '';
+
+			$style = '';
+			if ( $value && is_array( $value ) ) {
+				$style = '';
+				$top   = $this->get_spacing_value( $value['top'] ?? '' );
+				if ( '' !== $top ) {
+					$style .= "--be--{$attribute}bs:{$top};";
+				}
+
+				$right = $this->get_spacing_value( $value['right'] ?? '' );
+				if ( '' !== $right ) {
+					$style .= "--be--{$attribute}ie:{$right};";
+				}
+
+				$bottom = $this->get_spacing_value( $value['bottom'] ?? '' );
+				if ( '' !== $bottom ) {
+					$style .= "--be--{$attribute}be:{$bottom};";
+				}
+
+				$left = $this->get_spacing_value( $value['left'] ?? '' );
+				if ( '' !== $left ) {
+					$style .= "--be--{$attribute}is:{$left};";
+				}
+			}
+
+			return $style;
+		}
+
+		/**
+		 * Build block gap style
+		 *
+		 * @param array $args
+		 * @return void
+		 */
+		private function build_block_gap_css_value( $args ) {
+			$value = $args['value'] ?? [];
+
+			$style = '';
+			if ( $value ) {
+				if ( is_array( $value ) ) {
+					$style = '';
+					$top   = $this->get_spacing_value( $value['top'] ?? '' );
+					if ( '' !== $top ) {
+						$style .= "--be--gap:{$top};";
+					}
+
+					$left = $this->get_spacing_value( $value['left'] ?? '' );
+					if ( '' !== $left ) {
+						$style .= "--be--gap-h:{$left};";
+					}
+				} elseif ( is_string( $value ) ) {
+					$gap = $this->get_spacing_value( $value );
+					if ( '' !== $gap ) {
+						$style .= "--be--gap:{$gap};";
+					}
+				}
+			}
+
+			return $style;
 		}
 
 		/**
@@ -1752,27 +1992,25 @@ if ( ! class_exists( Style::class ) ) :
 			$selector         = $args['selector'];
 
 			$setting_styles = [];
-			if ( is_array( $setting_value ) && ! empty( $setting_value ) ) {
-				foreach ( $setting_value as $breakpoint => $value_by_breakpoint ) {
-					$value = [];
-					if ( isset( $value_by_breakpoint['value'] ) ) {
-						$value = $value_by_breakpoint['value'];
-					} elseif ( isset( $value_by_breakpoint['inherit'] ) && is_string( $value_by_breakpoint['inherit'] ) ) {
-						$value = $setting_value[ $value_by_breakpoint['inherit'] ]['value'] ?? [];
-					}
+			foreach ( $setting_value as $breakpoint => $value_by_breakpoint ) {
+				$value = [];
+				if ( isset( $value_by_breakpoint['value'] ) ) {
+					$value = $value_by_breakpoint['value'];
+				} elseif ( isset( $value_by_breakpoint['inherit'] ) && is_string( $value_by_breakpoint['inherit'] ) ) {
+					$value = $setting_value[ $value_by_breakpoint['inherit'] ]['value'] ?? [];
+				}
 
-					$style_by_breakpoint = $func_build_style(
-						array_merge(
-							$args,
-							[
-								'value'      => $value,
-								'breakpoint' => $breakpoint,
-							]
-						)
-					);
-					if ( $style_by_breakpoint ) {
-						$setting_styles[ $breakpoint ] = empty( $setting_variable ) ? $style_by_breakpoint : "{$setting_variable}:{$style_by_breakpoint};";
-					}
+				$style_by_breakpoint = $func_build_style(
+					array_merge(
+						$args,
+						[
+							'value'      => $value,
+							'breakpoint' => $breakpoint,
+						]
+					)
+				);
+				if ( $style_by_breakpoint ) {
+					$setting_styles[ $breakpoint ] = empty( $setting_variable ) ? $style_by_breakpoint : "{$setting_variable}:{$style_by_breakpoint};";
 				}
 			}
 
@@ -1869,6 +2107,17 @@ if ( ! class_exists( Style::class ) ) :
 		}
 
 		/**
+		 * Detect a value is valid
+		 *
+		 * @param mixed $value
+		 * @return boolean
+		 */
+		private function is_valid_value( $value ) {
+			return isset( $value ) && $value !== '';
+		}
+
+
+		/**
 		 * Get CSS value for a color object.
 		 *
 		 * @param array $color_array
@@ -1887,6 +2136,30 @@ if ( ! class_exists( Style::class ) ) :
 				} elseif ( $color_array['value'] ?? false ) {
 					$value = $color_array['value'];
 				}
+			}
+
+			return $value;
+		}
+
+		/**
+		 * Get value for spacing var
+		 *
+		 * @param string $value
+		 * @return string
+		 */
+		private function get_spacing_value( $value ) {
+			if ( ! $this->is_valid_value( $value ) ) {
+				return '';
+			}
+
+			if ( strpos( $value, 'var:preset|spacing|' ) !== false ) {
+				preg_match( '/var:preset\|spacing\|(.+)/', $value, $slug );
+
+				if ( ! $slug ) {
+					return $value;
+				}
+
+				return "var(--wp--preset--spacing--{$slug[1]})";
 			}
 
 			return $value;
