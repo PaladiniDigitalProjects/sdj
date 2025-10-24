@@ -1,0 +1,21 @@
+{
+  "apiVersion": 2,
+  "name": "pds/terms",
+  "title": "PDS: List Terms (Ver más)",
+  "category": "widgets",
+  "icon": "category",
+  "description": "Lista términos con límite y opción Ver más / Ver menos.",
+  "supports": { "html": false },
+  "attributes": {
+    "taxonomy": { "type": "string", "default": "ambito" },
+    "limit": { "type": "number", "default": 5 },
+    "show_more": { "type": "boolean", "default": true },
+    "show_count": { "type": "boolean", "default": false },
+    "show_description": { "type": "boolean", "default": false }
+  },
+  "editorScript": "file:./build/editor.js",
+  "script": "file:./build/frontend.js",
+  "editorStyle": "file:./build/style-style.css",
+  "style": "file:./build/style-style.css",
+  "textdomain": "pds-ver-mas-terms"
+}
