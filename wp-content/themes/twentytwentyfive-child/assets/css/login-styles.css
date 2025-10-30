@@ -27,6 +27,15 @@ body {
   cursor: pointer;
 }
 
+main {
+  padding: 0 1rem !important;
+}
+@media only screen and (min-width: 1024px) {
+  main {
+    padding: 0 !important;
+  }
+}
+
 /* CAPTION */
 figure.featured {
   margin-bottom: 3rem;
@@ -1042,6 +1051,140 @@ div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirect
   --wpforms-container-shadow-size-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0) !important;
 }
 .downloadPager .wp-block-button.hide {
+  display: none;
+}
+
+/* LOCTIONS */
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column {
+  width: 50%;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-1 {
+  width: calc(32% - 0.5rem);
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-2 {
+  width: calc(68% - 0.5rem);
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 {
+  width: 100%;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 h4 {
+  display: none;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 strong {
+  display: inline-block;
+  font-weight: 500;
+  padding-right: 0.5rem;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 p {
+  font-size: 1rem;
+  line-height: 125%;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-4 {
+  display: none;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column .pds-col-text .pds-provincia,
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column .pds-col-text .pds-ambitos {
+  font-weight: 600;
+  letter-spacing: 0.025rem;
+}
+.pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column .pds-col-text h3.pds-title {
+  font-size: 1.45rem;
+  line-height: 120%;
+  margin: 0 0 0.5rem 0;
+}
+@media only screen and (min-width: 1024px) {
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row {
+    padding-bottom: 1.5rem !important;
+  }
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-1 {
+    width: 10%;
+  }
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-2 {
+    width: 25%;
+  }
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 {
+    width: 30%;
+  }
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 h4 {
+    display: block;
+  }
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-4 {
+    display: block;
+    width: 30%;
+  }
+  .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column h4 {
+    margin-top: 0;
+    color: #007FAD;
+    font-size: 1rem;
+    font-weight: 600 !important;
+    letter-spacing: 0.025rem !important;
+  }
+}
+
+.tienda-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.tienda-block .tienda-content-section {
+  width: 100%;
+}
+.tienda-block .tienda-content-section .tienda-content p:first-of-type {
+  color: #007FAD !important;
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.tienda-block .tienda-content-section .tienda-content .info-store .data a {
+  color: #007FAD !important;
+  text-decoration: none;
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.tienda-block .tienda-content-section .tienda-content .info-store .data .icon {
+  display: inline-block;
+  width: 2rem;
+  height: auto;
+}
+.tienda-block .tienda-content-section .tienda-content .info-store .data .icon > img {
+  margin: 0.5rem 1.5rem -0.4rem 0;
+  width: 100%;
+  height: auto;
+}
+.tienda-block .tienda-content-section .tienda-map {
+  width: 100%;
+}
+.tienda-block .tienda-content-section .tienda-map iframe {
+  width: 100%;
+  min-height: 30vh;
+}
+.tienda-block .tienda-content-section .tienda-map .map-button {
+  float: right;
+  background-color: #007FAD !important;
+}
+@media only screen and (min-width: 1024px) {
+  .tienda-block {
+    flex-direction: row;
+  }
+  .tienda-block .tienda-content-section {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .tienda-block .tienda-content-section .tienda-content {
+    width: 100%;
+    max-width: 40rem;
+  }
+  .tienda-block .tienda-content-section .tienda-content .tienda-map {
+    width: 50%;
+  }
+}
+
+.location-template .entry-content p {
   display: none;
 }
 

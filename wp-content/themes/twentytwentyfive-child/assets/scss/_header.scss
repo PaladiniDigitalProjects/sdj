@@ -2,7 +2,7 @@
 
 .wp-block-site-logo {
   width: 100%;
-  max-width:8rem;
+  max-width:16rem;
   
   @include tablet{
     max-width: 10rem;
@@ -63,6 +63,10 @@ header.wp-block-template-part {
     z-index: 11;
     left: 0;
     right: 0;
+  }
+
+  &.fullheader {
+    border-bottom: none;
   }
 }
 

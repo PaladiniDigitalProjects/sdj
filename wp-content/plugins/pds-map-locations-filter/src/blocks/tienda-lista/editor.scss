@@ -9,6 +9,7 @@
     flex-wrap: wrap;
     margin: -0.5em;
     transition: opacity 0.3s ease-in-out; /* For loading state */
+    
 }
 
 /* Loading state for the block */
@@ -38,6 +39,8 @@
 .pds-tiendas-row {
     box-sizing: border-box;
     padding: 0.5em;
+
+    border: 2px solid lime;
 }
 
 /* reduce non-title text */

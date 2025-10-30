@@ -51,6 +51,7 @@
   /* BLOQUE LISTADO DE CATEGORIAS */
   /* TAGS LISTADO DE NOTICIAS */
   /* CARRUSEL NOTICIAS */
+  /* LOCTIONS */
   /* LANDING PAGE DESNUDOS */
   background: #ffffff;
   border-top: 1rem solid #007FAD;
@@ -84,6 +85,14 @@
 }
 .editor-styles-wrapper .pointer:hover {
   cursor: pointer;
+}
+.editor-styles-wrapper main {
+  padding: 0 1rem !important;
+}
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper main {
+    padding: 0 !important;
+  }
 }
 .editor-styles-wrapper figure.featured {
   margin-bottom: 3rem;
@@ -798,7 +807,7 @@
 }
 .editor-styles-wrapper .wp-block-site-logo {
   width: 100%;
-  max-width: 8rem;
+  max-width: 16rem;
 }
 @media only screen and (min-width: 768px) {
   .editor-styles-wrapper .wp-block-site-logo {
@@ -841,6 +850,9 @@
   z-index: 11;
   left: 0;
   right: 0;
+}
+.editor-styles-wrapper header.wp-block-template-part.fullheader {
+  border-bottom: none;
 }
 .editor-styles-wrapper .wp-block-button {
   transition: 0.25s;
@@ -5319,6 +5331,136 @@
 }
 .editor-styles-wrapper .page .wp-site-blocks .PageContent .wp-block-navigation .wp-block-navigation-item:first-child {
   border-top: 0.1rem solid #007FAD;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column {
+  width: 50%;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-1 {
+  width: calc(32% - 0.5rem);
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-2 {
+  width: calc(68% - 0.5rem);
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 {
+  width: 100%;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 h4 {
+  display: none;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 strong {
+  display: inline-block;
+  font-weight: 500;
+  padding-right: 0.5rem;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 p {
+  font-size: 1rem;
+  line-height: 125%;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-4 {
+  display: none;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column .pds-col-text .pds-provincia,
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column .pds-col-text .pds-ambitos {
+  font-weight: 600;
+  letter-spacing: 0.025rem;
+}
+.editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column .pds-col-text h3.pds-title {
+  font-size: 1.45rem;
+  line-height: 120%;
+  margin: 0 0 0.5rem 0;
+}
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row {
+    padding-bottom: 1.5rem !important;
+  }
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-1 {
+    width: 10%;
+  }
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-2 {
+    width: 25%;
+  }
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 {
+    width: 30%;
+  }
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-3 h4 {
+    display: block;
+  }
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column.pds-col-4 {
+    display: block;
+    width: 30%;
+  }
+  .editor-styles-wrapper .pds-tiendas .pds-tiendas-list.list .pds-tiendas-row .pds-column h4 {
+    margin-top: 0;
+    color: #007FAD;
+    font-size: 1rem;
+    font-weight: 600 !important;
+    letter-spacing: 0.025rem !important;
+  }
+}
+.editor-styles-wrapper .tienda-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section {
+  width: 100%;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-content p:first-of-type {
+  color: #007FAD !important;
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-content .info-store .data a {
+  color: #007FAD !important;
+  text-decoration: none;
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-content .info-store .data .icon {
+  display: inline-block;
+  width: 2rem;
+  height: auto;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-content .info-store .data .icon > img {
+  margin: 0.5rem 1.5rem -0.4rem 0;
+  width: 100%;
+  height: auto;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-map {
+  width: 100%;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-map iframe {
+  width: 100%;
+  min-height: 30vh;
+}
+.editor-styles-wrapper .tienda-block .tienda-content-section .tienda-map .map-button {
+  float: right;
+  background-color: #007FAD !important;
+}
+@media only screen and (min-width: 1024px) {
+  .editor-styles-wrapper .tienda-block {
+    flex-direction: row;
+  }
+  .editor-styles-wrapper .tienda-block .tienda-content-section {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .editor-styles-wrapper .tienda-block .tienda-content-section .tienda-content {
+    width: 100%;
+    max-width: 40rem;
+  }
+  .editor-styles-wrapper .tienda-block .tienda-content-section .tienda-content .tienda-map {
+    width: 50%;
+  }
+}
+.editor-styles-wrapper .location-template .entry-content p {
+  display: none;
 }
 .editor-styles-wrapper .page-template-page-desnudos {
   background: #000000 url("../images/FONS-POSTER-SENSE-VIDRIERA.jpg") no-repeat center center fixed;

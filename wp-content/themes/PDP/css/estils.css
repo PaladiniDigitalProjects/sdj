@@ -7388,6 +7388,10 @@ body > .menu-menu-nav-hermano-container {
   }
 }
 
+main.capitulo ul li {
+  list-style-type: none;
+}
+
 .wp-block-noticias.noticiasCapitulo {
   background-color: #ffffff !important;
 }
@@ -7395,6 +7399,10 @@ body > .menu-menu-nav-hermano-container {
   font-family: "Suisse-Bold", sans-serif;
   text-align: left !important;
   font-size: 2.4rem;
+}
+.wp-block-noticias.noticiasCapitulo .capitulo .entry-content .entry-title {
+  font-family: "Suisse-Light";
+  text-align: left !important;
 }
 
 .wp-block-cover.destacadoSimple {
@@ -7409,6 +7417,8 @@ body > .menu-menu-nav-hermano-container {
   padding: 0 1rem !important;
   margin: 1rem 0 !important;
   font-family: "Suisse-Semi-Bold", sans-serif !important;
+  font-size: 2.5rem !important;
+  line-height: 116% !important;
 }
 
 .capitulo2026 .section-header {
