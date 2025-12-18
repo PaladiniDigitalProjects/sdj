@@ -12,8 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
       loading: globalI18n.loadingLocations || globalI18n.loading,
       noResults: attrs.i18n?.noResults || 'No stores found matching your criteria.',
     };
+    const lockContainerHeight = () => {
+      const height = resultsContainer.offsetHeight;
+      resultsContainer.style.height = `${height}px`;
+    };
 
- 
+    const releaseContainerHeight = () => {
+      resultsContainer.style.height = '';
+    };
+    
     const resultsContainer = blockWrapper.querySelector('.pds-tiendas-results-container');
     const searchInput = blockWrapper.querySelector(`#${blockId}-mlf-search-input`);
     const taxonomySelects = blockWrapper.querySelectorAll('.mlf-filters-select');
@@ -35,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
    
     const fetchStores = debounce(async () => {
+      lockContainerHeight();
+
       resultsContainer.innerHTML = `<p class="pds-tiendas-loading">${i18n.loading}</p>`;
       blockWrapper.classList.add('is-loading');
 
@@ -43,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('nonce', nonce);
       formData.append('search', currentSearch);
       formData.append('taxonomies', JSON.stringify(currentTaxonomies));
-      formData.append('numStores', numStores); 
+      formData.append('numStores', numStores);
       formData.append('displayStyle', currentDisplayStyle);
 
       try {
@@ -54,15 +63,19 @@ document.addEventListener('DOMContentLoaded', () => {
           resultsContainer.innerHTML = data.data.html;
         } else {
           resultsContainer.innerHTML = `<p class="pds-tiendas-error">${i18n.noResults}</p>`;
-          console.error('AJAX error:', data.data);
         }
       } catch (err) {
         resultsContainer.innerHTML = `<p class="pds-tiendas-error">${i18n.noResults}</p>`;
-        console.error('Fetch error:', err);
       } finally {
         blockWrapper.classList.remove('is-loading');
+
+        // Allow the browser to render new content first
+        requestAnimationFrame(() => {
+          releaseContainerHeight();
+        });
       }
     }, 300);
+
 
     // Event listeners
 

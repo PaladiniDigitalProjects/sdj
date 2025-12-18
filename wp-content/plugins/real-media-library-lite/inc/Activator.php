@@ -179,6 +179,6 @@ class Activator
     public function checkDirtyFunction($function_name)
     {
         global $wpdb;
-        return $wpdb->get_var($wpdb->prepare('SHOW FUNCTION STATUS LIKE %s', $function_name), 1) === $function_name;
+        return $wpdb->get_var($wpdb->prepare('SHOW FUNCTION STATUS WHERE Name = %s AND Db = %s', $function_name, $wpdb->dbname), 1) === $function_name;
     }
 }

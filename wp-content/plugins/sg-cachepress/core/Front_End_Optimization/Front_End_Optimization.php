@@ -501,7 +501,7 @@ class Front_End_Optimization {
 		Supercacher::delete_assets();
 		Supercacher::purge_cache();
 		Supercacher::flush_memcache();
-		File_Cacher::purge_everything();
+		File_Cacher::get_instance()->purge_everything();
 	}
 
 	/**

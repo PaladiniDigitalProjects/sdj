@@ -139,13 +139,13 @@ class AAB_Block_Register {
 
 	// Horizontal accordion render callback
 	public function render_horizontal_accordion( $attributes, $content ) {
-		wp_register_style( 'aahb-horizontal-accordion', plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion/index.css' );
+		wp_register_style( 'aahb-horizontal-accordion', plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion/style-index.css' );
 		return $content;
 	}
 
 	// Horizontal accordion item render callback
 	public function render_horizontal_accordion_item( $attributes, $content ) {
-		wp_register_style( 'aahb-horizontal-accordion-item', plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion-item/index.css' );
+		wp_register_style( 'aahb-horizontal-accordion-item', plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion-item/style-index.css' );
 		return $content;
 	}
 }

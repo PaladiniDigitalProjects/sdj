@@ -53,12 +53,18 @@ abstract class Abstract_Images_Optimizer {
 			false
 		);
 
+		// Generate a secure one-time token for background processing.
+		$token = wp_hash( wp_generate_password( 32, true, true ) . time() );
+		set_transient( 'sgo_image_optimization_token_' . $this->type, $token, 3600 );
+
 		// Fork the process in background.
 		$args = array(
 			'timeout'   => 0.01,
 			'cookies'   => $_COOKIE,
 			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 		);
+
+		$args['body'] = array( 'token' => $token );
 
 		$response = wp_remote_post(
 			add_query_arg( 'action', $this->action, admin_url( 'admin-ajax.php' ) ),
@@ -107,6 +113,11 @@ abstract class Abstract_Images_Optimizer {
 	 * @since  5.9.0
 	 */
 	public function start_optimization() {
+		// Security check: Verify the request is authorized.
+		if ( ! $this->verify_optimization_request() ) {
+			wp_die( 'Unauthorized', 'Unauthorized', array( 'response' => 403 ) );
+		}
+
 		$started = time();
 		// Get image ids.
 		$ids = $this->get_batch();
@@ -290,5 +301,49 @@ abstract class Abstract_Images_Optimizer {
 		);
 
 		$result = $this->wpdb->query( $query ); //phpcs:ignore
+	}
+
+	/*
+	* Verify that the optimization request is authorized.
+	 *
+	 * @return bool True if authorized, false otherwise.
+	 */
+	private function verify_optimization_request() {
+		// Allow CRON jobs to run without authentication.
+		if ( wp_doing_cron() ) {
+			return true;
+		}
+
+		// Allow WP-CLI commands to run without authentication.
+		if ( defined( 'WP_CLI' ) && \WP_CLI ) {
+			return true;
+		}
+
+		// For AJAX requests, verify the token.
+		if ( wp_doing_ajax() ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$provided_token = isset( $_POST['token'] ) ? sanitize_text_field( wp_unslash( $_POST['token'] ) ) : '';
+			$stored_token   = get_transient( 'sgo_image_optimization_token_' . $this->type );
+
+			// Delete the transient after first use (one-time token).
+			if ( $stored_token ) {
+				delete_transient( 'sgo_image_optimization_token_' . $this->type );
+			}
+
+			// Verify the token matches and is not empty.
+			if ( ! empty( $provided_token ) && hash_equals( $stored_token, $provided_token ) ) {
+				return true;
+			}
+
+			// Fallback: Check if user has proper capabilities (for authenticated requests).
+			if ( current_user_can( 'manage_options' ) || current_user_can( 'upload_files' ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		// For any other context, require proper capabilities.
+		return current_user_can( 'manage_options' );
 	}
 }

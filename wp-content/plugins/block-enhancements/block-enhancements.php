@@ -4,7 +4,7 @@
  * Description:       Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
  * Requires at least: 6.5
  * Requires PHP:      7.0
- * Version:           1.2.8
+ * Version:           1.2.9
  * Author:            Phi Phan
  * Author URI:        https://boldblocks.net
  * Plugin URI:        https://boldblocks.net?utm_source=BE&utm_campaign=visit+site&utm_medium=link&utm_content=Plugin+URI
@@ -30,7 +30,7 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 		 *
 		 * @var String
 		 */
-		protected $version = '1.2.8';
+		protected $version = '1.2.9';
 
 		/**
 		 * Components

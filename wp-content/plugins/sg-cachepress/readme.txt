@@ -3,8 +3,8 @@ Contributors: Hristo Sg, siteground, sstoqnov, stoyangeorgiev, elenachavdarova, 
 Tags: nginx, caching, speed, performance, siteground
 Requires at least: 4.7
 Requires PHP: 7.0
-Tested up to: 6.7
-Stable tag: 7.7.2
+Tested up to: 6.9
+Stable tag: 7.7.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -118,6 +118,34 @@ Our plugin uses a cookie in order to function properly. It does not store person
 
 == Changelog ==
 
+= Version 7.7.6 =
+Release Date: Dec 15th, 2025
+
+* Image Optimization improvements
+
+= Version 7.7.5 =
+Release Date: Dec 4th, 2025
+
+* JS Combinator improvements
+* Dynamic cache purge improvements
+* CSS combination improvements
+* WebP deletion improvements
+* Query string exclude support for Dynamic Cache
+
+
+= Version 7.7.4 =
+Release Date: Nov 11th, 2025
+
+* Dynamic Cache Purge improvements
+
+= Version 7.7.3 =
+Release Date: Nov 3rd, 2025
+
+* File-based cache purge improvements
+* Third-Party plugins compatibility improvements
+* WP CLI improvements
+
+
 = Version 7.7.2 =
 Release Date: Dec 9th, 2024
 
@@ -172,7 +200,6 @@ Release Date: Aug 14th, 2024
 
 * Improved memcache handling of autoload options
 * Improved handling of heartbeat optimizations
-
 
 = Version 7.6.3 =
 Release Date: Aug 1st, 2024

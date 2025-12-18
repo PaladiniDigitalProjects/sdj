@@ -592,7 +592,7 @@ class File_Cacher extends Supercacher {
 	}
 
 	/**
-	 * Clean the file based cache dir and maybe preheatthe cache.
+	 * Clean the file based cache dir and maybe preheat the cache.
 	 *
 	 * @since  7.0.1
 	 */
@@ -600,12 +600,12 @@ class File_Cacher extends Supercacher {
 		// Delete the main directory for the file caching.
 		$this->wp_filesystem->delete( $this->get_cache_dir(), true );
 
+		$this->schedule_cleanup();
+
 		// Bail if WP Cron is disabled.
 		if ( Helper_Service::is_cron_disabled() ) {
 			return;
 		}
-
-		$this->schedule_cleanup();
 
 		if (
 			Options::is_enabled( 'siteground_optimizer_preheat_cache' ) &&

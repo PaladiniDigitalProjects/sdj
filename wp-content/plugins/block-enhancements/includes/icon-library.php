@@ -111,7 +111,7 @@ if ( ! class_exists( IconLibrary::class ) ) :
 			$media_svg_images = $this->query_svg_images();
 
 			if ( $media_svg_images ) {
-				$icons = $media_svg_images + $icons;
+				$icons = array_merge( $media_svg_images, $icons );
 			}
 
 			wp_send_json(
@@ -134,7 +134,7 @@ if ( ! class_exists( IconLibrary::class ) ) :
 					'post_type'      => 'attachment',
 					'post_mime_type' => [ 'image/svg+xml' ],
 					'post_status'    => 'any',
-					'posts_per_page' => 100,
+					'posts_per_page' => apply_filters( 'block_enhancements_limit_svgs', 100 ),
 				]
 			);
 

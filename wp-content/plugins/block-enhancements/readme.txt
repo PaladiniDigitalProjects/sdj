@@ -1,10 +1,10 @@
 === Gutenberg Block Enhancements - Icon, Responsive Spacing, Typography, Alignment, Shadow, Transform, Transition, Hover Style ===
 Contributors:      Mr2P
 Tags:              blocks, responsive, button, icon, hover
-Requires PHP:      7.0.0
+Requires PHP:      7.0
 Requires at least: 6.5
-Tested up to:      6.8
-Stable tag:        1.2.8
+Tested up to:      6.9
+Stable tag:        1.2.9
 License:           GPL-3.0
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 Donate link:       https://boldblocks.net?utm_source=wp.org&utm_campaign=readme&utm_medium=link&utm_content=BE+Donate
@@ -75,7 +75,7 @@ The plugin is developed using @wordpress/scripts.
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/block-enhancements` directory, or install the plugin through the WordPress plugins screen directly.
+1. Upload the plugin files to the `/wp-content/plugins` directory, or install the plugin through the WordPress plugins screen directly.
 1. Activate the plugin through the 'Plugins' screen in WordPress
 
 
@@ -134,6 +134,13 @@ It is probably because you added an inline element such as bold, italic, highlig
 11. Add an icon to categories
 
 == Changelog ==
+
+= 1.2.9 =
+*Release Date - 22 November 2025*
+
+* Fixed    – Missing styles for classic/hybrid themes that include template files (e.g., templates/index.html), which caused WordPress to detect them as block themes.
+* Fixed    – Removed the box-shadow from wp-block-button so it only applies to wp-block-button__link.
+* Improved - Allowed loading more SVGs from the media library via a hook
 
 = 1.2.8 =
 *Release Date - 15 October 2025*

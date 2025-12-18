@@ -35,51 +35,53 @@ if ($stores_query->have_posts()): ?>
             <?php if ($display_style === 'list'): ?>
                 <!-- ===== LIST VIEW ===== -->
                 <div class="pds-tiendas-row">
-                    <!-- Column 1: Image -->
-                    <div class="pds-column pds-col-1">
-                        <div class="pds-col-thumb">
-                            <?= $thumb_html; ?>
+    <a class="pds-item-link" href="<?= esc_url(get_permalink()); ?>" aria-label="<?= esc_attr(get_the_title()); ?>"></a>             
+         <!-- Column 1: Image -->
+                        <div class="pds-column pds-col-1">
+                            <div class="pds-col-thumb">
+                                <?= $thumb_html; ?>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Column 2: Title + meta -->
-                    <div class="pds-column pds-col-2">
-                        <div class="pds-col-text">
-                            <?php if ($provincia_names): ?>
-                                <span class="pds-provincia"><?= esc_html($provincia_names); ?></span>
+                        <!-- Column 2: Title + meta -->
+                        <div class="pds-column pds-col-2">
+                            <div class="pds-col-text">
+                                <?php if ($provincia_names): ?>
+                                    <span class="pds-provincia"><?= esc_html($provincia_names); ?></span>
+                                <?php endif; ?>
+                                <h3 class="pds-title">
+                                    <?= esc_html(get_the_title()); ?>
+                                </h3>
+                                <?php if ($ambitos_names): ?>
+                                    <span class="pds-ambitos"><?= esc_html($ambitos_names); ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Contact info -->
+                        <div class="pds-column pds-col-3">
+                            <h4><?php esc_html_e( 'Contacto', 'pds-map-locations-filter' ); ?></h4>
+                            <?php if ($telefono): ?>
+                                <p><strong><?php esc_html_e( 'Teléfono:', 'pds-map-locations-filter' ); ?></strong> <?= esc_html($telefono); ?></p>
                             <?php endif; ?>
-                            <h3 class="pds-title">
-                                <a href="<?= esc_url(get_permalink()); ?>"><?= esc_html(get_the_title()); ?></a>
-                            </h3>
-                            <?php if ($ambitos_names): ?>
-                                <span class="pds-ambitos"><?= esc_html($ambitos_names); ?></span>
+                            <?php if ($web): ?>
+                                <p><strong><?php esc_html_e( 'Sitio Web:', 'pds-map-locations-filter' ); ?></strong> 
+                                    <a href="<?= esc_url($web); ?>" target="_blank" rel="noopener"><?= esc_html($web); ?></a>
+                                </p>
+                            <?php endif; ?>
+                            <?php if ($email): ?>
+                                <p><strong><?php esc_html_e( 'Correo electrónico:', 'pds-map-locations-filter' ); ?></strong> 
+                                    <a href="mailto:<?= esc_attr($email); ?>"><?= esc_html($email); ?></a>
+                                </p>
                             <?php endif; ?>
                         </div>
-                    </div>
 
-                    <!-- Column 3: Contact info -->
-                    <div class="pds-column pds-col-3">
-                        <h4><?php esc_html_e( 'Contacto', 'pds-map-locations-filter' ); ?></h4>
-                        <?php if ($telefono): ?>
-                            <p><strong><?php esc_html_e( 'Teléfono:', 'pds-map-locations-filter' ); ?></strong> <?= esc_html($telefono); ?></p>
-                        <?php endif; ?>
-                        <?php if ($web): ?>
-                            <p><strong><?php esc_html_e( 'Sitio Web:', 'pds-map-locations-filter' ); ?></strong> 
-                                <a href="<?= esc_url($web); ?>" target="_blank" rel="noopener"><?= esc_html($web); ?></a>
-                            </p>
-                        <?php endif; ?>
-                        <?php if ($email): ?>
-                            <p><strong><?php esc_html_e( 'Correo electrónico:', 'pds-map-locations-filter' ); ?></strong> 
-                                <a href="mailto:<?= esc_attr($email); ?>"><?= esc_html($email); ?></a>
-                            </p>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Column 4: Address -->
-                    <div class="pds-column pds-col-4">
-                        <h4><?php esc_html_e( 'Dirección', 'pds-map-locations-filter' ); ?></h4>
-                        <?= esc_html($direccion); ?>
-                    </div>
+                        <!-- Column 4: Address -->
+                        <div class="pds-column pds-col-4">
+                            <h4><?php esc_html_e( 'Dirección', 'pds-map-locations-filter' ); ?></h4>
+                            <?= esc_html($direccion); ?>
+                        </div>
+                 
                 </div>
 
             <?php else: ?>

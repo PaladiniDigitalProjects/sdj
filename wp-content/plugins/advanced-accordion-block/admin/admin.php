@@ -2,8 +2,26 @@
 /**
  * Admin Support Page
  */
+
+// Include Documentation Builder page
+require_once plugin_dir_path( __FILE__ ) . 'documentation-builder.php';
+
 add_action( 'admin_menu', 'aab_plugin_admin_page' );
 add_action( 'admin_enqueue_scripts', 'aab_admin_page_assets' );
+
+// Hide admin notices on the documentation builder page
+add_action( 'admin_init', 'aab_hide_notices_on_documentation_builder' );
+
+if ( ! function_exists( 'aab_hide_notices_on_documentation_builder' ) ) {
+	function aab_hide_notices_on_documentation_builder() {
+		$page = $_GET['page'] ?? '';
+		if ( $page === 'aab-documentation-builder' ) {
+			// Remove all admin notices
+			remove_all_actions( 'admin_notices' );
+			remove_all_actions( 'all_admin_notices' );
+		}
+	}
+}
 
 // Admin Assets
 
@@ -12,6 +30,14 @@ if ( ! function_exists( 'aab_admin_page_assets' ) ) {
 		$page = $_GET['page'] ?? '';
 		if ( $page == 'aab-settings' ) {
 			wp_enqueue_style( 'aab-admin-css', plugins_url( 'assets/css/dashboard-app.css', __FILE__ ) );
+		}
+		if ( $page == 'aab-documentation-builder' ) {
+			wp_enqueue_style( 'aab-doc-builder-css', plugins_url( 'assets/css/documentation-builder.css', __FILE__ ), [], '1.0.0' );
+			wp_enqueue_script( 'aab-doc-builder-js', plugins_url( 'assets/js/documentation-builder.js', __FILE__ ), ['jquery'], '1.0.0', true );
+			wp_localize_script( 'aab-doc-builder-js', 'aabDocBuilder', [
+				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'aab_plugin_action' ),
+			] );
 		}
 	}
 }
@@ -42,6 +68,18 @@ if ( ! function_exists( 'aab_plugin_admin_page' ) ) {
 			'aab-block-usage-table',
 			'aab_render_block_usage_table',
 		);
+
+		// Only show Documentation Builder if EazyDocs is not active
+		if ( ! is_plugin_active( 'eazydocs/eazydocs.php' ) ) {
+			add_submenu_page(
+				'aab-settings',
+				'Documentation Builder',
+				'Documentation Builder',
+				'manage_options',
+				'aab-documentation-builder',
+				'aab_documentation_builder_page',
+			);
+		}
 	}
 }
 /**
@@ -120,6 +158,91 @@ if ( ! function_exists( 'aab_admin_page_content_callback' ) ) {
             </div>
         </main>
 		<?php
+	}
+}
+
+/**
+ * AJAX handler for installing EazyDocs plugin
+ */
+add_action( 'wp_ajax_aab_install_plugin', 'aab_install_plugin_ajax' );
+if ( ! function_exists( 'aab_install_plugin_ajax' ) ) {
+	function aab_install_plugin_ajax() {
+		check_ajax_referer( 'aab_plugin_action', 'nonce' );
+
+		if ( ! current_user_can( 'install_plugins' ) ) {
+			wp_send_json_error( [ 'message' => 'You do not have permission to install plugins.' ] );
+		}
+
+		$slug = isset( $_POST['slug'] ) ? sanitize_text_field( $_POST['slug'] ) : '';
+
+		if ( empty( $slug ) ) {
+			wp_send_json_error( [ 'message' => 'Plugin slug is required.' ] );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		require_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
+
+		$api = plugins_api( 'plugin_information', [
+			'slug'   => $slug,
+			'fields' => [ 'sections' => false ],
+		] );
+
+		if ( is_wp_error( $api ) ) {
+			wp_send_json_error( [ 'message' => 'Failed to get plugin information: ' . $api->get_error_message() ] );
+		}
+
+		$upgrader = new Plugin_Upgrader( new WP_Ajax_Upgrader_Skin() );
+		$result   = $upgrader->install( $api->download_link );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( [ 'message' => 'Installation failed: ' . $result->get_error_message() ] );
+		}
+
+		if ( ! $result ) {
+			wp_send_json_error( [ 'message' => 'Installation failed. Please try again.' ] );
+		}
+
+		$plugin_file = $upgrader->plugin_info();
+		if ( ! $plugin_file ) {
+			wp_send_json_error( [ 'message' => 'Plugin installed but could not determine plugin file.' ] );
+		}
+
+		wp_send_json_success( [
+			'message'     => 'EazyDocs has been installed successfully!',
+			'plugin_file' => $plugin_file,
+		] );
+	}
+}
+
+/**
+ * AJAX handler for activating EazyDocs plugin
+ */
+add_action( 'wp_ajax_aab_activate_plugin', 'aab_activate_plugin_ajax' );
+if ( ! function_exists( 'aab_activate_plugin_ajax' ) ) {
+	function aab_activate_plugin_ajax() {
+		check_ajax_referer( 'aab_plugin_action', 'nonce' );
+
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			wp_send_json_error( [ 'message' => 'You do not have permission to activate plugins.' ] );
+		}
+
+		$plugin = isset( $_POST['plugin'] ) ? sanitize_text_field( $_POST['plugin'] ) : '';
+
+		if ( empty( $plugin ) ) {
+			wp_send_json_error( [ 'message' => 'Plugin file is required.' ] );
+		}
+
+		$result = activate_plugin( $plugin );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( [ 'message' => 'Activation failed: ' . $result->get_error_message() ] );
+		}
+
+		wp_send_json_success( [
+			'message'      => 'EazyDocs has been activated successfully!',
+			'redirect_url' => admin_url( 'edit.php?post_type=docs' ),
+		] );
 	}
 }
 

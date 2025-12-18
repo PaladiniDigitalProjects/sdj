@@ -116,6 +116,8 @@ class Core extends BaseCore implements IOverrideCore
         \add_action('rest_attachment_query', [$restAttachment, 'rest_attachment_query'], 10, 2);
         \add_action('admin_enqueue_scripts', [$this->getAssets(), 'admin_enqueue_scripts']);
         \add_action('wp_enqueue_scripts', [$this->getAssets(), 'wp_enqueue_scripts']);
+        \add_filter('mailpoet_conflict_resolver_whitelist_script', [$this->getAssets(), 'mailpoet_conflict_resolver_whitelist_script_and_styles']);
+        \add_filter('mailpoet_conflict_resolver_whitelist_style', [$this->getAssets(), 'mailpoet_conflict_resolver_whitelist_script_and_styles']);
         \add_action('customize_controls_print_scripts', [$this->getAssets(), 'customize_controls_print_scripts']);
         \add_action('pre_get_posts', [Filter::getInstance(), 'pre_get_posts'], 998);
         \add_action('delete_attachment', [Shortcut::getInstance(), 'delete_attachment']);

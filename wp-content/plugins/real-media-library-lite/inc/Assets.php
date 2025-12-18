@@ -193,4 +193,15 @@ class Assets
         }
         return $actions;
     }
+    /**
+     * Whitelist script and styles for MailPoet so Real Media Library is loaded in the newsletter editor.
+     *
+     * @param string[] $scriptsOrStyles
+     * @return string[]
+     */
+    public function mailpoet_conflict_resolver_whitelist_script_and_styles($scriptsOrStyles)
+    {
+        $scriptsOrStyles = \array_merge($scriptsOrStyles, ['real-media-library']);
+        return $scriptsOrStyles;
+    }
 }

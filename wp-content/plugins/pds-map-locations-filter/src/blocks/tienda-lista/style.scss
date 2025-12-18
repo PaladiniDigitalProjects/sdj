@@ -15,9 +15,9 @@ $pds-bg-header: #f9f9f9;
     color: $pds-primary;
     text-decoration: none;
 
-    &:hover {
+   /* &:hover {
       color: #007fad;
-    }
+    }*/
   }
 
 h4{ 
@@ -37,6 +37,8 @@ h4{
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 1rem;
       margin: 0;
+      min-height: 100vh;
+      overflow-y: scroll;
 
       .pds-tiendas-row {
         display: flex;
@@ -49,7 +51,7 @@ h4{
 
       .pds-column {
         padding: 0.75rem;
-        border:2px solid red !important;
+       
       }
 
       .pds-col-title {
@@ -75,7 +77,9 @@ h4{
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-    
+      
+      max-height: 94vh;
+      overflow-y: scroll;
       .pds-tiendas-row {
         display: flex;
         flex-direction: row;
@@ -83,10 +87,29 @@ h4{
         border-bottom: 1px solid $pds-border;
         padding-bottom: 0.75rem;
         align-items: stretch;
+        position: relative;
+          /*   &:hover{
+                background-color:  #007fad;
+                color:#fff;
+              }*/
+          .pds-item-link {
+              position: absolute;
+              inset: 0;
+              z-index: 1;
+              display: block;
+             
+          }
+
+    a:not(.pds-item-link),
+    button {
+        position: relative;
+        z-index: 9;
+    }
+
 
 
           .pds-column {
-            broder:1px solid red;
+           
             padding: 0;
 
             &.pds-col-1 {
@@ -178,6 +201,7 @@ h4{
     display: flex;
     flex-wrap: wrap;
     gap: 1em;
+    z-index:99;
   }
 
   .mlf-search-wrapper {
