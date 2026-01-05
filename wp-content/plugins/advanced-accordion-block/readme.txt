@@ -1,153 +1,245 @@
-=== Advanced Accordion Gutenberg Block – Easy FAQ & Content Accordion Plugin ===
+=== Advanced Accordion Gutenberg Block – Create Beautiful FAQs, Content Accordions & Interactive Tabs ===
 Contributors: spiderdevs, mdjwel, freemius
-Tags: accordion block, FAQ, FAQs, Accordion, FAQ block
+Tags: accordion, FAQ, Gutenberg block, accordion block, FAQs
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 5.1.0
+Stable tag: 5.2.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Donate link: https://advanced-accordion-block.spider-themes.net/pricing/
 
-Advanced Accordion Gutenberg Block - is a custom Gutenberg Block that allows you to build a FAQs section easily on your site post and page.
-
+Create stunning FAQ & accordion blocks. SEO-optimized, fully accessible, zero performance impact. No coding needed.
 
 == Description ==
 
-**Advanced Accordion Gutenberg Block** is a custom native Gutenberg Block that allows you to build a **FAQs Section** or **Accordion** easily on your site post and page using **Gutenberg Editor**.
+**Advanced Accordion Gutenberg Block** is the #1 WordPress plugin for creating professional FAQ sections, expandable content accordions, and interactive tabs directly in the Gutenberg editor. Built with 100% native Gutenberg components, this lightweight plugin delivers stunning results without slowing down your website.
+
+Perfect for bloggers, agencies, and businesses looking to organize content, improve user engagement, and enhance SEO performance—all without writing a single line of code.
+
+### Why Choose Advanced Accordion Block?
+
+✓ **Lightning-Fast Performance** – Optimized code means zero bloat. Only loads on pages using the block.
+✓ **100% Gutenberg Native** – Built exclusively with Gutenberg components for seamless WordPress integration.
+✓ **Unlimited Flexibility** – Nest accordions, mix content types, and customize every detail.
+✓ **Consistent Update & Improvements** – Regular updates and improvements to keep the plugin secure, performant, and feature-rich.
+✓ **SEO Optimized** – FAQ schema markup and responsive design help you rank higher.
+✓ **Fully Accessible** – Complete keyboard navigation (Tab, Shift+Tab, Enter/Space, Arrow keys).
+✓ **No Coding Skills Needed** – Drag-and-drop editor makes it easy for anyone.
 
 ### Video Overview
 [youtube https://www.youtube.com/watch?v=UQDLpqro9yU]
 
-## 🔗 USEFUL LINKS ##
-- [Get the Pro Version](https://spider-themes.net/advanced-accordion-block/flexible-pricing-for-all)
-- [Demo (built with Advanced Accordion Gutenberg Block)](https://spider-themes.net/advanced-accordion-block/features)
-- [Documentation](https://helpdesk.spider-themes.net/docs/advance-accordions)
-- [Explore More](https://spider-themes.net/advanced-accordion-block)
+### Quick Links
+- [Get Pro Features](https://advanced-accordion-block.spider-themes.net/flexible-pricing-for-all) – Unlock advanced functionality
+- [View Live Demos](https://advanced-accordion-block.spider-themes.net/features) – See it in action
+- [Full Documentation](https://helpdesk.spider-themes.net/docs/advance-accordions) – Complete guides and tutorials
+- [Feature Showcase](https://advanced-accordion-block.spider-themes.net) – Explore all capabilities
 
-### Key Features
-- **Custom Minimal Design:** Experience a sleek, modern interface designed to enhance user engagement with a clean and minimalistic look.
+== Core Features ==
 
-- **Super Fast:** Lightweight, and Optimized: Ensure quick loading times and smooth performance with a highly optimized, lightweight build.
+**Free Version Includes:**
 
-- **Linked Accordion:** Seamlessly connect accordion items for interconnected content, providing a streamlined user experience.
+✨ **Unlimited Accordions** – Create as many FAQs and accordion sections as needed across all pages and posts.
 
-- **Built with Gutenberg Native Components:** Enjoy full integration with Gutenberg, ensuring compatibility and ease of use with WordPress's native block editor.
+✨ **Nested Accordion Support** – Build multi-level accordions for complex content hierarchies. Perfect for structured documentation and process guides.
 
-- **Unlimited Nested Accordion:** Create complex, multi-level accordions effortlessly, allowing for detailed and organized content structures.
+✨ **Global Style Settings** – Set universal accordion styling from one place. Apply consistent branding across your entire website with a single click.
 
-- **Unlimited Styling Options:** Customize your accordion with extensive styling options, including margin, padding, border radius, color, background, and tag selection.
+✨ **Responsive Design** – Perfect display on all devices—desktop, tablet, and mobile. Touch-friendly and fully responsive.
 
-- **Highly Customizable:** Benefit from extensive customization possibilities, offering flexibility to suit any design requirement.
+✨ **Horizontal Accordion Block** – Display accordions side-by-side with titles, subtitles, icons, and any inner blocks. Ideal for product comparisons and feature showcases.
 
-- **All Content Types Supported:** Insert any type of content, including text, images, videos, and more, within the accordion body for versatility.
+✨ **Advanced Customization** – Customize margins, padding, border radius, colors, backgrounds, and more for each accordion item.
 
-- **Custom Color Palette:** Personalize your accordion's appearance by selecting from a customizable color palette, aligning with your brand's aesthetics.
+✨ **Multiple Content Types** – Insert text, images, videos, tables, buttons, and any other block inside accordion sections.
 
-- **Active Accordion on Page Load:** Automatically expand the desired section when the page loads, ensuring immediate visibility of important content.
+✨ **Pre-Built Patterns** – Get started instantly with professionally designed accordion patterns. Save hours of design work.
 
-- **Responsive and SEO Friendly:** Maintain a seamless user experience across devices with a responsive design, while also optimizing your content for search engines.
+✨ **Keyboard Accessibility** – Full keyboard navigation support:
+  • Tab – Next accordion
+  • Shift + Tab – Previous accordion
+  • Enter/Space – Expand/collapse
+  • Arrow Keys – Navigate between items
 
-- **Unlimited FAQs:** Create and manage as many FAQs as needed, ensuring all user queries are addressed comprehensively.
+✨ **Active on Page Load** – Automatically expand specific accordion sections when the page loads for better user engagement.
 
-- **Infinite Reusability:** Reuse accordion items across different pages, making content management more efficient and consistent.
+✨ **SEO-Friendly with FAQ Schema** – Automatic FAQ structured data markup improves search rankings and enables Rich Results in Google Search.
 
-- **Pattern Design:** Pre-built stylish accordion patterns to enhance your layout instantly, with exclusive premium designs available in the Pro version.
+✨ **Linked Accordions** – Connect accordion items for synchronized, interconnected content experiences.
 
-- **Keyboard Accessibility:** Navigate and interact with accordions using keyboard keys—Tab, Shift+Tab, and Enter/Space—for a smoother and more accessible user experience.
+✨ **Custom Color Palette** – Choose from unlimited color options to match your brand perfectly.
 
-- **Horizontal Accordion block:** Display accordions side by side with support for titles, subtitles, icons, and all inner blocks—perfect for creating dynamic, content-rich layouts.
+== Premium Features ==
 
-- **Global Style Settings:** Easily manage and apply global styles to all your accordions from a single toolbar setting.
+Upgrade to Pro and unlock powerful advanced capabilities:
 
-### PRO Features
-- **Instant Search:** Enable a search bar to help users find specific FAQs quickly. It's useful when you have a long list of FAQs.
+🚀 **Instant Search** – Enable a search bar to help users find specific FAQs quickly. It's useful when you have a long list of FAQs.
 
-- **QA (Question and Answer) Style:** Display FAQs in a structured question-and-answer format for easy readability and user engagement.
+🚀 **Question & Answer (Q&A) Style** – Display FAQs in a structured question-and-answer format for easy readability and user engagement.
 
-- **Voting Feedback:** Add feedback voting buttons to each FAQ item. From the total vote count, you can understand how helpful an accordion is.
+🚀 **Voting Feedback** – Add feedback voting buttons to each FAQ item. From the total vote count, you can understand how helpful an accordion is.
 
-- **Anchor Link:** Generate unique links for each FAQ item. It's handy for directing users to specific FAQs from external sources or within the same page.
+🚀 **Anchor Link** – Generate unique links for each FAQ item. It's handy for directing users to specific FAQs from external sources or within the same page.
 
-- **Open All / Close All:** A functionality that lets users expand or collapse all accordion items simultaneously. It provides convenience, especially when users want to view or hide all FAQ items at once.
+🚀 **Open All / Close All** – A functionality that lets users expand or collapse all accordion items simultaneously. It provides convenience, especially when users want to view or hide all FAQ items at once.
 
-- **Read More button:** Expand the accordion content beyond a certain character limit or line count, displaying a "Read More" button or link to reveal the entire content.
+🚀 **Read More Button** – Expand the accordion content beyond a certain character limit or line count, displaying a "Read More" button or link to reveal the entire content.
 
-- **Activator Event:** Choose the event type to activate the accordion. You can choose from Click and Hover.
+🚀 **Activator Event** – Choose the event type to activate the accordion. You can choose from Click and Hover.
 
-- **Steps Layout:** Sequentially open accordions, marking previously opened ones as checked, guiding users through a step-by-step process.
+🚀 **Steps Layout** – Sequentially open accordions, marking previously opened ones as checked, guiding users through a step-by-step process.
 
-- **Checklist Layout:** Convert accordions into a checklist format, allowing users to tick off completed items, ensuring thorough task management.
+🚀 **Checklist Layout** – Convert accordions into a checklist format, allowing users to tick off completed items, ensuring thorough task management.
 
-- **Featured Icon:** Integrate custom icons/images into your accordion title to represent different types of themes visually. This enhances user experience and helps quickly differentiate content.
+🚀 **Featured Icon** – Integrate custom icons/images into your accordion title to represent different types of themes visually. This enhances user experience and helps quickly differentiate content.
 
-- **Subheading support:** Add unique subheadings to each accordion section for better content organization. This improves user navigation, making it easy for visitors to find and engage with specific information.
+🚀 **Subheading Support** – Add unique subheadings to each accordion section for better content organization. This improves user navigation, making it easy for visitors to find and engage with specific information.
 
-- **Custom CSS Field:** With full custom CSS support, you can tailor your accordion’s colors, fonts, and animations to seamlessly align with your website’s style.
+🚀 **Custom CSS Field** – With full custom CSS support, you can tailor your accordion's colors, fonts, and animations to seamlessly align with your website's style.
 
-- **Filter Tab by Category:** Easily filter and view specific content within your accordion sections. Set custom tags in the parent accordion, and watch the magic happen with dynamic filtering for a more organized and user-friendly experience.
+🚀 **Filter Tab by Category** – Easily filter and view specific content within your accordion sections. Set custom tags in the parent accordion, and watch the magic happen with dynamic filtering for a more organized and user-friendly experience.
 
-- **Show More Button:** Enhance user experience by enabling the "Show More" button in Group Accordion. Control how many items are displayed per click, keeping content organized and accessible.
+🚀 **Show More Button** – Enhance user experience by enabling the "Show More" button in Group Accordion. Control how many items are displayed per click, keeping content organized and accessible.
 
-- **Labelling Option:** User can add custom text label beside the Single accordion title, making it easier to highlight key information and categorize content effectively.
+🚀 **Labelling Option** – User can add custom text label beside the Single accordion title, making it easier to highlight key information and categorize content effectively.
 
-- **Autoplay Functionality:** Enable automatic section switching in Group Accordion blocks. Accordions will rotate between sections without user clicks, improving engagement and saving time.
+🚀 **Autoplay Functionality** – Enable automatic section switching in Group Accordion blocks. Accordions will rotate between sections without user clicks, improving engagement and saving time.
 
-- **Feature Image Support:** Add a custom image to each Group Accordion block for a more visually appealing and easily recognizable layout.
+🚀 **Feature Image Support** – Add a custom image to each Group Accordion block for a more visually appealing and easily recognizable layout.
 
-- **Auto-Numbering with Color Support:** Automatically number accordion items with customizable colors, giving your content a cleaner and more organized appearance.
+🚀 **Auto-Numbering with Color Support** – Automatically number accordion items with customizable colors, giving your content a cleaner and more organized appearance.
 
-[See All Features](https://spider-themes.net/advanced-accordion-block/features).
+🚀 **Next/Previous Navigation** – Enable smooth sequential browsing inside accordion content with built-in Next and Previous navigation controls, helping users move through sections without closing the accordion.
+
+[See All Features](https://advanced-accordion-block.spider-themes.net/features)
 
 ### Creating an Accordion FAQ with Advanced Accordion
 [youtube https://www.youtube.com/watch?v=K40z8KxojxE]
 
+== Perfect For ==
+
+📰 **Bloggers & Content Creators** – Organize long-form content into scannable, reader-friendly sections.
+
+🛍️ **E-commerce Sites** – Build product FAQs that reduce customer support inquiries and boost conversions.
+
+📚 **Service Providers** – Create comprehensive FAQ sections for agencies, consultants, and SaaS companies.
+
+🏛️ **Educational & Training** – Build interactive step-by-step guides and course content with nested accordions.
+
+🏢 **Corporate & Enterprise** – Professional Q&A sections with advanced filtering and custom styling.
+
+💼 **Job Boards & Directories** – Expandable listings with custom organization and search capabilities.
+
 == Frequently Asked Questions ==
 
-= have you used any framework to develop this? =
+= Is Advanced Accordion Block compatible with all WordPress themes? =
 
-No. It has been developed with 100% Gutenberg Native components. No Framework at all.
+Yes! The plugin works seamlessly with any WordPress theme. It's built with 100% Gutenberg native components, ensuring universal compatibility. We've tested it with popular themes like Astra, GeneratePress, OceanWP, and more—it works perfectly with all of them.
 
-= is it responsive? =
+= Will this plugin slow down my website? =
 
-Definitely, it is responsive.
+Not at all. Advanced Accordion Block is extremely lightweight and optimized for performance. JavaScript and CSS assets only load on pages where you actually use the block—not sitewide. Independent performance testing shows zero measurable impact on page load times.
 
-= Can I use it with any theme? =
-Yes, you can use it with any theme.
+= Do I need coding knowledge to use this? =
 
-= Will it slow down my site? =
-Never, it is light-weight and never slow down your site. In addition, it only loads scripts on the pages where the block is used.
+No! The entire plugin is drag-and-drop. Simply add the Accordion block from the Gutenberg editor, configure settings from the sidebar, and you're done. No custom code or technical skills required.
+
+= Can I use the plugin for something other than FAQs? =
+
+Absolutely! While excellent for FAQs, many users create content tabs, expandable guides, step-by-step tutorials, feature comparisons, timelines, checklists, and more. Your creativity is the only limit.
 
 = Is it built with Gutenberg Native Components? =
-Yes, it is built with 100% Gutenberg Native Components.
+
+Yes, 100%. We use only native Gutenberg components—no external frameworks or libraries. This ensures perfect WordPress integration and future compatibility.
+
+= Can I nest accordions inside other accordions? =
+
+Yes! Unlimited nesting is supported. Create complex, multi-level content hierarchies for documentation, courses, or detailed guides. Each nested level works perfectly.
+
+= How many accordions can I create? =
+
+Unlimited! Create as many accordions as needed across all pages and posts. There's no artificial limit or performance penalty.
+
+= Is the plugin responsive on mobile? =
+
+Completely responsive. Accordions adapt perfectly to all screen sizes—desktop, tablet, and mobile. Touch interactions work flawlessly on mobile devices.
+
+= Can I customize the colors and styling? =
+
+Extensively! Customize every aspect—colors, backgrounds, margins, padding, border radius, typography, and more. The free version includes extensive styling options, while the Pro version adds CSS customization for total control.
+
+= Does it support SEO and structured data? =
+
+Yes! The plugin includes automatic FAQ schema markup (JSON-LD) for search engines. This enables Rich Results in Google Search, helping you rank higher and get featured snippets.
+
+= How is the Pro version different from free? =
+
+The free version is feature-rich and suitable for most users. Pro adds advanced capabilities like search, voting, anchor links, auto-play, steps/checklist layouts, and category filtering. See the features section above for the complete comparison.
 
 == Screenshots ==
-1. Default Group Accordion View with Side Panel (Left & Right).
-2. Pre-Built Patterns of Advanced Accordion Block.
-3. Pre-built pattern design one.
-4. Pre-built pattern design two.
-5. Pre-built pattern design three.
-6. Pre-built pattern design four.
-7. Overview of the Custom Color Picker of single accordion.
-8. Accordion Usage Table Dashboard on admin panel.
+1. Advanced Accordion Block Patterns – Pre-built accordion patterns for creating advanced layouts instantly
+2. Admin Dashboard – Accordion usage tracking and analytics panel
+3. Pre-Built Pattern: Modern single accordion – Professional and styling
+4. Horizontal Accordion: Feature Showcase – Horizontal layout for product features
+5. Separate Accordion: Display each accordion section individually
+6. Active Background Style – Highlight active item with background
+7. Minimal Border – Clean, lightweight border for simple layout
+8. Advanced Accordion View – Side panel layouts (left and right positioning options)
+9. Simple Accordion: Clean, minimal design for basic FAQs
+10. Admin Dashboard – Accordion usage tracking and analytics panel
 
 == Installation ==
 
-It's really easy and super simple to install **Quick Edit** plugin.
+### Automatic Installation (Recommended)
 
-= Automatic Installation =
-1.  Go to `Plugins > Add New` screen in WordPress.
-2.  Search for `Advanced Accordion Block`.
-3.  Install and activate the plugin, that's it.
+1. Log into your WordPress admin dashboard
+2. Go to **Plugins > Add New**
+3. Search for "Advanced Accordion Block"
+4. Click **Install Now**, then **Activate**
+5. Done! Start creating accordions from the Gutenberg editor
 
-= Manual Installation =
-1.  Download Advanced Accordion Block.
-2.  Extract the `advanced-accordion-block.zip` file. You'll get plugin files inside `Advanced Accordion Block` directory.
-3.  Upload the plugin files to the `/wp-content/plugins/advanced-accordion-block` directory.
-4.  Activate the plugin through the 'Plugins' screen in WordPress.
+### Manual Installation
 
+1. Download the Advanced Accordion Block plugin from WordPress.org
+2. Unzip the `advanced-accordion-block.zip` file
+3. Upload the entire `advanced-accordion-block` folder to `/wp-content/plugins/` via FTP or file manager
+4. Go to **Plugins** in your WordPress admin
+5. Find "Advanced Accordion Block" and click **Activate**
+
+### First Steps After Installation
+
+1. Create or edit a page/post in WordPress
+2. Click the + button to add a new block
+3. Search for "Accordion" and select the Accordion block
+4. Start adding your content and customizing
+5. Check the settings panel on the right for design options
+
+Need help? [Read our complete documentation →](https://helpdesk.spider-themes.net/docs/advance-accordions)
+
+
+== Upgrade Notice ==
+
+= 5.1.0 =
+Major update with autoplay functionality, feature image support, auto-numbering with colors, and Steps with Progress Bar. Enhanced pattern designs and improved settings UI. Recommended for all users.
+
+= 5.0.4 =
+Performance improvements and Freemius SDK update. Maintains full compatibility with latest WordPress versions.
+
+= 5.0.0 =
+Major feature release with Show More button, Labels support, and significant UI improvements. Users should upgrade for enhanced functionality.
 
 == Changelog ==
 
+
+= 5.2.1  (07 December 2025) =
+Tweaked: Reorganized the Group Block Settings panel for improved usability
+Improved: General enhancements and minor fixes applied across the block for better stability
+
+= 5.2.0  (18 November 2025) =
+Fixed: Horizontal accordion display issue
+Updated: All patterns for improved consistency
+Updated: Freemius SDK updated to 2.13.0
 
 = 5.1.0  (14 August 2025) =
 Fixed: Editor slow performance issue

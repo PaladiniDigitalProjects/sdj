@@ -57,7 +57,8 @@
     "aagb/accordion-isFeatureImg": "isFeatureImg",
     "aagb/accordion-autoNumbering": "autoNumbering",
     "aagb/accordion-autoNumberingColor": "autoNumberingColor",
-    "aagb/accordion-progressBarOn": "progressBarOn"
+    "aagb/accordion-progressBarOn": "progressBarOn",
+    "aagb/accordion-nextPrevious": "nextPrevious"
   },
   "attributes": {
     "autoPlay": {
@@ -348,6 +349,22 @@
     "progressBarOn": {
       "type": "boolean",
       "default": false
+    },
+    "nextPrevious": {
+      "type": "boolean",
+      "default": false
+    },
+    "nextPreviousDirection": {
+      "type": "string",
+      "default": "left"
+    },
+    "nextPreviousIconBgColor": {
+      "type": "string",
+      "default": "#010101"
+    },
+    "nextPreviousIconColor": {
+      "type": "string",
+      "default": "#ffffff"
     }
   },
   "styles": [

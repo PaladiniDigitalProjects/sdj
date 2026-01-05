@@ -4427,6 +4427,9 @@
   text-align: left !important;
   font-size: 2.4rem;
 }
+.block-editor-writing-flow .wp-block-noticias.noticiasCapitulo .publicaciones {
+  min-width: 20rem !important;
+}
 .block-editor-writing-flow .wp-block-noticias.noticiasCapitulo .capitulo .entry-content .entry-title {
   font-family: "Suisse-Light";
   text-align: left !important;

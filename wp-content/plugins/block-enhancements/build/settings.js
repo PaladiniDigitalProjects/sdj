@@ -261,6 +261,10 @@
   margin-bottom: revert;
   font-size; 12px;
   color: #757575;
+
+  &.no-margin {
+    margin-top: 0;
+  }
 `,n(799),window.wp.keycodes,tn(o.Modal)`
   // Modal content
   .components-modal__content {

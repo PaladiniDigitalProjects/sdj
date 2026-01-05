@@ -119,6 +119,7 @@ class Supercacher {
 			'delete_term',
 			'update_option_woocommerce_coming_soon',
 			'update_option_woocommerce_store_pages_only',
+			'elementor/core/files/clear_cache',
 		),
 	);
 

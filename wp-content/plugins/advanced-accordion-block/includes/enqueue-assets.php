@@ -111,6 +111,20 @@ class AAB_Enqueue_Block_Assets {
 		);
 
 		wp_register_style(
+			'aahb-horizontal-accordion',
+			plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion/style-index.css',
+			array(),
+			'initial'
+		);
+
+		wp_register_style(
+			'aahb-horizontal-accordion-item',
+			plugins_url( '/', __FILE__ ) . '../build/horizontal-accordion-item/style-index.css',
+			array(),
+			'initial'
+		);
+
+		wp_register_style(
 			'aagb-toolbar',
 			plugins_url( '/', __FILE__ ) . '../build/accordion-toolbar/index.css',
 			array(),

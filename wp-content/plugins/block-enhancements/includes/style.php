@@ -133,9 +133,6 @@ if ( ! class_exists( Style::class ) ) :
 			// Add feature class to blocks.
 			add_filter( 'block_enhancements_block_class', [ $this, 'get_block_class' ], 10, 4 );
 
-			// Enqueue block styles.
-			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_all_block_styles' ] );
-
 			// Get block style.
 			add_filter( 'render_block', [ $this, 'render_list_item_block' ], 10, 2 );
 		}
@@ -201,25 +198,11 @@ if ( ! class_exists( Style::class ) ) :
 				return $block_content;
 			}
 
-			$features = $block_styles['features'] ?? [];
-
-			// Enqueue style for classic themes.
-			if ( ! wp_is_block_theme() ) {
-				$style = '';
-				foreach ( array_keys( $features ) as $feature_name ) {
-					if ( ! in_array( $feature_name, $this->loaded_feature_styles, true ) ) {
-						$style                        .= $this->feature_style_array[ $feature_name ] ?? '';
-						$this->loaded_feature_styles[] = $feature_name;
-					}
-				}
-
-				$style .= $block_styles['style'] ?? '';
-
-				$this->enqueue_block_style( $style );
-			}
+			// Enqueue style.
+			$this->enqueue_block_style( $block_styles );
 
 			// Add block class.
-			$block_class = apply_filters( 'block_enhancements_block_class', str_replace( '/', '-', $block['blockName'] ), $block['blockName'], $block, $features );
+			$block_class = apply_filters( 'block_enhancements_block_class', str_replace( '/', '-', $block['blockName'] ), $block['blockName'], $block, $block_styles['features'] ?? [] );
 
 			// Add selector to block wrapper element.
 			$content = $this->add_class_to_block( $block_content, "{$block_class} {$selector}" );
@@ -2168,61 +2151,25 @@ if ( ! class_exists( Style::class ) ) :
 		/**
 		 * Enqueue style for a block
 		 *
-		 * @param string $style
+		 * @param array $block_styles
 		 * @return void
 		 */
-		private function enqueue_block_style( $style ) {
+		private function enqueue_block_style( $block_styles ) {
+			// Get features.
+			$features = $block_styles['features'] ?? [];
+
+			$style = '';
+			foreach ( array_keys( $features ) as $feature_name ) {
+				if ( ! in_array( $feature_name, $this->loaded_feature_styles, true ) ) {
+					$style                        .= $this->feature_style_array[ $feature_name ] ?? '';
+					$this->loaded_feature_styles[] = $feature_name;
+				}
+			}
+
+			$style .= $block_styles['style'] ?? '';
+
 			wp_add_inline_style( $this->style_handle, $style );
 			wp_enqueue_style( $this->style_handle );
-		}
-
-		/**
-		 * Enqueue all styles for blocks
-		 *
-		 * @return void
-		 */
-		public function enqueue_all_block_styles() {
-			if ( wp_is_block_theme() ) {
-				$style = $this->get_all_block_styles();
-
-				if ( $style ) {
-					wp_add_inline_style( $this->style_handle, $style );
-					wp_enqueue_style( $this->style_handle );
-				}
-			}
-		}
-
-		/**
-		 * Get all block styles
-		 *
-		 * @return string
-		 */
-		private function get_all_block_styles() {
-			$style = '';
-
-			if ( $this->feature_style_array ) {
-				foreach ( $this->feature_style_array as $feature_style ) {
-					if ( $feature_style ) {
-						$style .= $feature_style;
-					}
-				}
-			}
-
-			if ( $this->style_array ) {
-				foreach ( $this->style_array as $selector_type => $value ) {
-					if ( count( $value ) > 0 ) {
-						$style .= $selector_type . '{' . implode( '', $value ) . '}';
-					}
-				}
-			}
-
-			if ( $this->responsive_style_array ) {
-				foreach ( $this->responsive_style_array as $responsive_style ) {
-					$style .= $responsive_style;
-				}
-			}
-
-			return $style;
 		}
 
 		/**

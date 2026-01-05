@@ -238,6 +238,10 @@
     "progressBarOn": {
       "type": "boolean",
       "default": false
+    },
+    "nextPrevious": {
+      "type": "boolean",
+      "default": false
     }
   },
   "textdomain": "advanced-accordion-block",

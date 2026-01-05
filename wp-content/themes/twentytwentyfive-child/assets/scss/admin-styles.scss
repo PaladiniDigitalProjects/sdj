@@ -11,7 +11,7 @@
   @import './listados.scss';
   @import './single.scss';
   @import './category.scss';
-  // @import './nutrities.scss';
+  @import './nutrities.scss';
   @import './components.scss';
   @import './event.scss';
   @import './page.scss';
@@ -30,11 +30,11 @@
   // @import './blocks/related.scss';
   // @import './blocks/events.scss';
   // @import './blocks/projects-slider.scss';
-  @import './blocks/carussel.scss';
+  @import './blocks/carousell.scss';
   // @import './blocks/ticker.scss';
   // @import './blocks/mapa.scss';
   @import './blocks/noticias.scss';
-  // @import './blocks/relacionado.scss';
+  @import './blocks/relacionado.scss';
   // @import './blocks/donaciones.scss';
   // @import './blocks/descargas.scss';
   // @import './blocks/redes-sociales.scss';
@@ -43,7 +43,7 @@
 
   // GENERIC
   background: $white;  
-  border-top:1rem solid $primary;
+  // border-top:1rem solid $primary;
 
   a {
     text-decoration: none;

@@ -3,6 +3,205 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 4.22.62 (2025-12-10)
+
+
+### Bug Fixes
+
+* show media library folders in MailPoet newsletter editor (CU-869bcanq9)
+
+
+
+
+
+
+
+## 4.22.61 (2025-12-04) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-media-library) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.5.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Features
+
+* inital implementation of object-storage package (CU-8697h8axv)
+* introduce contract profiles with predefined internal profile to exclude from OpenAPI (CU-8699tgz5g)</details>
+
+
+
+
+
+## 4.22.60 (2025-12-02)
+
+
+### Bug Fixes
+
+* folder content and folder structure is not always correctly ordered (CU-869b6wyqj)
+* function for child SQL is not created on a MySQL instance with multiple databases which hold WordPress (CU-869ayp0zd)
+
+
+### Maintenance
+
+* compatibility with WordPress 6.9 (CU-869bakzm8)
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.4.2</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Bug Fixes
+
+* implement missing file multipart upload in contracts (CU-869badh12)
+* implement missing file multipart upload in contracts fetch-client (CU-869badh12)</details>
+
+
+
+
+
+## 4.22.59 (2025-11-21) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+**Note:** This package (@devowl-wp/real-media-library) has been updated because a dependency, which is also shipped with this package, has changed.
+
+
+<details><summary>Development dependency update @devowl-wp/api 1.4.1</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Bug Fixes
+
+* allow to set a x-tagGroups via route details (CU-8699tgz5g)
+* remove redundant delivery ack policy handling (CU-869am6b3b)
+
+
+##### Maintenance
+
+* upgrade zod to latest v4 and refactor to zod imports instead of zod/v4 (CU-8699tgz5g)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-integration 0.7.12</summary>
+
+
+**_Purpose of dependency:_** _DevOps macros, job templates and jobs for Gitlab CI and @devowl-wp/node-gitlab-ci._
+##### Maintenance
+
+* introduce secret-scanner with gitleaks (CU-869aw6tca)</details>
+
+<details><summary>Development dependency update @devowl-wp/eslint-config 0.2.20</summary>
+
+
+**_Purpose of dependency:_** _Provide eslint configuration for our complete monorepo._
+##### Maintenance
+
+* upgrade zod to latest v4 and refactor to zod imports instead of zod/v4 (CU-8699tgz5g)</details>
+
+
+
+
+
+## 4.22.58 (2025-10-15) (not released)
+
+**Note:** This version of the package has not (yet) been released publicly. This happens if changes have been made in dependencies that do not affect this package (e.g. changes for the development of the package). The changes will be rolled out with the next official update.
+
+
+### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)
+
+
+<details><summary>Dependency updates @devowl-wp/freemium 1.3.122</summary>
+
+
+**_Purpose of dependency:_** _Make your plugin to a freemium plugin with predefined Envato support_
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-product-manager-wp-client 1.20.5</summary>
+
+
+**_Purpose of dependency:_** _A WordPress client for Real Product Manager_
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)</details>
+
+<details><summary>Dependency updates @devowl-wp/real-utils 1.14.5</summary>
+
+
+**_Purpose of dependency:_** _Create cross-selling ads, about page, rating and newsletter input for WP Real plugins._
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)</details>
+
+<details><summary>Dependency updates @devowl-wp/utils 1.20.5</summary>
+
+
+**_Purpose of dependency:_** _Utility functionality for all your WordPress plugins._
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)</details>
+
+<details><summary>Development dependency update @devowl-wp/api 1.4.0</summary>
+
+
+**_Purpose of dependency:_** _Shared typings for all Node.js backends and frontends._
+##### Bug Fixes
+
+* allow to create literal error code responses (CU-8699tgz5g)
+* allow to define routes to be a webhook (CU-8699tgz5g)
+* enhance vendor management contracts with new API endpoints and schema updates (CU-8699tgz5g)
+* make optional recursion schema properties work as expected (CU-8699tgz5g)
+
+
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)
+
+
+##### Documentation
+
+* user session and magic link routes improved (CU-8699tgz5g)
+
+
+##### Features
+
+* enhance vendor and user management with new API endpoints and schema updates (CU-8699tgz5g)
+* introduce a contract-first design for message brokers with delivery-tuning (CU-869am6b3b)</details>
+
+<details><summary>Development dependency update @devowl-wp/continuous-localization 0.8.28</summary>
+
+
+**_Purpose of dependency:_** _Provide a CLI to push and pull localization files from different translation management systems._
+##### Bug Fixes
+
+* compatibility with the new q parameter in autotranslate since Weblate 5.13 (CU-869ar5pcu)
+* update error handling for existing languages (CU-869ar5pcu)</details>
+
+<details><summary>Development dependency update @devowl-wp/regexp-translation-extractor 0.2.45</summary>
+
+
+**_Purpose of dependency:_** _Provide a performant translation extractor based on regular expression._
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)</details>
+
+<details><summary>Development dependency update @devowl-wp/ts-config 0.1.18</summary>
+
+
+**_Purpose of dependency:_** _Predefined compiler options for our backends._
+##### Continuous Integration
+
+* correctly type check with --project instead of cd into the TypeScript project folder (CU-8697h8axv)</details>
+
+
+
+
+
 ## 4.22.57 (2025-09-24)
 
 

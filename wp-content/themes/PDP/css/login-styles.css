@@ -7400,6 +7400,9 @@ main.capitulo ul li {
   text-align: left !important;
   font-size: 2.4rem;
 }
+.wp-block-noticias.noticiasCapitulo .publicaciones {
+  min-width: 20rem !important;
+}
 .wp-block-noticias.noticiasCapitulo .capitulo .entry-content .entry-title {
   font-family: "Suisse-Light";
   text-align: left !important;

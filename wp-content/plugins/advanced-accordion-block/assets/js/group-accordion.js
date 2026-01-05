@@ -17,7 +17,7 @@ const isPro = !!aagb_local_object.licensing;
 
 	function toggleIcon(element, target = ['expand', 'collapse'][0]) {
 		const $icon = $(element);
-		const classList = $icon.attr('class').split(/\s+/);
+		const classList = $icon.attr('class')?.split(/\s+/) || [];
 
 		for (const cls of classList) {
 			for (const [collapsedCls, expandedCls] of iconToggleMap) {
@@ -65,6 +65,7 @@ const isPro = !!aagb_local_object.licensing;
 		const Vertical = $accordions.data('progress-bar-direction');
         const progressBarOn = isPro && $accordions.data('progress-bar-on');
         const autoPlayWithProgressBar = isPro && autoPlay && progressBarOn;
+        const hasNextPrevious = $groupAccordion.hasClass('aab-next-previous-enabled');
         
 		// const autoPlaySpeed = 6000;
 		let currentIndex = 0;
@@ -108,8 +109,9 @@ const isPro = !!aagb_local_object.licensing;
 			$accordion.addClass('aagb__accordion_active');
 			$head.addClass('active');
 			$body.addClass('aagb__accordion_body--show').slideDown();
+
 			toggleIcon($icon, 'collapse');
-			// ✅ Feature image update
+			// Feature image update
 			const imageUrl = $accordion.data('feature-image-url');
             const $accordionContainerClass = $accordion.closest('.aagb__group_accordion_container');
            
@@ -160,7 +162,7 @@ const isPro = !!aagb_local_object.licensing;
 			const $body = $(this);
 			if ($body.hasClass('aagb__accordion_body--show')) {
 				$body.slideDown();
-				// ✅ Feature image update for initially active accordion
+				// Feature image update for initially active accordion
 				const imageUrl = $accordions.data('feature-image-url');
                 const $accordionContainerClass = $accordions.closest('.aagb__group_accordion_container');        
                 const $featureImg = $($accordionContainerClass).find('.aab-feature-img');
@@ -178,12 +180,19 @@ const isPro = !!aagb_local_object.licensing;
 			}
 		});
 
+		// If Next Previous is enabled and no accordion is active, activate the first one
+		if (hasNextPrevious) {
+			const hasActiveAccordion = $accordions.hasClass('aagb__accordion_active');
+			if (!hasActiveAccordion) {
+				activateAccordion($accordions.eq(0), 0);
+			}
+		}
+
 		$accordionHeads.on(activatorEvent, function () {
 			const $head = $(this);
 			const $accordion = $head.parent();
 			const index = $accordions.index($accordion);
 			const isActive = $accordion.hasClass('aagb__accordion_active');
-          
 			if (isActive) {
 				resetAll();
 				if (autoPlay) clearInterval(interval);
@@ -194,6 +203,8 @@ const isPro = !!aagb_local_object.licensing;
 					startAutoplay();
 				}
 			}
+            
+            updateButtonState($groupAccordion);
 		});
 
 		// Accessibility with Keyboard
@@ -239,71 +250,6 @@ const isPro = !!aagb_local_object.licensing;
 		}
 	});
 
-	// accordion autoplay js
-    // Show All and Close All buttons functionality
-	// $('.content-accordion__show-all').on('click', function (e) {
-	// 	e.preventDefault();
-	// 	var targetAccordion = $(`.` + $(this).data('opentarget'));
-	// 	targetAccordion
-	// 		.find($('.aagb__accordion_body'))
-	// 		.addClass('aagb__accordion_body--show')
-	// 		.slideDown();
-	// 	targetAccordion.find('.panel').addClass('aagb__accordion_active');
-	// 	targetAccordion.find('.hasSubHeading').addClass('active');
-
-	// 	// icon
-	// 	const $icon = targetAccordion.find(
-	// 		'.aagb__accordion_heading .aagb__icon'
-	// 	);
-
-	// 	if ($icon.hasClass('dashicons-plus-alt2')) {
-	// 		$icon.removeClass('dashicons-plus-alt2');
-	// 		$icon.addClass('dashicons-minus');
-	// 	} else if ($icon.hasClass('dashicons-arrow-down-alt2')) {
-	// 		$icon.removeClass('dashicons-arrow-down-alt2');
-	// 		$icon.addClass('dashicons-arrow-up-alt2');
-	// 	} else if ($icon.hasClass('dashicons-arrow-down')) {
-	// 		$icon.removeClass('dashicons-arrow-down');
-	// 		$icon.addClass('dashicons-arrow-up');
-	// 	} else if ($icon.hasClass('dashicons-plus-alt')) {
-	// 		$icon.removeClass('dashicons-plus-alt');
-	// 		$icon.addClass('dashicons-dismiss');
-	// 	} else if ($icon.hasClass('dashicons-insert')) {
-	// 		$icon.removeClass('dashicons-insert');
-	// 		$icon.addClass('dashicons-remove');
-	// 	}
-	// });
-	// $('.content-accordion__close-all').on('click', function (e) {
-	// 	e.preventDefault();
-	// 	var targetAccordion = $(`.` + $(this).data('closetarget'));
-	// 	targetAccordion
-	// 		.find($('.aagb__accordion_body'))
-	// 		.removeClass('aagb__accordion_body--show')
-	// 		.slideUp();
-	// 	targetAccordion.find('.panel').removeClass('aagb__accordion_active');
-	// 	targetAccordion.find('.hasSubHeading').removeClass('active');
-
-	// 	const $icon = targetAccordion.find(
-	// 		'.aagb__accordion_heading .aagb__icon'
-	// 	);
-
-	// 	if ($icon.hasClass('dashicons-minus')) {
-	// 		$icon.removeClass('dashicons-minus');
-	// 		$icon.addClass('dashicons-plus-alt2');
-	// 	} else if ($icon.hasClass('dashicons-arrow-up-alt2')) {
-	// 		$icon.removeClass('dashicons-arrow-up-alt2');
-	// 		$icon.addClass('dashicons-arrow-down-alt2');
-	// 	} else if ($icon.hasClass('dashicons-arrow-up')) {
-	// 		$icon.removeClass('dashicons-arrow-up');
-	// 		$icon.addClass('dashicons-arrow-down');
-	// 	} else if ($icon.hasClass('dashicons-dismiss')) {
-	// 		$icon.removeClass('dashicons-dismiss');
-	// 		$icon.addClass('dashicons-plus-alt');
-	// 	} else if ($icon.hasClass('dashicons-remove')) {
-	// 		$icon.removeClass('dashicons-remove');
-	// 		$icon.addClass('dashicons-insert');
-	// 	}
-	// });
 // Show All Click
   $('.content-accordion__show-all').on('click', function (e) {
     e.preventDefault();
@@ -400,4 +346,65 @@ const isPro = !!aagb_local_object.licensing;
 			);
 		});
 	}
+
+    const iconCls = {
+        next: 'aagb-accordion-next-icon',
+        previous: 'aagb-accordion-previous-icon',
+    };
+
+    $('.aagb-accordion-next-previous').on('click', `.${iconCls.previous}, .${iconCls.next}`, function() {
+        const $this = $(this);
+        console.log('Next Previous Clicked');
+        const parentItem = $this.closest('.wp-block-aab-group-accordion');
+        const activatorEvent = parentItem.hasClass('hover')
+            ? 'mouseenter'
+            : 'click';
+
+        let currentItem = parentItem.find(
+            '.wp-block-aab-accordion-item.aagb__accordion_active'
+        );
+        let targetItem = currentItem.next('.wp-block-aab-accordion-item');
+
+        if ($this.hasClass(iconCls.previous)) {
+            targetItem = currentItem.prev('.wp-block-aab-accordion-item');
+        }
+
+        targetItem.find('.aagb__accordion_head').trigger(activatorEvent);
+    })
+
+    $('.wp-block-aab-group-accordion').each(function(){
+        const parentItem = $(this);
+        updateButtonState(parentItem);
+    });
+
+    // update button state function
+    
+    function updateButtonState(parentItem) {
+        let activeItem = parentItem.find(
+            '.wp-block-aab-accordion-item.aagb__accordion_active'
+        );
+        let allItems = parentItem.find('.wp-block-aab-accordion-item');
+        let currentIndex = allItems.index(activeItem);
+
+        let prevBtn = parentItem.find('.aagb-accordion-previous-icon');
+        let nextBtn = parentItem.find('.aagb-accordion-next-icon');
+        const nextPrevBtn = parentItem.find('.aagb-accordion-next-previous');
+
+        prevBtn.removeClass('aagb_disabled');
+        nextBtn.removeClass('aagb_disabled');
+      
+        if(activeItem.length === 0){
+            nextPrevBtn.hide();
+            return;
+        }
+        // show buttons
+        nextPrevBtn.show();
+    
+        if (currentIndex === 0) {
+            prevBtn.addClass('aagb_disabled');
+        } else if (currentIndex === allItems.length - 1) {
+            nextBtn.addClass('aagb_disabled');
+        }
+    }
+
 })(jQuery);
