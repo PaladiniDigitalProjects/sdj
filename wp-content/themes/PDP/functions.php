@@ -141,7 +141,7 @@ add_filter( 'login_headerurl', 'my_login_logo_url' );
 function my_login_logo_url_title() {
     return 'Sant Juan de Dios';
 }
-add_filter( 'login_headertext ', 'my_login_logo_url_title' );
+add_filter( 'login_headertext', 'my_login_logo_url_title' );
 function my_login_stylesheet() {
     wp_enqueue_style( 'custom-login', get_stylesheet_directory_uri() . '/css/login-styles.css' );
 }
@@ -641,7 +641,7 @@ remove_filter( 'the_excerpt', 'wpautop' );
 /* EXCERT FROM THE CONTEnT */
 
 function get_excerpt($limit, $source = null){
-
+    global $post;
     $excerpt = $source == "content" ? get_the_content() : get_the_excerpt();
     $excerpt = preg_replace(" (\[.*?\])",'',$excerpt);
     $excerpt = strip_shortcodes($excerpt);
@@ -751,6 +751,58 @@ function html5_search_form( $form ) {
 }
 
 add_filter( 'get_search_form', 'html5_search_form' );
+
+
+
+
+// 1️⃣ Limpiar "#" en todos los términos de taxonomías al obtenerlos
+add_filter('get_the_terms', 'eliminar_hash_todas_taxonomias', 10, 3);
+function eliminar_hash_todas_taxonomias($terms, $post_id, $taxonomy) {
+    if (!empty($terms) && is_array($terms)) {
+        foreach ($terms as $term) {
+            $term->name = str_replace('#', '', $term->name);
+        }
+    }
+    return $terms;
+}
+
+// 2️⃣ Limpiar "#" en widgets de categorías (por ejemplo, Category Widget)
+add_filter('widget_categories_args', 'eliminar_hash_widget_categories');
+function eliminar_hash_widget_categories($args) {
+    add_filter('list_cats', function($cat_name) {
+        return str_replace('#', '', $cat_name);
+    });
+    return $args;
+}
+
+// 3️⃣ Limpiar "#" en etiquetas (por ejemplo, Tag Cloud Widget)
+add_filter('wp_tag_cloud', 'eliminar_hash_tag_cloud');
+function eliminar_hash_tag_cloud($tags_html) {
+    return str_replace('#', '', $tags_html);
+}
+
+// 4️⃣ Limpiar "#" en menús que usen términos de taxonomía
+add_filter('wp_nav_menu_items', 'eliminar_hash_menus', 10, 2);
+function eliminar_hash_menus($items, $args) {
+    return str_replace('#', '', $items);
+}
+
+
+add_filter('get_the_terms', 'ocultar_categoria_ohsjd', 10, 3);
+
+function ocultar_categoria_ohsjd($terms, $post_id, $taxonomy) {
+    if (!empty($terms) && is_array($terms)) {
+        foreach ($terms as $key => $term) {
+            if ($term->slug === 'ohsjd' || $term->name === 'OHSJD') {
+                unset($terms[$key]);
+            }
+        }
+        
+        $terms = array_values($terms);
+    }
+    return $terms;
+}
+
 
 /* IMAGES LIGHTBOX */
 

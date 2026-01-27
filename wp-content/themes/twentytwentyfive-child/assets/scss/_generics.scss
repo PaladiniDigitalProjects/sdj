@@ -4,14 +4,32 @@
   --wp--preset--color--base:#ffffff;
   --wp--style--root--padding-top:0;
   --wp--style--root--padding-bottom:0;
+  --wp--preset--font-family--suisse-intl: "Suisse Intl", sans-serif !important;
 }
 
+
 * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,.3) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.3);
+    border-radius: 8px;
+  }
+
   &:focus {
     outline: 0;
   }
 }
-
 
 body {
   background-color:var(--wp--preset--color--base);
@@ -489,3 +507,23 @@ figcaption {
     transform: scale(1.10); 
   }
 }
+
+/* TAGS */
+.wp-block-categories-list {
+  .pds-terms-list {
+    margin: 0;
+    .cat-item {
+      margin: 0 0.75rem 0.75rem 0;
+      a {
+        font-size: 1rem;
+        line-height: 130%;
+      }
+    }
+  }
+}
+
+/* RETALL PER LES IMATGES */
+
+.wp-block-media-text {
+  overflow: clip;
+}   

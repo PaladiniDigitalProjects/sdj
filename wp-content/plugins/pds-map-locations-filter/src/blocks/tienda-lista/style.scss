@@ -47,6 +47,20 @@ h4{
         border-radius: 8px;
         overflow: hidden;
         background: #fff;
+           .pds-item-link {
+              position: absolute;
+              inset: 0;
+              z-index: 1;
+              display: block;
+             
+                }
+
+          a:not(.pds-item-link),
+          button {
+              position: relative;
+              z-index: 9;
+          }
+
       }
 
       .pds-column {

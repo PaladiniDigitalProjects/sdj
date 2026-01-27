@@ -232,6 +232,34 @@ nav.menu-nav {
 }
 // END MENU NAV
 
+
+.single-capitulo,
+.single-lacasadetodos {
+  nav.menu-nav {
+    height:5.2rem !important;
+  }
+
+  .site-main .entry .entry-content {
+    padding: 2rem 1.5rem;
+    width: calc(100% - 3rem);
+    margin: 0 auto;
+
+    span {
+      margin: 1rem 0 !important;
+    }
+
+    @include laptop {
+      padding: 2rem 1.5rem;
+      width: calc(100% - 3rem);
+    }
+
+    @include large {
+      padding: 2rem 0;
+      width: 100%;
+    }
+  }
+}
+
 /* MENU SER HERMANOS */
 .menu-menu-nav-hermano-container {
   border-top:0.1rem solid $primary;

@@ -6,7 +6,7 @@
 		<ul class="category-list"><?php
 		foreach((get_the_category()) as $category){
 			if($category->name !== 'No listas'){
-				echo '<li class="entry-categories"><a href="'. esc_url( get_category_link( $category->term_id )) .'">#'.$category->name."</a></li>";
+				echo '<li class="entry-categories"><a href="'. esc_url( get_category_link( $category->term_id )) .'">'.$category->name."</a></li>";
 			}
 		} ?>
 		</ul>

@@ -87,6 +87,7 @@ if ($stores_query->have_posts()): ?>
             <?php else: ?>
                 <!-- ===== GRID VIEW ===== -->
                 <div class="pds-tiendas-row">
+                    <a class="pds-item-link" href="<?= esc_url(get_permalink()); ?>" aria-label="<?= esc_attr(get_the_title()); ?>"></a>   
                     <div class="pds-col-thumb">
                         <?= $thumb_html; ?>
                     </div>

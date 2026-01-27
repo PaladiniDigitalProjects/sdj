@@ -74,7 +74,7 @@ $term = get_field('block_relacionado_categoria');
               <?php if ('tribe_events' == get_post_type()) : ?>
                 <li class="entry-categories"><i class="ico-evento"></i><?php _e('Evento', 'PDP');?></li>
               <?php endif; ?>
-              <?php foreach ( $categoriesLoop as $cat ) { echo '<li class="entry-categories">#'.$cat->name.'</li> '; } ?>
+              <?php foreach ( $categoriesLoop as $cat ) { echo '<li class="entry-categories">'.$cat->name.'</li> '; } ?>
               </ul>
             <?php endif; ?>
             <?php the_date(); ?>
@@ -112,7 +112,7 @@ $term = get_field('block_relacionado_categoria');
               <?php if ('tribe_events' == get_post_type()) : ?>
               <li class="entry-categories"><i class="ico-evento"></i><?php _e('Evento', 'PDP');?></li>
               <?php endif; ?>
-                <?php foreach ( $categoriesLoop as $cat ) { echo '<li class="entry-categories">#'.$cat->name.'</li> '; } ?>
+                <?php foreach ( $categoriesLoop as $cat ) { echo '<li class="entry-categories">'.$cat->name.'</li> '; } ?>
             <?php endif; ?>
             </ul>
             <h3 class="entry-title"><?php echo get_the_title( $r_post->ID ); ?></h3>

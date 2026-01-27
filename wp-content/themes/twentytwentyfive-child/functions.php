@@ -379,3 +379,9 @@ function my_acf_block_render_callback( $block ) {
 	}
 }
 
+// LOGIN FIRST
+
+// if ( ( is_single() || is_front_page() || is_page() ) 
+//        && !is_page('login') && !is_user_logged_in()){ 
+//     auth_redirect(); 
+// } 
