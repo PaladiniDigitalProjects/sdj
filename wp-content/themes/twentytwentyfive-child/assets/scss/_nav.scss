@@ -300,8 +300,34 @@ header.wp-block-template-part {
       gap: 0.5rem;
       li {
         width: 49%;
+<<<<<<< HEAD
+=======
+        &.MemoriaActividad {
+          display: none;
+        }
+>>>>>>> main
+      }
+    } 
+  
+  }
+<<<<<<< HEAD
+}
+=======
+}
+
+
+footer.wp-block-template-part  {
+  .Sub_Menus {
+    ul.wp-block-navigation__container {
+      width: 100%;
+      height: 200px;
+      flex-wrap: wrap;
+      gap: 0;
+      li {
+        width: 49%;
       }
     } 
   
   }
 }
+>>>>>>> main

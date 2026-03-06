@@ -3,7 +3,11 @@
 * Tags: cookie banner, cookie consent, cookie notice, GDPR, privacy, cmp, consent‑management‑platform, google‑consent‑mode, compliance, gdpr‑compliance, ccpa, dma
 * Requires at least: 4.4
 * Tested up to: 6.8
+<<<<<<< HEAD
 * Stable tag: 4.6.2
+=======
+* Stable tag: 4.6.1
+>>>>>>> main
 * Requires PHP: 5.6
 * License: GPLv2 or later
 
@@ -180,6 +184,21 @@ Cookiebot by Usercentrics version 4.6.2 is out! This release has a bugfix and ne
 Release date: November 20th 2025
 
 Cookiebot by Usercentrics version 4.6.1 is out! This release has some bugfixes and new features
+
+####What's new####
+
+* Improved dashboard with clearer information on how to complete the configuration
+
+####Bugfixes####
+
+* Improved validation of field “Settings ID / Domain Group ID” when connecting to an existing account
+* Fixed issue detected when using option: Compliance with multiple privacy laws (geolocation)
+* Added missing language translations for FAQ article
+
+### 4.6.1 ###
+Release date: November 20th 2025
+
+Cookiebot CMP version 4.6.1 is out! This release has some bugfixes and new features
 
 ####What's new####
 

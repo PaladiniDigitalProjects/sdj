@@ -3,7 +3,7 @@ Contributors: digitalapps
 Donate link: https://www.buymeacoffee.com/wpplugins
 Tags: swiper, carousel, slider block, carousel block, swiper block
 Requires at least: 3.0.1
-Tested up to: 6.5
+Tested up to: 6.9
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -75,7 +75,23 @@ add_filter('wpswiper_frontend_js_register_args', function($args) {
 
 This filter provides flexibility in how the `frontend-js` script is loaded, allowing for optimizations tailored to your specific site needs.
 
---- 
+---
+
+## API Parameters
+
+### Loop Parameters
+
+#### `loopAddBlankSlides`
+- **Type:** boolean
+- **Default:** true
+- **Description:** Automatically adds blank slides if you use Grid or slidesPerGroup and the total amount of slides is not even to slidesPerGroup or to grid.rows
+
+#### `loopAdditionalSlides`
+- **Type:** number
+- **Default:** 0
+- **Description:** Allows to increase amount of looped slides
+
+---
 
 !!! IMPORTANT !!!
 
@@ -118,6 +134,27 @@ Alternatively, you can install the plugin manually by downloading the plugin fro
 
 
 == Changelog ==
+= 1.3.10 =
+* Performance boost: Removed the high-frequency setTranslate event (keep only the essential ones). Related to autoSlideWidth
+
+= 1.3.9 =
+* Added support for autoSlideWidth 
+* Read more: [WP-Swiper 1.3.9 released — new feature Auto Slide Width for perfectly sized slides](https://digitalapps.com/wp-swiper-1-3-9-released-new-feature-auto-slide-width-for-perfectly-sized-slides/)
+
+= 1.3.8 =
+* Autoplay bug fix
+
+= 1.3.7 =
+* Extended support for Free Mode
+* added loopAdditionalSlides
+* remove jquery dependency
+
+= 1.3.6 =
+* Allow zero to be set for delay
+
+= 1.3.5 =
+* Fix Overlay color not persisting
+* Add toggle to allow overflow to be visible
 
 = 1.3.4 =
 * Fix The error "The wp_swiper_settings options page is not in the allowed options list"

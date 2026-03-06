@@ -16966,7 +16966,9 @@ function elementor(content, alm) {
  * Elementor loaded and dispatch actions.
  *
  * @param {Object} alm The alm object.
+ * @return {Promise}   Resolves when done.
  */
+<<<<<<< HEAD
 function elementorLoaded(alm) {
   var page = alm.page,
     AjaxLoadMore = alm.AjaxLoadMore,
@@ -16985,6 +16987,10 @@ function elementorLoaded(alm) {
   }
   AjaxLoadMore.transitionEnd();
   dispatchScrollEvent();
+=======
+function elementorLoaded(_x) {
+  return _elementorLoaded.apply(this, arguments);
+>>>>>>> main
 }
 
 /**
@@ -16994,6 +17000,36 @@ function elementorLoaded(alm) {
  * @param {string} type The Elementor type.
  * @return {Object}     The modified object.
  */
+<<<<<<< HEAD
+=======
+function _elementorLoaded() {
+  _elementorLoaded = elementor_asyncToGenerator(/*#__PURE__*/elementor_regenerator().m(function _callee2(alm) {
+    var page, AjaxLoadMore, addons, _alm$rel, rel, nextPage, elementor_max_pages;
+    return elementor_regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
+        case 0:
+          page = alm.page, AjaxLoadMore = alm.AjaxLoadMore, addons = alm.addons, _alm$rel = alm.rel, rel = _alm$rel === void 0 ? 'next' : _alm$rel;
+          nextPage = page + 1;
+          elementor_max_pages = addons.elementor_max_pages;
+          lazyImages(alm); // Lazy load images if necessary.
+
+          if (typeof almComplete === 'function' && alm.transition !== 'masonry') {
+            window.almComplete(alm); // Trigger almComplete.
+          }
+          if (rel === 'next' && nextPage >= elementor_max_pages) {
+            AjaxLoadMore.triggerDone(); // Reached max pages.
+          }
+          AjaxLoadMore.transitionEnd();
+          dispatchScrollEvent();
+          return _context2.a(2, new Promise(function (resolve) {
+            resolve(true);
+          }));
+      }
+    }, _callee2);
+  }));
+  return _elementorLoaded.apply(this, arguments);
+}
+>>>>>>> main
 function setClasses(alm) {
   var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'posts';
   // Get the items based on the Elementor type.
@@ -17945,7 +17981,9 @@ function queryLoop(content, alm) {
  * Query Loop loaded and dispatch actions.
  *
  * @param {Object} alm The alm object.
+ * @return {Promise}   Resolves when done.
  */
+<<<<<<< HEAD
 function queryLoopLoaded(alm) {
   var AjaxLoadMore = alm.AjaxLoadMore;
   lazyImages(alm); // Lazy load images if necessary.
@@ -17955,6 +17993,10 @@ function queryLoopLoaded(alm) {
   }
   AjaxLoadMore.transitionEnd(); // End transitions.
   dispatchScrollEvent();
+=======
+function queryLoopLoaded(_x) {
+  return _queryLoopLoaded.apply(this, arguments);
+>>>>>>> main
 }
 
 /**
@@ -17963,6 +18005,28 @@ function queryLoopLoaded(alm) {
  * @param {HTMLElement} element The element to search.
  * @return {Object|void}        The config object.
  */
+function _queryLoopLoaded() {
+  _queryLoopLoaded = query_loop_asyncToGenerator(/*#__PURE__*/query_loop_regenerator().m(function _callee2(alm) {
+    var AjaxLoadMore;
+    return query_loop_regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
+        case 0:
+          AjaxLoadMore = alm.AjaxLoadMore;
+          lazyImages(alm); // Lazy load images if necessary.
+
+          if (typeof almComplete === 'function' && alm.transition !== 'masonry') {
+            window.almComplete(alm); // Trigger almComplete.
+          }
+          AjaxLoadMore.transitionEnd(); // End transitions.
+          dispatchScrollEvent();
+          return _context2.a(2, new Promise(function (resolve) {
+            resolve(true);
+          }));
+      }
+    }, _callee2);
+  }));
+  return _queryLoopLoaded.apply(this, arguments);
+}
 function getQueryLoopConfig(element) {
   var raw = element === null || element === void 0 ? void 0 : element.querySelector('pre[data-rel="ajax-load-more"]');
   if (!raw) {
@@ -18472,40 +18536,10 @@ function wooGetContent(alm, url) {
  * Handle WooCommerce loaded functionality and dispatch actions.
  *
  * @param {Object} alm ALM object.
- * @since 5.5.0
+ * @return {Promise}   Resolves when done.
  */
-function woocommerceLoaded(alm) {
-  var addons = alm.addons;
-  var nextPageNum = alm.page + 2;
-  var nextPage = addons.woocommerce_settings.paged_urls[nextPageNum - 1]; // Get URL.
-
-  // Set button state & URL.
-  if (alm.rel === 'prev' && alm.buttonPrev) {
-    var prevPage = addons.woocommerce_settings.paged_urls[alm.pagePrev - 2];
-    setButtonAtts(alm.buttonPrev, parseInt(alm.pagePrev) - 1, prevPage);
-  } else {
-    setButtonAtts(alm.button, nextPageNum, nextPage);
-  }
-
-  // Lazy load images if necessary.
-  lazyImages(alm);
-
-  // Trigger almComplete.
-  if (typeof almComplete === 'function' && alm.transition !== 'masonry') {
-    window.almComplete(alm);
-  }
-
-  // End transitions.
-  alm.AjaxLoadMore.transitionEnd();
-
-  // ALM Done.
-  if (alm.rel === 'prev' && alm.pagePrev <= 1) {
-    alm.AjaxLoadMore.triggerDonePrev();
-  }
-  if (alm.rel === 'next' && nextPageNum > parseInt(alm.addons.woocommerce_settings.pages)) {
-    alm.AjaxLoadMore.triggerDone();
-  }
-  dispatchScrollEvent();
+function woocommerceLoaded(_x) {
+  return _woocommerceLoaded.apply(this, arguments);
 }
 
 /**
@@ -18513,6 +18547,50 @@ function woocommerceLoaded(alm) {
  *
  * @since 5.3.8
  */
+function _woocommerceLoaded() {
+  _woocommerceLoaded = woocommerce_asyncToGenerator(/*#__PURE__*/woocommerce_regenerator().m(function _callee2(alm) {
+    var addons, nextPageNum, nextPage, prevPage;
+    return woocommerce_regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
+        case 0:
+          addons = alm.addons;
+          nextPageNum = alm.page + 2;
+          nextPage = addons.woocommerce_settings.paged_urls[nextPageNum - 1]; // Get URL.
+          // Set button state & URL.
+          if (alm.rel === 'prev' && alm.buttonPrev) {
+            prevPage = addons.woocommerce_settings.paged_urls[alm.pagePrev - 2];
+            setButtonAtts(alm.buttonPrev, parseInt(alm.pagePrev) - 1, prevPage);
+          } else {
+            setButtonAtts(alm.button, nextPageNum, nextPage);
+          }
+
+          // Lazy load images if necessary.
+          lazyImages(alm);
+
+          // Trigger almComplete.
+          if (typeof almComplete === 'function' && alm.transition !== 'masonry') {
+            window.almComplete(alm);
+          }
+
+          // End transitions.
+          alm.AjaxLoadMore.transitionEnd();
+
+          // ALM Done.
+          if (alm.rel === 'prev' && alm.pagePrev <= 1) {
+            alm.AjaxLoadMore.triggerDonePrev();
+          }
+          if (alm.rel === 'next' && nextPageNum > parseInt(alm.addons.woocommerce_settings.pages)) {
+            alm.AjaxLoadMore.triggerDone();
+          }
+          dispatchScrollEvent();
+          return _context2.a(2, new Promise(function (resolve) {
+            resolve(true);
+          }));
+      }
+    }, _callee2);
+  }));
+  return _woocommerceLoaded.apply(this, arguments);
+}
 function wooReset() {
   return new Promise(function (resolve) {
     var url = window.location;
@@ -18788,7 +18866,11 @@ function _displayResults() {
         case 0:
           container = alm.listing, transition = alm.transition, speed = alm.speed, images_loaded = alm.images_loaded;
           _context.n = 1;
+<<<<<<< HEAD
           return timeout(250);
+=======
+          return timeout(75);
+>>>>>>> main
         case 1:
           return _context.a(2, new Promise(function (resolve) {
             if (!container || !nodes) {
@@ -20704,11 +20786,19 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
    * @param {number}  index The current index number of the Ajax Load More instance.
    */
   var ajaxloadmore = /*#__PURE__*/function () {
+<<<<<<< HEAD
     var _ref = ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee10(el, index) {
       var _el$dataset, _alm, _alm2, _alm3, _alm4, _alm5, _alm6, _alm_localize, _alm7, _alm8, _alm9, _alm0, _alm1, _alm10, _alm11, _alm12, _alm13, _alm14, _alm15, _alm16, _alm_localize2, _alm17, _alm18, _alm19, _alm20, _alm21, _alm22, _alm_localize6;
       var alm, almChildren, almChildArray, btnWrap, alm_no_results, _alm23, buildPagination, resize;
       return ajax_load_more_regenerator().w(function (_context10) {
         while (1) switch (_context10.n) {
+=======
+    var _ref = ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee11(el, index) {
+      var _el$dataset, _alm, _alm2, _alm3, _alm4, _alm5, _alm6, _alm_localize, _alm7, _alm8, _alm9, _alm0, _alm1, _alm10, _alm11, _alm12, _alm13, _alm14, _alm15, _alm16, _alm_localize2, _alm17, _alm18, _alm19, _alm20, _alm21, _alm22, _alm_localize6;
+      var alm, almChildren, almChildArray, btnWrap, alm_no_results, _alm23, buildPagination, resize;
+      return ajax_load_more_regenerator().w(function (_context11) {
+        while (1) switch (_context11.n) {
+>>>>>>> main
           case 0:
             buildPagination = function _buildPagination(alm, data) {
               if (alm.addons.paging && alm.addons.nextpage && typeof almBuildPagination === 'function') {
@@ -20767,6 +20857,11 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
             alm.container_type = alm.listing.dataset.containerType;
             alm.loading_style = alm.listing.dataset.loadingStyle;
 
+            // Prefetch Params
+            alm.prefetch = alm.listing.dataset.prefetch === 'true' ? true : false;
+            alm.is_prefetching = false;
+            alm.prefetched_data = false;
+
             // Instance Params
             alm.canonical_url = el.dataset.canonicalUrl;
             alm.nested = el.dataset.nested ? el.dataset.nested : false;
@@ -20777,7 +20872,6 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
             alm.id = el.dataset.id ? el.dataset.id : '';
 
             // Shortcode Params
-
             alm.repeater = ((_alm = alm) === null || _alm === void 0 || (_alm = _alm.listing) === null || _alm === void 0 || (_alm = _alm.dataset) === null || _alm === void 0 ? void 0 : _alm.repeater) || 'default';
             alm.theme_repeater = ((_alm2 = alm) === null || _alm2 === void 0 || (_alm2 = _alm2.listing) === null || _alm2 === void 0 || (_alm2 = _alm2.dataset) === null || _alm2 === void 0 ? void 0 : _alm2.themeRepeater) || false;
             alm.post_type = ((_alm3 = alm) === null || _alm3 === void 0 || (_alm3 = _alm3.listing) === null || _alm3 === void 0 || (_alm3 = _alm3.dataset) === null || _alm3 === void 0 ? void 0 : _alm3.postType) || 'post';
@@ -20818,8 +20912,7 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
             alm.offset = (_alm22 = alm) !== null && _alm22 !== void 0 && (_alm22 = _alm22.listing) !== null && _alm22 !== void 0 && (_alm22 = _alm22.dataset) !== null && _alm22 !== void 0 && _alm22.offset ? parseInt(alm.listing.dataset.offset) : 0;
             alm.paged = false;
 
-            // Add-on Shortcode Params
-
+            // Add-on Params
             alm = queryLoopCreateParams(alm); // Query Loop add-on
             alm = elementorCreateParams(alm); // Elementor add-on
             alm = wooCreateParams(alm); // WooCommerce add-on
@@ -20833,8 +20926,12 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
             alm = filtersCreateParams(alm); // Filters add-on.
             alm = seoCreateParams(alm); // SEO add-on.
 
+<<<<<<< HEAD
             // Extension Shortcode Params
 
+=======
+            // Extension Params
+>>>>>>> main
             alm = usersParams(alm); // Users
             alm = restapiParams(alm); // REST API
             alm = acfParams(alm); // ACF
@@ -20962,6 +21059,14 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                 } else {
                   alm.button.classList.add('loading');
                 }
+              }
+
+              // Data is prefetched.
+              if (alm.prefetched_data && alm.rel === 'next') {
+                alm.loading = true;
+                alm.AjaxLoadMore.render(alm.prefetched_data);
+                alm.prefetched_data = false;
+                return;
               }
 
               // Dispatch Ajax request.
@@ -21114,6 +21219,7 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                   while (1) switch (_context8.n) {
                     case 0:
                       type = _args8.length > 1 && _args8[1] !== undefined ? _args8[1] : 'standard';
+<<<<<<< HEAD
                       if (!['totalposts', 'totalpages'].includes(type)) {
                         _context8.n = 1;
                         break;
@@ -21121,6 +21227,23 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                       buildPagination(alm, data);
                       return _context8.a(2);
                     case 1:
+=======
+                      if (!alm.is_prefetching) {
+                        _context8.n = 1;
+                        break;
+                      }
+                      alm.prefetched_data = data;
+                      alm.is_prefetching = false;
+                      return _context8.a(2);
+                    case 1:
+                      if (!['totalposts', 'totalpages'].includes(type)) {
+                        _context8.n = 2;
+                        break;
+                      }
+                      buildPagination(alm, data);
+                      return _context8.a(2);
+                    case 2:
+>>>>>>> main
                       if (alm.addons.single_post) {
                         alm.AjaxLoadMore.getSinglePost(); // Fetch the next post for the Single Post add-on.
                       }
@@ -21240,11 +21363,19 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
 
                       // Render results.
                       if (!(total > 0)) {
+<<<<<<< HEAD
                         _context8.n = 15;
                         break;
                       }
                       if (!(alm.addons.woocommerce || alm.addons.elementor || alm.addons.queryloop)) {
                         _context8.n = 2;
+=======
+                        _context8.n = 16;
+                        break;
+                      }
+                      if (!(alm.addons.woocommerce || alm.addons.elementor || alm.addons.queryloop)) {
+                        _context8.n = 3;
+>>>>>>> main
                         break;
                       }
                       temp = document.createElement('div');
@@ -21260,7 +21391,12 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                               _context4.n = 1;
                               return woocommerce(temp, alm);
                             case 1:
+<<<<<<< HEAD
                               woocommerceLoaded(alm);
+=======
+                              _context4.n = 2;
+                              return woocommerceLoaded(alm);
+>>>>>>> main
                             case 2:
                               if (!alm.addons.elementor) {
                                 _context4.n = 4;
@@ -21269,7 +21405,12 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                               _context4.n = 3;
                               return elementor(temp, alm);
                             case 3:
+<<<<<<< HEAD
                               elementorLoaded(alm);
+=======
+                              _context4.n = 4;
+                              return elementorLoaded(alm);
+>>>>>>> main
                             case 4:
                               if (!alm.addons.queryloop) {
                                 _context4.n = 6;
@@ -21278,7 +21419,12 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                               _context4.n = 5;
                               return queryLoop(temp, alm);
                             case 5:
+<<<<<<< HEAD
                               queryLoopLoaded(alm);
+=======
+                              _context4.n = 6;
+                              return queryLoopLoaded(alm);
+>>>>>>> main
                             case 6:
                               return _context4.a(2);
                           }
@@ -21295,10 +21441,22 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                         }
                       });
                       alm.init = false;
+<<<<<<< HEAD
                       return _context8.a(2);
                     case 2:
                       if (alm.addons.paging) {
                         _context8.n = 8;
+=======
+
+                      // Prefetch next batch of data.
+                      if (alm.prefetch && alm.rel === 'next') {
+                        alm.AjaxLoadMore.prefetch();
+                      }
+                      return _context8.a(2);
+                    case 3:
+                      if (alm.addons.paging) {
+                        _context8.n = 9;
+>>>>>>> main
                         break;
                       }
                       /**
@@ -21306,12 +21464,21 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                        */
                       nodes = formatHTML(alm, nodes);
                       _t = alm.transition;
+<<<<<<< HEAD
                       _context8.n = _t === 'masonry' ? 3 : 5;
                       break;
                     case 3:
                       _context8.n = 4;
                       return displayResults(alm, nodes);
                     case 4:
+=======
+                      _context8.n = _t === 'masonry' ? 4 : 6;
+                      break;
+                    case 4:
+                      _context8.n = 5;
+                      return displayResults(alm, nodes);
+                    case 5:
+>>>>>>> main
                       // Wrap almMasonry in anonymous async/await function
                       ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee5() {
                         return ajax_load_more_regenerator().w(function (_context5) {
@@ -21334,6 +21501,7 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                       }))()["catch"](function () {
                         console.error('There was an error with ALM Masonry'); //eslint-disable-line no-console
                       });
+<<<<<<< HEAD
                       return _context8.a(3, 7);
                     case 5:
                       _context8.n = 6;
@@ -21341,6 +21509,15 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                     case 6:
                       return _context8.a(3, 7);
                     case 7:
+=======
+                      return _context8.a(3, 8);
+                    case 6:
+                      _context8.n = 7;
+                      return displayResults(alm, nodes);
+                    case 7:
+                      return _context8.a(3, 8);
+                    case 8:
+>>>>>>> main
                       // Infinite Scroll -> Images Loaded: Run complete callbacks and checks.
                       ajax_load_more_imagesLoaded(alm.listing, function () {
                         alm.AjaxLoadMore.nested(); // Nested ALM.
@@ -21377,14 +21554,21 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                       /**
                        * End: Infinite Scroll Results.
                        */
+<<<<<<< HEAD
                       _context8.n = 14;
                       break;
                     case 8:
+=======
+                      _context8.n = 15;
+                      break;
+                    case 9:
+>>>>>>> main
                       /**
                        * Paging.
                        */
                       paging_container = alm.addons.paging_container;
                       if (!alm.init) {
+<<<<<<< HEAD
                         _context8.n = 11;
                         break;
                       }
@@ -21395,6 +21579,18 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                       _context8.n = 9;
                       return displayPagingResults(alm, nodes);
                     case 9:
+=======
+                        _context8.n = 12;
+                        break;
+                      }
+                      if (!paging_container) {
+                        _context8.n = 11;
+                        break;
+                      }
+                      _context8.n = 10;
+                      return displayPagingResults(alm, nodes);
+                    case 10:
+>>>>>>> main
                       // Inject content.
 
                       // Paging -> Images Loaded: Run complete callbacks and checks.
@@ -21409,6 +21605,7 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                           }
                         }, _callee6);
                       })));
+<<<<<<< HEAD
                     case 10:
                       _context8.n = 14;
                       break;
@@ -21423,6 +21620,22 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                       _context8.n = 13;
                       return displayPagingResults(alm, nodes);
                     case 13:
+=======
+                    case 11:
+                      _context8.n = 15;
+                      break;
+                    case 12:
+                      if (!paging_container) {
+                        _context8.n = 15;
+                        break;
+                      }
+                      _context8.n = 13;
+                      return almFadeOut(paging_container, 250);
+                    case 13:
+                      _context8.n = 14;
+                      return displayPagingResults(alm, nodes);
+                    case 14:
+>>>>>>> main
                       // Inject content.
 
                       // Paging -> Images Loaded: Run complete callbacks and checks.
@@ -21441,19 +21654,31 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                           }
                         }, _callee7);
                       })));
+<<<<<<< HEAD
                     case 14:
                       _context8.n = 16;
                       break;
                     case 15:
+=======
+                    case 15:
+                      _context8.n = 17;
+                      break;
+                    case 16:
+>>>>>>> main
                       /**
                        * No results from Ajax.
                        */
                       alm.AjaxLoadMore.noresults();
                       alm.AjaxLoadMore.transitionEnd();
+<<<<<<< HEAD
                     case 16:
                       /**
                        * Destroy After
                        */
+=======
+                    case 17:
+                      // Destroy After.
+>>>>>>> main
                       if (alm.destroy_after) {
                         currentPage = alm.page + 1; // Add 1 because alm.page starts at 0
                         currentPage = alm.addons.preloaded ? currentPage++ : currentPage; // Add 1 for preloaded
@@ -21462,24 +21687,37 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                         }
                       }
 
-                      /**
-                       * Display Table of Contents
-                       */
+                      // Display Table of Contents.
                       tableOfContents(alm, alm.init);
 
+<<<<<<< HEAD
                       /**
                        * Set Focus for accessibility.
                        */
+=======
+                      // Set Focus for accessibility.
+>>>>>>> main
                       if ((_alm29 = alm) !== null && _alm29 !== void 0 && (_alm29 = _alm29.last_loaded) !== null && _alm29 !== void 0 && _alm29.length) {
                         setFocus(alm, alm.last_loaded[0], total, alm_is_filtering);
                       }
-                      alm.main.classList.remove('alm-is-filtering'); // Remove filtering class.
 
+                      // Remove filtering class.
+                      alm.main.classList.remove('alm-is-filtering');
                       if (alm.init) {
-                        alm.main.classList.add('alm-is-loaded'); // Add loaded class to main container.
+                        // Add loaded class to main container.
+                        alm.main.classList.add('alm-is-loaded');
                       }
                       alm.init = false; // Set init flag.
+<<<<<<< HEAD
                     case 17:
+=======
+
+                      // Prefetch next batch of data.
+                      if (alm.prefetch && alm.rel === 'next' && !alm.addons.paging) {
+                        alm.AjaxLoadMore.prefetch();
+                      }
+                    case 18:
+>>>>>>> main
                       return _context8.a(2);
                   }
                 }, _callee8);
@@ -21543,6 +21781,11 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
 
                 // Cache.
                 createCache(alm, data, cache_id);
+<<<<<<< HEAD
+=======
+
+                // Show the results.
+>>>>>>> main
                 alm.AjaxLoadMore.render(data);
               })["catch"](function (error) {
                 alm.AjaxLoadMore.error(error);
@@ -21820,28 +22063,76 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
             };
 
             /**
+             * Prefetch posts function to load posts in advance.
+             */
+            alm.AjaxLoadMore.prefetch = /*#__PURE__*/ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee0() {
+              return ajax_load_more_regenerator().w(function (_context0) {
+                while (1) switch (_context0.n) {
+                  case 0:
+                    if (!(isBlockEditor && alm.addons.queryloop || alm.is_prefetching)) {
+                      _context0.n = 1;
+                      break;
+                    }
+                    return _context0.a(2);
+                  case 1:
+                    _context0.n = 2;
+                    return timeout(125);
+                  case 2:
+                    if (!alm.finished) {
+                      _context0.n = 3;
+                      break;
+                    }
+                    return _context0.a(2);
+                  case 3:
+                    if (alm.pause !== 'true') {
+                      alm.page++; // Increment page for prefetched data.
+                    }
+                    alm.is_prefetching = true;
+                    alm.AjaxLoadMore.ajax();
+                  case 4:
+                    return _context0.a(2);
+                }
+              }, _callee0);
+            }));
+
+            /**
              * Button click handler to load posts.
              *
-             * @param {Object} e The target button element.
              * @since 4.2.0
              */
+<<<<<<< HEAD
             alm.AjaxLoadMore.click = function (e) {
               if (isBlockEditor && alm.addons.queryloop) {
                 return; // Exit if in Block Editor with Query Loop add-on.
               }
               var button = e.currentTarget || e.target;
+=======
+            alm.AjaxLoadMore.click = function () {
+              if (isBlockEditor && alm.addons.queryloop || alm.is_prefetching) {
+                return; // Exit if in Block Editor with Query Loop add-on or already prefetching.
+              }
+>>>>>>> main
               alm.rel = 'next';
+
+              // Paused.
               if (alm.pause === 'true') {
                 alm.pause = false;
                 alm.pause_override = false;
                 alm.AjaxLoadMore.loadPosts();
+                alm.button.blur();
+                return;
               }
-              if (!alm.loading && !alm.finished && !button.classList.contains('done')) {
-                alm.loading = true;
-                alm.page++;
+
+              // Not loading, not finished, and button not done.
+              if (!alm.loading && !alm.finished && !alm.button.classList.contains('done')) {
+                if (!alm.prefetch) {
+                  alm.page++; // Increment page if not prefetched data.
+                }
                 alm.AjaxLoadMore.loadPosts();
+                alm.button.blur();
+                return;
               }
-              button.blur(); // Remove button focus
+              alm.button.blur(); // Remove button focus
             };
 
             /**
@@ -22078,10 +22369,17 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
              *
              * @since 2.0
              */
+<<<<<<< HEAD
             alm.AjaxLoadMore.init = /*#__PURE__*/ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee0() {
               var nextpage_pages, _alm40, nextpage_first, nextpage_total;
               return ajax_load_more_regenerator().w(function (_context0) {
                 while (1) switch (_context0.n) {
+=======
+            alm.AjaxLoadMore.init = /*#__PURE__*/ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee1() {
+              var nextpage_pages, _alm40, nextpage_first, nextpage_total;
+              return ajax_load_more_regenerator().w(function (_context1) {
+                while (1) switch (_context1.n) {
+>>>>>>> main
                   case 0:
                     // Preloaded and Destroy After is 1.
                     if (alm.addons.preloaded && alm.destroy_after === 1) {
@@ -22122,6 +22420,7 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
 
                     // Single Post Add-on.
                     if (!alm.addons.single_post) {
+<<<<<<< HEAD
                       _context0.n = 3;
                       break;
                     }
@@ -22129,6 +22428,15 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                     return timeout(200);
                   case 1:
                     _context0.n = 2;
+=======
+                      _context1.n = 3;
+                      break;
+                    }
+                    _context1.n = 1;
+                    return timeout(100);
+                  case 1:
+                    _context1.n = 2;
+>>>>>>> main
                     return alm.AjaxLoadMore.getSinglePost();
                   case 2:
                     // Set next post on load.
@@ -22147,10 +22455,17 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
 
                     // Preloaded + SEO && !Paging.
                     if (!(alm.addons.preloaded && alm.addons.seo && !alm.addons.paging)) {
+<<<<<<< HEAD
                       _context0.n = 5;
                       break;
                     }
                     _context0.n = 4;
+=======
+                      _context1.n = 5;
+                      break;
+                    }
+                    _context1.n = 4;
+>>>>>>> main
                     return timeout(250);
                   case 4:
                     // Add delay for setup and scripts to load.
@@ -22159,10 +22474,17 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                     }
                   case 5:
                     if (!(alm.addons.preloaded && !alm.addons.paging)) {
+<<<<<<< HEAD
                       _context0.n = 7;
                       break;
                     }
                     _context0.n = 6;
+=======
+                      _context1.n = 7;
+                      break;
+                    }
+                    _context1.n = 6;
+>>>>>>> main
                     return timeout(250);
                   case 6:
                     // Add delay for setup and scripts to load.
@@ -22221,11 +22543,24 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
                         alm.AjaxLoadMore.triggerDone(); // Done if `elementor_next_page` is false.
                       }
                     }
+<<<<<<< HEAD
                     setPreloadedParams(alm); // Set preloaded params.
                   case 8:
                     return _context0.a(2);
                 }
               }, _callee0);
+=======
+
+                    // Prefetch data if not paging and paused.
+                    if (alm.prefetch && !alm.addons.paging && alm.pause === 'true') {
+                      alm.AjaxLoadMore.prefetch();
+                    }
+                    setPreloadedParams(alm); // Set preloaded params.
+                  case 8:
+                    return _context1.a(2);
+                }
+              }, _callee1);
+>>>>>>> main
             }));
 
             // DOM Ready Handler.
@@ -22237,18 +22572,32 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
               // Masonry & Preloaded.
               if (alm.transition === 'masonry' && alm.addons.preloaded) {
                 // Wrap almMasonry in anonymous async/await function
+<<<<<<< HEAD
                 ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee1() {
                   return ajax_load_more_regenerator().w(function (_context1) {
                     while (1) switch (_context1.n) {
                       case 0:
                         _context1.n = 1;
+=======
+                ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee10() {
+                  return ajax_load_more_regenerator().w(function (_context10) {
+                    while (1) switch (_context10.n) {
+                      case 0:
+                        _context10.n = 1;
+>>>>>>> main
                         return almMasonry(alm, true, false);
                       case 1:
                         alm.masonry.init = false;
                       case 2:
+<<<<<<< HEAD
                         return _context1.a(2);
                     }
                   }, _callee1);
+=======
+                        return _context10.a(2);
+                    }
+                  }, _callee10);
+>>>>>>> main
                 }))()["catch"](function () {
                   console.error('There was an error with ALM Masonry');
                 });
@@ -22367,9 +22716,15 @@ var isBlockEditor = document.body.classList.contains('wp-admin');
               window.scrollTo(0, 0); // Move user to top of page to prevent loading on initial page load.
             }
           case 1:
+<<<<<<< HEAD
             return _context10.a(2);
         }
       }, _callee10, this);
+=======
+            return _context11.a(2);
+        }
+      }, _callee11, this);
+>>>>>>> main
     }));
     return function ajaxloadmore(_x, _x2) {
       return _ref.apply(this, arguments);
@@ -22439,6 +22794,7 @@ var ajax_load_more_reset = function reset() {
   }
   if (props && props.type === 'woocommerce') {
     // WooCommerce
+<<<<<<< HEAD
     ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee11() {
       var instance, settings;
       return ajax_load_more_regenerator().w(function (_context11) {
@@ -22449,15 +22805,33 @@ var ajax_load_more_reset = function reset() {
             return wooReset();
           case 1:
             settings = _context11.v;
+=======
+    ajax_load_more_asyncToGenerator(/*#__PURE__*/ajax_load_more_regenerator().m(function _callee12() {
+      var instance, settings;
+      return ajax_load_more_regenerator().w(function (_context12) {
+        while (1) switch (_context12.n) {
+          case 0:
+            instance = document.querySelector('.ajax-load-more-wrap .alm-listing[data-woo="true"]'); // Get ALM instance
+            _context12.n = 1;
+            return wooReset();
+          case 1:
+            settings = _context12.v;
+>>>>>>> main
             // Get WooCommerce `settings` via Ajax
             if (settings) {
               instance.dataset.wooSettings = settings; // Update data atts
               almFilter('fade', '100', data, 'filter');
             }
           case 2:
+<<<<<<< HEAD
             return _context11.a(2);
         }
       }, _callee11);
+=======
+            return _context12.a(2);
+        }
+      }, _callee12);
+>>>>>>> main
     }))()["catch"](function () {
       console.warn('Ajax Load More: There was an issue resetting the Ajax Load More instance.');
     });

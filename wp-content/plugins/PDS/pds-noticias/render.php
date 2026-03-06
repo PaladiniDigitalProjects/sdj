@@ -169,7 +169,7 @@ jQuery(document).ready(function ($) {
                 nav:true,
             },
             1024:{
-                items:4,
+                items:3,
                 nav:true,
             },
         }
