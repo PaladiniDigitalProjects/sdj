@@ -5068,6 +5068,19 @@
 .editor-styles-wrapper header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li {
   width: 49%;
 }
+.editor-styles-wrapper header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li.MemoriaActividad {
+  display: none;
+}
+.editor-styles-wrapper footer.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container {
+  width: 100%;
+  height: 200px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 0;
+}
+.editor-styles-wrapper footer.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li {
+  width: 49%;
+}
 .editor-styles-wrapper .wp-block-list.is-style-list-ratllat {
   display: block;
   list-style-type: none;
@@ -6494,57 +6507,53 @@
   background-color: #F9F8FF;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button {
+  margin: 0;
   width: calc(100% - 4rem);
   position: relative;
-  z-index: 11;
+  z-index: 1;
   -webkit-transition: 0.35s;
   transition: 0.35s;
+  background-image: url("../img/Recetas.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+  border-radius: 1rem 5rem 5rem 1rem !important;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:hover {
   cursor: pointer;
   scale: 110%;
 }
+.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:first-child {
+  background-image: url("../img/Capsulas.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+}
+.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:last-child {
+  background-image: url("../img/Seguridad.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+}
+.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n) {
+  background-image: url("../img/Cocina.svg"), url("../img/white.png");
+  background-position: right center, left bottom;
+  background-repeat: no-repeat, repeat;
+  background-size: 10rem 10rem, 100% 100%;
+}
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button .wp-block-button__link {
   -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
           box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
   text-align: left;
-  padding: 0 10rem 0 2rem;
+  padding: 0;
   line-height: 120%;
   height: 10rem;
   border-radius: 1rem 5rem 5rem 1rem !important;
   letter-spacing: 0;
   font-size: 2rem !important;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:before {
-  content: " ";
-  width: 8rem;
-  height: 8rem;
-  position: absolute;
+  padding: 0 10rem 0 2rem;
   display: block;
-  top: 1rem;
-  right: 1.5rem;
-  border-radius: 4rem;
-  background: url("../img/Recetas.svg") center no-repeat;
-  background-size: 100%;
-  z-index: 1;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:first-child:before {
-  background: url("../img/Capsulas.svg") center no-repeat;
-  background-size: 100%;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:last-child {
-  margin-right: 0;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:last-child:before {
-  background: url("../img/IcoSeguridad.svg") center no-repeat;
-  background-size: 100%;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n) {
-  margin-right: 0;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button:nth-child(3n):before {
-  background: url("../img/Cocina.svg") center no-repeat;
-  background-size: 100%;
+  background-color: transparent !important;
 }
 @media only screen and (min-width: 1024px) {
   .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button {
@@ -6554,8 +6563,8 @@
 }
 @media only screen and (min-width: 1240px) {
   .editor-styles-wrapper .nutrities .wp-block-buttons.secciones .wp-block-button {
-    margin: 0 1rem;
-    width: calc(24% - 2rem);
+    margin-right: 2rem;
+    width: calc(25% - 4rem);
   }
 }
 @media only screen and (min-width: 1024px) {
@@ -6585,14 +6594,13 @@
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button {
   margin: 0 0 2rem 0;
   width: 100%;
+  border-radius: 1rem 5rem 5rem 1rem !important;
 }
 .editor-styles-wrapper .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button .wp-block-button__link {
   text-align: left;
-  padding: 0 2rem 0 11rem;
-  border-radius: 5rem 0.5rem 0.5rem 5rem !important;
-}
-.editor-styles-wrapper .nutrities .wp-block-buttons.secciones.is-vertical .wp-block-button:before {
-  left: 1.5rem;
+  width: 100%;
+  padding: 1rem 10rem 1rem 2rem;
+  border-radius: 1rem 5rem 5rem 1rem !important;
 }
 .editor-styles-wrapper .nutrities .sponsors {
   margin: 4rem 0;

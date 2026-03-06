@@ -1689,6 +1689,20 @@ header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container {
 header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li {
   width: 49%;
 }
+header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li.MemoriaActividad {
+  display: none;
+}
+
+footer.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container {
+  width: 100%;
+  height: 200px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  gap: 0;
+}
+footer.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li {
+  width: 49%;
+}
 
 .login {
   background-color: #ffffff;
