@@ -2,6 +2,9 @@
 
 namespace WPML;
 
+use WPML\Legacy\Component\WordsToTranslate\Domain\Post\JobQuery;
+use WPML\Legacy\Component\WordsToTranslate\Domain\StringPackage\JobQuery as StringPackageJobQuery;
+
 /**
  * Single entry for building whole project.
  */
@@ -78,6 +81,20 @@ class CompositionRoot {
 
 
   /**
+   * @return void
+   */
+  public function loadContentStatsScripts() {
+    $this->config->loadContentStatsScripts();
+  }
+
+
+  /** @return void */
+  public function loadCheckPosthogShouldRecordScript() {
+    $this->config->loadCheckPosthogShouldRecordScript();
+  }
+
+
+  /**
    * List of all common interface implementations.
    *
    * @return void
@@ -126,6 +143,8 @@ class CompositionRoot {
     global $wpdb, $sitepress;
     $this->dic->share( $wpdb );
     $this->dic->share( $sitepress );
+    $this->dic->share( JobQuery::class );
+    $this->dic->share( StringPackageJobQuery::class );
     $this->dic->defineParam( 'wpdb', $wpdb );
     $this->dic->defineParam( 'sitepress', $sitepress );
   }

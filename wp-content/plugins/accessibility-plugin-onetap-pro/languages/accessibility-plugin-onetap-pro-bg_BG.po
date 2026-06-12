@@ -1,0 +1,1426 @@
+# Copyright (C) 2025 OneTap
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: OneTap Pro (for WordPress OneTap Pro - #1 Accessibility) "
+"6.9.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/accessibility-"
+"plugin-onetap-pro\n"
+"POT-Creation-Date: 2025-11-12T01:50:03+07:00\n"
+"PO-Revision-Date: 2025-01-27 12:00+0000\n"
+"Last-Translator: OneTap Translation Team\n"
+"Language-Team: Bulgarian <bg@li.org>\n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: accessibility-plugin-onetap-pro\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Plugin Name of the plugin
+#: accessibility-plugin-onetap-pro.php
+msgid "OneTap Pro (for WordPress OneTap Pro - #1 Accessibility)"
+msgstr "OneTap Pro (за WordPress OneTap Pro - #1 Достъпност)"
+
+#. Plugin URI of the plugin
+#: accessibility-plugin-onetap-pro.php
+msgid "https://wponetap.com"
+msgstr "https://wponetap.com"
+
+#. Description of the plugin
+#: accessibility-plugin-onetap-pro.php
+msgid ""
+"OneTap is a multilingual WordPress plugin designed for seamless website "
+"accessibility. With a simple one-click installation, it ensures your site "
+"meets accessibility standards without any hassle. Built for performance, "
+"providing an inclusive, user-friendly web environment for all visitors."
+msgstr ""
+"OneTap е многоезичен WordPress плъгин, проектиран за безпроблемна достъпност "
+"на уебсайтове. С проста инсталация с едно кликване, той гарантира, че вашият "
+"сайт отговаря на стандартите за достъпност без никакви проблеми. Изграден за "
+"производителност, осигурявайки инклюзивна, удобна за потребителя уеб среда "
+"за всички посетители."
+
+#. Author of the plugin
+#: accessibility-plugin-onetap-pro.php
+#: public/class-accessibility-pro-public.php:5303
+msgid "OneTap"
+msgstr "OneTap"
+
+#. Author URI of the plugin
+#: accessibility-plugin-onetap-pro.php
+msgid "https://wponetap.com/"
+msgstr "https://wponetap.com/"
+
+#: admin/class-accessibility-plugin-onetap-pro-admin.php:165
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1444
+msgid "Active"
+msgstr "Активен"
+
+#: admin/class-accessibility-plugin-onetap-pro-admin.php:167
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1452
+msgid "Inactive"
+msgstr "Неактивен"
+
+#: admin/class-accessibility-plugin-onetap-pro-admin.php:210
+#: admin/class-onetap-pro-accessibility-settings-options.php:150
+#: admin/class-onetap-pro-accessibility-settings-options.php:151
+#: admin/class-onetap-pro-accessibility-settings-options.php:316
+#: admin/partials/header.php:68
+msgid "Settings"
+msgstr "Настройки"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:463
+#: admin/class-onetap-pro-accessibility-settings-manager.php:526
+msgid "Save Changes"
+msgstr "Запази промените"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:555
+#: admin/class-onetap-pro-accessibility-settings-manager.php:840
+#: admin/class-onetap-pro-accessibility-settings-manager.php:928
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1328
+msgid "This is a PRO Feature"
+msgstr "Това е PRO функция"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:556
+#: admin/class-onetap-pro-accessibility-settings-manager.php:841
+#: admin/class-onetap-pro-accessibility-settings-manager.php:929
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1329
+msgid " to use this Feature."
+msgstr " за да използвате тази функция."
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:557
+#: admin/class-onetap-pro-accessibility-settings-manager.php:842
+#: admin/class-onetap-pro-accessibility-settings-manager.php:930
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1330
+msgid "Upgrade to Pro"
+msgstr "Надстройка до Pro"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:579
+#: admin/class-onetap-pro-accessibility-settings-manager.php:864
+#: admin/class-onetap-pro-accessibility-settings-manager.php:955
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1358
+msgid "PRO"
+msgstr "PRO"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:735
+#: admin/partials/settings.php:28
+msgid "Desktop"
+msgstr "Настолен компютър"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:741
+#: admin/partials/settings.php:32
+msgid "Tablet"
+msgstr "Таблет"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:747
+#: admin/partials/settings.php:36
+msgid "Mobile"
+msgstr "Мобилен"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:894
+msgid "Copied!"
+msgstr "Копирано!"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:894
+msgid "Failed!"
+msgstr "Неуспешно!"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:894
+msgid "Copy"
+msgstr "Копирай"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:937
+msgid "Enter Custom Label"
+msgstr "Въведете персонализиран етикет"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:982
+msgid "Save"
+msgstr "Запази"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1048
+msgid "Thumbnail"
+msgstr "Миниатюра"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1049
+#: admin/class-onetap-pro-accessibility-settings-options.php:332
+msgid "Alt Text"
+msgstr "Alt текст"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1050
+msgid "Uploaded"
+msgstr "Качено"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1051
+msgid "Actions"
+msgstr "Действия"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1079
+msgid "Enter a Alt-text..."
+msgstr "Въведете Alt текст..."
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1118
+msgid "No images found in Media Library."
+msgstr "Няма намерени изображения в медийната библиотека."
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1136
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1141
+msgid "Previous"
+msgstr "Предишна"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1184
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1189
+msgid "Next"
+msgstr "Следваща"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1445
+msgid "Deactivate License"
+msgstr "Деактивирай лиценз"
+
+#: admin/class-onetap-pro-accessibility-settings-manager.php:1453
+msgid "Activate License"
+msgstr "Активирай лиценз"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:112
+#: admin/class-onetap-pro-accessibility-settings-options.php:113
+msgid "OneTap Pro"
+msgstr "OneTap Pro"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:123
+#: admin/class-onetap-pro-accessibility-settings-options.php:124
+#: admin/partials/header.php:53
+msgid "Widget"
+msgstr "Джаджа"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:132
+#: admin/class-onetap-pro-accessibility-settings-options.php:133
+#: admin/class-onetap-pro-accessibility-settings-options.php:324
+#: admin/partials/header.php:58
+msgid "Modules"
+msgstr "Модули"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:141
+#: admin/class-onetap-pro-accessibility-settings-options.php:142
+#: admin/class-onetap-pro-accessibility-settings-options.php:1167
+#: admin/partials/header.php:63 public/class-accessibility-pro-public.php:5312
+msgid "Statement"
+msgstr "Декларация"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:159
+#: admin/class-onetap-pro-accessibility-settings-options.php:160
+#: admin/class-onetap-pro-accessibility-settings-options.php:328
+msgid "Module Labels"
+msgstr "Етикети на модули"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:320
+msgid "General settings"
+msgstr "Общи настройки"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:375
+msgid "Icons"
+msgstr "Икони"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:386
+msgid ""
+"Customize your accessibility button's color, icon, and size to match your "
+"brand."
+msgstr ""
+"Персонализирайте цвета, иконата и размера на бутона за достъпност, за да "
+"съответства на вашата марка."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:386
+#: admin/class-onetap-pro-accessibility-settings-options.php:451
+#: admin/class-onetap-pro-accessibility-settings-options.php:673
+#: admin/class-onetap-pro-accessibility-settings-options.php:730
+#: admin/partials/accessibility-status.php:1565
+msgid "See Documentation"
+msgstr "Вижте документацията"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:388
+msgid "Widget Design"
+msgstr "Дизайн на джаджата"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:396
+msgid "Icon Size"
+msgstr "Размер на иконата"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:412
+msgid "Add Border"
+msgstr "Добави граница"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:439
+msgid "Set your own branding colors to personalize the plugin's appearance."
+msgstr ""
+"Задайте собствените си маркови цветове, за да персонализирате външния вид на "
+"плъгина."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:439
+msgid "Free WCAG Contrast-Checker"
+msgstr "Безплатен WCAG проверявач на контраст"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:440
+msgid "Widget Color"
+msgstr "Цвят на джаджата"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:451
+msgid "Adjust the position of widgets to fit your layout preferences."
+msgstr ""
+"Настройте позицията на джаджите, за да отговарят на вашите предпочитания за "
+"оформление."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:453
+msgid "Widget Position "
+msgstr "Позиция на джаджата "
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:459
+#: admin/class-onetap-pro-accessibility-settings-options.php:511
+#: admin/class-onetap-pro-accessibility-settings-options.php:563
+msgid "Widget Position"
+msgstr "Позиция на джаджата"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:469
+#: admin/class-onetap-pro-accessibility-settings-options.php:521
+#: admin/class-onetap-pro-accessibility-settings-options.php:573
+msgid "Middle right"
+msgstr "Средна дясно"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:470
+#: admin/class-onetap-pro-accessibility-settings-options.php:522
+#: admin/class-onetap-pro-accessibility-settings-options.php:574
+msgid "Middle left"
+msgstr "Средна ляво"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:471
+#: admin/class-onetap-pro-accessibility-settings-options.php:523
+#: admin/class-onetap-pro-accessibility-settings-options.php:575
+msgid "Bottom right"
+msgstr "Долу дясно"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:472
+#: admin/class-onetap-pro-accessibility-settings-options.php:524
+#: admin/class-onetap-pro-accessibility-settings-options.php:576
+msgid "Bottom left"
+msgstr "Долу ляво"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:473
+#: admin/class-onetap-pro-accessibility-settings-options.php:525
+#: admin/class-onetap-pro-accessibility-settings-options.php:577
+msgid "Top right"
+msgstr "Горе дясно"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:474
+#: admin/class-onetap-pro-accessibility-settings-options.php:526
+#: admin/class-onetap-pro-accessibility-settings-options.php:578
+msgid "Top left"
+msgstr "Горе ляво"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:479
+#: admin/class-onetap-pro-accessibility-settings-options.php:531
+#: admin/class-onetap-pro-accessibility-settings-options.php:583
+msgid "Vertical (Default 20px)"
+msgstr "Вертикално (По подразбиране 20px)"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:495
+#: admin/class-onetap-pro-accessibility-settings-options.php:547
+#: admin/class-onetap-pro-accessibility-settings-options.php:599
+msgid "Horizontal (Default 20px)"
+msgstr "Хоризонтално (По подразбиране 20px)"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:632
+msgid "Hide On Desktop"
+msgstr "Скрий на настолен компютър"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:633
+msgid "When enabled, the icon will not be displayed on desktop devices."
+msgstr ""
+"Когато е активирано, иконата няма да се показва на настолни устройства."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:648
+msgid "Hide On Tablet"
+msgstr "Скрий на таблет"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:649
+msgid "When enabled, the icon will not be displayed on tablet devices."
+msgstr "Когато е активирано, иконата няма да се показва на таблет устройства."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:664
+msgid "Hide On Mobile"
+msgstr "Скрий на мобилен"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:665
+msgid "When enabled, the icon will not be displayed on mobile devices."
+msgstr "Когато е активирано, иконата няма да се показва на мобилни устройства."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:672
+msgid "Default Language"
+msgstr "Език по подразбиране"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:673
+msgid "Choose your preferred language for the plugin's interface."
+msgstr "Изберете предпочитания от вас език за интерфейса на плъгина."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:683
+#: admin/partials/accessibility-status.php:82
+#: admin/partials/module-labels.php:23 admin/partials/module-labels.php:237
+#: public/class-accessibility-pro-public.php:5020
+#: public/class-accessibility-pro-public.php:5031
+msgid "English"
+msgstr "English"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:684
+#: admin/partials/accessibility-status.php:83
+#: admin/partials/module-labels.php:29
+#: public/class-accessibility-pro-public.php:5037
+msgid "Deutsch"
+msgstr "Deutsch"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:685
+#: admin/partials/accessibility-status.php:84
+#: admin/partials/module-labels.php:35
+#: public/class-accessibility-pro-public.php:5043
+msgid "Español"
+msgstr "Español"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:686
+#: admin/partials/accessibility-status.php:85
+#: admin/partials/module-labels.php:41
+#: public/class-accessibility-pro-public.php:5049
+msgid "Français"
+msgstr "Français"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:687
+#: admin/partials/accessibility-status.php:86
+#: admin/partials/module-labels.php:47
+#: public/class-accessibility-pro-public.php:5055
+msgid "Italiano"
+msgstr "Italiano"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:688
+#: admin/partials/accessibility-status.php:87
+#: admin/partials/module-labels.php:53
+#: public/class-accessibility-pro-public.php:5061
+msgid "Polski"
+msgstr "Polski"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:689
+#: admin/partials/accessibility-status.php:88
+#: admin/partials/module-labels.php:59
+#: public/class-accessibility-pro-public.php:5067
+msgid "Svenska"
+msgstr "Svenska"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:690
+#: admin/partials/accessibility-status.php:89
+#: admin/partials/module-labels.php:65
+#: public/class-accessibility-pro-public.php:5073
+msgid "Suomi"
+msgstr "Suomi"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:691
+#: admin/partials/accessibility-status.php:90
+#: admin/partials/module-labels.php:71
+#: public/class-accessibility-pro-public.php:5079
+msgid "Português"
+msgstr "Português"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:692
+#: admin/partials/accessibility-status.php:91
+#: admin/partials/module-labels.php:77
+#: public/class-accessibility-pro-public.php:5085
+msgid "Română"
+msgstr "Română"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:693
+#: admin/partials/accessibility-status.php:92
+#: admin/partials/module-labels.php:83
+#: public/class-accessibility-pro-public.php:5091
+msgid "Slovenščina"
+msgstr "Slovenščina"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:694
+#: admin/partials/accessibility-status.php:93
+#: admin/partials/module-labels.php:89
+#: public/class-accessibility-pro-public.php:5097
+msgid "Slovenčina"
+msgstr "Slovenčina"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:695
+#: admin/partials/accessibility-status.php:94
+#: admin/partials/module-labels.php:95
+#: public/class-accessibility-pro-public.php:5103
+msgid "Nederlands"
+msgstr "Nederlands"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:696
+#: admin/partials/accessibility-status.php:95
+#: admin/partials/module-labels.php:101
+#: public/class-accessibility-pro-public.php:5109
+msgid "Dansk"
+msgstr "Dansk"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:697
+#: admin/partials/accessibility-status.php:96
+#: admin/partials/module-labels.php:107
+#: public/class-accessibility-pro-public.php:5115
+msgid "Ελληνικά"
+msgstr "Ελληνικά"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:698
+#: admin/partials/accessibility-status.php:97
+#: admin/partials/module-labels.php:113
+#: public/class-accessibility-pro-public.php:5121
+msgid "Čeština"
+msgstr "Čeština"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:699
+#: admin/partials/accessibility-status.php:98
+#: admin/partials/module-labels.php:119
+#: public/class-accessibility-pro-public.php:5127
+msgid "Magyar"
+msgstr "Magyar"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:700
+#: admin/partials/accessibility-status.php:99
+#: admin/partials/module-labels.php:125
+#: public/class-accessibility-pro-public.php:5133
+msgid "Lietuvių"
+msgstr "Lietuvių"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:701
+#: admin/partials/accessibility-status.php:100
+#: admin/partials/module-labels.php:131
+#: public/class-accessibility-pro-public.php:5139
+msgid "Latviešu"
+msgstr "Latviešu"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:702
+#: admin/partials/accessibility-status.php:101
+#: admin/partials/module-labels.php:137
+#: public/class-accessibility-pro-public.php:5145
+msgid "Eesti"
+msgstr "Eesti"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:703
+#: admin/partials/accessibility-status.php:102
+#: admin/partials/module-labels.php:143
+#: public/class-accessibility-pro-public.php:5151
+msgid "Hrvatski"
+msgstr "Hrvatski"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:704
+#: admin/partials/accessibility-status.php:103
+#: admin/partials/module-labels.php:149
+#: public/class-accessibility-pro-public.php:5157
+msgid "Gaeilge"
+msgstr "Gaeilge"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:705
+#: admin/partials/accessibility-status.php:104
+#: admin/partials/module-labels.php:155
+#: public/class-accessibility-pro-public.php:5163
+msgid "Български"
+msgstr "Български"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:706
+#: admin/partials/accessibility-status.php:105
+#: admin/partials/module-labels.php:161
+#: public/class-accessibility-pro-public.php:5169
+msgid "Norsk"
+msgstr "Norsk"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:707
+#: admin/partials/accessibility-status.php:106
+#: admin/partials/module-labels.php:167
+#: public/class-accessibility-pro-public.php:5175
+msgid "Türkçe"
+msgstr "Türkçe"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:708
+#: admin/partials/accessibility-status.php:107
+#: admin/partials/module-labels.php:173
+#: public/class-accessibility-pro-public.php:5181
+msgid "Bahasa Indonesia"
+msgstr "Bahasa Indonesia"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:709
+#: admin/partials/accessibility-status.php:108
+#: admin/partials/module-labels.php:179
+#: public/class-accessibility-pro-public.php:5187
+msgid "Português (Brasil)"
+msgstr "Português (Brasil)"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:710
+#: admin/partials/accessibility-status.php:109
+#: admin/partials/module-labels.php:185
+#: public/class-accessibility-pro-public.php:5193
+msgid "日本語"
+msgstr "日本語"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:711
+#: admin/partials/accessibility-status.php:110
+#: admin/partials/module-labels.php:191
+#: public/class-accessibility-pro-public.php:5199
+msgid "한국어"
+msgstr "한국어"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:712
+#: admin/partials/accessibility-status.php:111
+#: admin/partials/module-labels.php:197
+#: public/class-accessibility-pro-public.php:5205
+msgid "简体中文"
+msgstr "简体中文"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:713
+#: admin/partials/accessibility-status.php:112
+#: admin/partials/module-labels.php:203
+#: public/class-accessibility-pro-public.php:5211
+msgid "العربية"
+msgstr "العربية"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:714
+#: admin/partials/accessibility-status.php:113
+#: admin/partials/module-labels.php:209
+#: public/class-accessibility-pro-public.php:5217
+msgid "Русский"
+msgstr "Русский"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:715
+#: admin/partials/accessibility-status.php:114
+#: admin/partials/module-labels.php:215
+#: public/class-accessibility-pro-public.php:5223
+msgid "हिन्दी"
+msgstr "हिन्दी"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:716
+#: admin/partials/accessibility-status.php:115
+#: admin/partials/module-labels.php:221
+#: public/class-accessibility-pro-public.php:5229
+msgid "Українська"
+msgstr "Українська"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:717
+#: admin/partials/accessibility-status.php:116
+#: admin/partials/module-labels.php:227
+#: public/class-accessibility-pro-public.php:5235
+msgid "Srpski"
+msgstr "Srpski"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:718
+#: admin/partials/accessibility-status.php:117
+#: public/class-accessibility-pro-public.php:5241
+msgid "England"
+msgstr ""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:719
+#: admin/partials/accessibility-status.php:118
+#: public/class-accessibility-pro-public.php:5247
+msgid "ایران"
+msgstr ""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:720
+#: admin/partials/accessibility-status.php:119
+#: public/class-accessibility-pro-public.php:5253
+msgid "ישראל"
+msgstr ""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:721
+#: admin/partials/accessibility-status.php:120
+#: public/class-accessibility-pro-public.php:5259
+msgid "Македонија"
+msgstr ""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:722
+#: admin/partials/accessibility-status.php:121
+#: public/class-accessibility-pro-public.php:5265
+msgid "ประเทศไทย"
+msgstr ""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:723
+#: admin/partials/accessibility-status.php:122
+#: public/class-accessibility-pro-public.php:5271
+msgid "Việt Nam"
+msgstr ""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:725
+#: public/class-accessibility-pro-public.php:5557
+#: public/class-accessibility-pro-public.php:5595
+msgid "Default"
+msgstr "По подразбиране"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:729
+msgid "License Key"
+msgstr "Лицензен ключ"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:730
+msgid ""
+"Enter your license key to unlock Pro features and gain access to advanced "
+"features."
+msgstr ""
+"Въведете вашия лицензен ключ, за да отключите Pro функции и да получите "
+"достъп до разширени функции."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:752
+msgid "General Settings"
+msgstr "Общи настройки"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:753
+msgid "Hide \"Powered by OneTap\""
+msgstr "Скрий \"Powered by OneTap\""
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:754
+msgid ""
+"Remove the \"Powered by OneTap\" text from the Toolbar on the frontend of "
+"your website."
+msgstr ""
+"Премахнете текста \"Powered by OneTap\" от лентата с инструменти в предната "
+"част на вашия уебсайт."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:766
+msgid "Open with URL"
+msgstr "Отвори с URL"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:767
+#: admin/class-onetap-pro-accessibility-settings-options.php:780
+msgid "Open the OneTap Toolbar with URL"
+msgstr "Отворете лентата с инструменти OneTap с URL"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:779
+msgid "Edit Module Labels"
+msgstr "Редактирай етикети на модули"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:784
+#: admin/partials/header.php:76
+msgid "Edit Labels"
+msgstr "Редактирай етикети"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:793
+msgid "Alt-Text AI"
+msgstr "Alt-текст AI"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:794
+msgid "Generate Alt-Text with Ai"
+msgstr "Генерирай Alt-текст с AI"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:795
+msgid "Save hours, boost SEO & Accessibility"
+msgstr "Спестете часове, подобрете SEO и достъпността"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:799
+#: admin/partials/alt-text.php:43
+msgid "Start with AltPilot.ai"
+msgstr "Започнете с AltPilot.ai"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:811
+#: admin/class-onetap-pro-accessibility-settings-options.php:812
+#: admin/class-onetap-pro-accessibility-settings-options.php:1198
+msgid "Accessibility Profiles"
+msgstr "Профили за достъпност"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:813
+msgid "Ready-to-use accessibility profiles for different user needs."
+msgstr ""
+"Готови за използване профили за достъпност за различни потребителски нужди."
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:826
+#: admin/class-onetap-pro-accessibility-settings-options.php:1365
+#: public/class-accessibility-pro-public.php:5542
+msgid "Content Modules"
+msgstr "Модули за съдържание"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:827
+#: admin/class-onetap-pro-accessibility-settings-options.php:1366
+#: public/class-accessibility-pro-public.php:5551
+msgid "Font Size"
+msgstr "Размер на шрифта"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:828
+#: admin/class-onetap-pro-accessibility-settings-options.php:1367
+#: admin/class-onetap-pro-accessibility-settings-options.php:1381
+msgid "Easily enlarge text for improved readability and accessibility for all"
+msgstr ""
+"Лесно увеличаване на текста за подобрена четимост и достъпност за всички"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:841
+#: admin/class-onetap-pro-accessibility-settings-options.php:1394
+#: public/class-accessibility-pro-public.php:5581
+msgid "Highlight Links"
+msgstr "Подчертаване на връзки"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:842
+#: admin/class-onetap-pro-accessibility-settings-options.php:1395
+msgid ""
+"Easily identify clickable links with visual enhancements for better "
+"navigation"
+msgstr ""
+"Лесно идентифицирайте кликващи връзки с визуални подобрения за по-добра "
+"навигация"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:855
+#: admin/class-onetap-pro-accessibility-settings-options.php:1408
+#: public/class-accessibility-pro-public.php:5589
+msgid "Line Height"
+msgstr "Височина на реда"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:856
+#: admin/class-onetap-pro-accessibility-settings-options.php:1409
+#: admin/class-onetap-pro-accessibility-settings-options.php:1423
+msgid "Adjust line spacing for better readability and improved text clarity"
+msgstr ""
+"Настройте разстоянието между редовете за по-добра четимост и подобрена "
+"яснота на текста"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:869
+#: admin/class-onetap-pro-accessibility-settings-options.php:1436
+#: public/class-accessibility-pro-public.php:5620
+msgid "Readable Font"
+msgstr "Четима шрифт"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:870
+#: admin/class-onetap-pro-accessibility-settings-options.php:1437
+msgid "Switch to a clearer, easy-to-read font for improved text accessibility"
+msgstr ""
+"Преминете към по-ясен, лесно четим шрифт за подобрена достъпност на текста"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:883
+#: admin/class-onetap-pro-accessibility-settings-options.php:1450
+msgid "Big Cursor"
+msgstr "Голям курсор"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:884
+#: admin/class-onetap-pro-accessibility-settings-options.php:1451
+msgid ""
+"Enhance visibility with a larger cursor for easier navigation and control"
+msgstr "Подобрете видимостта с по-голям курсор за по-лесна навигация и контрол"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:897
+#: admin/class-onetap-pro-accessibility-settings-options.php:1464
+#: public/class-accessibility-pro-public.php:5645
+msgid "Text Magnifier"
+msgstr "Увеличител на текст"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:898
+#: admin/class-onetap-pro-accessibility-settings-options.php:1465
+msgid "Magnify selected text for enhanced readability and accessibility"
+msgstr "Увеличете избрания текст за подобрена четимост и достъпност"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:911
+#: admin/class-onetap-pro-accessibility-settings-options.php:1478
+#: public/class-accessibility-pro-public.php:5658
+msgid "Dyslexic Font"
+msgstr "Шрифт за дислексия"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:912
+#: admin/class-onetap-pro-accessibility-settings-options.php:1479
+msgid ""
+"Use a specialized font designed to enhance readability for dyslexic users"
+msgstr ""
+"Използвайте специализиран шрифт, проектиран да подобри четимостта за "
+"потребители с дислексия"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:925
+#: admin/class-onetap-pro-accessibility-settings-options.php:1492
+#: public/class-accessibility-pro-public.php:5678
+#, fuzzy
+msgid "Align Text"
+msgstr "Alt текст"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:926
+#: admin/class-onetap-pro-accessibility-settings-options.php:1493
+msgid "Adjust text alignment for improved structure and readability"
+msgstr "Настройте подравняването на текста за подобрена структура и четимост"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:939
+#: admin/class-onetap-pro-accessibility-settings-options.php:1506
+#: public/class-accessibility-pro-public.php:5692
+msgid "Letter Spacing"
+msgstr "Разстояние между буквите"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:940
+#: admin/class-onetap-pro-accessibility-settings-options.php:1507
+msgid "Adjust letter spacing for improved readability"
+msgstr "Настройте разстоянието между буквите за подобрена четимост"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:953
+#: public/class-accessibility-pro-public.php:5704
+msgid "Font Weight"
+msgstr "Тегло на шрифта"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:954
+#: admin/class-onetap-pro-accessibility-settings-options.php:1521
+msgid "Adjust font weight for improved readability"
+msgstr "Настройте теглото на шрифта за подобрена четимост"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:967
+#: admin/class-onetap-pro-accessibility-settings-options.php:1534
+#: public/class-accessibility-pro-public.php:5715
+msgid "Color Modules"
+msgstr "Модули за цветове"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:968
+#: admin/class-onetap-pro-accessibility-settings-options.php:1535
+#: public/class-accessibility-pro-public.php:5727
+msgid "Dark Contrast"
+msgstr "Тъмен контраст"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:969
+#: admin/class-onetap-pro-accessibility-settings-options.php:1536
+msgid "Adjust dark contrast for a more vivid or subdued visual experience"
+msgstr ""
+"Настройте тъмния контраст за по-ярко или по-сдържано визуално изживяване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:982
+#: admin/class-onetap-pro-accessibility-settings-options.php:1549
+#: public/class-accessibility-pro-public.php:5739
+msgid "Light Contrast"
+msgstr "Светъл контраст"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:983
+#: admin/class-onetap-pro-accessibility-settings-options.php:1550
+msgid "Adjust light contrast for a more vivid or subdued visual experience"
+msgstr ""
+"Настройте светлия контраст за по-ярко или по-сдържано визуално изживяване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:996
+#: admin/class-onetap-pro-accessibility-settings-options.php:1563
+#: public/class-accessibility-pro-public.php:5751
+msgid "High Contrast"
+msgstr "Висок контраст"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:997
+#: admin/class-onetap-pro-accessibility-settings-options.php:1564
+msgid "Adjust high contrast for a more vivid or subdued visual experience"
+msgstr ""
+"Настройте високия контраст за по-ярко или по-сдържано визуално изживяване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1010
+#: admin/class-onetap-pro-accessibility-settings-options.php:1577
+#: public/class-accessibility-pro-public.php:5763
+msgid "Monochrome"
+msgstr "Монохром"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1011
+#: admin/class-onetap-pro-accessibility-settings-options.php:1578
+msgid "Adjust color monochrome for a more vivid or subdued visual experience"
+msgstr ""
+"Настройте монохромния цвят за по-ярко или по-сдържано визуално изживяване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1024
+#: admin/class-onetap-pro-accessibility-settings-options.php:1591
+#: public/class-accessibility-pro-public.php:5775
+msgid "Saturation"
+msgstr "Наситеност"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1025
+#: admin/class-onetap-pro-accessibility-settings-options.php:1592
+msgid "Adjust color saturation for a more vivid or subdued visual experience"
+msgstr ""
+"Настройте наситеността на цветовете за по-ярко или по-сдържано визуално "
+"изживяване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1038
+#: admin/class-onetap-pro-accessibility-settings-options.php:1605
+#: public/class-accessibility-pro-public.php:5786
+msgid "Orientation Modules"
+msgstr "Модули за ориентация"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1039
+#: admin/class-onetap-pro-accessibility-settings-options.php:1606
+#: public/class-accessibility-pro-public.php:5799
+msgid "Reading Line"
+msgstr "Линия за четене"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1040
+#: admin/class-onetap-pro-accessibility-settings-options.php:1607
+msgid "Highlight the current line to track reading progress and improve focus"
+msgstr ""
+"Подчертайте текущия ред, за да проследите напредъка в четенето и да "
+"подобрите фокуса"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1053
+#: admin/class-onetap-pro-accessibility-settings-options.php:1620
+#: public/class-accessibility-pro-public.php:5811
+msgid "Reading Mask"
+msgstr "Маска за четене"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1054
+#: admin/class-onetap-pro-accessibility-settings-options.php:1621
+msgid "Use a mask to focus on a specific area of text and reduce distractions"
+msgstr ""
+"Използвайте маска, за да се фокусирате върху конкретна област от текста и да "
+"намалите разсейването"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1067
+#: admin/class-onetap-pro-accessibility-settings-options.php:1634
+#: public/class-accessibility-pro-public.php:5838
+msgid "Read Page"
+msgstr "Чети страница"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1068
+#: admin/class-onetap-pro-accessibility-settings-options.php:1635
+msgid "Automatically read aloud the page content for hands-free accessibility"
+msgstr ""
+"Автоматично четене на съдържанието на страницата за достъпност без ръце"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1081
+#: admin/class-onetap-pro-accessibility-settings-options.php:1648
+#: public/class-accessibility-pro-public.php:5850
+msgid "Keyboard Navigation"
+msgstr "Навигация с клавиатура"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1082
+#: admin/class-onetap-pro-accessibility-settings-options.php:1649
+msgid "Navigate the site using only the keyboard"
+msgstr "Навигирайте в сайта само с клавиатурата"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1095
+#: admin/class-onetap-pro-accessibility-settings-options.php:1662
+#: public/class-accessibility-pro-public.php:5862
+msgid "Hide Images"
+msgstr "Скрий изображения"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1096
+#: admin/class-onetap-pro-accessibility-settings-options.php:1663
+msgid ""
+"Remove distracting images for a cleaner, more focused browsing experience"
+msgstr ""
+"Премахнете разсейващи изображения за по-чисто и по-фокусирано изживяване при "
+"сърфиране"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1109
+#: admin/class-onetap-pro-accessibility-settings-options.php:1676
+#: public/class-accessibility-pro-public.php:5874
+msgid "Mute Sounds"
+msgstr "Стоп звуци"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1110
+#: admin/class-onetap-pro-accessibility-settings-options.php:1677
+msgid "Easily mute website sounds for a distraction-free browsing experience"
+msgstr ""
+"Лесно спиране на звуците на уебсайта за изживяване при сърфиране без "
+"разсейване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1123
+#: admin/class-onetap-pro-accessibility-settings-options.php:1690
+#: public/class-accessibility-pro-public.php:5894
+msgid "Highlight Titles"
+msgstr "Подчертаване на заглавия"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1124
+#: admin/class-onetap-pro-accessibility-settings-options.php:1691
+msgid "Highlight titles for better recognition"
+msgstr "Подчертайте заглавията за по-добро разпознаване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1137
+#: admin/class-onetap-pro-accessibility-settings-options.php:1704
+#: public/class-accessibility-pro-public.php:5907
+msgid "Highlight Content"
+msgstr "Подчертаване на съдържание"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1138
+#: admin/class-onetap-pro-accessibility-settings-options.php:1705
+msgid "Highlight elements when hovered over"
+msgstr "Подчертайте елементите при преминаване с мишката"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1151
+#: admin/class-onetap-pro-accessibility-settings-options.php:1718
+#: public/class-accessibility-pro-public.php:5919
+msgid "Stop Animations"
+msgstr "Спри анимации"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1152
+#: admin/class-onetap-pro-accessibility-settings-options.php:1719
+msgid "Disable animations to reduce distractions"
+msgstr "Деактивирайте анимациите, за да намалите разсейването"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1169
+msgid "Information"
+msgstr "Информация"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1182
+#: public/class-accessibility-pro-public.php:5320
+#: public/class-accessibility-pro-public.php:5379
+msgid "Hide Toolbar"
+msgstr "Скрий лентата с инструменти"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1196
+msgid "Accessibility Adjustments"
+msgstr "Настройки за достъпност"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1211
+#: public/class-accessibility-pro-public.php:5388
+msgid "Select your accessibility profile"
+msgstr "Изберете вашия профил за достъпност"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1225
+#: public/class-accessibility-pro-public.php:5400
+#: public/class-accessibility-pro-public.php:5412
+msgid "Vision Impaired Mode"
+msgstr "Режим за нарушено зрение"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1239
+#: public/class-accessibility-pro-public.php:5405
+msgid "Enhances website's visuals"
+msgstr "Подобрява визуалните елементи на уебсайта"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1253
+#: public/class-accessibility-pro-public.php:5429
+#: public/class-accessibility-pro-public.php:5441
+msgid "Seizure Safe Profile"
+msgstr "Безопасен профил за припадъци"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1267
+#: public/class-accessibility-pro-public.php:5434
+msgid "Clear flashes & reduces color"
+msgstr "Изчиства светкавиците и намалява цветовете"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1281
+#: public/class-accessibility-pro-public.php:5458
+#: public/class-accessibility-pro-public.php:5470
+msgid "ADHD Friendly Mode"
+msgstr "Режим, подходящ за ADHD"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1295
+#: public/class-accessibility-pro-public.php:5463
+msgid "Focused browsing, distraction-free"
+msgstr "Фокусирано сърфиране без разсейване"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1309
+#: public/class-accessibility-pro-public.php:5487
+#: public/class-accessibility-pro-public.php:5499
+msgid "Blindness Mode"
+msgstr "Режим за слепота"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1323
+#: public/class-accessibility-pro-public.php:5492
+msgid "Reduces distractions, improves focus"
+msgstr "Намалява разсейването, подобрява фокуса"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1337
+#: public/class-accessibility-pro-public.php:5516
+#: public/class-accessibility-pro-public.php:5528
+msgid "Epilepsy Safe Mode"
+msgstr "Безопасен режим за епилепсия"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1351
+#: public/class-accessibility-pro-public.php:5521
+msgid "Dims colors and stops blinking"
+msgstr "Приглушава цветовете и спира мигането"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1380
+msgid "Font Size (Default)"
+msgstr "Размер на шрифта"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1422
+msgid "Line Height (Default)"
+msgstr "Височина на реда"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1520
+msgid "Font weight"
+msgstr "Тегло на шрифта"
+
+#: admin/class-onetap-pro-accessibility-settings-options.php:1734
+msgid "Edit Alt Text"
+msgstr "Редактирай Alt текст"
+
+#: admin/partials/accessibility-status.php:66
+msgid "Show Accessibility Statement"
+msgstr "Покажи декларация за достъпност"
+
+#: admin/partials/accessibility-status.php:78
+msgid "Select Language"
+msgstr "Избери език"
+
+#: admin/partials/accessibility-status.php:139
+msgid "Company Name"
+msgstr "Име на компанията"
+
+#: admin/partials/accessibility-status.php:140
+msgid "Company Inc."
+msgstr "Компания ООД"
+
+#: admin/partials/accessibility-status.php:145
+msgid "Business E-mail"
+msgstr "Бизнес имейл"
+
+#: admin/partials/accessibility-status.php:146
+msgid "info@company.com"
+msgstr "info@company.com"
+
+#: admin/partials/accessibility-status.php:151
+msgid "Website"
+msgstr "Уебсайт"
+
+#: admin/partials/accessibility-status.php:153
+msgid "https://"
+msgstr "https://"
+
+#: admin/partials/accessibility-status.php:155
+msgid "www.company.com"
+msgstr "www.company.com"
+
+#: admin/partials/accessibility-status.php:163
+msgid ""
+"I confirm that the generated accessibility status is based on my own "
+"assessment. The provider of this generator assumes no liability for its "
+"accuracy or compliance."
+msgstr ""
+"Потвърждавам, че генерираният статус на достъпността се базира на моя "
+"собствена оценка. Доставчикът на този генератор не поема отговорност за "
+"неговата точност или съответствие."
+
+#: admin/partials/accessibility-status.php:179
+msgid "Generate Text"
+msgstr "Генерирай текст"
+
+#: admin/partials/accessibility-status.php:183
+msgid ""
+"Please note: Generating a new statement will automatically overwrite the "
+"previous version."
+msgstr ""
+"Моля, обърнете внимание: Генерирането на нова декларация автоматично ще "
+"презапише предишната версия."
+
+#: admin/partials/accessibility-status.php:1561
+msgid "Generate Accessibility Status"
+msgstr "Генерирай статус на достъпност"
+
+#: admin/partials/accessibility-status.php:1564
+msgid ""
+"You can edit or insert a Statement as needed. Click \"Save settings\" to "
+"save your changes."
+msgstr ""
+"Можете да редактирате или вмъкнете декларация според нуждите. Кликнете "
+"\"Запази настройките\" за да запазите промените си."
+
+#: admin/partials/alt-text.php:37
+msgid "Save hours"
+msgstr "Спестете часове"
+
+#: admin/partials/alt-text.php:38
+msgid "and generate your Alt-text with AltPilot.ai."
+msgstr "и генерирайте вашия Alt-текст с AltPilot.ai."
+
+#: admin/partials/alt-text.php:39
+msgid "Try 25 Images for Free"
+msgstr "Опитайте 25 изображения безплатно"
+
+#: admin/partials/footer.php:17
+msgid "If you're enjoying OneTap, we'd really appreciate a quick "
+msgstr "Ако се наслаждавате на OneTap, наистина бихме оценили бързо "
+
+#: admin/partials/footer.php:17
+msgid " review – it means a lot to us. "
+msgstr " рецензия – това означава много за нас. "
+
+#: admin/partials/header.php:24
+msgid "Documentation"
+msgstr "Документация"
+
+#: admin/partials/header.php:29
+msgid "Support"
+msgstr "Поддръжка"
+
+#: admin/partials/header.php:34
+msgid "Get PRO"
+msgstr "Вземи PRO"
+
+#: admin/partials/header.php:82
+msgid "Save changes"
+msgstr "Запази промените"
+
+#: admin/partials/module-labels.php:236
+msgid "Currently editing"
+msgstr "В момента редактирате"
+
+#: admin/partials/module-labels.php:238
+msgid "labels. Change the language to edit others."
+msgstr "етикети. Сменете езика, за да редактирате други."
+
+#: admin/partials/settings.php:23
+msgid "Live Preview"
+msgstr "На живо преглед"
+
+#. translators: the plugin name.
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:288
+msgid "There is a new version of %1$s available."
+msgstr "Има нова версия на %1$s налична."
+
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:294
+msgid "Contact your network administrator to install the update."
+msgstr ""
+"Свържете се с вашия мрежов администратор, за да инсталирате актуализацията."
+
+#. translators: 1. opening anchor tag, do not translate 2. the new plugin version 3. closing anchor tag, do not translate.
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:299
+msgid "%1$sView version %2$s details%3$s."
+msgstr "%1$sВижте детайли за версия %2$s%3$s."
+
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:307
+msgid "%1$sView version %2$s details%3$s or %4$supdate now%5$s."
+msgstr "%1$sВижте детайли за версия %2$s%3$s или %4$sактуализирайте сега%5$s."
+
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:318
+msgid "Update now."
+msgstr "Актуализирайте сега."
+
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:553
+msgid "You do not have permission to install plugin updates"
+msgstr "Нямате разрешение да инсталирате актуализации на плъгини"
+
+#: inc/plugin-updater/Onetap_Plugin_Updater.php:553
+msgid "Error"
+msgstr "Грешка"
+
+#: public/class-accessibility-pro-public.php:5022
+msgid "icon drop down menu"
+msgstr "икона падащо меню"
+
+#: public/class-accessibility-pro-public.php:5293
+msgid "Accessibility  Adjustments"
+msgstr "Настройки за достъпност"
+
+#: public/class-accessibility-pro-public.php:5300
+msgid "Powered by"
+msgstr "Задвижвано от"
+
+#: public/class-accessibility-pro-public.php:5333
+msgid "Back"
+msgstr "Назад"
+
+#: public/class-accessibility-pro-public.php:5349
+msgid "How long do you want to hide the toolbar?"
+msgstr "Колко дълго искате да скриете лентата с инструменти?"
+
+#: public/class-accessibility-pro-public.php:5353
+msgid "Hide Toolbar Duration"
+msgstr "Продължителност на скриване на лентата"
+
+#: public/class-accessibility-pro-public.php:5357
+msgid "Only for this session"
+msgstr "Само за тази сесия"
+
+#: public/class-accessibility-pro-public.php:5364
+msgid "24 hours"
+msgstr "24 часа"
+
+#: public/class-accessibility-pro-public.php:5371
+msgid "A Week"
+msgstr "Една седмица"
+
+#: public/class-accessibility-pro-public.php:5378
+msgid "Not Now"
+msgstr "Не сега"
+
+#: public/class-accessibility-pro-public.php:5553
+#, fuzzy
+msgid "Increase Font Size"
+msgstr "Размер на шрифта"
+
+#: public/class-accessibility-pro-public.php:5554
+#: public/class-accessibility-pro-public.php:5592
+msgid "+"
+msgstr "+"
+
+#: public/class-accessibility-pro-public.php:5559
+#, fuzzy
+msgid "Decrease Font Size"
+msgstr "Размер на шрифта"
+
+#: public/class-accessibility-pro-public.php:5560
+#: public/class-accessibility-pro-public.php:5598
+msgid "-"
+msgstr "-"
+
+#: public/class-accessibility-pro-public.php:5591
+#, fuzzy
+msgid "Increase Line Height"
+msgstr "Височина на реда"
+
+#: public/class-accessibility-pro-public.php:5597
+#, fuzzy
+msgid "Decrease Line Height"
+msgstr "Височина на реда"
+
+#: public/class-accessibility-pro-public.php:5633
+msgid "Cursor"
+msgstr "Курсор"
+
+#: public/class-accessibility-pro-public.php:5819
+msgid "Browser needs to be updated"
+msgstr "Браузърът трябва да бъде актуализиран"
+
+#: public/class-accessibility-pro-public.php:5822
+msgid ""
+"Your browser doesn’t support speech output. Please update your browser or "
+"use one with speech synthesis enabled (e.g. Chrome, Edge, Safari)."
+msgstr ""
+"Вашият браузър не поддържа речов изход. Моля, актуализирайте браузъра си или "
+"използвайте такъв с активиран речов синтез (напр. Chrome, Edge, Safari)."
+
+#: public/class-accessibility-pro-public.php:5824
+msgid "How to Update?"
+msgstr "Как да актуализирам?"
+
+#: public/class-accessibility-pro-public.php:5929
+msgid "Reset Settings"
+msgstr "Нулирай настройките"
+
+#~ msgid "Align Center"
+#~ msgstr "Центриране"
+
+#~ msgid "Bigger Text"
+#~ msgstr "По-голям текст"
+
+#~ msgid "Text Align"
+#~ msgstr "Подравняване на текста"
+
+#~ msgid "Invert Colors"
+#~ msgstr "Обърни цветовете"
+
+#~ msgid "Swap text and background colors for better contrast and readability"
+#~ msgstr ""
+#~ "Разменете цветовете на текста и фона за по-добър контраст и четимост"
+
+#~ msgid "Brightness"
+#~ msgstr "Яркост"
+
+#~ msgid "Adjust screen brightness to reduce glare and enhance text visibility"
+#~ msgstr ""
+#~ "Настройте яркостта на екрана, за да намалите блясъка и да подобрите "
+#~ "видимостта на текста"
+
+#~ msgid "Contrast"
+#~ msgstr "Контраст"
+
+#~ msgid "Fine-tune color contrast for clearer text and improved readability"
+#~ msgstr ""
+#~ "Точно настройте цветовия контраст за по-ясен текст и подобрена четимост"
+
+#~ msgid "Grayscale"
+#~ msgstr "Сива скала"
+
+#~ msgid ""
+#~ "Convert display to black and white for reduced visual clutter and better "
+#~ "focus"
+#~ msgstr ""
+#~ "Преобразувайте дисплея в черно и бяло за намалено визуално безпорядък и "
+#~ "по-добро фокусиране"
+
+#~ msgid "Highlight All"
+#~ msgstr "Подчертай всичко"
+
+#~ msgid "Content"
+#~ msgstr "Съдържание"
+
+#~ msgid "Colors"
+#~ msgstr "Цветове"
+
+#~ msgid "Orientation"
+#~ msgstr "Ориентация"
+
+#~ msgid "Highlight Al"
+#~ msgstr "Подчертай всичко"
+
+#~ msgid "Version "
+#~ msgstr "Версия "

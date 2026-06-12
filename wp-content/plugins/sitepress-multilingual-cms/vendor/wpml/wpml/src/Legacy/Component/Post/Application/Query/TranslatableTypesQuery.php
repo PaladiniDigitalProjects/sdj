@@ -112,6 +112,8 @@ class TranslatableTypesQuery implements TranslatableTypesQueryInterface {
       $postTypeObject->labels->singular_name,
       $postTypeObject->labels->name,
       $postTypeObject->hierarchical,
+      $postTypeObject->public,
+      $postTypeObject->show_ui,
       $isDisplayAsTranslated
     );
   }

@@ -37,6 +37,7 @@ class WPML_TF_Collection implements Iterator, Countable {
 		return count( $this->collection );
 	}
 
+  #[\ReturnTypeWillChange]
 	public function rewind() {
 		reset( $this->collection );
 	}
@@ -51,6 +52,7 @@ class WPML_TF_Collection implements Iterator, Countable {
 		return key( $this->collection );
 	}
 
+  #[\ReturnTypeWillChange]
 	public function next() {
 		next( $this->collection );
 	}

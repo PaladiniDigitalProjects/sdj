@@ -58,6 +58,8 @@ class WPML_Custom_Types_Translation_UI {
 					   data-slug="<?php esc_attr_e( $content_slug ) ?>"
 					   data-name="<?php esc_attr_e( $content_label ) ?>"
 					   data-singular-name="<?php esc_attr_e( $content_label_singular ?: $content_label ) ?>"
+					   aria-label="<?php echo __('Select translation option', 'sitepress');?>"
+					   aria-describedby="<?php echo $this->translation_option_class_names[ $value ]; ?>"
 					<?php checked( $value, $current_translation_mode ); ?>
 				/>
 				<?php if ( $disabled_state_for_mode['reason_message'] ) { ?>
@@ -91,7 +93,8 @@ class WPML_Custom_Types_Translation_UI {
 		foreach ( $this->translation_modes->get_options() as $value => $label ) {
 			?>
 			<div
-					class="wpml-flex-table-cell text-center <?php echo $this->translation_option_class_names[ $value ]; ?>">
+				id="<?php echo $this->translation_option_class_names[ $value ];?>"
+				class="wpml-flex-table-cell text-center <?php echo $this->translation_option_class_names[ $value ]; ?>">
 				<?php echo wp_kses_post( $label ); ?>
 			</div>
 			<?php

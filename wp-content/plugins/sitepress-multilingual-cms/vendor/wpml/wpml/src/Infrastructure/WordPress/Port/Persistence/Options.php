@@ -34,4 +34,16 @@ class Options implements OptionsInterface {
   }
 
 
+  /**
+   * @param string $optionName
+   * @param mixed  $value
+   * @param bool   $autoload
+   *
+   * @return bool
+   */
+  public function add( string $optionName, $value, bool $autoload = true ): bool {
+    return \add_option( $optionName, $value, '', $autoload ? 'yes' : 'no' );
+  }
+
+
 }

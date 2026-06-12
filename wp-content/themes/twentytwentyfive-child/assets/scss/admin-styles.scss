@@ -1,53 +1,54 @@
+@use 'sass:meta';
+@use './variables' as *;
 
 .editor-styles-wrapper {
-    
-  @import './variables.scss';
-  @import './generics.scss';
-  @import './header.scss';
-  @import './buttons.scss';
-  @import './animacions.scss';
-  @import './wpforms.scss';
-  @import './nav.scss';
-  @import './listados.scss';
-  @import './single.scss';
-  @import './category.scss';
-  @import './nutrities.scss';
-  @import './components.scss';
-  @import './event.scss';
-  @import './page.scss';
-  @import './localizaciones.scss';
-  @import './grid.scss';
+
+  @include meta.load-css('generics');
+  @include meta.load-css('header');
+  @include meta.load-css('buttons');
+  @include meta.load-css('animacions');
+  @include meta.load-css('wpforms');
+  @include meta.load-css('nav');
+  @include meta.load-css('listados');
+  @include meta.load-css('single');
+  @include meta.load-css('category');
+  @include meta.load-css('nutrities');
+  @include meta.load-css('components');
+  @include meta.load-css('event');
+  @include meta.load-css('page');
+  @include meta.load-css('localizaciones');
+  @include meta.load-css('grid');
 
 
   // LANDING PAGES
 
-  @import './landings/desnudos.scss';
-  @import './landings/nutrities.scss';
+  @include meta.load-css('landings/desnudos');
+  //@include meta.load-css('landings/nutrities');
 
   // BLOCKS
 
-  @import './blocks/slider.scss';
-  // @import './blocks/block-menu.scss';
-  // @import './blocks/related.scss';
-  // @import './blocks/events.scss';
-  // @import './blocks/projects-slider.scss';
-  @import './blocks/carousell.scss';
-  // @import './blocks/ticker.scss';
-  // @import './blocks/mapa.scss';
-  @import './blocks/noticias.scss';
-  @import './blocks/relacionado.scss';
-  // @import './blocks/donaciones.scss';
-  // @import './blocks/descargas.scss';
-  // @import './blocks/redes-sociales.scss';
+  @include meta.load-css('blocks/slider');
+  // @include meta.load-css('blocks/block-menu');
+  // @include meta.load-css('blocks/related');
+  // @include meta.load-css('blocks/events');
+  // @include meta.load-css('blocks/projects-slider');
+  @include meta.load-css('blocks/carousell');
+  // @include meta.load-css('blocks/ticker');
+  // @include meta.load-css('blocks/mapa');
+  @include meta.load-css('blocks/noticias');
+  @include meta.load-css('blocks/relacionado');
+  // @include meta.load-css('blocks/donaciones');
+  // @include meta.load-css('blocks/descargas');
+  // @include meta.load-css('blocks/redes-sociales');
 
 
 
   // GENERIC
-  background: $white;  
+  background: $white;
   // border-top:1rem solid $primary;
 
   a {
     text-decoration: none;
   }
-    
+
 }

@@ -1,6 +1,7 @@
 <?php
 
 use WPML\API\Sanitize;
+use WPML\Core\Component\PostHog\Application\Service\Event\EventInstanceService;
 
 class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 
@@ -76,7 +77,8 @@ class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 			wp_register_script(
 				'wpml-language-switcher-settings',
 				ICL_PLUGIN_URL . '/res/js/language-switchers-settings' . $suffix . '.js',
-				array( 'jquery', 'wp-util', 'jquery-ui-sortable', 'jquery-ui-dialog', 'wp-color-picker', 'wp-pointer' )
+				array( 'jquery', 'wp-util', 'jquery-ui-sortable', 'jquery-ui-dialog', 'wp-color-picker', 'wp-pointer' ),
+				ICL_SITEPRESS_SCRIPT_VERSION
 			);
 			wp_enqueue_script( 'wpml-language-switcher-settings' );
 
@@ -111,11 +113,48 @@ class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 	public function save_settings_action() {
 		if ( $this->has_valid_nonce() && isset( $_POST['settings'] ) ) {
 			$new_settings = $this->parse_request_settings( 'settings' );
+
+			// Get old settings BEFORE saving to detect changes
+			$old_settings = $this->settings->get_settings();
+
 			$this->settings->save_settings( $new_settings );
+
+			// Captures PostHog event for footer LS enable/disable if it's changed.
+			$this->capturePostHogEventForFooterLSChange( $old_settings, $new_settings );
+
 			$this->maybe_complete_setup_wizard_step( $new_settings );
 			$this->sitepress->get_wp_api()->wp_send_json_success( esc_html__( 'Settings saved', 'sitepress' ) );
 		} else {
 			$this->sitepress->get_wp_api()->wp_send_json_error( esc_html__( "You can't do that!", 'sitepress' ) );
+		}
+	}
+
+	/**
+	 * Capture PostHog event when footer language switcher state changes
+	 *
+	 * @param array $oldSettings The settings before saving
+	 * @param array $newSettings The new settings being saved
+	 */
+	private function capturePostHogEventForFooterLSChange( $oldSettings, $newSettings ) {
+		// Get the old footer switcher state (from database/slot object)
+		$oldFooterLSEnabled = isset( $oldSettings['statics']['footer'] )
+		                      && $oldSettings['statics']['footer']->get( 'show' );
+
+		// Get the new footer switcher state (from POST data)
+		// Note: Unchecked checkboxes don't send any data, so the key won't exist
+		$newFooterLSEnabled = isset( $newSettings['statics']['footer']['show'] )
+		                      && ! empty( $newSettings['statics']['footer']['show'] );
+
+		// Only capture event if the state has changed
+		if ( $oldFooterLSEnabled !== $newFooterLSEnabled ) {
+			$eventProps = array(
+				'enabled' => $newFooterLSEnabled,
+				'source'  => 'languages_page',
+			);
+
+			\WPML\PostHog\Event\CaptureEvent::capture(
+				( new EventInstanceService() )->getFooterLanguageSwitcherToggledEvent( $eventProps )
+			);
 		}
 	}
 
@@ -395,6 +434,7 @@ class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 					'url'    => 'https://wpml.org/documentation/getting-started-guide/language-setup/language-switcher-options/preserve-url-arguments-when-switching-languages/?utm_source=plugin&utm_medium=gui&utm_campaign=languages',
 					'target' => '_blank',
 				),
+				'id'   => 'preserve_url_arguments_tooltip',
 			),
 			'additional_css'                => array(
 				'text' => __( 'Enter CSS to add to the page. This is useful when you want to add styling to the language switcher, without having to edit the CSS file on the server.', 'sitepress' ),
@@ -403,6 +443,7 @@ class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 					'url'    => 'https://wpml.org/documentation/getting-started-guide/language-setup/language-switcher-options/how-to-fix-styling-and-css-issues-for-the-language-switchers/?utm_source=plugin&utm_medium=gui&utm_campaign=languages',
 					'target' => '_blank',
 				),
+				'id'   => 'additional_css_tooltip',
 			),
 			'section_post_translations'     => array(
 				'text' => __( 'You can display links to translation of posts before the post and after it. These links look like "This post is also available in..."', 'sitepress' ),
@@ -424,6 +465,7 @@ class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 			),
 			'available_menus'               => array(
 				'text' => __( 'Select the menus, in which to display the language switcher.', 'sitepress' ),
+				'id'   => 'available_menus_tooltip',
 			),
 			'available_sidebars'            => array(
 				'text' => __( 'Select the widget area where to include the language switcher.', 'sitepress' ),
@@ -448,6 +490,7 @@ class WPML_LS_Admin_UI extends WPML_Templates_Factory {
 			),
 			'backwards_compatibility'       => array(
 				'text' => __( "Since WPML 3.6.0, the language switchers are not using CSS IDs and the CSS classes have changed. This was required to fix some bugs and match the latest standards. If your theme or your custom CSS is not relying on these old selectors, it's recommended to skip the backwards compatibility. However, it's still possible to re-activate this option later.", 'sitepress' ),
+				'id'   => 'backwards_compatibility_tooltip',
 			),
 			'show_in_footer'                => array(
 				'text' => __( "You can display a language switcher in the site's footer. You can customize and style it here.", 'sitepress' ),

@@ -33,7 +33,7 @@ class WPML_Absolute_To_Permalinks {
 		$abshome = $parts['scheme'] . '://' . $parts['host'];
 		$path    = isset( $parts['path'] ) ? ltrim( $parts['path'], '/' ) : '';
 		$tx_qvs  = join( '|', $this->taxonomies_query->get_query_vars() );
-		$reg_ex  = '@<a([^>]+)?href="((' . $abshome . ')?/' . $path . '/?(' . $active_langs_reg_ex . ')?\?(p|page_id|cat_ID|' . $tx_qvs . ')=([0-9a-z-]+))(#?[^"]*)"([^>]+)?>@i';
+        $reg_ex  = '@<a([^>]+)?href="((' . $abshome . ')?/' . $path . '/?(' . $active_langs_reg_ex . ')?/?\?(p|page_id|cat_ID|' . $tx_qvs . ')=([^"&#]+))(#?[^"]*)"([^>]+)?>@iu';
 		$text    = preg_replace_callback( $reg_ex, [ $this, 'show_permalinks_cb' ], $text );
 
 		return $text;

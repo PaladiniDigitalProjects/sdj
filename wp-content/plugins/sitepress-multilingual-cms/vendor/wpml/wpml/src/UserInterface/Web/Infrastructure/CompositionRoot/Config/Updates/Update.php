@@ -8,7 +8,7 @@ use WPML\PHP\Exception\RuntimeException;
 
 class Update {
 
-  /** @var string $id */
+  /** @var int $id */
   private $id;
 
   /** @var class-string<UpdateInterface> $handlerClassName */
@@ -23,26 +23,24 @@ class Update {
   /** @var UpdateInterface|null $handler */
   private $handler;
 
-  /** @var string $includedIn */
-  private $includedIn;
-
   /** @var bool $tryOnlyOnce */
   private $tryOnlyOnce = false;
 
+  /** @var bool $lazyLoad */
+  private $lazyLoad = false;
+
 
   /**
-   * @param string $id
+   * @param int $id
    * @param class-string<UpdateInterface> $handlerClassName
-   * @param string $includedIn
    */
-  public function __construct( $id, $handlerClassName, $includedIn ) {
+  public function __construct( $id, $handlerClassName ) {
     $this->id = $id;
     $this->handlerClassName = $handlerClassName;
-    $this->includedIn = $includedIn;
   }
 
 
-  public function id(): string {
+  public function id(): int {
     return $this->id;
   }
 
@@ -81,11 +79,6 @@ class Update {
   }
 
 
-  public function includedIn(): string {
-    return $this->includedIn;
-  }
-
-
   public function tryOnlyOnce(): bool {
     return $this->tryOnlyOnce;
   }
@@ -94,6 +87,17 @@ class Update {
   /** @return void */
   public function setTryOnlyOnce( bool $tryOnlyOnce ) {
     $this->tryOnlyOnce = $tryOnlyOnce;
+  }
+
+
+  public function lazyLoad(): bool {
+    return $this->lazyLoad;
+  }
+
+
+  /** @return void */
+  public function setLazyLoad( bool $lazyLoad ) {
+    $this->lazyLoad = $lazyLoad;
   }
 
 

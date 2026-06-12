@@ -20,7 +20,7 @@ class UpdateHandler {
   /** @var Repository $repository */
   private $repository;
 
-  /** @var array<string, Update> $updatesToPerform */
+  /** @var array<int, Update> $updatesToPerform */
   private $updatesToPerform = [];
 
 
@@ -42,7 +42,7 @@ class UpdateHandler {
 
 
   /**
-   * @param array<string, Update> $updatesToPerform
+   * @param array<int, Update> $updatesToPerform
    * @return void
    */
   public function registerRoute( $updatesToPerform ) {
@@ -68,24 +68,32 @@ class UpdateHandler {
       return;
     }
 
-    $update = $this->updatesToPerform[ $requestData['update'] ];
+    $this->doUpdate( $this->updatesToPerform[ $requestData['update'] ] );
+  }
+
+
+  /**
+   * @param Update $update
+   * @return void
+   */
+  public function doUpdate( $update ) {
     try {
       $update->tryOnlyOnce()
-        ? $this->repository->setUpdateComplete( $update )
+        ? $this->repository->setUpdateTryOnlyOnceStuck( $update ) // Not stuck yet, but on a timeout the status won't change.
         : $this->repository->setUpdateInProgress( $update );
 
       $handler = $update->handler();
       $result = $handler->update();
 
-      if ( ! $update->tryOnlyOnce() ) {
-        $result
-          ? $this->repository->setUpdateComplete( $update )
-          : $this->repository->setUpdateFailed( $update );
-      }
+      $result
+        ? $this->repository->setUpdateComplete( $update )
+        : ( $update->tryOnlyOnce()
+          ? $this->repository->setUpdateTryOnlyOnceFailed( $update )
+          : $this->repository->setUpdateFailed( $update ) );
     } catch ( Exception $e ) {
-      if ( ! $update->tryOnlyOnce() ) {
-        $this->repository->setUpdateFailed( $update );
-      }
+        $update->tryOnlyOnce()
+          ? $this->repository->setUpdateTryOnlyOnceFailed( $update )
+          : $this->repository->setUpdateFailed( $update );
     }
   }
 

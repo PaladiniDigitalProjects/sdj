@@ -27,15 +27,23 @@ class WarningTranslationEditController implements EventListenerInterface {
 
 
   /**
-   * @param int          $postId
-   * @param string       $pageBuilderName
+   * @param int           $postId
+   * @param string        $pageBuilderName
+   * @param array<string> $args
    *
    * @return void
    */
-  public function maybeShowPageBuilderWarning( $postId, $pageBuilderName ) {
+  public function maybeShowPageBuilderWarning( $postId, $pageBuilderName, $args = [] ) {
+    $defaultArgs = [
+      'iframeModeQuerySelector' => ''
+    ];
+
+    $args = array_merge( $defaultArgs, $args );
+
     $translationEditorUrl = $this->translationEditor->getTranslationEditorLink( $postId );
     if ( $translationEditorUrl ) {
-        $this->enqueueAssets( $pageBuilderName, $translationEditorUrl );
+        /** @phpstan-ignore-next-line */
+        $this->enqueueAssets( $pageBuilderName, $translationEditorUrl, $args );
     }
   }
 
@@ -43,10 +51,10 @@ class WarningTranslationEditController implements EventListenerInterface {
   /**
    * @param string $pageBuilderName
    * @param string $translationEditorUrl
+   * @param array{iframeModeQuerySelector: string} $args $args
    * @return void
    */
-  private function enqueueAssets( $pageBuilderName, $translationEditorUrl ) {
-
+  private function enqueueAssets( $pageBuilderName, $translationEditorUrl, $args ) {
     $script_m = new Script( 'wpml-modules' );
     $script_m->setSrc( 'public/js/node-modules.js' );
     $this->asset->enqueueScript( $script_m );
@@ -54,10 +62,11 @@ class WarningTranslationEditController implements EventListenerInterface {
     $script = new Script( self::SCRIPT_HANDLE );
     $script->setSrc( 'public/js/notice-warning-translation-edit.js' )
         ->setScriptData(
-          array(
+          [
               'page_builder_name' => $pageBuilderName,
-              'translation_editor_url' => $translationEditorUrl
-            )
+              'translation_editor_url' => $translationEditorUrl,
+              'iframe_mode_query_selector' => $args['iframeModeQuerySelector']
+          ]
         )
         ->setScriptVarName( self::SCRIPT_HANDLE )
         ->setDependencies( ['wpml-modules', 'wp-i18n'] );

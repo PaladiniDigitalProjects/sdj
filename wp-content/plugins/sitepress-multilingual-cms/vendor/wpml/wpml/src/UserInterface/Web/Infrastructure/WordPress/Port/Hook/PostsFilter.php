@@ -94,9 +94,12 @@ class PostsFilter implements PostsFilterInterface {
       $link = '<a href="' . $link . '">' . $oldLabel . '</a>';
     }
 
-    return $maybeExtractUrlFromLinkTag(
-      (string) apply_filters( $hook, $link, $oldLabel, $legacyObject, 'post', $postType )
-    );
+    /** @var mixed $filtered */
+    $filtered = apply_filters( $hook, $link, $oldLabel, $legacyObject, 'post', $postType );
+
+    return is_string( $filtered )
+      ? $maybeExtractUrlFromLinkTag( $filtered )
+      : $link;
   }
 
 

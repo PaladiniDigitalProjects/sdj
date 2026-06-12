@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: nl_NL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:17
 msgid "Preparing..."
@@ -9,45 +11,19 @@ msgstr "Voorbereiden..."
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:77
 msgid "All jobs have been cancelled"
-msgstr "Alle opdrachten zijn geannuleerd"
+msgstr "Alle taken zijn geannuleerd"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:79
 msgid "There is no more jobs to cancel"
-msgstr "Er zijn geen opdrachten meer om te annuleren"
+msgstr "Er zijn geen taken meer om te annuleren"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:82
 msgid "The jobs cancellation has failed"
-msgstr "Het annuleren van opdrachten is mislukt"
+msgstr "Het annuleren van de taken is mislukt"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:88
 msgid "Cancel in-progress automatic jobs"
-msgstr "Annuleer lopende automatische opdrachten"
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:27
-msgid "Enabling WPML's Advanced Translation Editor..."
-msgstr "WPML's Geavanceerde Vertaaleditor inschakelen..."
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:28
-msgid "Force-enable WPML's Advanced Translation Editor"
-msgstr "WPML's Geavanceerde Vertaaleditor geforceerd inschakelen"
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:37
-msgid ""
-"If you're running this website from two or more domains on the same "
-"installation, this action will allow both to use the Advanced Translation "
-"Editor. Don't use this if you've moved or copied the site to a different "
-"domain on a different server."
-msgstr "Als u deze website vanaf twee of meer domeinen op dezelfde installatie uitvoert, zal deze actie beide in staat stellen de Geavanceerde Vertaaleditor te gebruiken. Gebruik dit niet als u de site naar een ander domein op een andere server hebt verplaatst of gekopieerd."
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:41
-msgid "An error occurred while enabling WPML on both domains. Please try again."
-msgstr "Er is een fout opgetreden bij het inschakelen van WPML op beide domeinen. Probeer het opnieuw."
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:44
-msgid ""
-"You can now use the Advanced Translation Editor from this site, as well as "
-"the other site(s) running from a different domain on the same installation."
-msgstr "U kunt nu de Geavanceerde Vertaaleditor gebruiken vanaf deze site, evenals de andere site(s) die draaien op een ander domein op dezelfde installatie."
+msgstr "Annuleer automatische taken die bezig zijn"
 
 #: src/js/troubleshooting/lsTemplates/UpdateDomain.js:31
 msgid "Domain name has been updated"
@@ -55,16 +31,111 @@ msgstr "Domeinnaam is bijgewerkt"
 
 #: src/js/troubleshooting/lsTemplates/UpdateDomain.js:33
 msgid "Domain name update has been failed"
-msgstr "Domeinnaam aanpassing is mislukt"
+msgstr "Het bijwerken van de domeinnaam is mislukt"
 
 #: src/js/troubleshooting/lsTemplates/UpdateDomain.js:41
 msgid "Update domain name in language switcher settings"
-msgstr "Domeinnaam bijwerken in instellingen voor taalswitcher"
+msgstr "Domeinnaam bijwerken in de taalwisselaarinstellingen"
+
+#: src/js/troubleshooting/optimizeDbTables/components/DiskSpaceDisclaimerAlert.js:7
+msgid "Disclaimer: MySQL Disk Space"
+msgstr "Disclaimer: MySQL-schijfruimte"
+
+#: src/js/troubleshooting/optimizeDbTables/components/DiskSpaceDisclaimerAlert.js:8
+msgid ""
+"Cleaning and compressing the wp_icl_translate and wp_icl_translation_status "
+"tables reduces its data size, but does not automatically free up disk space "
+"in MySQL. To reclaim disk space, a table rebuild is required—a risky "
+"operation not performed automatically by this tool."
+msgstr "Het opschonen en comprimeren van de wp_icl_translate- en wp_icl_translation_status-tabellen vermindert de gegevensgrootte, maar maakt niet automatisch schijfruimte vrij in MySQL. Om schijfruimte terug te winnen, is een tabelreconstructie vereist – een risicovolle bewerking die niet automatisch door deze tool wordt uitgevoerd."
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:38
+msgid "Optimize translation tables"
+msgstr "Vertaaltabellen optimaliseren"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:47
+msgid "Previous State Migration"
+msgstr "Migratie vorige status"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:58
+msgid "Translation Elements Migration"
+msgstr "Migratie vertaalelementen"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:64
+msgid "Processed"
+msgstr "Verwerkt"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:72
+msgid "Error"
+msgstr "Fout"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:82
+msgid "Success"
+msgstr "Succes"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:83
+msgid "Database tables optimization completed successfully."
+msgstr "Optimalisatie van databasetabellen succesvol voltooid."
+
+#: src/js/troubleshooting/optimizeDbTables/components/ResourceWarningAlert.js:7
+msgid "Warning"
+msgstr "Waarschuwing"
+
+#: src/js/troubleshooting/optimizeDbTables/components/ResourceWarningAlert.js:8
+msgid ""
+"This process is resource-intensive and may take a significant amount of "
+"time. It is recommended to run this optimization during periods of low "
+"traffic."
+msgstr "Dit proces is resource-intensief en kan aanzienlijk veel tijd in beslag nemen. Het wordt aanbevolen om deze optimalisatie uit te voeren tijdens perioden van weinig verkeer."
+
+#: src/js/troubleshooting/optimizeDbTables/index.js:16
+msgid "Database Tables Optimization"
+msgstr "Optimalisatie van databasetabellen"
 
 #: src/js/troubleshooting/refreshLicense/RefreshLicense.js:14
 msgid "Refresh license data to recognise license update"
-msgstr "Licentiegegevens verversen om licentie-update te herkennen"
+msgstr "Licentiegegevens vernieuwen om licentie-update te herkennen"
 
 #: src/js/troubleshooting/refreshLicense/useRefreshLicense.js:36
 msgid "WPML License has been refreshed"
-msgstr "WPML licentie is geüpdatet"
+msgstr "WPML-licentie is vernieuwd"
+
+#: src/js/troubleshooting/retryStuckJobs/RetryStuckJobs.js:11
+msgid "Translate Everything Automatically is not active."
+msgstr "Alles automatisch vertalen is niet actief."
+
+#: src/js/troubleshooting/retryStuckJobs/RetryStuckJobs.js:49
+msgid "Retry stuck automatic translations"
+msgstr "Vastgelopen automatische vertalingen opnieuw proberen"
+
+#: src/js/troubleshooting/retryStuckJobs/RetryStuckJobs.js:54
+msgid ""
+"Resends translation jobs that couldn't be processed due to a temporary "
+"issue while Translate Everything Automatically was active."
+msgstr "Verzendt vertaaltaken opnieuw die niet konden worden verwerkt vanwege een tijdelijk probleem terwijl 'Alles automatisch vertalen' actief was."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:10
+msgid "Checking for stuck translation jobs..."
+msgstr "Controleren op vastgelopen vertaaltaken..."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:13
+msgid "Processing... %s stuck translation found so far"
+msgid_plural "Processing... %s stuck translations found so far"
+msgstr[0] "Verwerken... %s vastgelopen vertaling tot nu toe gevonden"
+msgstr[1] "Verwerken... %s vastgelopen vertalingen tot nu toe gevonden"
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:25
+msgid ""
+"Something went wrong while checking for stuck translation jobs. Please "
+"<a>contact WPML support</a>."
+msgstr "Er is iets misgegaan tijdens het controleren op vastgelopen vertaaltaken. Neem alstublieft <a>contact op met de WPML-ondersteuning</a>."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:37
+msgid "No stuck translation jobs found."
+msgstr "Geen vastgelopen vertaaltaken gevonden."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:41
+msgid "%s stuck translation job found. WPML will translate it automatically in the background.\nYou can check the progress in the Translation Dashboard."
+msgid_plural "%s stuck translation jobs found. WPML will translate them automatically in the background.\nYou can check their progress in the Translation Dashboard."
+msgstr[0] "%s vastgelopen vertaaltaak gevonden. WPML zal deze automatisch op de achtergrond vertalen.\nU kunt de voortgang controleren in het vertaaloverzicht."
+msgstr[1] "%s vastgelopen vertaaltaken gevonden. WPML zal deze automatisch op de achtergrond vertalen.\nU kunt de voortgang controleren in het vertaaloverzicht."

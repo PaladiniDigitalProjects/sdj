@@ -133,7 +133,9 @@ class WPML_TM_Xliff_Writer {
 			$job->language_code,
 			$translation_units,
 			$external_file_url,
-			$original_post_type
+			$original_post_type,
+			$job->wpml_words_to_translate_count,
+			$job->wpml_automatic_translation_costs
 		);
 
 		return $xliff;
@@ -167,7 +169,9 @@ class WPML_TM_Xliff_Writer {
 		$target_language,
 		array $translation_units = array(),
 		$external_file_url = null,
-		$original_post_type = null
+		$original_post_type = null,
+		$words_to_translate_count = null,
+		$automatic_translation_costs = null
 	) {
 		/** @var \SitePress $sitepress */
 		global $sitepress;
@@ -189,16 +193,18 @@ class WPML_TM_Xliff_Writer {
 		$string = $xliff
 			->setFileAttributes(
 				array(
-					'original'                    => $original_id,
-					'source-language'             => $source_language,
-					'target-language'             => $target_language,
-					'tool:source-language-domain' => $source_language_domain,
-					'tool:target-language-domain' => $target_language_domain,
-					'tool:sender-id'              => $jobSender->id,
-					'tool:sender-username'        => $jobSender->username,
-					'tool:sender-email'           => $jobSender->email,
-					'tool:sender-display-name'    => $jobSender->displayName,
-					'datatype'                    => 'plaintext',
+					'original'                           => $original_id,
+					'source-language'                    => $source_language,
+					'target-language'                    => $target_language,
+					'tool:source-language-domain'        => $source_language_domain,
+					'tool:target-language-domain'        => $target_language_domain,
+					'tool:sender-id'                     => $jobSender->id,
+					'tool:sender-username'               => $jobSender->username,
+					'tool:sender-email'                  => $jobSender->email,
+					'tool:sender-display-name'           => $jobSender->displayName,
+					'tool:wpml-words-to-translate-count' => $words_to_translate_count,
+					'tool:wpml-automatic-translation-costs' => $automatic_translation_costs,
+					'datatype'                           => 'plaintext',
 				)
 			)
 			->setReferences(
@@ -456,7 +462,9 @@ class WPML_TM_Xliff_Writer {
 			$extra_data['unit'] = Labels::labelize( $field_name );
 		}
 
-		if ( $this->is_valid_unit_content( $field_data ) ) {
+		$is_valid_unit_content = $this->is_valid_unit_content( $field_data );
+		$is_valid_unit_content = apply_filters( 'wpml_xliff_is_valid_unit_content', $is_valid_unit_content, $field_data );
+		if ( $is_valid_unit_content ) {
 
 			$is_translation_memory_outdated = false;
 
@@ -729,8 +737,7 @@ class WPML_TM_Xliff_Writer {
 		$translation_unit['note']                   = array( 'content' => $field_wrap_tag );
 
 		if ( $extradata && $this->is_xliff_for_ate ) {
-			$encoded_extradata                           = wp_json_encode( $extradata ) !== false ? wp_json_encode( $extradata ) : '';
-			$translation_unit['attributes']['extradata'] = str_replace( '"', '&quot;', $encoded_extradata );
+			$translation_unit['extradata'] = $extradata;
 		}
 
 		if ( $is_translated_from_memory ) {
@@ -837,9 +844,7 @@ class WPML_TM_Xliff_Writer {
 	 * @return bool
 	 */
 	private function is_valid_unit_content( $content ) {
-		$content = preg_replace( '/[^#\w]*/u', '', $content );
-
-		return $content || '0' === $content;
+		return '' !== trim( $content );
 	}
 
 	private function get_translator_notes( $job ) {

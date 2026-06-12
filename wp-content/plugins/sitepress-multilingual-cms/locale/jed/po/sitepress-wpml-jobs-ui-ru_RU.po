@@ -2,14 +2,16 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: src/js/jobs/components/Actions/BatchSync.js:39
 msgid "Start batch sync"
-msgstr "Начать синхронизацию партии"
+msgstr "Начать пакетную синхронизацию"
 
 #: src/js/jobs/components/Actions/Cancel.js:35
 msgid "Cancel job"
-msgstr "Отменить заказ"
+msgstr "Отменить задание"
 
 #: src/js/jobs/components/Actions/ContinieReview.js:44
 msgid "Continue reviewing"
@@ -17,11 +19,11 @@ msgstr "Продолжить проверку"
 
 #: src/js/jobs/components/Actions/DownloadXLIFF.js:33
 msgid "Start downloading XLIFF file"
-msgstr "Начать загрузку XLIFF-файла"
+msgstr "Начать загрузку файла XLIFF"
 
 #: src/js/jobs/components/Actions/Edit.js:38
 msgid "Edit"
-msgstr "Изменить"
+msgstr "Редактировать"
 
 #: src/js/jobs/components/Actions/GetTranslation.js:31
 msgid "Get translation"
@@ -42,7 +44,7 @@ msgstr "Перевести"
 
 #: src/js/jobs/components/Actions/TakeAndTranslate.js:33
 msgid "Take and Translate"
-msgstr "Взять на перевод"
+msgstr "Взять и перевести"
 
 #: src/js/jobs/components/Actions/View.js:22
 msgid "View"
@@ -54,26 +56,26 @@ msgstr "Удалить переводы"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:56
 msgid "Keep Translations as Draft"
-msgstr "Оставить переводы в виде черновиков"
+msgstr "Сохранить переводы как черновик"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:63
 msgid "Never mind. I want to review these translations."
-msgstr "Не надо. Я хочу проверить эти переводы."
+msgstr "Неважно. Я хочу проверить эти переводы."
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:74
 #: src/js/jobs/components/Filters/ActionFilters.js:60
 msgid "Cancel"
-msgstr "Отмена"
+msgstr "Отменить"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:80
 msgid ""
 "This will remove the selected jobs from the Translations Queue without "
 "publishing them. What would you like to do with the translations?"
-msgstr "Это приведет к удалению выбранных заказов из очереди переводов без их публикации. Что сделать с переводами?"
+msgstr "Это удалит выбранные задания из очереди переводов без их публикации. Что вы хотите сделать с переводами?"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:84
 msgid "Cancel Translation Review"
-msgstr "Отменить проверку переводов"
+msgstr "Отменить проверку перевода"
 
 #: src/js/jobs/components/BulkActions/BulkActions.js:39
 msgid "Bulk actions"
@@ -88,13 +90,13 @@ msgstr "Применить"
 msgid ""
 "Actions applied to multiple translation jobs can take a few seconds. Please "
 "do not leave the page."
-msgstr "Действия, применяемые к нескольким заданиям на перевод, могут занять несколько секунд. Пожалуйста, не покидайте страницу."
+msgstr "Применение действий к нескольким заданиям перевода может занять несколько секунд. Пожалуйста, не покидайте страницу."
 
 #: src/js/jobs/components/BulkActions/Info.js:9
 msgid ""
 "Actions applied to multiple translation jobs can take a few minutes. Please "
 "do not leave the page."
-msgstr "Действия, применяемые к нескольким заданиям на перевод, могут занять несколько минут. Пожалуйста, не покидайте страницу."
+msgstr "Применение действий к нескольким заданиям перевода может занять несколько минут. Пожалуйста, не покидайте страницу."
 
 #: src/js/jobs/components/Cells/AssignTranslator.js:35
 msgid "Select translator"
@@ -106,7 +108,7 @@ msgstr "Назначить"
 
 #: src/js/jobs/components/Cells/StatusCell.js:11
 msgid "Cancelled"
-msgstr "Отменена"
+msgstr "Отменено"
 
 #: src/js/jobs/components/Cells/StatusCell.js:12
 #: src/js/jobs/model/store/columnsManagement.js:50
@@ -116,7 +118,7 @@ msgstr "Требуется перевод"
 #: src/js/jobs/components/Cells/StatusCell.js:13
 #: src/js/jobs/model/store/columnsManagement.js:46
 msgid "In progress"
-msgstr "в процессе"
+msgstr "В процессе"
 
 #: src/js/jobs/components/Cells/StatusCell.js:14
 #: src/js/jobs/model/store/columnsManagement.js:23
@@ -126,12 +128,12 @@ msgstr "Перевод готов к загрузке"
 #: src/js/jobs/components/Cells/StatusCell.js:15
 #: src/js/jobs/model/store/columnsManagement.js:38
 msgid "Completed"
-msgstr "завершено"
+msgstr "Завершено"
 
 #: src/js/jobs/components/Cells/StatusCell.js:25
 #. placeholder is the string package type. Could be WP Forms, ACF Field Groups.
 msgid "%s are immediately published because they don't support draft mode."
-msgstr "%s публикуются немедленно, поскольку они не поддерживают режим черновика."
+msgstr "%s публикуются немедленно, так как они не поддерживают режим черновика."
 
 #: src/js/jobs/components/Cells/StatusCell.js:37
 msgid "Published — Pending review"
@@ -143,15 +145,15 @@ msgstr "Черновик — Ожидает проверки"
 
 #: src/js/jobs/components/Cells/StatusCell.js:43
 msgid "Review in progress"
-msgstr "Идет проверка"
+msgstr "Проверка в процессе"
 
 #: src/js/jobs/components/Cells/StatusCell.js:46
 msgid "Published — Review in progress"
-msgstr "Опубликовано — Выполняется проверка"
+msgstr "Опубликовано — Проверка в процессе"
 
 #: src/js/jobs/components/Cells/StatusCell.js:47
 msgid "Draft — Review in progress"
-msgstr "Черновик — Идет проверка"
+msgstr "Черновик — Проверка в процессе"
 
 #: src/js/jobs/components/Cells/StatusCell.js:51
 msgid "Insufficient funds"
@@ -160,15 +162,15 @@ msgstr "Недостаточно средств"
 #: src/js/jobs/components/Cells/StatusCell.js:57
 #: src/js/jobs/model/store/columnsManagement.js:42
 msgid "Needs update"
-msgstr "Необходимо обновление"
+msgstr "Требуется обновление"
 
 #: src/js/jobs/components/Cells/TitleCell.js:14
 msgid "View original"
-msgstr "Смотреть оригинал"
+msgstr "Просмотреть оригинал"
 
 #: src/js/jobs/components/Cells/TitleCell.js:9
 msgid "(no title)"
-msgstr "(Без заголовка)"
+msgstr "(без названия)"
 
 #: src/js/jobs/components/Cells/TranslatorCell.js:21
 #: src/js/jobs/components/Filters/FiltersList.js:63
@@ -178,7 +180,7 @@ msgstr "Автоматический перевод"
 
 #: src/js/jobs/components/Cells/TranslatorCell.js:42
 msgid "TP ID: %d"
-msgstr "Идентификатор ПП: %d"
+msgstr "ID задания перевода: %d"
 
 #: src/js/jobs/components/Filters/Buttons.js:8
 msgid "Reset"
@@ -186,16 +188,15 @@ msgstr "Сбросить"
 
 #: src/js/jobs/components/Filters/Buttons.js:9
 msgid "Filter"
-msgstr "Фильтровать
-"
+msgstr "Фильтр"
 
 #: src/js/jobs/components/Filters/FiltersList.js:103
 msgid "ID (%s)"
-msgstr "Идентификатор (%s)"
+msgstr "ID (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:105
 msgid "Title (%s)"
-msgstr "Заголовок (%s)"
+msgstr "Название (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:107
 msgid "Type (%s)"
@@ -207,7 +208,7 @@ msgstr "Язык (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:111
 msgid "Batch name (%s)"
-msgstr "Название партии (%s)"
+msgstr "Название пакета (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:113
 msgid "Status (%s)"
@@ -223,7 +224,7 @@ msgstr "Дата отправки (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:119
 msgid "Deadline (%s)"
-msgstr "Крайний срок (%s)"
+msgstr "Срок (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:159
 msgid "Clear all filters"
@@ -232,7 +233,7 @@ msgstr "Очистить все фильтры"
 #: src/js/jobs/components/Filters/FiltersList.js:55
 #: src/js/jobs/components/Filters/TranslatedBy.js:37
 msgid "Any Translation Service"
-msgstr "Любой службой переводов"
+msgstr "Любая служба перевода"
 
 #: src/js/jobs/components/Filters/FiltersList.js:59
 #: src/js/jobs/components/Filters/TranslatedBy.js:42
@@ -241,15 +242,15 @@ msgstr "Любой переводчик WordPress"
 
 #: src/js/jobs/components/Filters/Languages.js:72
 msgid "From"
-msgstr "с"
+msgstr "От"
 
 #: src/js/jobs/components/Filters/Languages.js:84
 msgid "To"
-msgstr "на"
+msgstr "До"
 
 #: src/js/jobs/components/Filters/TranslatedBy.js:28
 msgid "Anyone"
-msgstr "Любым лицом"
+msgstr "Любой"
 
 #: src/js/jobs/components/Filters/TranslationServiceJobsSwitcher.js:7
 msgid "Include jobs from translation services"
@@ -277,35 +278,35 @@ msgstr "Отменить сортировку"
 
 #: src/js/jobs/components/Table.js:97
 msgid "The bulk action is running..."
-msgstr "Массовое действие выполняется..."
+msgstr "Выполняется массовое действие..."
 
 #: src/js/jobs/components/XliffBox/Export.js:54
 msgid "Export all jobs to XLIFF 1.0"
-msgstr "Экспорт всех заданий в XLIFF 1.0"
+msgstr "Экспортировать все задания в XLIFF 1.0"
 
 #: src/js/jobs/components/XliffBox/Export.js:55
 msgid "Export all filtered jobs to XLIFF 1.0"
-msgstr "Экспорт всех отфильтрованных заданий в XLIFF 1.0"
+msgstr "Экспортировать все отфильтрованные задания в XLIFF 1.0"
 
 #: src/js/jobs/components/XliffBox/Export.js:61
 msgid "Export all jobs to XLIFF 1.1"
-msgstr "Экспорт всех заданий в XLIFF 1.1"
+msgstr "Экспортировать все задания в XLIFF 1.1"
 
 #: src/js/jobs/components/XliffBox/Export.js:62
 msgid "Export all filtered jobs to XLIFF 1.1"
-msgstr "Экспорт всех отфильтрованных заданий в XLIFF 1.1"
+msgstr "Экспортировать все отфильтрованные задания в XLIFF 1.1"
 
 #: src/js/jobs/components/XliffBox/Export.js:68
 msgid "Export all jobs to XLIFF 1.2"
-msgstr "Экспорт всех заданий в XLIFF 1.2"
+msgstr "Экспортировать все задания в XLIFF 1.2"
 
 #: src/js/jobs/components/XliffBox/Export.js:69
 msgid "Export all filtered jobs to XLIFF 1.2"
-msgstr "Экспорт всех отфильтрованных заданий в XLIFF 1.2"
+msgstr "Экспортировать все отфильтрованные задания в XLIFF 1.2"
 
 #: src/js/jobs/components/XliffBox/Export.js:81
 msgid "Export"
-msgstr "Экспортировать"
+msgstr "Экспорт"
 
 #: src/js/jobs/components/XliffBox/Import.js:38
 msgid "Select File"
@@ -321,11 +322,11 @@ msgstr "Импорт"
 
 #: src/js/jobs/components/XliffBox/Import.js:53
 msgid "Import"
-msgstr "Импортировать"
+msgstr "Импорт"
 
 #: src/js/jobs/components/XliffBox/XliffBox.js:19
 msgid "Import / Export XLIFF"
-msgstr "Импорт / Экспорт XLIFF"
+msgstr "Импорт/экспорт XLIFF"
 
 #: src/js/jobs/components/actionColumn.js:13
 msgid "Actions"
@@ -334,7 +335,7 @@ msgstr "Действия"
 #: src/js/jobs/components/columns.js:113
 #: src/js/jobs/model/store/columnsManagement.js:90
 msgid "Batch name"
-msgstr "Название партии"
+msgstr "Название пакета"
 
 #: src/js/jobs/components/columns.js:184
 msgid "Filter by %s"
@@ -343,23 +344,23 @@ msgstr "Фильтровать по %s"
 #: src/js/jobs/components/columns.js:66
 #: src/js/jobs/model/store/columnsManagement.js:71
 msgid "Title"
-msgstr "Заголовок"
+msgstr "Название"
 
 #: src/js/jobs/hooks/BulkActions/useCreateApproveTranslationReviewsAction.js:13
 msgid "Approve translation reviews"
-msgstr "Утвердить проверенные переводы"
+msgstr "Одобрить проверки перевода"
 
 #: src/js/jobs/hooks/BulkActions/useCreateCancelAction.js:20
 msgid "Cancel jobs"
-msgstr "Отменить заказы"
+msgstr "Отменить задания"
 
 #: src/js/jobs/hooks/BulkActions/useCreateCancelTranslationReviewsAction.js:16
 msgid "Cancel translation reviews"
-msgstr "Отменить проверку переводов"
+msgstr "Отменить проверки перевода"
 
 #: src/js/jobs/hooks/BulkActions/useCreateExportXLIFFAction.js:12
 msgid "Export to XLIFF %s"
-msgstr "Экспорт в XLIFF %s"
+msgstr "Экспортировать в XLIFF %s"
 
 #: src/js/jobs/hooks/BulkActions/useGetTranslationsAction.js:13
 msgid "Get translations"
@@ -367,31 +368,31 @@ msgstr "Получить переводы"
 
 #: src/js/jobs/hooks/BulkActions/useNotApplicableJobsSelected.js:15
 msgid "This action does not apply to any of the selected translation jobs"
-msgstr "Это действие не применяется ни к одному из выбранных заданий на перевод"
+msgstr "Это действие не применимо ни к одному из выбранных заданий перевода"
 
 #: src/js/jobs/model/store/applyTranslations.js:30
 msgid "Translations have been downloaded"
-msgstr "Переводы были загружены"
+msgstr "Переводы загружены"
 
 #: src/js/jobs/model/store/applyTranslations.js:31
 msgid "Translation has been downloaded"
-msgstr "Перевод был загружен"
+msgstr "Перевод загружен"
 
 #: src/js/jobs/model/store/applyTranslations.js:36
 msgid "Translations could not be downloaded"
-msgstr "Переводы не могут быть загружены"
+msgstr "Не удалось загрузить переводы"
 
 #: src/js/jobs/model/store/applyTranslations.js:37
 msgid "Translation could not be downloaded"
-msgstr "Перевод не может быть загружен"
+msgstr "Не удалось загрузить перевод"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:10
 msgid "Approving translations reviews failed!"
-msgstr "Не удалось одобрить проверки переводов"
+msgstr "Не удалось одобрить проверки переводов!"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:38
 msgid "Failed approving translations for the following posts: "
-msgstr "Не удалось одобрить переводы следующих публикаций:"
+msgstr "Не удалось одобрить переводы для следующих записей: "
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:51
 msgid "Translations reviews approved successfully!"
@@ -399,32 +400,32 @@ msgstr "Проверки переводов успешно одобрены!"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:57
 msgid "No valid jobs selected to approve translations reviews!"
-msgstr "Не выбрано подходящих заданий для одобрения проверок переводов!"
+msgstr "Не выбраны действительные задания для одобрения проверок переводов!"
 
 #: src/js/jobs/model/store/assignTranslator.js:17
 msgid "The translator has been assigned to the job"
-msgstr "Переводчик был назначен на задание"
+msgstr "Переводчик назначен на задание"
 
 #: src/js/jobs/model/store/assignTranslator.js:22
-#: src/js/jobs/model/store/openEditor.js:29
+#: src/js/jobs/model/store/openEditor.js:37
 msgid "The translator could not be assigned to the job"
-msgstr "Переводчик не может быть назначен на задание"
+msgstr "Не удалось назначить переводчика на задание"
 
 #: src/js/jobs/model/store/cancelJobs.js:22
 msgid "The jobs have been cancelled"
-msgstr "Задания были отменены"
+msgstr "Задания отменены"
 
 #: src/js/jobs/model/store/cancelJobs.js:23
 msgid "The job has been cancelled"
-msgstr "Задание было отменено"
+msgstr "Задание отменено"
 
 #: src/js/jobs/model/store/cancelJobs.js:30
 msgid "The jobs could not be cancelled"
-msgstr "Задания не могли быть отменены"
+msgstr "Не удалось отменить задания"
 
 #: src/js/jobs/model/store/cancelJobs.js:31
 msgid "The job could not be cancelled"
-msgstr "Задание не может быть отменено"
+msgstr "Не удалось отменить задание"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:26
 msgid "Translation reviews have been canceled"
@@ -436,11 +437,11 @@ msgstr "Проверка перевода отменена"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:33
 msgid "Translation reviews could not be canceled"
-msgstr "Проверки переводов не могут быть отменены"
+msgstr "Не удалось отменить проверки переводов"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:34
 msgid "Translation review could not be canceled"
-msgstr "Проверка перевода не может быть отменена"
+msgstr "Не удалось отменить проверку перевода"
 
 #: src/js/jobs/model/store/columnsManagement.js:106
 msgid "Sent on"
@@ -448,19 +449,19 @@ msgstr "Отправлено"
 
 #: src/js/jobs/model/store/columnsManagement.js:114
 msgid "Deadline"
-msgstr "Крайний срок"
+msgstr "Срок"
 
 #: src/js/jobs/model/store/columnsManagement.js:121
 msgid "Status"
-msgstr "Состояние"
+msgstr "Статус"
 
 #: src/js/jobs/model/store/columnsManagement.js:54
 msgid "Pending review"
-msgstr "В ожидании проверки"
+msgstr "Ожидает проверки"
 
 #: src/js/jobs/model/store/columnsManagement.js:65
 msgid "ID"
-msgstr "Идентификатор"
+msgstr "ID"
 
 #: src/js/jobs/model/store/columnsManagement.js:77
 msgid "Type"
@@ -472,11 +473,11 @@ msgstr "Языки"
 
 #: src/js/jobs/model/store/columnsManagement.js:99
 msgid "Translated by"
-msgstr "переводчик"
+msgstr "Переведено"
 
 #: src/js/jobs/model/store/downloadXliff.js:11
 msgid "Download XLIFF file couldn't be finished"
-msgstr "Загрузка XLIFF-файла не может быть завершена"
+msgstr "Не удалось завершить загрузку файла XLIFF"
 
 #: src/js/jobs/model/store/exportToXLIFF.js:20
 msgid "Could not load jobs for export"
@@ -484,7 +485,7 @@ msgstr "Не удалось загрузить задания для экспо�
 
 #: src/js/jobs/model/store/exportToXLIFF.js:44
 msgid "The export to XLIFF failed"
-msgstr "Не удалось экспортировать в XLIFF"
+msgstr "Экспорт в XLIFF не удался"
 
 #: src/js/jobs/model/store/importXLIFF.js:26
 msgid "Imported %d jobs"
@@ -496,11 +497,11 @@ msgstr "Импортировано одно задание"
 
 #: src/js/jobs/model/store/importXLIFF.js:41
 msgid "Could not import any job"
-msgstr "Не удалось импортировать ни одно задание"
+msgstr "Не удалось импортировать ни одного задания"
 
 #: src/js/jobs/model/store/importXLIFF.js:45
 msgid "Import failed!"
-msgstr "Не удалось импортировать!"
+msgstr "Импорт не удался!"
 
 #: src/js/jobs/model/store/jobs.js:18
 msgid "Loading translations queue"
@@ -508,7 +509,7 @@ msgstr "Загрузка очереди переводов"
 
 #: src/js/jobs/model/store/jobs.js:19
 msgid "Loading translation jobs"
-msgstr "Загрузка заданий на перевод"
+msgstr "Загрузка заданий перевода"
 
 #: src/js/jobs/model/store/jobs.js:82
 msgid "Jobs could not be loaded"
@@ -516,27 +517,27 @@ msgstr "Не удалось загрузить задания"
 
 #: src/js/jobs/model/store/resign.js:12
 msgid "Specify some jobs to resign"
-msgstr "Укажите некоторые задания, которые нужно отменить"
+msgstr "Укажите задания, от которых нужно отказаться"
 
 #: src/js/jobs/model/store/resign.js:22
 msgid "We could not resign jobs: %s"
-msgstr "Мы не смогли отменить задания: %s"
+msgstr "Не удалось отказаться от заданий: %s"
 
 #: src/js/jobs/model/store/resign.js:34
 msgid "Resigned from jobs"
-msgstr "Отказался от заданий"
+msgstr "Отказано от заданий"
 
 #: src/js/jobs/model/store/resign.js:35
 msgid "Resigned from job"
-msgstr "Отказался от задания"
+msgstr "Отказано от задания"
 
 #: src/js/jobs/model/store/resign.js:39
 msgid "Failed to resign from jobs"
-msgstr "Не удалось отказаться от задания"
+msgstr "Не удалось отказаться от заданий"
 
 #: src/js/jobs/model/store/synchronizeATEJobs.js:27
 msgid "The Advanced Editor jobs synchronization has failed"
-msgstr "Ошибка синхронизации заданий Расширенного редактора"
+msgstr "Синхронизация заданий Advanced Editor не удалась"
 
 #: src/js/jobs/model/store/synchronizeTranslationProxyJobs.js:12
 msgid "Synchronization with the Professional Translation service has failed"
@@ -545,13 +546,14 @@ msgstr "Синхронизация со службой профессионал�
 #: src/js/jobs/model/store/translationBatchSync.js:68
 msgid "%d translation has been downloaded"
 msgid_plural "%d translations have been downloaded"
-msgstr[0] "%d перевод был загружен"
-msgstr[1] "%d Переводы были загружены"
+msgstr[0] "Загружен %d перевод"
+msgstr[1] "Загружено %d перевода"
+msgstr[2] "Загружено %d переводов"
 
 #: src/js/jobs/model/store/translationBatchSync.js:83
 msgid "Batch sync finished successfully!"
-msgstr "Синхронизация партии успешно завершена!"
+msgstr "Пакетная синхронизация успешно завершена!"
 
 #: src/js/jobs/model/store/translationBatchSync.js:88
 msgid "Batch sync couldn't be finished"
-msgstr "Не удалось завершить синхронизацию партии"
+msgstr "Не удалось завершить пакетную синхронизацию"

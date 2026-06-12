@@ -87,8 +87,8 @@
             "%d mục đã được chọn",
             "%d mục đã được chọn"
          ],
-         "(%d word count)": [
-            "(%d số từ)"
+         "(%d words to translate)": [
+            "(%d từ cần dịch)"
          ],
          "%s item not showing.": [
             "%s mục không hiển thị.",
@@ -124,6 +124,9 @@
          "Cancel": [
             "Hủy"
          ],
+         "Filter by publication status": [
+            "Lọc theo trạng thái xuất bản"
+         ],
          "All Statuses": [
             "Tất cả trạng thái"
          ],
@@ -144,6 +147,9 @@
          ],
          "Translation complete": [
             "Đã hoàn thành dịch"
+         ],
+         "Filter by translation status": [
+            "Lọc theo trạng thái dịch"
          ],
          "Global Filter": [
             "Bộ lọc toàn cục"
@@ -199,6 +205,9 @@
          "This page is set to be %1$stranslated manually%2$s using the WordPress Editor": [
             "Trang này được đặt để %1$sdịch thủ công%2$s bằng cách sử dụng Trình soạn thảo WordPress"
          ],
+         "Select %s": [
+            "Chọn %s"
+         ],
          "(no title)": [
             "(không có tiêu đề)"
          ],
@@ -207,9 +216,6 @@
          ],
          "Date / Status": [
             "Ngày / Trạng thái"
-         ],
-         "Word count": [
-            "Số từ"
          ],
          "Loading items...": [
             "Đang tải các mục..."
@@ -268,6 +274,9 @@
          "Loading...": [
             "Đang tải..."
          ],
+         "Select all %ss": [
+            "Chọn tất cả %s"
+         ],
          "Save note": [
             "Lưu ghi chú"
          ],
@@ -301,6 +310,33 @@
          "Show strings in:": [
             "Hiển thị chuỗi trong:"
          ],
+         "Display Columns": [
+            "Hiển thị cột"
+         ],
+         "Close modal": [
+            "Đóng cửa sổ"
+         ],
+         "Select visible columns": [
+            "Chọn cột hiển thị"
+         ],
+         "String": [
+            "Chuỗi"
+         ],
+         "Name": [
+            "Tên"
+         ],
+         "Domain": [
+            "Miền"
+         ],
+         "Source": [
+            "Nguồn"
+         ],
+         "Type": [
+            "Loại"
+         ],
+         "Apply": [
+            "Áp dụng"
+         ],
          "All domains": [
             "Tất cả các miền"
          ],
@@ -316,8 +352,8 @@
          "Unknown": [
             "Không xác định"
          ],
-         "String": [
-            "Chuỗi"
+         "Search string or a name": [
+            "Tìm kiếm chuỗi hoặc tên"
          ],
          "All Translation Priorities": [
             "Tất cả các Ưu tiên Dịch thuật"
@@ -333,15 +369,6 @@
          ],
          "viewed": [
             "đã xem"
-         ],
-         "Domain": [
-            "Miền"
-         ],
-         "Source": [
-            "Nguồn"
-         ],
-         "Type": [
-            "Loại"
          ],
          "Strings in the theme and plugins": [
             "Các chuỗi trong giao diện và plugin"
@@ -375,6 +402,18 @@
          ],
          "Still can't find the strings you're looking to translate? Add more strings for translation.": [
             "Vẫn không tìm thấy chuỗi cần dịch? Hãy thêm chuỗi để dịch."
+         ],
+         "Not seeing strings that you are looking for?": [
+            "Không thấy chuỗi bạn đang tìm kiếm à?"
+         ],
+         "Enable the autoregistration setting.": [
+            "Hãy bật cài đặt tự động đăng ký nhé."
+         ],
+         "Visit translations the site's front-end for WPML to see which strings are missing translations. Visiting one language is enough: %s.": [
+            "Hãy truy cập phần dịch ở giao diện người dùng của trang web để WPML thấy những chuỗi nào còn thiếu bản dịch. Chỉ cần truy cập một ngôn ngữ là đủ: %s."
+         ],
+         "Alternatively, you can register strings manually.": [
+            "Hoặc bạn có thể đăng ký chuỗi thủ công."
          ],
          "Translate Everything translates only those strings which are registered in English language": [
             "Dịch Mọi Thứ chỉ dịch những chuỗi được đăng ký bằng tiếng Anh"
@@ -484,17 +523,23 @@
          "In order to translate automatically, you first need to <enable_ate>enable WPML's Advanced Translation Editor</enable_ate>.<br/>Enable the Advanced Translation Editor and click <check_again>check again</check_again> or choose a different translation option.": [
             "Để dịch tự động, trước tiên bạn cần <enable_ate>bật Trình soạn thảo Dịch thuật Nâng cao của WPML</enable_ate>.<br/>Bật Trình soạn thảo Dịch thuật Nâng cao và nhấp vào <check_again>kiểm tra lại</check_again> hoặc chọn một tùy chọn dịch thuật khác."
          ],
-         "The items you selected were translated with the Classic Translation Editor and cannot be sent for automatic translation.": [
-            "Các mục bạn đã chọn đã được dịch bằng Trình chỉnh sửa dịch cổ điển và không thể được gửi để dịch tự động."
+         "Selected content was translated using the Classic Translation Editor and can't be sent for automatic translation. To allow this, enable \"Use also for old translations\" in <wpmlSettingLink>WPML Settings</wpmlSettingLink> page.": [
+            "Nội dung đã chọn được dịch bằng Trình biên dịch cổ điển và không thể gửi để dịch tự động. Để cho phép điều này, hãy bật \"Cũng sử dụng cho bản dịch cũ\" trong trang <wpmlSettingLink>Cài đặt WPML</wpmlSettingLink>."
          ],
-         "Some of the items you selected were translated with the Classic Translation Editor. These cannot be sent for automatic translation.": [
-            "Một số mục bạn đã chọn đã được dịch bằng Trình chỉnh sửa dịch cổ điển. Những mục này không thể được gửi để dịch tự động."
+         "Some of the selected content was translated using the Classic Translation Editor and can't be sent for automatic translation. To allow this, enable \"Use also for old translations\" in <wpmlSettingLink>WPML Settings</wpmlSettingLink> page.": [
+            "Một số nội dung đã chọn được dịch bằng Trình biên dịch cổ điển và không thể gửi để dịch tự động. Để cho phép điều này, hãy bật \"Cũng sử dụng cho bản dịch cũ\" trong trang <wpmlSettingLink>Cài đặt WPML</wpmlSettingLink>."
          ],
          "Any existing content (translations) will be overwritten when creating duplicates.\nWhen duplicating content, please first duplicate parent pages to maintain the site's hierarchy.": [
             "Bất kỳ nội dung hiện có nào (bản dịch) sẽ bị ghi đè khi tạo bản sao.\nKhi sao chép nội dung, vui lòng sao chép các trang cha trước để duy trì cấu trúc phân cấp của trang web."
          ],
          "Some of the selected content is already being translated. This will cancel any in-progress translations.": [
             "Một số nội dung đã chọn đang được dịch. Điều này sẽ hủy bỏ mọi bản dịch đang thực hiện."
+         ],
+         "The selected items were translated using the WordPress Editor and will be overwritten with automatic translations.": [
+            "Các mục đã chọn được dịch bằng Trình chỉnh sửa WordPress và sẽ bị ghi đè bằng bản dịch tự động."
+         ],
+         "Some of the selected content was translated using the WordPress Editor and will be overwritten.": [
+            "Một số nội dung đã chọn được dịch bằng Trình chỉnh sửa WordPress và sẽ bị ghi đè."
          ],
          "Connection Error. Please wait a minute and reload this page. If the problem continues, please contact WPML support.": [
             "Lỗi kết nối. Vui lòng đợi một phút và tải lại trang này. Nếu vấn đề vẫn tiếp tục, vui lòng liên hệ với bộ phận hỗ trợ của WPML."
@@ -517,8 +562,8 @@
          "Your site doesn't have any reviewers yet. This means that you’re the only person who can review translations.": [
             "Trang web của bạn chưa có người kiểm duyệt nào. Điều này có nghĩa là bạn là người duy nhất có thể kiểm duyệt bản dịch."
          ],
-         "If you want other people to review the translations, go to <a>WPML → Translation Management → Translators</a> and add translators. They will be able to both review and translate content for you.": [
-            "Nếu bạn muốn người khác kiểm duyệt bản dịch, hãy đi tới <a>WPML → Quản lý Dịch thuật → Người dịch</a> và thêm người dịch. Họ sẽ có thể vừa kiểm duyệt vừa dịch nội dung cho bạn."
+         "If you want other people to review the translations, go to <a>WPML → Translation Dashboard → Translators</a> and add translators. They will be able to both review and translate content for you.": [
+            "Nếu bạn muốn người khác kiểm tra bản dịch, hãy vào <a>WPML → Bảng điều khiển dịch thuật → Người dịch</a> và thêm người dịch. Họ sẽ có thể vừa kiểm tra vừa dịch nội dung cho bạn."
          ],
          "WPML does not support duplicating strings. Your selection to duplicate strings to %1$s will be ignored if you proceed with the translation.": [
             "WPML không hỗ trợ sao chép chuỗi. Lựa chọn sao chép chuỗi sang %1$s sẽ bị bỏ qua nếu bạn tiếp tục dịch."
@@ -549,18 +594,6 @@
          ],
          "WPML will translate your content into %d languages": [
             "WPML sẽ dịch nội dung của bạn sang %d ngôn ngữ"
-         ],
-         "Content selected for translation": [
-            "Nội dung được chọn để dịch"
-         ],
-         "Volume": [
-            "Khối lượng"
-         ],
-         "~ %d words": [
-            "~ %d từ"
-         ],
-         "Total": [
-            "Tổng cộng"
          ],
          "Sent for translation": [
             "Đã gửi để dịch"
@@ -702,8 +735,8 @@
          "Selected content is already translated": [
             "Nội dung đã chọn đã được dịch"
          ],
-         "Please select a review option": [
-            "Vui lòng chọn một tùy chọn kiểm duyệt"
+         "Please select a review mode": [
+            "Vui lòng chọn chế độ kiểm soát"
          ],
          "Assign local translator or choose another option": [
             "Giao cho người dịch địa phương hoặc chọn tùy chọn khác"
@@ -719,6 +752,9 @@
          ],
          "Authenticate translation service or choose another option": [
             "Xác thực dịch vụ dịch thuật hoặc chọn tùy chọn khác"
+         ],
+         "Please provide context to enable translation": [
+            "Vui lòng cung cấp nội dung để bật dịch"
          ],
          "Please don't close this page or refresh it, as doing so will cancel the translation process.": [
             "Vui lòng không đóng hoặc làm mới trang này, vì làm vậy sẽ hủy quá trình dịch thuật."
@@ -743,6 +779,9 @@
          ],
          "Translate everything automatically from now on, without asking me.": [
             "Dịch mọi thứ tự động từ bây giờ, không cần hỏi tôi nữa."
+         ],
+         "Loading options to translate the content": [
+            "Đang tải các tùy chọn để dịch nội dung"
          ],
          "What content do you want to translate?": [
             "Bạn muốn dịch nội dung nào?"
@@ -774,6 +813,24 @@
          "Existing untranslated content on your side will not be translated.": [
             "Nội dung chưa được dịch hiện có trên trang của bạn sẽ không được dịch."
          ],
+         "WPML Settings": [
+            "Cài đặt WPML"
+         ],
+         "Some of your content was translated using the Classic Translation Editor. These translations won’t be included in Translate Everything Automatically.": [
+            "Một số nội dung của bạn đã được dịch bằng Trình biên dịch cổ điển. Những bản dịch này sẽ không được đưa vào Tự động dịch mọi nội dung."
+         ],
+         "To include them, enable \"Use also for old translations\" in <wpmlSettingLink/>.": [
+            "Để bao gồm chúng, hãy bật \"Cũng sử dụng cho bản dịch cũ\" trong <wpmlSettingLink/>."
+         ],
+         "Some of your content was translated using the WordPress Editor. These translations won’t be included in Translate Everything Automatically.": [
+            "Một số nội dung của bạn đã được dịch bằng Trình chỉnh sửa WordPress. Những bản dịch này sẽ không được đưa vào Tự động dịch mọi nội dung."
+         ],
+         "Some of your content was translated using the Classic Translation Editor or WordPress Editor. These translations won’t be included in Translate Everything Automatically.": [
+            "Một số nội dung của bạn đã được dịch bằng Trình biên dịch cổ điển hoặc Trình chỉnh sửa WordPress. Những bản dịch này sẽ không được đưa vào Tự động dịch mọi nội dung."
+         ],
+         "To include Classic Editor translations, enable \"Use also for old translations\" in <wpmlSettingLink/>.": [
+            "Để bao gồm các bản dịch từ Trình biên dịch cổ điển, hãy bật \"Cũng sử dụng cho bản dịch cũ\" trong <wpmlSettingLink/>."
+         ],
          "Existing content": [
             "Nội dung hiện có"
          ],
@@ -789,8 +846,30 @@
          "Target language": [
             "Ngôn ngữ đích"
          ],
-         "Translation Method": [
-            "Phương pháp dịch"
+         "Words to translate": [
+            "Từ cần dịch"
+         ],
+         "Apply to all languages": [
+            "Áp dụng cho tất cả ngôn ngữ"
+         ],
+         "Credits needed": [
+            "Điểm tín dụng cần thiết"
+         ],
+         "Automatic translation is not supported for %s.": [
+            "Dịch tự động không được hỗ trợ cho %s."
+         ],
+         "The selected translation engines do not support %s.": [
+            "Các công cụ dịch được chọn không hỗ trợ %s."
+         ],
+         "Summary": [
+            "Tóm tắt"
+         ],
+         "credit": [
+            "Điểm tín dụng",
+            "Điểm tín dụng"
+         ],
+         "( ~ €%3$0.2f | %1$sexact pricing%2$s )": [
+            "( ~ €%3$0.2f | %1$sgiá chính xác%2$s )"
          ],
          "Translation service additional options": [
             "Tùy chọn bổ sung cho dịch vụ dịch thuật"
@@ -831,47 +910,8 @@
          "(Me)": [
             "(Tôi)"
          ],
-         "Translation controls": [
-            "Điều khiển dịch thuật"
-         ],
          "Step 2": [
             "Bước 2"
-         ],
-         "Get More Features with WPML's Advanced Translation Editor": [
-            "Nhận thêm tính năng với Trình biên tập dịch nâng cao của WPML"
-         ],
-         "Close banner": [
-            "Đóng banner"
-         ],
-         "You're using the Classic Translation Editor, an old legacy tool, and missing out on the many features and efficiency of our Advanced Translation Editor:": [
-            "Bạn đang sử dụng Trình biên tập dịch cổ điển, một công cụ cũ, và đang bỏ lỡ nhiều tính năng và hiệu quả của Trình biên tập dịch nâng cao của chúng tôi:"
-         ],
-         "Translation Memory": [
-            "Bộ nhớ dịch"
-         ],
-         "HTML Protection": [
-            "Bảo vệ HTML"
-         ],
-         "Glossary": [
-            "Bảng thuật ngữ"
-         ],
-         "Spellchecker": [
-            "Kiểm tra chính tả"
-         ],
-         "AI Assistant": [
-            "Trợ lý AI"
-         ],
-         "Automatic Translation": [
-            "Dịch tự động"
-         ],
-         "Switch now for a faster, more convenient, and reliable translation experience.": [
-            "Chuyển đổi ngay để có trải nghiệm dịch nhanh hơn, thuận tiện hơn và đáng tin cậy hơn."
-         ],
-         "Switch Now": [
-            "Chuyển đổi ngay"
-         ],
-         "Learn More": [
-            "Tìm hiểu thêm"
          ],
          "<a><s>Read more about automatic translation credits</s></a>": [
             "<a><s>Đọc thêm về tín dụng dịch tự động</s></a>"
@@ -1042,14 +1082,20 @@
          "Translation status": [
             "Trạng thái dịch"
          ],
+         "Before translating with PTC, please provide context about your website and target audience (one-time thing).": [
+            "Trước khi dịch với PTC, vui lòng cung cấp thông tin về trang web và đối tượng mục tiêu của bạn (chỉ cần làm một lần)."
+         ],
+         "Provide Context": [
+            "Cung cấp nội dung"
+         ],
          "Default language does not support automatic translations.": [
             "Ngôn ngữ mặc định không hỗ trợ dịch tự động."
          ],
          "You must enable ATE to activate Translate Everything Automatically.": [
             "Bạn phải kích hoạt ATE để kích hoạt Dịch Mọi thứ Tự động."
          ],
-         "This item needs an update but cannot be translated automatically because it was manually translated.\nPlease, select the item and send for manual translation.": [
-            "Mục này cần cập nhật nhưng không thể được dịch tự động vì nó đã được dịch thủ công.\nVui lòng chọn mục này và gửi để dịch thủ công."
+         "This item needs a translation update but can't be translated automatically because it was translated with the Classic Translation Editor.": [
+            "Mục này cần cập nhật bản dịch nhưng không thể được dịch tự động vì nó đã được dịch bằng Trình biên dịch cổ điển."
          ],
          "This item needs update. Please, select the item and send for translation.": [
             "Mục này cần cập nhật. Vui lòng chọn mục và gửi để dịch."
@@ -1089,6 +1135,15 @@
          ],
          "needs attention": [
             "cần chú ý"
+         ],
+         "This item was translated using the WordPress Editor. Switching to the WPML's Translation Editor will overwrite the existing translation.": [
+            "Mục này đã được dịch bằng Trình chỉnh sửa WordPress. Chuyển sang Trình biên dịch của WPML sẽ ghi đè lên bản dịch hiện có."
+         ],
+         "This item needs a translation update but was previously translated using the WordPress Editor. Using the WPML's Translation Editor will overwrite the existing translation.": [
+            "Mục này cần cập nhật bản dịch nhưng trước đây đã được dịch bằng Trình chỉnh sửa WordPress. Sử dụng Trình biên dịch của WPML sẽ ghi đè lên bản dịch hiện có."
+         ],
+         "This item hasn't been translated yet and is set to use the WordPress Editor.": [
+            "Mục này chưa được dịch và được cài đặt để sử dụng Trình chỉnh sửa WordPress."
          ],
          "%1$s: %2$s%3$s": [
             "%1$s: %2$s%3$s"
@@ -1132,11 +1187,14 @@
          "Expand": [
             "Mở rộng"
          ],
-         "Close modal": [
-            "Đóng cửa sổ"
-         ],
          "Select an item": [
             "Chọn một mục"
+         ],
+         "Open dropdown": [
+            "Mở danh sách thả xuống"
+         ],
+         "Reset": [
+            "Đặt lại"
          ],
          "Search": [
             "Tìm kiếm"
@@ -1153,8 +1211,26 @@
          "%1$s Flag": [
             "Cờ %1$s"
          ],
+         "- Select a review mode -": [
+            "- Chọn chế độ kiểm soát -"
+         ],
+         "What would you like to do when WPML finishes translating your content automatically?": [
+            "Bạn muốn làm gì khi WPML hoàn thành việc dịch tự động nội dung của bạn?"
+         ],
          "What would you like to do after WPML finishes translating your content automatically?": [
             "Bạn muốn làm gì sau khi WPML hoàn thành việc dịch nội dung của bạn tự động?"
+         ],
+         "Publish without review": [
+            "Xuất bản mà không cần xem xét"
+         ],
+         "Recommended with PTC": [
+            "Được khuyến nghị với PTC"
+         ],
+         "PTC provides Better Than Human Translations that rarely need improvements, so you can confidently skip the review process. For other translation engines, a human review is recommended to confirm accuracy.": [
+            "PTC cung cấp bản dịch tốt hơn cả con người và hiếm khi cần cải thiện, vì vậy bạn có thể tự tin bỏ qua quá trình kiểm tra. Đối với các công cụ dịch thuật khác, nên có người kiểm tra để xác nhận độ chính xác."
+         ],
+         "WPML publishes translations immediately, skipping the review process.": [
+            "WPML xuất bản các bản dịch ngay lập tức, bỏ qua quy trình đánh giá."
          ],
          "Wait for review": [
             "Chờ xem xét"
@@ -1162,8 +1238,8 @@
          "Recommended with DeepL, Google and Microsoft": [
             "Được đề xuất với DeepL, Google và Microsoft"
          ],
-         "DeepL, Google, and Microsoft deliver great translations, but we recommend a human review to confirm they are correct. WPML AI provides Better Than Human Translations that understand context, so you can confidently skip the review process.": [
-            "DeepL, Google và Microsoft cung cấp các bản dịch tuyệt vời, nhưng chúng tôi khuyên bạn nên có một người kiểm tra để xác nhận chúng là chính xác. WPML AI cung cấp các bản dịch Tốt hơn Con người, hiểu được ngữ cảnh, vì vậy bạn có thể tự tin bỏ qua quá trình kiểm tra."
+         "DeepL, Google, and Microsoft deliver great translations, but we recommend a human review to confirm they are correct. PTC provides Better Than Human Translations that understand context, so you can confidently skip the review process.": [
+            "DeepL, Google và Microsoft cung cấp bản dịch tuyệt vời, nhưng chúng tôi khuyên bạn nên có người kiểm tra để xác nhận tính chính xác. PTC cung cấp bản dịch tốt hơn cả con người và hiểu được ngữ cảnh, vì vậy bạn có thể tự tin bỏ qua quá trình kiểm tra."
          ],
          "WPML keeps translations unpublished, so you can review them first.": [
             "WPML giữ các bản dịch chưa được xuất bản, để bạn có thể xem xét chúng trước."
@@ -1179,18 +1255,6 @@
          ],
          "WPML publishes translations immediately but flags them for translators to review later.": [
             "WPML xuất bản bản dịch ngay lập tức nhưng đánh dấu chúng để người dịch xem xét sau."
-         ],
-         "Publish without review": [
-            "Xuất bản mà không cần xem xét"
-         ],
-         "Recommended with WPML AI": [
-            "Được khuyến nghị với WPML AI"
-         ],
-         "WPML AI provides Better Than Human Translations that rarely need improvements, so you can confidently skip the review process. For other translation engines, a human review is recommended to confirm accuracy.": [
-            "WPML AI cung cấp Bản dịch Tốt hơn Con người hiếm khi cần cải thiện, vì vậy bạn có thể tự tin bỏ qua quá trình xem xét. Đối với các công cụ dịch thuật khác, nên có sự xem xét của con người để xác nhận tính chính xác."
-         ],
-         "WPML publishes translations immediately, skipping the review process.": [
-            "WPML xuất bản các bản dịch ngay lập tức, bỏ qua quy trình đánh giá."
          ]
       }
    }

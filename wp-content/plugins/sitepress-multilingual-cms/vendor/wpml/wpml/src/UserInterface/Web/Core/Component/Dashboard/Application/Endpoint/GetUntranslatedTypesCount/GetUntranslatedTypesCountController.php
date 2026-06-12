@@ -3,28 +3,21 @@
 namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetUntranslatedTypesCount;
 
 use WPML\Core\Port\Endpoint\EndpointInterface;
-use WPML\Core\SharedKernel\Component\Item\Application\Query\UntranslatedTypesCountQueryInterface;
+use WPML\Core\SharedKernel\Component\Item\Application\Service\UntranslatedService;
 
 class GetUntranslatedTypesCountController implements EndpointInterface {
 
-  /** @var UntranslatedTypesCountQueryInterface[] */
-  private $queries;
+  /** @var UntranslatedService */
+  private $service;
 
 
-  /**
-   * @param UntranslatedTypesCountQueryInterface[] $queries
-   */
-  public function __construct( array $queries ) {
-    $this->queries = $queries;
+  public function __construct( UntranslatedService $service ) {
+    $this->service = $service;
   }
 
 
   public function handle( $requestData = null ): array {
-    $counts = [];
-
-    foreach ( $this->queries as $query ) {
-      $counts = array_merge( $counts, $query->get() );
-    }
+    $counts = $this->service->getUntranslatedTypesCounts();
 
     return array_map(
       function ( $count ) {

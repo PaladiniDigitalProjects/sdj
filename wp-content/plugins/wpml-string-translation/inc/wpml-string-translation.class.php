@@ -538,6 +538,9 @@ class WPML_String_Translation {
 				</div>
 				<div id="wpml-st-localization-section" class="wpml-section-content wpml-section-content-wide">';
 		$this->renderChangedMoFilesBlock( $plugin_localization );
+
+		do_action( 'wpml_st_before_localization_ui_table' );
+
 		echo '		<table id="wpml-st-localization-table" class="widefat striped">';
 		/** @phpstan-ignore-next-line */
 		echo $localization->renderTemplate( 'theme-plugin-localization-ui-table-header.twig', [
@@ -555,10 +558,6 @@ class WPML_String_Translation {
 				'scan_files'  => [
 					'action' => WPML_ST_Theme_Plugin_Scan_Files_Ajax_Factory::AJAX_ACTION,
 					'nonce'  => wp_create_nonce( WPML_ST_Theme_Plugin_Scan_Files_Ajax_Factory::AJAX_ACTION ),
-				],
-				'update_hash' => [
-					'action' => WPML_ST_Update_File_Hash_Ajax_Factory::AJAX_ACTION,
-					'nonce'  => wp_create_nonce( WPML_ST_Update_File_Hash_Ajax_Factory::AJAX_ACTION ),
 				],
 			],
 			'endpoints' => [
@@ -679,15 +678,13 @@ class WPML_String_Translation {
 	function scan_theme_for_strings() {
 		require_once WPML_ST_PATH . '/inc/gettext/wpml-theme-string-scanner.class.php';
 
-		$file_hashing     = new WPML_ST_File_Hashing();
-		$scan_for_strings = new WPML_Theme_String_Scanner( wpml_get_filesystem_direct(), $file_hashing );
+		$scan_for_strings = new WPML_Theme_String_Scanner( wpml_get_filesystem_direct() );
 		$scan_for_strings->scan();
 	}
 
 	function scan_plugins_for_strings() {
 		require_once WPML_ST_PATH . '/inc/gettext/wpml-plugin-string-scanner.class.php';
-		$file_hashing     = new WPML_ST_File_Hashing();
-		$scan_for_strings = new WPML_Plugin_String_Scanner( wpml_get_filesystem_direct(), $file_hashing );
+		$scan_for_strings = new WPML_Plugin_String_Scanner( wpml_get_filesystem_direct() );
 		$scan_for_strings->scan();
 	}
 
@@ -781,62 +778,6 @@ class WPML_String_Translation {
 			)
 		) ? strlen( $string ) / 6
 			: count( explode( ' ', $string ) );
-	}
-
-	function cancel_remote_translation( $rid ) {
-		/** @var wpdb $wpdb */
-		global $wpdb;
-
-		/** @var string $sql */
-		$sql = $wpdb->prepare(
-			"	SELECT string_translation_id
-															FROM {$wpdb->prefix}icl_string_status
-															WHERE rid = %d",
-			$rid
-		);
-
-		$translation_ids = $wpdb->get_col(
-			$sql
-		);
-		$cancel_count    = 0;
-		foreach ( $translation_ids as $translation_id ) {
-			$res          = (bool) $this->cancel_local_translation( $translation_id );
-			$cancel_count = $res ? $cancel_count + 1 : $cancel_count;
-		}
-
-		return $cancel_count;
-	}
-
-	function cancel_local_translation( $id, $return_original_id = false ) {
-		global $wpdb;
-		$string_id = $wpdb->get_var(
-			$wpdb->prepare(
-				"	SELECT string_id
-														FROM {$wpdb->prefix}icl_string_translations
-														WHERE id=%d AND status IN (%d, %d)",
-				$id,
-				ICL_TM_IN_PROGRESS,
-				ICL_TM_WAITING_FOR_TRANSLATOR
-			)
-		);
-		if ( $string_id ) {
-			$wpdb->update(
-				$wpdb->prefix . 'icl_string_translations',
-				array(
-					'status'              => ICL_TM_NOT_TRANSLATED,
-					'translation_service' => null,
-					'translator_id'       => null,
-					'batch_id'            => null,
-				),
-				array( 'id' => $id )
-			);
-			icl_update_string_status( $string_id );
-			$res = $return_original_id ? $string_id : $id;
-		} else {
-			$res = false;
-		}
-
-		return $res;
 	}
 
 	/**
@@ -990,17 +931,14 @@ class WPML_String_Translation {
 		global $wpdb;
 
 		$icl_string_positions_query    = "DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id=%d";
-		$icl_string_status_query       = "DELETE FROM {$wpdb->prefix}icl_string_status WHERE string_translation_id IN (SELECT id FROM {$wpdb->prefix}icl_string_translations WHERE string_id=%d)";
 		$icl_string_translations_query = "DELETE FROM {$wpdb->prefix}icl_string_translations WHERE string_id=%d";
 		$icl_strings_query             = "DELETE FROM {$wpdb->prefix}icl_strings WHERE id=%d";
 
 		$icl_string_positions_prepare    = $wpdb->prepare( $icl_string_positions_query, $string_id );
-		$icl_string_status_prepare       = $wpdb->prepare( $icl_string_status_query, $string_id );
 		$icl_string_translations_prepare = $wpdb->prepare( $icl_string_translations_query, $string_id );
 		$icl_strings_prepare             = $wpdb->prepare( $icl_strings_query, $string_id );
 
 		$wpdb->query( $icl_string_positions_prepare );
-		$wpdb->query( $icl_string_status_prepare );
 		$wpdb->query( $icl_string_translations_prepare );
 		$wpdb->query( $icl_strings_prepare );
 

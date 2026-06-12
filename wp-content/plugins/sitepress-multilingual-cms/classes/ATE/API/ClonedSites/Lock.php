@@ -4,9 +4,16 @@
 namespace WPML\TM\ATE\ClonedSites;
 
 use WPML\FP\Obj;
+use WPML\API\Settings;
+use WPML\TM\ATE\API\FingerprintGenerator;
+use WPML\TM\Upgrade\Commands\ValidateAliasDomain;
+use function WPML\Container\make;
 
 class Lock {
 	const CLONED_SITE_OPTION = 'otgs_wpml_tm_ate_cloned_site_lock';
+
+	/** @var FingerprintGenerator */
+	private static $fingerprint_generator;
 
 	public function lock( $lockData ) {
 		if ( $this->isLockDataPresent( $lockData ) ) {
@@ -60,11 +67,47 @@ class Lock {
 	}
 
 	public function unlock() {
+		$lockData = $this->getLockData();
+
+		Settings::setAndSave( 'migrated_site',
+			[
+				'old_url' => $lockData['urlCurrentlyRegisteredInAMS'],
+				'new_url' => $lockData['urlUsedToMakeRequest'],
+			]
+		);
+
+		static::doUnlock();
+		delete_option( ValidateAliasDomain::BANNER_CONTEXT_OPTION );
+	}
+
+	private static function doUnlock() {
 		delete_option( self::CLONED_SITE_OPTION );
 	}
 
 	public static function isLocked() {
-		return (bool) get_option( self::CLONED_SITE_OPTION, false ) && \WPML_TM_ATE_Status::is_enabled();
+		$option = get_option( self::CLONED_SITE_OPTION, false );
+
+		if ( $option && isset( $option['stored_fingerprint'] ) && isset( $option['stored_fingerprint']['wp_url'] ) ) {
+			$stored_url = $option['stored_fingerprint']['wp_url'];
+
+			// Use FingerprintGenerator to get current URL.
+			$current_url = self::getFingerPrintGenerator()->getClonedSiteUrl();
+
+			if ( $stored_url === $current_url ) {
+				// URLs match - this is the original site, so we should unlock it.
+				static::doUnlock();
+				return false;
+			}
+		}
+
+		return (bool) $option && \WPML_TM_ATE_Status::is_enabled();
+	}
+
+	private static function getFingerPrintGenerator() {
+		if ( ! self::$fingerprint_generator ) {
+			self::$fingerprint_generator = make( FingerprintGenerator::class );
+		}
+		return self::$fingerprint_generator;
 	}
 
 }

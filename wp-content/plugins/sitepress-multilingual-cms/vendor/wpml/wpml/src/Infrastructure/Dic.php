@@ -2,9 +2,9 @@
 
 namespace WPML\Infrastructure;
 
-use Auryn\ConfigException;
-use Auryn\Injector;
 use WPML\DicInterface;
+use WPML\PHP\Auryn\ConfigException;
+use WPML\PHP\Auryn\Injector;
 
 /**
  * DIC implemmentation using Auryn.
@@ -34,7 +34,7 @@ class Dic implements DicInterface {
    * @psalm-suppress MixedReturnStatement
    *
    * @return T
-   * @throws \Auryn\InjectionException
+   * @throws \WPML\PHP\Auryn\InjectionException
    *
    */
   public function make( $classname, $args = [] ) {
@@ -48,7 +48,7 @@ class Dic implements DicInterface {
    * @param string|object $classnameOrObject
    *
    * @return void
-   * @throws \Auryn\ConfigException
+   * @throws \WPML\PHP\Auryn\ConfigException
    *
    */
   public function share( $classnameOrObject ) {
@@ -89,7 +89,7 @@ class Dic implements DicInterface {
    * @param string $implementationName
    *
    * @return void
-   * @throws \Auryn\ConfigException
+   * @throws \WPML\PHP\Auryn\ConfigException
    *
    */
   public function alias( $interfaceName, $implementationName ) {

@@ -22,6 +22,12 @@ return [
   // Updates to db schema or other data.
   'updates' => require __DIR__ . '/config-updates.php',
 
+  // Collecting and sending content stats of the site
+  'contentStatsScripts' =>  require __DIR__ . '/config-content-stats-scripts.php',
+
+  // Check if posthog should record on site
+  'checkPosthogShouldRecord' =>  require __DIR__ . '/config-posthog-should-record.php',
+
   // EVENTS
   // Events which are triggered by a 3rd party (WordPress other plugin) AND
   // which are triggering the start of some WPML code, goes into

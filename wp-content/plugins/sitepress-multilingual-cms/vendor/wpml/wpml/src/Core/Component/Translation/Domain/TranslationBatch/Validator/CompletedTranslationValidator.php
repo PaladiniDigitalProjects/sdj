@@ -2,17 +2,25 @@
 
 namespace WPML\Core\Component\Translation\Domain\TranslationBatch\Validator;
 
+use WPML\Core\Component\Translation\Domain\CompletedTranslationDetector;
 use WPML\Core\Component\Translation\Domain\HowToHandleExistingTranslationType;
 use WPML\Core\Component\Translation\Domain\TranslationBatch\Element;
 use WPML\Core\Component\Translation\Domain\TranslationBatch\TargetLanguage;
 use WPML\Core\Component\Translation\Domain\TranslationBatch\TranslationBatch;
 use WPML\Core\Component\Translation\Domain\TranslationMethod\AutomaticMethod;
-use WPML\Core\SharedKernel\Component\Translation\Domain\TranslationStatus;
 
 
 class CompletedTranslationValidator implements ValidatorInterface {
 
   const IGNORED_ELEMENT_REASON = 'content_already_translated';
+
+  /** @var CompletedTranslationDetector */
+  private $completedTranslationDetector;
+
+
+  public function __construct( CompletedTranslationDetector $completedTranslationDetector ) {
+    $this->completedTranslationDetector = $completedTranslationDetector;
+  }
 
 
   /**
@@ -72,12 +80,16 @@ class CompletedTranslationValidator implements ValidatorInterface {
     $existingTranslations = $element->getExistingTranslations();
 
     foreach ( $existingTranslations as $translation ) {
-      if (
-        $translation->getTargetLanguageCode() === $languageCode &&
-        $translation->getStatus()->get() === TranslationStatus::COMPLETE &&
-        ! $translation->needsUpdate()
-      ) {
-        return true;
+      if ( $translation->getTargetLanguageCode() === $languageCode ) {
+
+        if ( $this->completedTranslationDetector->isTranslationCompleted(
+          $translation->getStatus()->get(),
+          $translation->needsUpdate(),
+          $translation->getId(),
+          $translation->getTranslatedElementId()
+        ) ) {
+          return true;
+        }
       }
     }
 

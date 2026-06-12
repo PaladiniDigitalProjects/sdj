@@ -74,14 +74,11 @@ class PDS_luge_Public {
 		
 		// Ensure bundle.js is loaded AFTER GSAP & ScrollTrigger
 		wp_enqueue_script(
-			$this->PDS_luge, 
-			plugin_dir_url(__FILE__) . 'js/bundle.js', 
-			array(),  // ✅ Declare dependencies
-			$this->version, 
+			$this->PDS_luge,
+			plugin_dir_url(__FILE__) . 'js/bundle.js',
+			array( 'jquery' ),
+			$this->version,
 			true
 		);
-	
-		// Optionally enqueue jQuery if needed
-		wp_enqueue_script('pds-jquery', plugin_dir_url(__FILE__) . 'js/jquery-3.7.1.min.js', array(), null, true);
 	}
 }

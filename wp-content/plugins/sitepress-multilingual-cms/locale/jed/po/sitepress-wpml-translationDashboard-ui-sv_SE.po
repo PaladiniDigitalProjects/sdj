@@ -2,10 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
-
-#: src/js/ate/status-icons/StatusUpdater.js:80
-msgid "Refreshing translation status"
-msgstr "Uppdaterar översättningsstatus"
+"Language: sv_SE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/components/translation/TranslationMethod.js:115
 msgid "Your pending automatic translations will be canceled."
@@ -17,7 +15,7 @@ msgstr "Spara"
 
 #: src/js/components/translation/TranslationMethod.js:125
 msgid "Go to the <a>Translation Management Dashboard</a> to translate your content."
-msgstr "Gå till <a>översättningshanteringens instrumentpanel</a> för att översätta ditt innehåll."
+msgstr "Gå till <a>Översättningshanteringspanelen</a> för att översätta ditt innehåll."
 
 #: src/js/components/translation/TranslationMethod.js:142
 msgid "Review the translations before publishing"
@@ -37,15 +35,15 @@ msgstr "Översätt allt"
 
 #: src/js/components/translation/TranslationMethod.js:71
 msgid "WPML will automatically translate content that you publish or update"
-msgstr "WPML kommer automatiskt att översätta innehåll som du publicerar eller uppdaterar"
+msgstr "WPML översätter automatiskt innehåll som du publicerar eller uppdaterar"
 
 #: src/js/components/translation/TranslationMethod.js:74
 msgid "How do you want to translate this site?"
-msgstr "Hur vill du översätta denna webbplats?"
+msgstr "Hur vill du översätta den här webbplatsen?"
 
 #: src/js/components/translation/TranslationMethod.js:97
 msgid "Translate Some"
-msgstr "Översätt vissa"
+msgstr "Översätt delvis"
 
 #: src/js/components/translation/TranslationMethod.js:99
 msgid "I want to choose which content to translate"
@@ -65,7 +63,7 @@ msgstr "En del av innehållet du vill översätta är redan översatt"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:30
 msgid "What do you want to do with the content that’s already translated?"
-msgstr "Vad vill du göra med innehållet som redan är översatt?"
+msgstr "Vad vill du göra med innehåll som redan är översatt?"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:39
 msgid "Leave existing translations as is"
@@ -79,27 +77,27 @@ msgstr "Du valde att granska översättningar innan publicering."
 msgid ""
 "If you retranslate content that's already published, the changes will be "
 "applied directly to live pages or posts."
-msgstr "Om du översätter innehåll som redan är publicerat kommer ändringarna att tillämpas direkt på live-sidor eller inlägg."
+msgstr "Om du översätter innehåll som redan är publicerat igen, kommer ändringarna att tillämpas direkt på live-sidor eller inlägg."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:82
 msgid ""
 "This also updates the translation memory for your site. Read more about <a "
 "href=\"%s\" target=\"_blank\" >translation memory</a>"
-msgstr "Detta uppdaterar också översättningsminnet för din webbplats. Läs mer om <a href=\"%s\" target=\"_blank\" >översättningsminne</a>"
+msgstr "Detta uppdaterar även översättningsminnet för din webbplats. Läs mer om <a href=\"%s\" target=\"_blank\" >översättningsminne</a>"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:89
 msgid ""
 "Allows you to re-translate your content and update the translation memory "
 "for your site. Read more about <a href=\"%s\" target=\"_blank\" "
 ">translation memory</a>"
-msgstr "Gör att du kan översätta ditt innehåll igen och uppdatera översättningsminnet för din webbplats. Läs mer om <a href=\"%s\" target=\"_blank\" >översättningsminne</a>"
+msgstr "Låter dig översätta ditt innehåll igen och uppdatera översättningsminnet för din webbplats. Läs mer om <a href=\"%s\" target=\"_blank\" >översättningsminne</a>"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:96
 msgid ""
 "Allows your translators to re-translate your content and update the "
 "translation memory for your site. Read more about <a href=\"%s\" "
 "target=\"_blank\" >translation memory</a>"
-msgstr "Gör det möjligt för dina översättare att översätta ditt innehåll på nytt och uppdatera översättningsminnet för din webbplats. Läs mer om <a href=\"%s\" target=\"_blank\" >översättningsminne</a>"
+msgstr "Låter dina översättare översätta ditt innehåll igen och uppdatera översättningsminnet för din webbplats. Läs mer om <a href=\"%s\" target=\"_blank\" >översättningsminne</a>"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:98
 msgid ""
@@ -132,7 +130,7 @@ msgid ""
 "You can only automatically translate content from your site's default "
 "language (English), to your site's other languages. Deselect content in "
 "your site's secondary languages to proceed."
-msgstr "Du kan endast automatiskt översätta innehåll från din webbplats standardspråk (engelska) till dina andra språk på webbplatsen. Avmarkera innehåll på dina sekundära språk för att fortsätta."
+msgstr "Du kan bara automatiskt översätta innehåll från din webbplats standard språk (engelska) till din webbplats andra språk. Avmarkera innehåll på din webbplats sekundära språk för att fortsätta."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToTranslate.js:92
 #. %s is the name of the default language. </a>
@@ -140,7 +138,7 @@ msgid ""
 "You can only automatically translate content from your primary language "
 "(%s) to other languages. Use the language switcher at the top of this page "
 "to switch to %s."
-msgstr "Du kan endast automatiskt översätta innehåll från ditt primära språk (%s) till andra språk. Använd språkväxlaren högst upp på denna sida för att byta till %s."
+msgstr "Du kan bara automatiskt översätta innehåll från ditt primära språk (%s) till andra språk. Använd språkbytaren högst upp på denna sida för att växla till %s."
 
 #: src/js/translationDashboard/sending-to-translation/components/LanguageRow.js:49
 msgid ""
@@ -172,7 +170,7 @@ msgstr "Valt innehåll är redan översatt"
 msgid ""
 "Selected content includes items in a language other than your site's "
 "default language."
-msgstr "Valt innehåll inkluderar objekt på ett annat språk än din webbplats standardspråk."
+msgstr "Valt innehåll inkluderar objekt på ett annat språk än din webbplats standard språk."
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:74
 msgid "Choose at least one translation action"
@@ -188,11 +186,11 @@ msgstr "Börja översätta och duplicera"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:90
 msgid "Add to Translation Basket and duplicate"
-msgstr "Lägg till i översättningskorg och duplicera"
+msgstr "Lägg till i översättningskorgen och duplicera"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:92
 msgid "Add to Translation Queue and duplicate"
-msgstr "Lägg till i översättningskö och duplicera"
+msgstr "Lägg till i översättningskön och duplicera"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:96
 msgid "Start translating"
@@ -200,7 +198,7 @@ msgstr "Börja översätta"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:98
 msgid "Add to Translation Basket"
-msgstr "Lägg till i översättningskorg"
+msgstr "Lägg till i översättningskorgen"
 
 #: src/js/translationDashboard/sending-to-translation/components/TranslationReviewModal.js:37
 msgid "One more thing..."
@@ -240,19 +238,19 @@ msgstr "Du behöver krediter för att använda automatisk översättning."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:113
 msgid "Finish setting up %s on your site"
-msgstr "Slutför inställningen av %s på din webbplats"
+msgstr "Slutför installationen av %s på din webbplats"
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:117
 msgid ""
 "You need to authenticate %s to send them content for translation. Visit the "
 "%s to finish the setup."
-msgstr "Du måste autentisera %s för att skicka dem innehåll för översättning. Besök %s för att slutföra inställningen."
+msgstr "Du måste autentisera %s för att skicka innehåll för översättning. Besök %s för att slutföra installationen."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:14
 msgid ""
 "Connection Error. Please wait a minute and reload this page. If the problem "
 "continues, please <a>contact WPML support</a>."
-msgstr "Anslutningsfel. Vänta en minut och ladda om denna sida. Om problemet kvarstår, vänligen <a>kontakta WPML-supporten</a>."
+msgstr "Anslutningsfel. Vänta en minut och ladda om sidan. Om problemet kvarstår, vänligen <a>kontakta WPML-support</a>."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:143
 msgid "Add a translator to use %s."
@@ -274,19 +272,19 @@ msgstr "Dina valda automatiska översättningsmotorer stöder inte följande spr
 msgid ""
 "Some of the selected content is already being translated. This will cancel "
 "any in-progress translations."
-msgstr "En del av det valda innehållet håller redan på att översättas. Detta kommer att avbryta pågående översättningar."
+msgstr "En del av det valda innehållet översätts redan. Detta kommer att avbryta alla pågående översättningar."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:44
 msgid ""
 "Any existing content (translations) will be overwritten when creating "
 "duplicates."
-msgstr "Allt befintligt innehåll (översättningar) kommer att skrivas över när du skapar dubbletter."
+msgstr "Befintligt innehåll (översättningar) kommer att skrivas över när du skapar dubbletter."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:45
 msgid ""
 "When duplicating content, please first duplicate parent pages to maintain "
 "the site's hierarchy."
-msgstr "När du duplicerar innehåll, vänligen duplicera först föräldrasidor för att behålla webbplatsens hierarki."
+msgstr "När du duplicerar innehåll, duplicera först överordnade sidor för att bibehålla webbplatsens hierarki."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:68
 msgid ""
@@ -297,33 +295,4 @@ msgstr "För att tilldela innehåll till en översättare, <a href=\"%s\" target
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:94
 msgid "Translators Tab"
-msgstr "Översättarfliken"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:12
-msgid ""
-"Some of the content that you selected for translation includes fields that "
-"are encoded. Translators will not be able to work on this kind of content, "
-"so we removed it from the job."
-msgstr "En del av innehållet som du valde för översättning innehåller kodade fält. Översättare kan inte arbeta med denna typ av innehåll, så vi tog bort det från uppdraget."
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:24
-msgid ""
-"To fix this problem, you need to tell WPML how these fields are encoded, so "
-"that WPML can decode them before sending for translation."
-msgstr "För att lösa detta problem behöver du berätta för WPML hur dessa fält är kodade, så att WPML kan avkoda dem innan de skickas för översättning."
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:30
-msgid "WPML cannot send some of the content to translation"
-msgstr "WPML kan inte skicka en del av innehållet för översättning"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:44
-msgid "<s>%s</s>: There are base64 encoded fields in this document"
-msgstr "<s>%s</s>: Det finns base64-kodade fält i detta dokument"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:62
-msgid "Hide details"
-msgstr "Dölj detaljer"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:62
-msgid "Show details"
-msgstr "Visa detaljer"
+msgstr "Fliken Översättare"

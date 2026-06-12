@@ -10,8 +10,8 @@ use WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery\Q
 class SearchQueryBuilder implements SearchQueryBuilderInterface {
   use SearchQueryBuilderTrait;
 
-  const WORD_COUNT_META_KEY = '_wpml_word_count';
   const TRANSLATOR_NOTE_META_KEY = '_icl_translator_note';
+  const USE_NATIVE_EDITOR_META_KEY = '_wpml_post_translation_editor_native';
 
   /** @var QueryPrepareInterface $queryPrepare */
   private $queryPrepare;
@@ -61,8 +61,8 @@ class SearchQueryBuilder implements SearchQueryBuilderInterface {
 
     return "
         {$postColumns},
-        IFNULL(meta_wc.meta_value, 0) AS word_count,
-        meta_tn.meta_value AS translator_note        
+        meta_tn.meta_value AS translator_note,
+        meta_ne.meta_value AS use_native_editor
 		";
   }
 
@@ -85,19 +85,18 @@ class SearchQueryBuilder implements SearchQueryBuilderInterface {
         AND source_t.language_code = '{$sourceLanguage}'
             
             
-      LEFT JOIN wp_icl_translations target_t
+      LEFT JOIN {$this->queryPrepare->prefix()}icl_translations target_t
          ON target_t.trid = source_t.trid
              AND target_t.language_code IN ({$gluedEscapedLanguageCodes})
-       LEFT JOIN wp_icl_translation_status target_ts
+       LEFT JOIN {$this->queryPrepare->prefix()}icl_translation_status target_ts
          ON target_ts.translation_id = target_t.translation_id
-        
-  
-      LEFT JOIN {$this->queryPrepare->prefix()}postmeta meta_wc
-        ON meta_wc.post_id = p.ID
-        AND meta_wc.meta_key = '" . self::WORD_COUNT_META_KEY . "'
+      
       LEFT JOIN {$this->queryPrepare->prefix()}postmeta meta_tn
         ON meta_tn.post_id = p.ID
         AND meta_tn.meta_key = '" . self::TRANSLATOR_NOTE_META_KEY . "'
+      LEFT JOIN {$this->queryPrepare->prefix()}postmeta meta_ne
+        ON meta_ne.post_id = p.ID
+        AND meta_ne.meta_key = '" . self::USE_NATIVE_EDITOR_META_KEY . "'
       WHERE p.post_type = '{$criteria->getType()}'
           {$this->buildPostStatusCondition( $criteria->getPublicationStatus() )}
           {$this->buildPostTitleCondition( $criteria )}

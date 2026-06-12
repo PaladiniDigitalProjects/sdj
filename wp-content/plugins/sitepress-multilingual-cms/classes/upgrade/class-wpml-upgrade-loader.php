@@ -24,6 +24,9 @@ use WPML\Upgrade\Commands\CreateBackgroundTaskTable;
 use WPML\Upgrade\Commands\RemoveTmWcmlPromotionNotice;
 use WPML\TM\Upgrade\Commands\SetCorrectTranslateEverythingState;
 use WPML\TM\Upgrade\Commands\MigrateTranslateEverythingCompletedOption;
+use WPML\TM\Upgrade\Commands\EnableHandleMediaAutoOptionForNewInstalls;
+use WPML\TM\Upgrade\Commands\CreateUnsolvableJobsTable;
+use WPML\TM\Upgrade\Commands\ValidateAliasDomain;
 
 /**
  * Class WPML_Upgrade_Loader
@@ -143,11 +146,13 @@ class WPML_Upgrade_Loader implements IWPML_Action {
 			$this->factory->create_command_definition( AddAteSyncCountToTranslationJob::class, [ $this->upgrade_schema ], [ 'admin', 'ajax' ] ),
 			$this->factory->create_command_definition( 'WPML_TM_Add_TP_ID_Column_To_Translation_Status', [ $this->upgrade_schema ], array( 'admin', 'ajax', 'front-end' ) ),
 			$this->factory->create_command_definition( 'WPML_TM_Add_TP_Revision_And_TS_Status_Columns_To_Translation_Status', [ $this->upgrade_schema ], array( 'admin', 'ajax', 'front-end' ) ),
-			$this->factory->create_command_definition( 'WPML_TM_Add_TP_Revision_And_TS_Status_Columns_To_Core_Status', [ $this->upgrade_schema ], array( 'admin', 'ajax', 'front-end' ) ),
 			$this->factory->create_command_definition( RemoveEndpointsOption::class, [], [ 'admin', 'ajax', 'front-end' ] ),
 			$this->factory->create_command_definition( RemoveTmWcmlPromotionNotice::class, [], [ 'admin' ] ),
 			$this->factory->create_command_definition( SetCorrectTranslateEverythingState::class, [], [ 'admin' ] ),
 			$this->factory->create_command_definition( MigrateTranslateEverythingCompletedOption::class, [], [ 'admin' ] ),
+			$this->factory->create_command_definition( EnableHandleMediaAutoOptionForNewInstalls::class, [], [ 'admin' ] ),
+			$this->factory->create_command_definition( CreateUnsolvableJobsTable::class, [ $this->upgrade_schema ], [ 'admin' ] ),
+			$this->factory->create_command_definition( ValidateAliasDomain::class, [], [ 'admin' ] ),
 		];
 
 		$upgrade = new WPML_Upgrade( $commands, $this->sitepress, $this->factory );

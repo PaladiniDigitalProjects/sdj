@@ -3,6 +3,7 @@
 namespace WPML\TM\ATE\AutoTranslate\Repository;
 
 use WPML\TM\ATE\Jobs;
+use WPML\Translation\TranslateJobErrorServiceFactory;
 
 class JobsCount implements JobsCountInterface {
  	/** @var Jobs $jobs */
@@ -17,7 +18,8 @@ class JobsCount implements JobsCountInterface {
 	 *   allCount: int,
 	 *   allAutomaticCount: int,
 	 *   automaticWithoutLongstandingCount: int,
-	 *   needsReviewCount: int
+	 *   needsReviewCount: int,
+	 *   unsolvableJobsCount: int
 	 * }
 	 */
 	public function get(): array {
@@ -26,6 +28,7 @@ class JobsCount implements JobsCountInterface {
 			'allAutomaticCount'                 => $this->jobs->getCountOfAutomaticInProgress( true ),
 			'automaticWithoutLongstandingCount' => $this->jobs->getCountOfAutomaticInProgress( false ),
 			'needsReviewCount'                  => $this->jobs->getCountOfNeedsReview(),
+			'unsolvableJobsCount'               => TranslateJobErrorServiceFactory::create()->getCount(),
 		];
 	}
 

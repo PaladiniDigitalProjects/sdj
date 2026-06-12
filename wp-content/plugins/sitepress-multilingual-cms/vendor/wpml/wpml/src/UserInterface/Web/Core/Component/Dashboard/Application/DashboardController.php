@@ -3,6 +3,7 @@
 
 namespace WPML\UserInterface\Web\Core\Component\Dashboard\Application;
 
+use WPML\Core\Component\ATE\Application\Query\WebsiteContextQueryInterface;
 use WPML\Core\Component\Post\Application\Query\Dto\PublicationStatusDto;
 use WPML\Core\Component\Post\Application\Query\PublicationStatusQueryInterface;
 use WPML\Core\Component\Translation\Application\Query\JobQueryInterface;
@@ -15,6 +16,7 @@ use WPML\Core\Component\TranslationProxy\Application\Service\TranslationProxySer
 use WPML\Core\SharedKernel\Component\TranslationProxy\Domain\Query\FetchRemoteTranslationServiceException;
 use WPML\Core\SharedKernel\Component\Translator\Application\Service\Dto\TranslatorDto;
 use WPML\Core\Port\Persistence\Exception\DatabaseErrorException;
+use WPML\Core\Port\PluginInterface;
 use WPML\Core\SharedKernel\Component\Language\Application\Query\Dto\LanguageDto;
 use WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface;
 use WPML\Core\SharedKernel\Component\Post\Application\Query\Dto\PostTypeDto;
@@ -113,6 +115,12 @@ class DashboardController implements
   /** @var TranslationBatchesQueryInterface */
   private $translationBatchesQuery;
 
+  /** @var WebsiteContextQueryInterface */
+  private $websiteContextQuery;
+
+  /** @var PluginInterface */
+  private $plugin;
+
   public function __construct(
     DashboardTabsInterface $dashboardTabs,
     DashboardTranslatableTypesQueryInterface $translatableItems,
@@ -130,7 +138,9 @@ class DashboardController implements
     TranslationProxyServiceInterface $translationProxyService,
     UserQueryInterface $userQuery,
     LanguagePreferencesLoader $languagePreferencesLoader,
-    TranslationBatchesQueryInterface $translationBatchesQuery
+    TranslationBatchesQueryInterface $translationBatchesQuery,
+    WebsiteContextQueryInterface $websiteContextQuery,
+    PluginInterface $plugin
   ) {
     $this->dashboardTabs                    = $dashboardTabs;
     $this->translatableItems                = $translatableItems;
@@ -149,6 +159,8 @@ class DashboardController implements
     $this->userQuery                        = $userQuery;
     $this->languagePreferencesLoader        = $languagePreferencesLoader;
     $this->translationBatchesQuery          = $translationBatchesQuery;
+    $this->websiteContextQuery              = $websiteContextQuery;
+    $this->plugin                           = $plugin;
   }
 
 
@@ -181,6 +193,7 @@ class DashboardController implements
    */
   private function getDashboardUrls(): array {
     return [
+      'amsBaseUrl'                      => $this->plugin->getAMSHost(),
       'translatorspage'                 => admin_url( 'admin.php?page=tm/menu/main.php&sm=translators' ),
       'jobs'                            => admin_url( 'admin.php?page=tm/menu/main.php&sm=jobs' ),
       'translationqueue'                => admin_url( 'admin.php?page=tm/menu/translations-queue.php' ),
@@ -191,6 +204,7 @@ class DashboardController implements
       'stringTranslationPage'           => admin_url( 'admin.php?page=wpml-string-translation%2Fmenu%2Fstring-translation.php' ),
       'languageEditorPage'              => admin_url( 'admin.php?page=sitepress-multilingual-cms%2Fmenu%2Flanguages.php&trop=1' ),
       'glossaryPage'                    => admin_url( 'admin.php?page=tm%2Fmenu%2Fmain.php&sm=ate-ams&settings=glossary' ),
+      'connectedSites'                  => admin_url( 'admin.php?page=tm%2Fmenu%2Fmain.php&sm=ate-ams&settings=connected_sites' ),
       'translationProxyUrl'             => $this->translationProxyService->getTPUrl(),
       'translationEngine'               => admin_url( 'admin.php?page=tm%2Fmenu%2Fsettings#automatic-translations-section' ),
     ];
@@ -367,6 +381,7 @@ class DashboardController implements
         'completedStrings'            => $translateEverythingSettings->getCompletedStrings(),
       ],
 
+      'isContextPresent'                       => $this->websiteContextQuery->isContextPresent(),
       'publicationStatuses'                    => $this->getPublicationStatuses(),
       'translators'                            => $this->getTranslators(),
       // returns the currently logged-in user data ONLY if he's a translator (has language pairs)
@@ -379,6 +394,8 @@ class DashboardController implements
       'remoteTranslationService'               => $currentTranslationService,
       'isAteEnabled'                           => $isAteEnabled,
       'useAteForOldTranslationsCreatedWithCte' => $useAteForOldTranslationsCreatedWithCte,
+      'useNativeEditorForAllPostTypes'         => $translationEditor && $translationEditor->useNativeEditorForAllPostTypes(),
+      'postTypesUsingNativeEditor'             => $translationEditor ? $translationEditor->getPostTypesUsingNativeEditor() : [],
       'translationProxyLastPickedUp'           => $this->lastPickedUpDateService->get(),
       'remoteJobsCount'                        => ! isset( $currentTranslationService ) ?
         0 :

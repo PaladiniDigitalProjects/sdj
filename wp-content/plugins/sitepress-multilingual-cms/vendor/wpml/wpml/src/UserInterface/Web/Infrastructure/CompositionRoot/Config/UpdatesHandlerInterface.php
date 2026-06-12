@@ -8,7 +8,7 @@ interface UpdatesHandlerInterface {
 
 
   /**
-   * @param array<string, Update> $allUpdates
+   * @param array<int, Update> $allUpdates
    * @return void
    */
   public function prepareUpdates( $allUpdates );

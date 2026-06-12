@@ -25,18 +25,23 @@ class LanguageDto {
   /** @var bool|null */
   private $supportsAutomaticTranslations = null;
 
+  /** @var string */
+  private $defaultLocale;
+
 
   public function __construct(
     string $code,
     string $englishName,
     string $nativeName,
+    string $defaultLocale,
     bool $isActivated = true
   ) {
-    $this->code        = $code;
-    $this->englishName = $englishName;
-    $this->nativeName  = $nativeName;
-    $this->isActivated = $isActivated;
-    $this->displayName = $englishName;
+    $this->code          = $code;
+    $this->englishName   = $englishName;
+    $this->nativeName    = $nativeName;
+    $this->isActivated   = $isActivated;
+    $this->displayName   = $englishName;
+    $this->defaultLocale = $defaultLocale;
   }
 
 
@@ -92,6 +97,11 @@ class LanguageDto {
    */
   public function doesSupportAutomaticTranslations() {
     return $this->supportsAutomaticTranslations;
+  }
+
+
+  public function getDefaultLocale(): string {
+    return $this->defaultLocale;
   }
 
 

@@ -17,6 +17,7 @@ use WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery;
  *  element_id:int|string,
  *  trid:int|string,
  *  original_element_id:int|string,
+ *  translation_id: int|string,
  *  status:int|string,
  *  review_status:'ACCEPTED'|'EDITING'|'NEEDS_REVIEW'|null,
  *  needs_update:int,
@@ -25,7 +26,8 @@ use WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQuery;
  *  translator_id:string,
  *  automatic:string,
  *  translation_service:string,
- *  editor:string
+ *  editor:string,
+ *  editor_job_id:string|null
  *  }
  */
 class TranslationsQuery {
@@ -103,6 +105,7 @@ class TranslationsQuery {
         target_t.element_id,
         target_t.trid,
         source_t.element_id as original_element_id,
+        ts.translation_id,
         ts.status,
         ts.review_status,
         ts.needs_update,
@@ -111,7 +114,8 @@ class TranslationsQuery {
         tj.translator_id,
         tj.automatic,
         ts.translation_service,
-        tj.editor
+        tj.editor,
+        tj.editor_job_id
       FROM {$this->queryPrepare->prefix()}icl_translations source_t
 
       INNER JOIN {$this->queryPrepare->prefix()}icl_translations target_t

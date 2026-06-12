@@ -1,10 +1,14 @@
 <?php
 
 use WPML\Settings\PostType\Automatic;
+use WPML\Utils\XmlTranslatableIds;
 
 class WPML_Config {
 
 	const PATH_TO_XSD = WPML_PLUGIN_PATH . '/res/xsd/wpml-config.xsd';
+
+	/** @var bool $has_run */
+	static $has_run = false;
 
 	static $wpml_config_files = array();
 	static $active_plugins    = array();
@@ -38,6 +42,11 @@ class WPML_Config {
 
 	static function load_config_run() {
 		global $sitepress;
+
+		if ( self::$has_run ) {
+			return;
+		}
+
 		self::load_config_pre_process();
 		self::load_plugins_wpml_config();
 		self::load_theme_wpml_config();
@@ -45,6 +54,8 @@ class WPML_Config {
 		self::parse_wpml_config_files();
 		self::load_config_post_process();
 		$sitepress->save_settings();
+
+		self::$has_run = true;
 	}
 
 	static function get_custom_fields_translation_settings( $translation_actions = array( 0 ) ) {
@@ -440,7 +451,8 @@ class WPML_Config {
 		global $iclTranslationManagement;
 
 		$setting_factory = $iclTranslationManagement->settings_factory();
-		$import          = new WPML_Custom_Field_XML_Settings_Import( $setting_factory, $config['wpml-config'] );
+		$xml_object_ids  = new XmlTranslatableIds();
+		$import          = new WPML_Custom_Field_XML_Settings_Import( $setting_factory, $xml_object_ids, $config['wpml-config'] );
 		$import->run();
 	}
 

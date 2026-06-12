@@ -497,7 +497,6 @@ class WPML_Query_Parser {
 		if ( ( (bool) ( $name_in_q = $q->get( 'name' ) ) === true
 			 || (bool) ( $name_in_q = $q->get( 'pagename' ) ) === true )
 			 && (bool) $q->get( 'page_id' ) === false
-			 && (bool) $q->get( 'category_name' ) === false
 			|| ( (bool) ( $post_type = $q->get( 'post_type' ) ) === true
 				&& is_scalar( $post_type )
 				&& (bool) ( $name_in_q = $q->get( $post_type ) ) === true )

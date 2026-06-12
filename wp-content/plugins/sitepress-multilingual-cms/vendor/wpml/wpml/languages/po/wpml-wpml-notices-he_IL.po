@@ -11,21 +11,23 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpml\n"
+"Language: he_IL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Add glossary terms"
-msgstr "הוסף מונחי מילון"
+msgstr "הוסף מונחים למונחון"
 
 msgid "Minimize"
-msgstr "צמצם"
+msgstr "מזער"
 
 msgid "Expand"
 msgstr "הרחב"
 
 msgid "There's nothing yet in the Glossary"
-msgstr "אין עדיין דבר במילון"
+msgstr "אין עדיין מונחים במונחון"
 
 msgid "Looks like you're not yet using the glossary. Glossary can help you:"
-msgstr "נראה שעדיין לא השתמשת במילון. המילון יכול לעזור לך:"
+msgstr "נראה שאתה עדיין לא משתמש במונחון. המונחון יכול לעזור לך:"
 
 msgid "Improve the quality of the translation"
 msgstr "לשפר את איכות התרגום"
@@ -37,12 +39,12 @@ msgid "Reduce translation costs"
 msgstr "להפחית עלויות תרגום"
 
 msgid "Improve SEO in translation languages"
-msgstr "לשפר SEO בשפות התרגום"
+msgstr "לשפר את ה-SEO בשפות התרגום"
 
 msgid "How to Use the Glossary for Accurate Translations"
-msgstr "כיצד להשתמש במילון לתרגומים מדויקים"
+msgstr "כיצד להשתמש במונחון לתרגומים מדויקים"
 
 msgid "%d item in the <a>Glossary</a>"
 msgid_plural "%d items in the <a>Glossary</a>"
-msgstr[0] "%d פריט ב<a>מילון</a>"
-msgstr[1] "%d פריטים ב<a>מילון</a>"
+msgstr[0] "פריט %d ב<a>מילון המונחים</a>"
+msgstr[1] "%d פריטים ב<a>מונחון</a>"

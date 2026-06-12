@@ -11,7 +11,6 @@ use WPML\UIPage;
 use WPML\TM\ATE\Review\ApproveTranslations;
 use WPML\TM\ATE\Review\Cancel;
 use WPML\TM\Jobs\Endpoint\Resign;
-use WPML\TM\API\Basket;
 use WPML\TM\API\Translators;
 use WPML\Element\API\Languages;
 use function WPML\FP\pipe;
@@ -111,7 +110,7 @@ class WPML_TM_Jobs_List_Script_Data {
 			'translatedByFilters' => $this->translated_by_filter->get(),
 			'localTranslators'    => $this->translators->get(),
 			'translationServices' => $this->services->get(),
-			'isBasketUsed'        => Basket::shouldUse(),
+			'isBasketUsed'        => false,
 			'translationService'  => $translation_service,
 			'siteKey'             => WP_Installer::instance()->get_site_key( 'wpml' ),
 			'batchUrl'            => OTG_TRANSLATION_PROXY_URL . '/projects/%d/external',
@@ -202,7 +201,7 @@ class WPML_TM_Jobs_List_Script_Data {
 	}
 
 	private function getTypesForFilter() {
-		$postTypeFilters = new PostTypeFilters( wpml_tm_get_jobs_repository( true, false ) );
+		$postTypeFilters = new PostTypeFilters( wpml_tm_get_jobs_repository( true ) );
 
 		return \wpml_collect( $postTypeFilters->get( [ 'include_unassigned' => true ] ) )
 			->map( function ( $label, $name ) {

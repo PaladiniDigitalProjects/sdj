@@ -5,7 +5,6 @@ use WPML\TM\Jobs\Dispatch\BatchBuilder;
 use WPML\TM\StringTranslation\StringTranslationRequest;
 use WPML\TM\Jobs\Dispatch\Strings;
 use WPML\TM\Jobs\Dispatch\Messages;
-use WPML\TM\API\Basket;
 use \WPML\FP\Obj;
 use function WPML\FP\partial;
 
@@ -46,10 +45,10 @@ function action_wpml_tm_save_data( $data ) {
 
 add_action( 'wpml_save_translation_data', 'action_wpml_tm_save_data', 10, 1 );
 
-function wpml_tm_add_translation_job( $rid, $translator_id, $translation_package, $batch_options, $sendFrom = null ) {
+function wpml_tm_add_translation_job( $rid, $translator_id, $translation_package, $batch_options, $sendFrom = null, $addJobLogs = false ) {
 
 	$helper = new WPML_TM_Action_Helper();
-	return $helper->add_translation_job( $rid, $translator_id, $translation_package, $batch_options, $sendFrom );
+	return $helper->add_translation_job( $rid, $translator_id, $translation_package, $batch_options, $sendFrom, $addJobLogs );
 }
 
 add_action( 'wpml_add_translation_job', 'wpml_tm_add_translation_job', 10, 4 );
@@ -102,16 +101,12 @@ function wpml_tm_add_strings_to_basket() {
 }
 
 function getTranslationSendMethod() {
-	if ( Basket::shouldUse() ) {
-		return [ TranslationProxy_Basket::class, 'add_strings_to_basket' ];
-	} else {
-		return partial(
-			[ Strings::class, 'dispatch' ],
-			[ Batch::class, 'sendStrings' ],
-			new Messages(),
-			BatchBuilder::buildStringsBatch()
-		);
-	}
+	return partial(
+		[ Strings::class, 'dispatch' ],
+		[ Batch::class, 'sendStrings' ],
+		new Messages(),
+		BatchBuilder::buildStringsBatch()
+	);
 }
 
 if ( is_admin() ) {

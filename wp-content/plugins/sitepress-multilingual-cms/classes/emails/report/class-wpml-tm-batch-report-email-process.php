@@ -39,13 +39,14 @@ class WPML_TM_Batch_Report_Email_Process {
 	private function send_emails() {
 		$this->batch_report->clean_batch_jobs();
 
-		$headers = array();
-		$headers[] = 'Content-type: text/html; charset=UTF-8';
+		$headers         = array();
+		$headers[]       = 'Content-type: text/html; charset=UTF-8';
 		$translators_ids = [ 0 ];
 
 		foreach ( $this->email_builder->get_emails() as $email ) {
 			$email['attachment'] = isset( $email['attachment'] ) ? $email['attachment'] : array();
-			$email_sent = wp_mail( $email['email'], $email['subject'], $email['body'], $headers, $email['attachment'] );
+
+            $email_sent = WPML_Mail_Sender::send( $email['email'], $email['subject'], $email['body'], $headers, $email['attachment'], 'batch-report' );
 
 			if ( $email_sent ) {
 				$translators_ids[] = $email['translator_id'];

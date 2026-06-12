@@ -135,12 +135,12 @@ class WPML_PB_Update_Shortcodes_In_Content {
 	 * We need to escape backward references that could be included in the replacement text
 	 * e.g. '$1999.each' => '$19' is considered as a backward reference
 	 *
-	 * @param string $string
+	 * @param string $stringToEscape
 	 *
 	 * @return string
 	 */
-	private function escape_backward_reference_on_replacement_string( $string ) {
-		return preg_replace( '/\$([\d]{1,2})/', '\\\$${1}', $string );
+	private function escape_backward_reference_on_replacement_string( $stringToEscape ) {
+		return preg_replace( '/\$([\d]{1,2})/', '\\\$${1}', $stringToEscape );
 	}
 
 	private function replace_content_without_delimiters( $block, $replacement ) {
@@ -148,12 +148,12 @@ class WPML_PB_Update_Shortcodes_In_Content {
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $maybeLongString
 	 *
 	 * @return bool
 	 */
-	private function is_string_too_long_for_regex( $string ) {
-		return mb_strlen( $string ) > self::LONG_STRING_THRESHOLD;
+	private function is_string_too_long_for_regex( $maybeLongString ) {
+		return mb_strlen( $maybeLongString ) > self::LONG_STRING_THRESHOLD;
 	}
 
 	private function get_translation( $original, $encoding = false ) {
@@ -185,10 +185,10 @@ class WPML_PB_Update_Shortcodes_In_Content {
 		}
 
 		if ( $translation ) {
-			$translation = $this->encoding->encode( $translation, $encoding );
+			return $this->encoding->encode( $translation, $encoding );
+		} else {
+			return $original;
 		}
-
-		return $translation;
 	}
 
 	/**
@@ -211,4 +211,3 @@ class WPML_PB_Update_Shortcodes_In_Content {
 		return $translation;
 	}
 }
-

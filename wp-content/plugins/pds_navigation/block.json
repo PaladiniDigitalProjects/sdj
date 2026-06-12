@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "pds/navigation",
+  "version": "1.0.0",
+  "title": "PDS Navigation",
+  "category": "design",
+  "description": "Mobile menu styles extension for WordPress Navigation block",
+  "keywords": [ "navigation", "mobile", "menu", "drawer" ],
+  "textdomain": "pds-navigation",
+  "supports": {
+    "html": false
+  },
+  "editorScript": "file:./build/index.js",
+  "style": "file:./build/frontend.css",
+  "script": "file:./build/frontend.js"
+}

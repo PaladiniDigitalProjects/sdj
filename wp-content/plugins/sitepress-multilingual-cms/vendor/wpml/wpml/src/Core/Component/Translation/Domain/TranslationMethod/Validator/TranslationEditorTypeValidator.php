@@ -3,7 +3,7 @@
 namespace WPML\Core\Component\Translation\Domain\TranslationMethod\Validator;
 
 use WPML\Core\Component\Translation\Domain\TranslationMethod\AutomaticMethod;
-use WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting;
+use WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting;
 
 class TranslationEditorTypeValidator {
 

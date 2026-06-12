@@ -1,18 +1,20 @@
+@use "variables";
+
 // LOGO
 
 .wp-block-site-logo {
   width: 100%;
-  max-width:16rem;
-  
-  @include tablet{
+  max-width: 16rem;
+
+  @include variables.tablet {
     max-width: 10rem;
   }
 
-  @include laptop {
+  @include variables.laptop {
     max-width: 14rem;
   }
 
-   @include large{
+  @include variables.large {
     max-width: 16rem;
   }
 }
@@ -28,8 +30,8 @@ header.wp-block-template-part {
   margin: 0 auto;
   position: fixed;
   z-index: 10;
-  top:0;
-  background-color: $white;
+  top: 0;
+  background-color: variables.$white;
 
   &.headerup {
     transform: translateY(-13rem);
@@ -38,7 +40,7 @@ header.wp-block-template-part {
   &.fullheader {
     transition: 0.35s;
     transform: translateY(0);
-    border-bottom: 0.1rem solid $primary;
+    border-bottom: 0.1rem solid variables.$primary;
     // &:before {
     //   position: absolute;
     //   bottom:0;
@@ -53,9 +55,9 @@ header.wp-block-template-part {
     // }
   }
 
-  & + main {
+  &+main {
     padding-top: 0;
-    top:6.6rem;
+    top: 6.6rem;
   }
 
   .Sub_Menus {
@@ -67,50 +69,12 @@ header.wp-block-template-part {
 
   &.fullheader {
     border-bottom: none;
+    padding-bottom: 1rem;
+    -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+
+    @include variables.tablet {
+      padding-bottom: 0;
+    }
   }
 }
-
-// main {
-//   margin-top: 0 !important;
-// }
-
-// html.has-modal-open  {
-//   header.wp-block-template-part {
-//     background-color: #000000;
-//   &.headerup,
-//   &.fullheader {
-//     height: 100%;
-//     background: transparent;
-//     }
-//   }
-// }
-
-
-// // HEADER SINGLE
-
-// .single {  
-//   header.wp-block-template-part {
-//     background-color: transparent;
-//     // &.fullheader {
-//       // background-color:rgba(255, 255, 255, 0.5);
-//     // }
-
-//     .wp-block-site-logo {
-//       img{
-//         filter: invert(100%);
-//       }
-//     }
-//   }
-// }
-
-// html.has-modal-open {
-//   .single {
-//     header.wp-block-template-part {
-//       .wp-block-site-logo {
-//         img{
-//           filter: invert(0);
-//         }
-//       }
-//     }
-//   }
-// }

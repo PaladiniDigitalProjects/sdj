@@ -149,6 +149,44 @@ class Parser {
 
 
   /**
+   * @return array<Script>
+   * @throws Exception
+   */
+  public function parseContentStatsScripts() {
+    $scripts = [];
+
+    foreach ( $this->configRaw['contentStatsScripts'] as $id => $scriptRaw ) {
+
+      $scriptRaw['id'] = $scriptRaw['id'] ?? $id;
+      if ( $script = $this->parseScript( $scriptRaw ) ) {
+        $scripts[] = $script;
+      }
+    }
+
+    return $scripts;
+  }
+
+
+  /**
+   * @return array<Script>
+   * @throws Exception
+   */
+  public function parseCheckPosthogShouldRecordScript() {
+    $scripts = [];
+
+    foreach ( $this->configRaw['checkPosthogShouldRecord'] as $id => $scriptRaw ) {
+
+      $scriptRaw['id'] = $scriptRaw['id'] ?? $id;
+      if ( $script = $this->parseScript( $scriptRaw ) ) {
+        $scripts[] = $script;
+      }
+    }
+
+    return $scripts;
+  }
+
+
+  /**
    * Parses 'adminPages' to $config->adminPages.
    *
    * @param ?Config $config
@@ -258,6 +296,14 @@ class Parser {
     ) {
       $page->setPosition( (int) $pageConfig['position'] );
     }
+
+    if (
+      array_key_exists( 'requiresWPMLSetupToBeCompleted', $pageConfig ) &&
+      is_bool( $pageConfig['requiresWPMLSetupToBeCompleted'] )
+    ) {
+      $page->setRequiresWPMLSetupToBeCompleted( $pageConfig['requiresWPMLSetupToBeCompleted'] );
+    }
+
   }
 
 
@@ -385,6 +431,14 @@ class Parser {
       $script->setUsedOn( $scriptRaw['usedOn'] );
     }
 
+    if ( array_key_exists( 'inFooter', $scriptRaw ) ) {
+      $script->setInFooter( (bool) $scriptRaw['inFooter'] );
+    }
+
+    if ( array_key_exists( 'supportsHMR', $scriptRaw ) ) {
+      $script->setSupportsHMR( (bool) $scriptRaw['supportsHMR'] );
+    }
+
     return $script;
   }
 
@@ -482,18 +536,22 @@ class Parser {
   public function parseUpdates() {
     $updates = [];
 
-    foreach ( $this->configRaw['updates'] as $id => $updateRaw ) {
+    foreach ( $this->configRaw['updates'] as $updateRaw ) {
       if (
         ! array_key_exists( 'handler', $updateRaw )
-        || ! array_key_exists( 'includedIn', $updateRaw )
+        || ! array_key_exists( 'id', $updateRaw )
       ) {
         continue;
       }
 
-      $update = new Update( $id, $updateRaw['handler'], $updateRaw['includedIn'] );
+      $update = new Update( (int) $updateRaw['id'], $updateRaw['handler'] );
 
       if ( array_key_exists( 'tryOnlyOnce', $updateRaw ) ) {
-        $update->setTryOnlyOnce( $updateRaw['tryOnlyOnce'] );
+        $update->setTryOnlyOnce( (bool) $updateRaw['tryOnlyOnce'] );
+      }
+
+      if ( array_key_exists( 'lazyLoad', $updateRaw ) ) {
+        $update->setLazyLoad( (bool) $updateRaw['lazyLoad'] );
       }
 
       $updates[] = $update;
@@ -577,6 +635,10 @@ class Parser {
 
       if ( array_key_exists( 'version', $raw ) ) {
         $endpoint->setVersion( $raw['version'] );
+      }
+
+      if ( array_key_exists( 'capability', $raw ) ) {
+        $endpoint->setCapability( $raw['capability'] );
       }
 
       $endpoints[] = $endpoint;

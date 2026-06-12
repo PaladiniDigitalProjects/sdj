@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:17
 msgid "Preparing..."
@@ -17,37 +19,11 @@ msgstr "Não há mais trabalhos para cancelar"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:82
 msgid "The jobs cancellation has failed"
-msgstr "Falha no cancelamento dos trabalhos"
+msgstr "O cancelamento dos trabalhos falhou"
 
 #: src/js/troubleshooting/cancelJobs/CancelJobs.js:88
 msgid "Cancel in-progress automatic jobs"
-msgstr "Cancele os trabalhos automáticos em andamento"
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:27
-msgid "Enabling WPML's Advanced Translation Editor..."
-msgstr "Habilitando o Editor de Tradução Avançado do WPML..."
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:28
-msgid "Force-enable WPML's Advanced Translation Editor"
-msgstr "Forçar a habilitação do Editor de Tradução Avançado do WPML"
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:37
-msgid ""
-"If you're running this website from two or more domains on the same "
-"installation, this action will allow both to use the Advanced Translation "
-"Editor. Don't use this if you've moved or copied the site to a different "
-"domain on a different server."
-msgstr "Se você estiver executando este site a partir de dois ou mais domínios na mesma instalação, esta ação permitirá que ambos usem o Editor de Tradução Avançado. Não use isso se você moveu ou copiou o site para um domínio diferente em um servidor diferente."
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:41
-msgid "An error occurred while enabling WPML on both domains. Please try again."
-msgstr "Ocorreu um erro ao habilitar o WPML em ambos os domínios. Por favor, tente novamente."
-
-#: src/js/troubleshooting/enableSecondaryDomainForATE/EnableSecondaryDomain.js:44
-msgid ""
-"You can now use the Advanced Translation Editor from this site, as well as "
-"the other site(s) running from a different domain on the same installation."
-msgstr "Agora você pode usar o Editor de Tradução Avançado neste site, bem como no(s) outro(s) site(s) executado(s) a partir de um domínio diferente na mesma instalação."
+msgstr "Cancelar trabalhos automáticos em andamento"
 
 #: src/js/troubleshooting/lsTemplates/UpdateDomain.js:31
 msgid "Domain name has been updated"
@@ -55,16 +31,111 @@ msgstr "O nome de domínio foi atualizado"
 
 #: src/js/troubleshooting/lsTemplates/UpdateDomain.js:33
 msgid "Domain name update has been failed"
-msgstr "Falha ao atualizar nome de domínio"
+msgstr "A atualização do nome de domínio falhou"
 
 #: src/js/troubleshooting/lsTemplates/UpdateDomain.js:41
 msgid "Update domain name in language switcher settings"
-msgstr "Atualize o nome de domínio nas configurações do seletor de idioma"
+msgstr "Atualizar nome de domínio nas configurações do seletor de idioma"
+
+#: src/js/troubleshooting/optimizeDbTables/components/DiskSpaceDisclaimerAlert.js:7
+msgid "Disclaimer: MySQL Disk Space"
+msgstr "Aviso: espaço em disco do MySQL"
+
+#: src/js/troubleshooting/optimizeDbTables/components/DiskSpaceDisclaimerAlert.js:8
+msgid ""
+"Cleaning and compressing the wp_icl_translate and wp_icl_translation_status "
+"tables reduces its data size, but does not automatically free up disk space "
+"in MySQL. To reclaim disk space, a table rebuild is required—a risky "
+"operation not performed automatically by this tool."
+msgstr "A limpeza e compactação das tabelas wp_icl_translate e wp_icl_translation_status reduzem o tamanho dos dados, mas não liberam automaticamente espaço em disco no MySQL. Para recuperar espaço em disco, é necessária uma reconstrução da tabela — uma operação arriscada não realizada automaticamente por esta ferramenta."
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:38
+msgid "Optimize translation tables"
+msgstr "Otimizar tabelas de tradução"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:47
+msgid "Previous State Migration"
+msgstr "Migração de estado anterior"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:58
+msgid "Translation Elements Migration"
+msgstr "Migração de elementos de tradução"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:64
+msgid "Processed"
+msgstr "Processado"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:72
+msgid "Error"
+msgstr "Erro"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:82
+msgid "Success"
+msgstr "Sucesso"
+
+#: src/js/troubleshooting/optimizeDbTables/components/OptimizeDbTables.js:83
+msgid "Database tables optimization completed successfully."
+msgstr "Otimização das tabelas do banco de dados concluída com sucesso."
+
+#: src/js/troubleshooting/optimizeDbTables/components/ResourceWarningAlert.js:7
+msgid "Warning"
+msgstr "Aviso"
+
+#: src/js/troubleshooting/optimizeDbTables/components/ResourceWarningAlert.js:8
+msgid ""
+"This process is resource-intensive and may take a significant amount of "
+"time. It is recommended to run this optimization during periods of low "
+"traffic."
+msgstr "Este processo consome muitos recursos e pode levar um tempo significativo. Recomenda-se executar esta otimização durante períodos de baixo tráfego."
+
+#: src/js/troubleshooting/optimizeDbTables/index.js:16
+msgid "Database Tables Optimization"
+msgstr "Otimização das tabelas do banco de dados"
 
 #: src/js/troubleshooting/refreshLicense/RefreshLicense.js:14
 msgid "Refresh license data to recognise license update"
-msgstr "Atualize os dados da licença para reconhecer a atualização da licença"
+msgstr "Atualizar dados da licença para reconhecer a atualização da licença"
 
 #: src/js/troubleshooting/refreshLicense/useRefreshLicense.js:36
 msgid "WPML License has been refreshed"
 msgstr "A licença do WPML foi atualizada"
+
+#: src/js/troubleshooting/retryStuckJobs/RetryStuckJobs.js:11
+msgid "Translate Everything Automatically is not active."
+msgstr "Traduzir Tudo Automaticamente não está ativo."
+
+#: src/js/troubleshooting/retryStuckJobs/RetryStuckJobs.js:49
+msgid "Retry stuck automatic translations"
+msgstr "Tentar novamente traduções automáticas travadas"
+
+#: src/js/troubleshooting/retryStuckJobs/RetryStuckJobs.js:54
+msgid ""
+"Resends translation jobs that couldn't be processed due to a temporary "
+"issue while Translate Everything Automatically was active."
+msgstr "Reenvia trabalhos de tradução que não puderam ser processados devido a um problema temporário enquanto a opção Traduzir Tudo Automaticamente estava ativa."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:10
+msgid "Checking for stuck translation jobs..."
+msgstr "Verificando trabalhos de tradução travados..."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:13
+msgid "Processing... %s stuck translation found so far"
+msgid_plural "Processing... %s stuck translations found so far"
+msgstr[0] "Processando... %s tradução travada encontrada até agora"
+msgstr[1] "Processando... %s traduções travadas encontradas até agora"
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:25
+msgid ""
+"Something went wrong while checking for stuck translation jobs. Please "
+"<a>contact WPML support</a>."
+msgstr "Algo deu errado ao verificar os trabalhos de tradução travados. Por favor, <a>entre em contato com o suporte do WPML</a>."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:37
+msgid "No stuck translation jobs found."
+msgstr "Nenhum trabalho de tradução travado encontrado."
+
+#: src/js/troubleshooting/retryStuckJobs/Utils/getStatusMessage.js:41
+msgid "%s stuck translation job found. WPML will translate it automatically in the background.\nYou can check the progress in the Translation Dashboard."
+msgid_plural "%s stuck translation jobs found. WPML will translate them automatically in the background.\nYou can check their progress in the Translation Dashboard."
+msgstr[0] "%s trabalho de tradução travado encontrado. O WPML o traduzirá automaticamente em segundo plano.\nVocê pode verificar o progresso no Painel de Tradução."
+msgstr[1] "%s trabalhos de tradução travados encontrados. O WPML os traduzirá automaticamente em segundo plano.\nVocê pode verificar o progresso no Painel de Tradução."

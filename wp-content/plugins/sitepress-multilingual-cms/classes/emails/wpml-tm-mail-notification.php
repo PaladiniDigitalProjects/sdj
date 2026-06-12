@@ -133,7 +133,8 @@ class WPML_TM_Mail_Notification {
 					 * @deprecated Use 'wpml_new_job_notification_attachments' instead
 					 */
 					$attachments = apply_filters( 'WPML_new_job_notification_attachments', $attachments );
-					$this->sitepress->get_wp_api()->wp_mail( $to, $subject, $body_to_send, $headers, $attachments );
+
+					WPML_Mail_Sender::send( $to, $subject, $body_to_send, $headers, $attachments, $type );
 				}
 			}
 		}

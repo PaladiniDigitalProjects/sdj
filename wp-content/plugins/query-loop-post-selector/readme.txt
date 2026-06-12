@@ -1,8 +1,8 @@
 === Query Loop Post Selector ===
 Contributors:      smallplugins
 Tags:              block, query loop, query loop post selector
-Tested up to:      6.7
-Stable tag:        1.0.5
+Tested up to:      7.0.0
+Stable tag:        1.0.6
 Requires at least: 6.0
 Requires PHP:      7.2
 License:           GPL-2.0-or-later
@@ -39,6 +39,9 @@ Yes, it's compatible with all public post types.
 4. Respects the "Items Per Page" limit from the parent query.
 
 == Changelog ==
+
+= 1.0.6 =
+* Dev: Update freemius SDK and maintenance update.
 
 = 1.0.5
 * Fix: Add support for similar post names.

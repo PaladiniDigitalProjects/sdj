@@ -44,7 +44,7 @@ class WPML_WPSEO_Should_Create_Redirect implements IWPML_Action {
 		if ( in_array( $status, [ 'draft', 'auto-draft' ], true ) ) {
 
 			$this->filter_hooks->each(
-				function( $filter_hook ) {
+				function ( $filter_hook ) {
 					add_filter( $filter_hook, [ $this, 'save_unfiltered_url' ], 0 );
 					add_filter( $filter_hook, [ $this, 'restore_unfiltered_url' ], 20 );
 				}
@@ -78,7 +78,7 @@ class WPML_WPSEO_Should_Create_Redirect implements IWPML_Action {
 		$this->unfiltered_url = null;
 
 		$this->filter_hooks->each(
-			function( $filter_hook ) {
+			function ( $filter_hook ) {
 				remove_filter( $filter_hook, [ $this, 'save_unfiltered_url' ], 0 );
 				remove_filter( $filter_hook, [ $this, 'restore_unfiltered_url' ], 20 );
 			}
@@ -86,5 +86,4 @@ class WPML_WPSEO_Should_Create_Redirect implements IWPML_Action {
 
 		return $url;
 	}
-
 }

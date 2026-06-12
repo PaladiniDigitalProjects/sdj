@@ -40,7 +40,7 @@ class Controller implements UpdatesHandlerInterface {
 
 
   /**
-   * @param array<string, Update> $allUpdates
+   * @param array<int, Update> $allUpdates
    * @return void
    */
   public function prepareUpdates( $allUpdates ) {
@@ -56,12 +56,12 @@ class Controller implements UpdatesHandlerInterface {
       return;
     }
 
-    $this->onAdmin( $allUpdates );
+    $this->initUpdates( $allUpdates );
   }
 
 
   /**
-   * @param array<string, Update> $allUpdates
+   * @param array<int, Update> $allUpdates
    * @return void
    */
   private function onRest( $allUpdates ) {
@@ -71,15 +71,30 @@ class Controller implements UpdatesHandlerInterface {
 
 
   /**
-   * @param array<string, Update> $allUpdates
+   * @param array<int, Update> $allUpdates
    * @return void
    */
-  private function onAdmin( $allUpdates ) {
+  private function initUpdates( $allUpdates ) {
     $updatesToPerform = $this->repository->getUpdatesToPerform( $allUpdates );
-    $this->scriptLoader->loadScript(
-      array_keys( $updatesToPerform ),
-      $this->updateHandler->endpoint()
-    );
+
+    $lazyLoadedUpdates = [];
+
+    foreach ( $updatesToPerform as $update ) {
+      if ( $update->lazyLoad() ) {
+        $lazyLoadedUpdates[ $update->id() ] = $update;
+        continue;
+      }
+
+      // No lazy loaded update - directly perfrom it.
+      $this->updateHandler->doUpdate( $update );
+    }
+
+    if ( $lazyLoadedUpdates ) {
+      $this->scriptLoader->loadScript(
+        array_keys( $updatesToPerform ),
+        $this->updateHandler->endpoint()
+      );
+    }
   }
 
 

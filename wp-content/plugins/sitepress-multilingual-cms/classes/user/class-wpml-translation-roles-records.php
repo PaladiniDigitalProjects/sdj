@@ -78,8 +78,8 @@ abstract class WPML_Translation_Roles_Records {
 	 *
 	 * @return array
 	 */
-	public function search_for_users_without_capability( $search = '', $limit = -1 ) {
-		return $this->get_records( self::USERS_WITHOUT_CAPABILITY, $search, $limit );
+	public function search_for_users_without_capability( $search = '', $limit = -1, $exact_match = false ) {
+		return $this->get_records( self::USERS_WITHOUT_CAPABILITY, $search, $limit, $exact_match );
 	}
 
 	/**
@@ -126,27 +126,39 @@ abstract class WPML_Translation_Roles_Records {
 	 *
 	 * @return array
 	 */
-	private function get_records( $compare, $search = '', $limit = -1 ) {
+	private function get_records( $compare, $search = '', $limit = -1, $exact_match = false ) {
 		$search = trim( $search );
 
 		// Only use the cache when we are looking for all users with the capability.
 		$useCache = $compare === self::USERS_WITH_CAPABILITY && '' === $search && -1 === $limit;
 
 		$preparedUserQuery = $this->wpdb->prepare(
-			"SELECT u.id FROM {$this->wpdb->users} u INNER JOIN {$this->wpdb->usermeta} c ON c.user_id=u.ID AND CAST(c.meta_key AS BINARY)=%s AND c.meta_value {$compare} %s",
+			"SELECT u.id FROM {$this->wpdb->users} u INNER JOIN {$this->wpdb->usermeta} c ON c.user_id=u.ID AND c.meta_key=%s AND c.meta_value {$compare} %s",
 			"{$this->wpdb->prefix}capabilities",
 			"%" . $this->get_capability() . "%"
 		);
 
 		if ( self::USERS_WITHOUT_CAPABILITY === $compare ) {
 			$required_wp_roles = $this->get_required_wp_roles();
+			$x = 0;
 			foreach( $required_wp_roles as $required_wp_role ) {
-				$preparedUserQuery .= $this->wpdb->prepare( " AND c.meta_value LIKE %s", "%{$required_wp_role}%" );
+				if ( $x === 0 ) {
+					$preparedUserQuery .= " AND (";
+				} else {
+					$preparedUserQuery .= " OR ";
+				}
+				$preparedUserQuery .= $this->wpdb->prepare( "c.meta_value LIKE %s", "%{$required_wp_role}%" );
+				$x++;
+			}
+			if ( $x > 0 ) {
+				$preparedUserQuery .= " ) ";
 			}
 		}
 
 		if ( $search ) {
-			$preparedUserQuery .= $this->wpdb->prepare( " AND (u.user_login LIKE %s OR u.user_nicename LIKE %s OR u.user_email LIKE %s)", "%{$search}%", "%{$search}%", "%{$search}%" );
+			$preparedUserQuery .= $exact_match
+				? $this->wpdb->prepare( " AND (u.user_login = %s OR u.user_nicename = %s OR u.user_email = %s)", "{$search}", "{$search}", "{$search}" )
+				: $this->wpdb->prepare( " AND (u.user_login LIKE %s OR u.user_nicename LIKE %s OR u.user_email LIKE %s)", "%{$search}%", "%{$search}%", "%{$search}%" );
 		}
 
 		$cache      = $this->get_cache();
@@ -167,7 +179,7 @@ abstract class WPML_Translation_Roles_Records {
 
 		$users      = $this->wpdb->get_col( $preparedUserQuery );
 
-		if ( $search && strlen( $search ) > self::MIN_SEARCH_LENGTH && ( $limit <= 0 || count( $users ) < $limit ) ) {
+		if ( ! $exact_match && $search && strlen( $search ) > self::MIN_SEARCH_LENGTH && ( $limit <= 0 || count( $users ) < $limit ) ) {
 			$users_from_metas = $this->get_records_from_users_metas( $compare, $search, $limit );
 			$users_with_dupes = array_merge( $users, $users_from_metas );
 			$users            = wpml_array_unique( $users_with_dupes, SORT_REGULAR );
@@ -213,7 +225,7 @@ abstract class WPML_Translation_Roles_Records {
 	}
 
 	/**
-	 * @return array|false
+	 * @return array | false
 	 */
 	private function get_cache() {
 		return get_option( $this->get_cache_key(), false );
@@ -230,8 +242,9 @@ abstract class WPML_Translation_Roles_Records {
 	/**
 	 * @return void
 	 */
-	private function delete_cache() {
-		delete_option( $this->get_cache_key() );
+	public static function delete_cache() {
+		delete_option( self::CACHE_PREFIX . \WPML\LIB\WP\User::CAP_TRANSLATE );
+		delete_option( self::CACHE_PREFIX . \WPML\LIB\WP\User::CAP_MANAGE_TRANSLATIONS );
 	}
 
 	/**
@@ -246,7 +259,12 @@ abstract class WPML_Translation_Roles_Records {
 		}
 
 		$translators = $this->get_cache();
-		if ( is_array( $translators ) && array_key_exists( $user->ID, $translators ) ) {
+
+		if ( ! is_array( $translators ) ) {
+			$translators = array();
+		}
+
+		if ( array_key_exists( $user->ID, $translators ) ) {
 			return;
 		}
 
@@ -289,7 +307,7 @@ abstract class WPML_Translation_Roles_Records {
 			) {
 				// Import of an user, which has the same id OR login as an translator.
 				// Nothing unusual on import when there are already existing users.
-				$this->delete_cache();
+				self::delete_cache();
 				break;
 			}
 		}

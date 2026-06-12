@@ -1,6 +1,6 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
-  "apiVersion": 3,
+  "apiVersion": 2,
   "name": "pds-map-locations-filter/tienda-lista",
   "title": "Tienda Lista",
   "category": "widgets",
@@ -14,7 +14,8 @@
   "attributes": {
     "title":               { "type": "string", "default": "Our Stores" },
     "displayStyle":        { "type": "string", "enum": ["grid", "list"], "default": "grid" },
-    "numStores":           { "type": "number", "default": 8 },
+    "numStores":           { "type": "number", "default": 25 },
+    "showAllResults":      { "type": "boolean", "default": false },
     "selectedTaxonomies":  { "type": "array",  "items": { "type": "string" }, "default": ["ambito"] },
     "cptSlug":             { "type": "string",  "default": "location" } 
   },

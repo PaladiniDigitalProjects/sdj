@@ -4,7 +4,7 @@ Donate link: https://www.buymeacoffee.com/wpplugins
 Tags: swiper, carousel, slider block, carousel block, swiper block
 Requires at least: 3.0.1
 Tested up to: 6.9
-Stable tag: 1.0.0
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,20 @@ Download WP Swiper Gutenberg Block today and take your mobile displays to the ne
 Support my work and fuel my creativity by buying me a virtual coffee on [BuyMeACoffee](https://www.buymeacoffee.com/wpplugins)
 
 New Features and suggestions [Contact Me](https://digitalapps.com/contacts/)
+
+== BETA TESTING ==
+
+We're actively developing new features and improvements for WP Swiper! Beta versions are available for testing, and we'd love your feedback to help make the plugin even better.
+
+**How to participate:**
+1. Download and install the latest beta version
+2. Test the new features in your environment
+3. Report any issues or provide feedback on our GitHub repository
+
+**Report Issues & Feedback:**
+Found a bug or have suggestions? Please submit them here: [https://github.com/andreyc0d3r/wp-swiper/issues](https://github.com/andreyc0d3r/wp-swiper/issues)
+
+Your feedback is invaluable in helping us improve WP Swiper for everyone!
 
 == NEW RELEASE ==
 
@@ -134,6 +148,39 @@ Alternatively, you can install the plugin manually by downloading the plugin fro
 
 
 == Changelog ==
+= 1.4.4 =
+* Editor UI improvements
+
+= 1.4.3 =
+* **Added Media Library Selection**: Introduced "Select Images from Media Library" button as a secondary method to create slides
+  - Allows users to select multiple images at once from the WordPress media library
+  - Provides an alternative to drag-and-drop for better media library integration
+  - Each selected image automatically creates a new slide with proper image and thumbnail assignment
+  - Complements existing drag-and-drop functionality with more reliable media handling
+
+= 1.4.2 =
+* Fixed the error "Cannot read properties of undefined (reading 'substring')" in the editor
+
+= 1.4.1 =
+* Switch to media library for image upload
+
+= 1.4.0 =
+* **Swiper Bundle Update**: Upgraded Swiper to version **v12.0.2** for improved performance and features
+* **UI Modernization**: Complete overhaul of block editor interface with modern design patterns
+  - CSS custom properties for consistent theming
+  - Modern tab navigation with pill-style active states
+  - Card-like container with subtle shadows and rounded corners
+  - Smooth transitions and animations
+  - Improved visual hierarchy and spacing
+  - Create slides from drop zone images
+  - Better drop zone feedback with hover/drag animations
+  - Modern gradient-based remove buttons
+  - Prepared for future dark mode support
+* **Bug Fixes**:
+  - Fixed ReferenceError for reverseDirection, stopOnLastSlide, and waitForTransition variables in slides block
+  - Fixed block validation error caused by conditional overlay style rendering
+  - Improved attribute handling in save functions
+
 = 1.3.10 =
 * Performance boost: Removed the high-frequency setTranslate event (keep only the essential ones). Related to autoSlideWidth
 

@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: pl_PL\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: src/js/blocks/LanguageSwitcher/Components/Advanced/Control.js:20
 msgid "Advanced"
@@ -17,7 +19,7 @@ msgstr "Dodaj skrót do tego bloku podczas ładowania strony, używając adresu 
 
 #: src/js/blocks/LanguageSwitcher/Components/Advanced/Control.js:48
 msgid "Additional CSS class(es)"
-msgstr "Dodatkowa klasa(y) CSS"
+msgstr "Dodatkowe klasy CSS"
 
 #: src/js/blocks/LanguageSwitcher/Components/Advanced/Control.js:65
 msgid "Separate multiple classes with spaces."
@@ -59,7 +61,7 @@ msgstr "JĘZYK"
 
 #: src/js/blocks/LanguageSwitcher/Components/Dimensions/Control.js:412
 msgid "Language spacing"
-msgstr "Odstępy między językami"
+msgstr "Odstępy języka"
 
 #: src/js/blocks/LanguageSwitcher/Components/Dimensions/Control.js:425
 msgid "Language padding"
@@ -67,7 +69,7 @@ msgstr "Wypełnienie języka"
 
 #: src/js/blocks/LanguageSwitcher/Components/Display/Control.js:37
 msgid "Display"
-msgstr "Wyświetlanie"
+msgstr "Wyświetl"
 
 #: src/js/blocks/LanguageSwitcher/Components/Display/Control.js:41
 msgid "Show flag"
@@ -101,9 +103,17 @@ msgstr "Wysokość"
 msgid "Spacing"
 msgstr "Odstępy"
 
+#: src/js/blocks/LanguageSwitcher/Components/LanguageItem/Edit.js:41
+msgid "Switch to %s"
+msgstr "Przełącz na %s"
+
+#: src/js/blocks/LanguageSwitcher/Components/LanguageList/Edit.js:49
+msgid "Available languages"
+msgstr "Dostępne języki"
+
 #: src/js/blocks/LanguageSwitcher/Components/Layout/Control.js:119
 msgid "Allow wrapping to multiple lines"
-msgstr "Zezwól na zawijanie do wielu linii"
+msgstr "Zezwalaj na zawijanie do wielu wierszy"
 
 #: src/js/blocks/LanguageSwitcher/Components/Layout/Control.js:132
 msgid "Open on click"
@@ -124,6 +134,16 @@ msgstr "Wyrównanie"
 #: src/js/blocks/LanguageSwitcher/Components/Layout/Control.js:74
 msgid "Orientation"
 msgstr "Orientacja"
+
+#: src/js/blocks/LanguageSwitcher/Components/Layout/Edit.js:31
+#: src/js/blocks/LanguageSwitcher/index.js:42
+#: src/js/blocks/NavigationLanguageSwitcher/index.js:51
+msgid "Language Switcher"
+msgstr "Przełącznik języka"
+
+#: src/js/blocks/LanguageSwitcher/Components/Layout/LayoutContent.js:168
+msgid "Language switcher, press tab to navigate to other languages"
+msgstr "Przełącznik języka, naciśnij tab, aby przejść do innych języków"
 
 #: src/js/blocks/LanguageSwitcher/Components/Typography/Control.js:160
 msgid "Typography"
@@ -165,7 +185,7 @@ msgstr "Wyrównaj elementy do lewej"
 
 #: src/js/blocks/LanguageSwitcher/attributes/layout.js:29
 msgid "Justify items center"
-msgstr "Wyrównaj elementy do środka"
+msgstr "Wyśrodkuj elementy"
 
 #: src/js/blocks/LanguageSwitcher/attributes/layout.js:34
 msgid "Justify items right"
@@ -216,29 +236,25 @@ msgid "Small"
 msgstr "Mały"
 
 #: src/js/blocks/LanguageSwitcher/index.js:36
+#: src/js/blocks/NavigationLanguageSwitcher/index.js:30
 msgid "Displays the WPML Language Switcher."
-msgstr "Wyświetla przełącznik języków WPML."
-
-#: src/js/blocks/LanguageSwitcher/index.js:42
-#: src/js/blocks/NavigationLanguageSwitcher/index.js:47
-msgid "Language Switcher"
-msgstr "Przełącznik języków"
+msgstr "Wyświetla przełącznik języka WPML."
 
 #: src/js/blocks/LanguageSwitcher/index.js:43
-#: src/js/blocks/NavigationLanguageSwitcher/index.js:48
+#: src/js/blocks/NavigationLanguageSwitcher/index.js:52
 msgid "displays the WPML Language Switcher"
-msgstr "wyświetla przełącznik języków WPML"
+msgstr "wyświetla przełącznik języka WPML"
 
-#: src/js/blocks/NavigationLanguageSwitcher/index.js:30
+#: src/js/blocks/NavigationLanguageSwitcher/index.js:34
 msgid ""
 "Displays the WPML Language Switcher. <br/> Learn <a>how to translate this "
 "block</a>."
-msgstr "Wyświetla przełącznik języków WPML. <br/> Dowiedz się <a>jak przetłumaczyć ten blok</a>."
+msgstr "Wyświetla przełącznik języka WPML. <br/> Dowiedz się, <a>jak przetłumaczyć ten blok</a>."
 
-#: src/js/blocks/NavigationLanguageSwitcher/index.js:38
+#: src/js/blocks/NavigationLanguageSwitcher/index.js:42
 msgid "Navigation Language Switcher"
-msgstr "Nawigacyjny przełącznik języków"
+msgstr "Przełącznik języka nawigacji"
 
 #: src/js/blocks/Shared/Controls/PanelSettingsDropdown.js:64
 msgid "Reset all"
-msgstr "Resetuj wszystko"
+msgstr "Zresetuj wszystko"

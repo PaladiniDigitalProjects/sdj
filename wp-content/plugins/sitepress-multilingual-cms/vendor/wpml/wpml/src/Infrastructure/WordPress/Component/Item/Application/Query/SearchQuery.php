@@ -19,8 +19,9 @@ use WPML\PHP\Exception\InvalidArgumentException;
  *    post_status:string,
  *    post_date:string,
  *    post_type:string,
- *    word_count:string,
- *    translator_note:string
+ *    word_count:string|null,
+ *    translator_note:string,
+ *    use_native_editor:string
  * }
  */
 class SearchQuery implements SearchQueryInterface {

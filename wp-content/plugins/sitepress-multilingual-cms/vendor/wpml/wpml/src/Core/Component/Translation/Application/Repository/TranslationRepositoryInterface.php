@@ -39,4 +39,7 @@ interface TranslationRepositoryInterface {
   );
 
 
+  public function setCancelledStatus( int $translationId ): int;
+
+
 }

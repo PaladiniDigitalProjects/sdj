@@ -11,9 +11,11 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpml\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 msgid "Add glossary terms"
-msgstr "Добавить термины в глоссарий"
+msgstr "Добавить термины глоссария"
 
 msgid "Minimize"
 msgstr "Свернуть"
@@ -31,10 +33,10 @@ msgid "Improve the quality of the translation"
 msgstr "Улучшить качество перевода"
 
 msgid "Ensure translation consistency"
-msgstr "Обеспечить согласованность перевода"
+msgstr "Обеспечить единообразие перевода"
 
 msgid "Reduce translation costs"
-msgstr "Снизить затраты на перевод"
+msgstr "Сократить расходы на перевод"
 
 msgid "Improve SEO in translation languages"
 msgstr "Улучшить SEO на языках перевода"
@@ -44,5 +46,6 @@ msgstr "Как использовать глоссарий для точных �
 
 msgid "%d item in the <a>Glossary</a>"
 msgid_plural "%d items in the <a>Glossary</a>"
-msgstr[0] "%d элемент в <a>Глоссарии</a>"
-msgstr[1] "%d элементов в <a>Глоссарии</a>"
+msgstr[0] "%d элемент в <a>глоссарии</a>"
+msgstr[1] "%d элемента в <a>глоссарии</a>"
+msgstr[2] "%d элементов в <a>глоссарии</a>"

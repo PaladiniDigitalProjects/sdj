@@ -6,6 +6,7 @@ use WPML\Core\Component\Translation\Application\Repository\TranslationNotFoundEx
 use WPML\Core\Component\Translation\Application\Repository\TranslationRepositoryInterface;
 use WPML\Core\Component\Translation\Domain\Translation;
 use WPML\Core\Component\Translation\Domain\TranslationType;
+use WPML\Core\Port\Persistence\DatabaseWriteInterface;
 use WPML\Core\Port\Persistence\Exception\DatabaseErrorException;
 use WPML\Core\Port\Persistence\QueryHandlerInterface;
 use WPML\Core\Port\Persistence\QueryPrepareInterface;
@@ -46,6 +47,9 @@ class TranslationRepository implements TranslationRepositoryInterface {
   /** @var TranslationResultMapper $resultMapper */
   private $resultMapper;
 
+  /** @var DatabaseWriteInterface $dbWriter */
+  private $dbWriter;
+
 
   /**
    * @phpstan-param QueryHandlerInterface<int, TranslationRow> $queryHandler
@@ -57,11 +61,13 @@ class TranslationRepository implements TranslationRepositoryInterface {
     QueryHandlerInterface $queryHandler,
     QueryPrepareInterface $queryPrepare,
     TranslationResultMapper $resultMapper,
+    DatabaseWriteInterface $dbWriter,
     $sitepress
   ) {
     $this->queryHandler = $queryHandler;
     $this->queryPrepare = $queryPrepare;
     $this->resultMapper = $resultMapper;
+    $this->dbWriter     = $dbWriter;
     $this->sitepress    = $sitepress;
   }
 
@@ -151,6 +157,19 @@ class TranslationRepository implements TranslationRepositoryInterface {
         AND `translation`.`element_id` != `original`.`element_id` 
         AND `translation`.`element_type` = %s
     ";
+  }
+
+
+  public function setCancelledStatus( int $translationId ): int {
+    try {
+      return $this->dbWriter->update(
+        'icl_translation_status',
+        [ 'status' => 0 ],
+        [ 'translation_id' => $translationId ]
+      );
+    } catch ( DatabaseErrorException $e ) {
+      return 0;
+    }
   }
 
 

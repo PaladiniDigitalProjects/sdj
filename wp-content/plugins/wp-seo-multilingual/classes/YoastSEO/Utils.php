@@ -76,4 +76,23 @@ class Utils {
 	public static function isIndexableTerm( $term ) {
 		return (int) \WPSEO_Taxonomy_Meta::get_term_meta( $term, $term->taxonomy, 'noindex' ) !== 1;
 	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isSitemapRequest(): bool {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+		$path        = (string) wp_parse_url( $request_uri, PHP_URL_PATH );
+		$extension   = pathinfo( $path, PATHINFO_EXTENSION );
+
+		if ( stripos( $request_uri, 'sitemap' ) !== false && in_array( $extension, [ 'xml', 'xsl' ], true ) ) {
+			return true;
+		}
+
+		return false;
+	}
 }

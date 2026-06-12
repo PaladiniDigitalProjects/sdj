@@ -1,21 +1,24 @@
+@use "variables";
+
+
 .wpforms-container {
-  background-color: #000000;
+  background-color: #ffffff;
   width: 100%;
-  
+  button[type="submit"] {
+    background-color: #007fad !important;
+  }
   .wpforms-field {
     .wpforms-field-medium {
       width: 100%;
       max-width: 100%;
       padding-left: 0;
-      border-radius: 0;
-      border:none;
-      border-bottom: 0.1rem solid $white;
-      color:rgb(255, 255, 255);
-      @include font-size(14);
+      border-radius: 3px;
+     
+      color:rgb(0, 0, 0);
       &::placeholder {
-        color:rgb(255, 255, 255);
+        color:rgb(105, 105, 105);
         font-weight: 400;
-        @include font-size(12);
+        
       }
     }
   }
@@ -24,11 +27,11 @@
   select.wpforms-field-medium,
   .wpforms-field-row.wpforms-field-medium {
     max-width: 100%;
-    background-color: #000000 !important;
+    background-color: #ffffff;
   }
 
   label.wpforms-field-label-inline {
-    color:#ffffff;
+    color:#000000;
   }
   .wpforms-submit-container {
     text-align: right;
@@ -36,6 +39,7 @@
     .wpforms-submit {
       font-weight: bold;
       letter-spacing: 0.05rem;
+       background-color: aqua;
     }
   }
 
@@ -52,22 +56,21 @@ div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirectio
 div.wpforms-container-full .wpforms-confirmation-container-full p,
 div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirection-message) p {
   color: #ffffff;
-  font-size: 1.4rem;
 }
 
 footer.wp-block-template-part {
   .wpforms-submit-container {
     text-align: right;
     .wpforms-submit {
-      background-color: #ffffff !important;
-      color:#000000 !important;
+      background-color: #ffffff ;
+      color:#000000 ;
     }
   }
 
   div.wpforms-container-full .wpforms-confirmation-container-full,
   div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirection-message) {
     background: #ffffff;
-    border: 1px solid #ffffff;
+    border: 1px solid #000000;
     box-sizing: border-box;
   }
 
@@ -75,7 +78,7 @@ footer.wp-block-template-part {
   div.wpforms-container-full .wpforms-confirmation-container-full p,
   div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirection-message) p {
     color: #000000;
-    font-size: 1.4rem;
+  
   }
 }
 
@@ -85,7 +88,7 @@ footer.wp-block-template-part {
   .wpforms-container {
     background-color: #ffffff;
     width: 100%;
-    box-shadow: none !important;
+    box-shadow: none ;
     
     .wpforms-field {
       .wpforms-field-medium {
@@ -93,14 +96,10 @@ footer.wp-block-template-part {
         max-width: 100%;
         padding-left: 0;
         border-radius: 0;
-        border:none;
-        border-bottom: 0.1rem solid $gray;
-        color:$gray;
-        @include font-size(14);
+        color:variables.$gray;
         &::placeholder {
-          color:$gray;
+          color:variables.$gray;
           font-weight: 400;
-          @include font-size(12);
         }
       }
     }
@@ -109,11 +108,11 @@ footer.wp-block-template-part {
     select.wpforms-field-medium,
     .wpforms-field-row.wpforms-field-medium {
       max-width: 100%;
-      background-color: $white !important;
+      background-color: variables.$white;
     }
   
     label.wpforms-field-label-inline {
-      color:$gray;
+      color:variables.$gray;
     }
     .wpforms-submit-container {
       text-align: right;
@@ -129,23 +128,23 @@ footer.wp-block-template-part {
   div.wpforms-container-full .wpforms-confirmation-container-full,
 div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirection-message) {
   background: #ffffff;
-  border: 1px solid $gray;
+  border: 1px solid variables.$gray;
   box-sizing: border-box;
 }
 
 }
 
 .wpforms-form .wpforms-field.wpforms-field-select-style-classic select {
-  padding-inline-start: 0 !important;
+  padding-inline-start: 0 ;
   option.placeholder {
-    font-size: 14px !important;
-    line-height: 100% !important;
+    font-size: 0.875rem ;
+    line-height: 100% ;
   }
 }
 
 .div.wpforms-container-full .wpforms-confirmation-container-full p,
 div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirection-message) p {
-  color:$black;
+  color:variables.$black;
 }
 
 .downloadPager {
@@ -155,12 +154,12 @@ div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirect
     transition: 0.15s;
   .wpforms-container  {
     display: none;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
+    padding: 0 ;
+    margin: 0 ;
+    width: 100%;
 
     .wpforms-field-medium {
-      background-color: #f1f1f1!important;
+      background-color: #ffffff;
       color:gray;
       &::placeholder {
         color:gray;
@@ -169,21 +168,21 @@ div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirect
     }
 
     .wpforms-field-label-inline {
-      color:$black;
+      color:variables.$black;
     }
     
     &.display-box {
-    border: 1px solid gray;
+    border: 1px solid rgb(0, 0, 0);
     border-radius: 6px;
-    padding: 1rem !important;
+    padding: 1rem ;
       display: block;
-      --wpforms-container-shadow-size-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0) !important;
+      --wpforms-container-shadow-size-box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0);
     }
   }
 
 
   .wp-block-button.hide {
   display:none;
-  }
+  } 
 }
 

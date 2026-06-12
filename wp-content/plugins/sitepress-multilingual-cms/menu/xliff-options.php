@@ -33,7 +33,7 @@ $new_line_labels = array(
 
 				<h4><?php esc_html_e( 'XLIFF version', 'wpml-translation-management' ); ?></h4>
 
-				<p>
+				<label>
 					<?php esc_html_e( 'Choose default format for XLIFF file:', 'wpml-translation-management' ); ?>
 
 					<select name="icl_xliff_version">
@@ -51,7 +51,7 @@ $new_line_labels = array(
 						}
 						?>
 					</select>
-				</p>
+				</label>
 			</div>
 
 			<div class="wpml-section-content-inner">

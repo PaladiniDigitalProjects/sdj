@@ -39,4 +39,14 @@ interface DatabaseWriteInterface {
   public function update( string $table, array $entityData, array $whereData ): int;
 
 
+  /**
+   * @param string               $table
+   * @param array<string, mixed> $whereData
+   *
+   * @return int
+   * @throws DatabaseErrorException
+   */
+  public function delete( string $table, array $whereData ): int;
+
+
 }

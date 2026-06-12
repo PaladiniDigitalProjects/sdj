@@ -113,4 +113,22 @@ class DatabaseWrite implements \WPML\Core\Port\Persistence\DatabaseWriteInterfac
   }
 
 
+  /**
+   * @param string               $table
+   * @param array<string, mixed> $whereData
+   *
+   * @return int
+   * @throws DatabaseErrorException
+   */
+  public function delete( string $table, array $whereData ): int {
+    $this->wpdb->delete( $this->wpdb->prefix . $table, $whereData );
+
+    if ( $this->wpdb->last_error ) {
+      throw new DatabaseErrorException( $this->wpdb->last_error );
+    }
+
+    return $this->wpdb->rows_affected;
+  }
+
+
 }

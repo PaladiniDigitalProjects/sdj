@@ -21,7 +21,6 @@ class LanguageSwitcher implements \IWPML_Backend_Action, \IWPML_Frontend_Action 
 	 * @return void
 	 */
 	public function registerWidgets() {
-		// @phpstan-ignore-next-line
 		Plugin::instance()->widgets_manager->register( new Widget() );
 	}
 
@@ -31,7 +30,6 @@ class LanguageSwitcher implements \IWPML_Backend_Action, \IWPML_Frontend_Action 
 	 * @return void
 	 */
 	public function registerWidgetsDeprecated() {
-		// @phpstan-ignore-next-line
 		Plugin::instance()->widgets_manager->register_widget_type( new Widget() );
 	}
 }

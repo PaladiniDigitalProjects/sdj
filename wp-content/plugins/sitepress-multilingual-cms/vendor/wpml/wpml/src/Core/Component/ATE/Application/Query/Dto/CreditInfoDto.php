@@ -44,6 +44,11 @@ class CreditInfoDto {
    */
   private $payAsYouGo;
 
+  /**
+   * @var int
+   */
+  private $subscriptionDebt;
+
 
   public function __construct(
     int $freeCreditsAmount,
@@ -53,7 +58,8 @@ class CreditInfoDto {
     int $totalCreditsDeposited,
     int $totalCreditsSpent,
     bool $payAsYouGo,
-    int $subscriptionMaxLimit = null
+    int $subscriptionMaxLimit = null,
+    int $subscriptionDebt = 0
   ) {
     $this->freeCreditsAmount     = $freeCreditsAmount;
     $this->activeSubscription    = $activeSubscription;
@@ -63,6 +69,7 @@ class CreditInfoDto {
     $this->totalCreditsDeposited = $totalCreditsDeposited;
     $this->totalCreditsSpent     = $totalCreditsSpent;
     $this->payAsYouGo            = $payAsYouGo;
+    $this->subscriptionDebt      = $subscriptionDebt;
   }
 
 
@@ -106,6 +113,11 @@ class CreditInfoDto {
 
   public function getPayAsYouGo(): bool {
     return $this->payAsYouGo;
+  }
+
+
+  public function getSubscriptionDebt(): int {
+    return $this->subscriptionDebt;
   }
 
 

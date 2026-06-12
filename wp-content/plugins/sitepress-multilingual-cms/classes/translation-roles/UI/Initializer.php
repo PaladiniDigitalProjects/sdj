@@ -63,12 +63,15 @@ class Initializer {
 	}
 
 	public static function getTranslationData( callable $userExtra = null, $preload = true ) {
+		global $wpdb;
 		$currentUser = User::getCurrent();
 		$service     = Option::isTMAllowed() ? \TranslationProxy::get_current_service() : null;
+		$highUserCount = $wpdb->get_var("SELECT 1 FROM {$wpdb->prefix}users LIMIT 3000,1");
 
 		return [
 			'canManageOptions' => $currentUser->has_cap( 'manage_options' ),
 			'adminUserName'    => $currentUser->display_name,
+			'highUserCount'    => (int)$highUserCount === 1,
 			'translators'      => $preload ? Fns::map(
 				User::withAvatar(),
 				make( \WPML_Translator_Records::class )->get_users_with_capability()

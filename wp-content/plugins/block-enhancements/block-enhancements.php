@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:       Block Enhancements
- * Description:       Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive typography, text alignment, hover style, etc.
+ * Description:       Enhance Gutenberg blocks with practical features such as icon, color, shadow, transform, transition, responsive dimensions, responsive typography, text alignment, hover style, etc.
  * Requires at least: 6.5
  * Requires PHP:      7.0
- * Version:           1.2.9
+ * Version:           1.2.12
  * Author:            Phi Phan
  * Author URI:        https://boldblocks.net
  * Plugin URI:        https://boldblocks.net?utm_source=BE&utm_campaign=visit+site&utm_medium=link&utm_content=Plugin+URI
@@ -30,7 +30,7 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 		 *
 		 * @var String
 		 */
-		protected $version = '1.2.9';
+		protected $version = '1.2.12';
 
 		/**
 		 * Components
@@ -147,6 +147,7 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 
 			// Enqueue scripts for editor.
 			add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
+			add_action( 'enqueue_block_assets', [ $this, 'enqueue_block_assets' ] );
 
 			// Run all components.
 			foreach ( $this->components as $component ) {
@@ -170,13 +171,11 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 		}
 
 		/**
-		 * Enqueue editor assets
+		 * Enqueue block editor assets
 		 *
 		 * @return void
 		 */
 		public function enqueue_block_editor_assets() {
-			// $index_asset = $this->include_file( 'build/index.asset.php' );
-
 			// Scripts.
 			wp_enqueue_script(
 				BLOCK_ENHANCEMANCES_EDITOR_SCRIPTS_HANDLE,
@@ -204,6 +203,23 @@ if ( ! class_exists( BlockEnhancements::class ) ) :
 				'BlockEnhancementsFeatures',
 				$this->get_features()
 			);
+		}
+
+		/**
+		 * Enqueue block assets
+		 *
+		 * @return void
+		 */
+		public function enqueue_block_assets() {
+			if ( is_admin() ) {
+				// Styles.
+				wp_enqueue_style(
+					BLOCK_ENHANCEMANCES_EDITOR_STYLE_HANDLE,
+					$this->get_file_uri( 'build/index.css' ),
+					[],
+					$this->get_script_version( $this->index_asset )
+				);
+			}
 		}
 
 		/**

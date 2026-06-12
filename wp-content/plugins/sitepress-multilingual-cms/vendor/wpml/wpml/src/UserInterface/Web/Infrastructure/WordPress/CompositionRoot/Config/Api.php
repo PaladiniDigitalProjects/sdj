@@ -123,6 +123,11 @@ class Api implements ApiInterface {
 
 
   public function validateRequest( string $capability ): bool {
+    // Allow public access if capability is set to __return_true
+    if ( $capability === '__return_true' ) {
+      return true;
+    }
+
     return \current_user_can( $this->capabilityPlusAdmin( $capability ) );
   }
 
@@ -153,6 +158,15 @@ class Api implements ApiInterface {
    */
   public function responseJsonError( $data ) {
       return \rest_ensure_response( new \WP_REST_Response( $data, 500 ) );
+  }
+
+
+  /**
+   * @param array<mixed> $data
+   * @param int $status_code
+   */
+  public function responseJsonWithStatusCode( $data, $status_code ) {
+      return \rest_ensure_response( new \WP_REST_Response( $data, $status_code ) );
   }
 
 

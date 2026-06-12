@@ -352,8 +352,14 @@ class Repository implements RepositoryInterface {
   }
 
 
+  public function addDatabaseTablesIfNotExist(): bool {
+    return self::createDatabaseTables();
+  }
+
+
   /*
-  * This is called by legacy CreateLinksTables::run_admin().
+  * DO NOT CHANGE THIS METHOD NAME / VISIBLITY.
+  * This is called by legacy initial database setup.
   */
   public static function createDatabaseTables(): bool {
     $wpdb = $GLOBALS['wpdb'];

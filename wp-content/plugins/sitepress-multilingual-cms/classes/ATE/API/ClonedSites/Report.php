@@ -55,21 +55,6 @@ class Report {
 
 
 	/**
-	 * @return true|\WP_Error
-	 */
-	public function move() {
-		$reportResult = $this->apiClient->reportMovedSite();
-		$result       = $this->apiClient->processMoveReport( $reportResult );
-
-		if ( $result ) {
-			$this->lock->unlock();
-			do_action( 'wpml_tm_ate_synchronize_translators' );
-		}
-
-		return $result;
-	}
-
-	/**
 	 * @return bool
 	 */
 	public function copy() {
@@ -92,11 +77,16 @@ class Report {
 	 * @return bool
 	 */
 	private function copyWithStrategy( $copyStrategy, $arguments = [] ) {
+		MigrationLogger::begin( $copyStrategy );
+
 		$reportResult = call_user_func_array( [ $this->apiClient, $copyStrategy ], $arguments );
 		$result       = $this->apiClient->processCopyReportConfirmation( $reportResult );
 
 		if ( $result ) {
 			$jobsInProgress = $this->ateJobsRepository->get_jobs_to_sync();
+
+			MigrationLogger::jobsCancelled( count( $jobsInProgress ) );
+
 			/** @var \WPML_TM_Post_Job_Entity $jobInProgress */
 			foreach ( $jobsInProgress as $jobInProgress ) {
 				$jobInProgress->set_status( ICL_TM_NOT_TRANSLATED );
@@ -105,8 +95,14 @@ class Report {
 			}
 
 			$this->lock->unlock();
+			MigrationLogger::siteUnlocked();
+
 			do_action( 'wpml_tm_ate_synchronize_translators' );
+		} else {
+			MigrationLogger::migrationFailed( $copyStrategy );
 		}
+
+		MigrationLogger::end();
 
 		return $result;
 	}

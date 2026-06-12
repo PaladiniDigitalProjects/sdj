@@ -2,6 +2,7 @@
 
 namespace WPML\UserInterface\Web\Core\Component\Preferences\Application;
 
+use WPML\Core\Port\PluginInterface;
 use WPML\Core\SharedKernel\Component\Language\Application\Query\Dto\LanguageDto;
 use WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface;
 
@@ -10,9 +11,13 @@ class LanguagePreferencesLoader {
   /** @var LanguagesQueryInterface */
   private $languagesQuery;
 
+  /** @var PluginInterface */
+  private $pluginInterface;
 
-  public function __construct( LanguagesQueryInterface $languagesQuery ) {
+
+  public function __construct( LanguagesQueryInterface $languagesQuery, PluginInterface $pluginInterface ) {
     $this->languagesQuery = $languagesQuery;
+    $this->pluginInterface = $pluginInterface;
   }
 
 
@@ -24,6 +29,7 @@ class LanguagePreferencesLoader {
    * }>
    */
   private function getLanguages(): array {
+
     return array_reduce(
       $this->languagesQuery->getActive(),
       function ( array $carry, LanguageDto $language ) {
@@ -31,6 +37,7 @@ class LanguagePreferencesLoader {
           'code'                             => $language->getCode(),
           'name'                             => $language->getDisplayName(),
           'flagUrl'                          => $language->getCountryFlagUrl(),
+          'homeUrl'                         =>  $this->pluginInterface->getLanguageHomeUrl( $language->getCode() ),
           'doesSupportAutomaticTranslations' => $language->doesSupportAutomaticTranslations(),
         ];
 

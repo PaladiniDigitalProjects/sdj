@@ -59,7 +59,7 @@ class ElementLink {
 		$tmPostLink = apply_filters(
 			'wpml_document_view_item_link',
 			$tmPostLink,
-			'',
+			__( 'View', 'sitepress' ),
 			$job,
 			$job->get_element_type_prefix(),
 			$elementType

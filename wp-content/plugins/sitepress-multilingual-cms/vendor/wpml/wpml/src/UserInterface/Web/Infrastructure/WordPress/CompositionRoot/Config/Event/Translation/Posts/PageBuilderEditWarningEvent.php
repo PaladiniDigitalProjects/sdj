@@ -29,11 +29,11 @@ class PageBuilderEditWarningEvent {
      */
     add_action(
       'wpml_maybe_display_modal_page_builder_warning',
-      function( int $postId, string $pageBuilderName ) {
-        $this->getWarningTranslationEditController()->maybeShowPageBuilderWarning( $postId, $pageBuilderName );
+      function( int $postId, string $pageBuilderName, array $args = [] ) {
+        $this->getWarningTranslationEditController()->maybeShowPageBuilderWarning( $postId, $pageBuilderName, $args );
       },
       10,
-      2
+      3
     );
 
   }

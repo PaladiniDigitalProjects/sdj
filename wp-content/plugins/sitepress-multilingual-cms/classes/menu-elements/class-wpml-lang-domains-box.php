@@ -50,6 +50,7 @@ class WPML_Lang_Domains_Box extends WPML_SP_User {
                                     name="language_domains[<?php echo esc_attr( $code ); ?>]"
                                     value="<?php echo $this->get_language_domain( $code, $default_home, $language_domains ); ?>"
                                     data-language="<?php echo esc_attr( $code ); ?>"
+									aria-description="<?php esc_attr_e( 'Edit to change the domain for the language', 'sitepress' ); ?>"
                                     size="30"/>
 							<?php if ( isset( $home_path[1] ) && is_string( $home_path[1] ) ) { ?>
                                 <code><?php echo esc_html( $home_path ); ?></code>

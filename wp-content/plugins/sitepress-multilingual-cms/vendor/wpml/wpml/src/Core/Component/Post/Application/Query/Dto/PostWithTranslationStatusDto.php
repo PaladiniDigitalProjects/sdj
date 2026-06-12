@@ -38,6 +38,9 @@ final class PostWithTranslationStatusDto
   /** @var string|null */
   private $translatorNote;
 
+  /** @var bool|null */
+  private $usingNativeEditor;
+
 
   /**
    * @param int                                 $id
@@ -47,6 +50,7 @@ final class PostWithTranslationStatusDto
    * @param array<string, TranslationStatusDto|array<string, mixed>> $translationStatuses
    * @param int|null                            $wordCount
    * @param string|null                         $translatorNote
+   * @param string                              $usingNativeEditor 'yes' | 'no' | ''
    */
   public function __construct(
     int $id,
@@ -56,7 +60,8 @@ final class PostWithTranslationStatusDto
     string $postType,
     array $translationStatuses,
     int $wordCount = null,
-    string $translatorNote = null
+    string $translatorNote = null,
+    string $usingNativeEditor = ''
   ) {
     $translationStatuses = array_map(
       function ( $translationStatus ) {
@@ -86,6 +91,7 @@ final class PostWithTranslationStatusDto
     $this->translationStatuses = $translationStatuses;
     $this->wordCount           = $wordCount;
     $this->translatorNote      = $translatorNote;
+    $this->usingNativeEditor   = $this->mapNativeEditorValue( $usingNativeEditor );
   }
 
 
@@ -133,6 +139,28 @@ final class PostWithTranslationStatusDto
    */
   public function getTranslatorNote() {
     return $this->translatorNote;
+  }
+
+
+  /**
+   * @return bool|null
+   */
+  public function getUsingNativeEditor() {
+    return $this->usingNativeEditor;
+  }
+
+
+  /**
+   * @param string $dbValue
+   *
+   * @return bool|null
+   */
+  private function mapNativeEditorValue( string $dbValue ) {
+    if ( empty( $dbValue ) ) {
+      return null;
+    }
+
+    return $dbValue === 'yes';
   }
 
 

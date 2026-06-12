@@ -29,11 +29,17 @@ abstract class WPML_Page_Builders_Register_Strings {
 	/** @var int $group_index */
 	private $group_index;
 
+	/**
+	 * @param IWPML_Page_Builders_Translatable_Nodes      $translatable_nodes
+	 * @param IWPML_Page_Builders_Data_Settings           $data_settings
+	 * @param WPML_PB_String_Registration                 $string_registration
+	 * @param WPML_PB_Reuse_Translations_By_Strategy|null $reuse_translations
+	 */
 	public function __construct(
 		IWPML_Page_Builders_Translatable_Nodes $translatable_nodes,
 		IWPML_Page_Builders_Data_Settings $data_settings,
 		WPML_PB_String_Registration $string_registration,
-		WPML_PB_Reuse_Translations_By_Strategy $reuse_translations = null
+		$reuse_translations = null
 	) {
 
 		$this->data_settings       = $data_settings;

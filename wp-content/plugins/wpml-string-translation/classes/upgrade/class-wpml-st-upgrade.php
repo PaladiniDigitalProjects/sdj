@@ -81,6 +81,8 @@ class WPML_ST_Upgrade {
 		$this->maybe_run( '\WPML\ST\Upgrade\Command\RegenerateMoFilesWithStringNames' );
 		$this->maybe_run( \WPML\ST\Upgrade\Command\MigrateMultilingualWidgets::class );
 		$this->maybe_run( \WPML\ST\Upgrade\Command\UpgradeAutoregisteringStrings::class );
+		$this->maybe_run( \WPML\ST\Upgrade\Command\UpgradeWpSettingsStrings::class );
+		$this->maybe_run( \WPML\ST\Upgrade\Command\DeleteFileHashingOption::class );
 	}
 
 	/**

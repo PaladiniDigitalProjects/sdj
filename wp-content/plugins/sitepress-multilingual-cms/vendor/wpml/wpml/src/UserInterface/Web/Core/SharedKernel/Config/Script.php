@@ -4,7 +4,7 @@ namespace WPML\UserInterface\Web\Core\SharedKernel\Config;
 
 use WPML\PHP\Exception\InvalidArgumentException;
 
-class Script {
+class Script implements AssetInterface {
   const USED_ON_ADMIN = 'admin';
   const USED_ON_FRONT = 'front';
   const USED_ON_BOTH = 'both';
@@ -35,6 +35,12 @@ class Script {
 
   /** @var array<string> $scriptData */
   private $scriptData = [];
+
+  /** @var bool */
+  private $inFooter = true;
+
+  /** @var bool */
+  private $supportsHMR = false;
 
 
   public function __construct( string $id ) {
@@ -183,6 +189,30 @@ class Script {
    */
   public function setScriptData( array $scriptData ): self {
     $this->scriptData = $scriptData;
+    return $this;
+  }
+
+
+  public function inFooter(): bool {
+    return $this->inFooter;
+  }
+
+
+  public function setInFooter( bool $inFooter ): self {
+    $this->inFooter = $inFooter;
+
+    return $this;
+  }
+
+
+  public function supportsHMR(): bool {
+    return $this->supportsHMR;
+  }
+
+
+  public function setSupportsHMR( bool $supportsHMR ): self {
+    $this->supportsHMR = $supportsHMR;
+
     return $this;
   }
 

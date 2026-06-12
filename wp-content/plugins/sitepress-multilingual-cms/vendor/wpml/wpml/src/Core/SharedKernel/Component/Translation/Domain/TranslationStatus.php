@@ -31,7 +31,7 @@ class TranslationStatus {
 
 
   public function __construct( int $value ) {
-    if ( in_array( $value, $this->getAll(), true ) ) {
+    if ( in_array( $value, self::getAll(), true ) ) {
       $this->value = $value;
     } else {
       $this->value = self::NOT_TRANSLATED;
@@ -57,7 +57,7 @@ class TranslationStatus {
   /**
    * @return int[]
    */
-  public function getAll() {
+  public static function getAll() {
     return [
       self::NOT_TRANSLATED,
       self::WAITING_FOR_TRANSLATOR,

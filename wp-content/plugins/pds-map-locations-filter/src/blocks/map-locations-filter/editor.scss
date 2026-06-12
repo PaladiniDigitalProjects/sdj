@@ -1,0 +1,33 @@
+/**
+ * Styles for the editor view of the map-locations-filter block.
+ */
+ .wp-block-pds-map-locations-filter-map-locations-filter {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px dashed #ccc;
+    min-height: 150px; /* Ensure it has some height */
+
+    .mlf-title-editor { /* Use a different class for editor title if needed */
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .mlf-map-placeholder { /* Placeholder for the map area in editor */
+        background-color: #e0e0e0;
+        border: 1px solid #ccc;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        font-style: italic;
+    }
+
+     /* You might show simplified controls or just a message in the editor */
+    .editor-filters-preview {
+        margin-top: 10px;
+        font-size: 0.9em;
+        color: #777;
+     }
+}

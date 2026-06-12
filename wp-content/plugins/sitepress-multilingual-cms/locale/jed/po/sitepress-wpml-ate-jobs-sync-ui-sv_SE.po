@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: sv_SE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/ate/AutoTranslate.js:21
 msgid "Sending for translation"
@@ -23,7 +25,7 @@ msgstr "Försök igen"
 
 #: src/js/ate/review/init.js:17
 msgid "You don't have the rights to review this language"
-msgstr "Du har inte rättigheter att granska detta språk"
+msgstr "Du har inte rättigheter att granska det här språket"
 
 #: src/js/ate/status-bar/components/AteJobsStatus.js:33
 msgid "translations"
@@ -38,7 +40,7 @@ msgid "Translation on hold"
 msgstr "Översättning pausad"
 
 #: src/js/ate/status-bar/components/AteJobsStatus.js:45
-#: src/js/ate/status-bar/components/constants.js:15
+#: src/js/ate/status-bar/components/constants.js:16
 msgid "No translations in the queue"
 msgstr "Inga översättningar i kön"
 
@@ -48,99 +50,118 @@ msgstr "%d översättningar kvar"
 
 #: src/js/ate/status-bar/components/StatusBar/Notifications.js:38
 msgid "%d min remaining"
-msgstr "%d min återstår"
+msgstr "%d minuter återstår"
 
 #: src/js/ate/status-bar/components/StatusBar/Notifications.js:39
 msgid "less than 1 min remaining"
 msgstr "mindre än 1 min återstår"
 
-#: src/js/ate/status-bar/components/constants.js:13
-#: src/js/ate/translate-everything/components/Status/index.js:50
-msgid "Automatic translation status"
-msgstr "Status för automatisk översättning"
-
-#: src/js/ate/status-bar/components/constants.js:17
-msgid "Translate Everything Automatically"
-msgstr "Översätt allt automatiskt"
-
-#: src/js/ate/status-bar/components/constants.js:19
-msgid "Translate Everything Automatically is active"
-msgstr "Översätt allt automatiskt är aktivt"
-
-#: src/js/ate/status-bar/components/constants.js:21
-msgid "Translate Everything Automatically is paused"
-msgstr "Översätt allt automatiskt är pausat"
-
-#: src/js/ate/status-bar/components/constants.js:23
-msgid "Translate Everything Automatically is stopped"
-msgstr "Översätt allt automatiskt är stoppat"
-
-#: src/js/ate/status-bar/components/constants.js:25
-msgid "Out of Credits for Automatic Translation"
-msgstr "Slut på krediter för automatisk översättning"
-
-#: src/js/ate/status-bar/components/constants.js:28
-msgid "You have <b>1</b> prepaid translation credit in your wpml.org account. Assign these credits to your site to start using automatic translation"
-msgid_plural "You have <b>%s</b> prepaid translation credits in your wpml.org account. Assign these credits to your site to start using automatic translation"
-msgstr[0] "Du har <b>1</b> förbetald översättningskredit på ditt wpml.org-konto. Tilldela dessa krediter till din webbplats för att börja använda automatisk översättning"
-msgstr[1] "Du har <b>%s</b> förbetalda översättningskrediter på ditt wpml.org-konto. Tilldela dessa krediter till din webbplats för att börja använda automatisk översättning"
-
-#: src/js/ate/status-bar/components/constants.js:40
-#: src/js/ate/status-bar/components/sending/index.js:10
-msgid "Preparing content for translation"
-msgstr "Förbereder innehåll för översättning"
-
-#: src/js/ate/status-bar/components/constants.js:42
-#: src/js/ate/status-bar/components/sending/index.js:9
-msgid "Preparing more content for translation"
-msgstr "Förbereder mer innehåll för översättning"
-
-#: src/js/ate/status-bar/components/constants.js:44
-msgid "An error occured, fix it to continue."
-msgstr "Ett fel inträffade, åtgärda det för att fortsätta."
-
-#: src/js/ate/status-bar/components/constants.js:46
-msgid ""
-"There is an issue with automatic translation that needs your attention. Fix "
-"it to continue."
-msgstr "Det finns ett problem med automatisk översättning som kräver din uppmärksamhet. Åtgärda det för att fortsätta."
-
-#: src/js/ate/status-bar/components/constants.js:49
-#. %s is replaced by the name of the language.
-msgid ""
-"Your default language, %s, must be mapped to a supported language in order "
-"to use automatic translation."
-msgstr "Ditt standardspråk, %s, måste mappas till ett stött språk för att kunna använda automatisk översättning."
-
-#: src/js/ate/status-bar/components/constants.js:57
-#. %s is replaced by the language(s) name.
-msgid "Your language, %s, must be mapped to a supported language in order to use automatic translation."
-msgid_plural "The following languages on your site must be mapped to a supported language in order to use automatic translation: %s"
-msgstr[0] "Ditt språk, %s, måste mappas till ett stött språk för att kunna använda automatisk översättning."
-msgstr[1] "Följande språk på din webbplats måste mappas till ett stött språk för att kunna använda automatisk översättning: %s"
-
-#: src/js/ate/status-bar/components/constants.js:67
-msgid ""
-"Content in those languages: %s, cannot be automatically translated unless "
-"you map them to a language that's different from the default."
-msgstr "Innehåll på dessa språk: %s, kan inte översättas automatiskt om du inte mappar dem till ett språk som skiljer sig från standardspråket."
-
-#: src/js/ate/status-bar/components/constants.js:77
+#: src/js/ate/status-bar/components/constants.js:105
 #. %d is replaced by the number of jobs to review.
 msgid "%d translation waiting for review"
 msgid_plural "%d translations waiting for review"
 msgstr[0] "%d översättning väntar på granskning"
 msgstr[1] "%d översättningar väntar på granskning"
 
+#: src/js/ate/status-bar/components/constants.js:119
+msgid "Translate Everything Automatically has unresolved jobs"
+msgstr "Översätt allt automatiskt har olösta jobb"
+
+#: src/js/ate/status-bar/components/constants.js:121
+msgid "Automatic translation has unresolved jobs"
+msgstr "Automatisk översättning har olösta jobb"
+
+#: src/js/ate/status-bar/components/constants.js:126
+#. %d is replaced by the number of unsolvable jobs.
+msgid "%d job couldn't be completed. Go to Translation Dashboard to review and resolve."
+msgid_plural "%d jobs couldn't be completed. Go to Translation Dashboard to review and resolve."
+msgstr[0] "%d jobb kunde inte slutföras. Gå till översättningspanelen för att granska och lösa."
+msgstr[1] "%d jobb kunde inte slutföras. Gå till översättningspanelen för att granska och lösa."
+
+#: src/js/ate/status-bar/components/constants.js:14
+#: src/js/ate/translate-everything/components/Status/index.js:50
+msgid "Automatic translation status"
+msgstr "Status för automatisk översättning"
+
+#: src/js/ate/status-bar/components/constants.js:18
+msgid "Translate Everything Automatically"
+msgstr "Översätt allt automatiskt"
+
+#: src/js/ate/status-bar/components/constants.js:20
+msgid "Translate Everything Automatically is active"
+msgstr "Översätt allt automatiskt är aktivt"
+
+#: src/js/ate/status-bar/components/constants.js:24
+msgid "Translate Everything Automatically is paused — payment required"
+msgstr "Översätt allt automatiskt är pausat – betalning krävs"
+
+#: src/js/ate/status-bar/components/constants.js:26
+msgid "Automatic translation is paused — payment required"
+msgstr "Automatisk översättning är pausad – betalning krävs"
+
+#: src/js/ate/status-bar/components/constants.js:28
+msgid ""
+"We couldn’t process your payment. Click “Pay now” to complete the "
+"transaction and resume automatic translation."
+msgstr "Vi kunde inte behandla din betalning. Klicka på “Betala nu” för att slutföra transaktionen och återuppta automatisk översättning."
+
+#: src/js/ate/status-bar/components/constants.js:32
+msgid "Translate Everything automatically is paused - not enough credits"
+msgstr "Översätt allt automatiskt är pausat – inte tillräckligt med krediter"
+
+#: src/js/ate/status-bar/components/constants.js:34
+msgid "Automatic translation is paused — not enough credits"
+msgstr "Automatisk översättning är pausad – inte tillräckligt med krediter"
+
+#: src/js/ate/status-bar/components/constants.js:36
+msgid "Translation will resume automatically once you assign more credits."
+msgstr "Översättningen återupptas automatiskt när du tilldelar fler krediter."
+
+#: src/js/ate/status-bar/components/constants.js:38
+msgid "You have %s prepaid translation credit in your WPML account. Assign these credits to this site to resume automatic translation"
+msgid_plural "You have %s prepaid translation credits in your WPML account. Assign these credits to this site to resume automatic translation"
+msgstr[0] "Du har %s förbetald översättningskredit på ditt WPML-konto. Tilldela dessa krediter till denna webbplats för att återuppta automatisk översättning"
+msgstr[1] "Du har %s förbetalda översättningskrediter på ditt WPML-konto. Tilldela dessa krediter till denna webbplats för att återuppta automatisk översättning"
+
+#: src/js/ate/status-bar/components/constants.js:72
+#: src/js/ate/status-bar/components/sending/index.js:10
+msgid "Preparing content for translation"
+msgstr "Förbereder innehåll för översättning"
+
+#: src/js/ate/status-bar/components/constants.js:74
+#: src/js/ate/status-bar/components/sending/index.js:9
+msgid "Preparing more content for translation"
+msgstr "Förbereder mer innehåll för översättning"
+
+#: src/js/ate/status-bar/components/constants.js:77
+#. %s is replaced by the name of the language.
+msgid ""
+"Your default language, %s, must be mapped to a supported language in order "
+"to use automatic translation."
+msgstr "Ditt standardspråk, %s, måste mappas till ett språk som stöds för att kunna använda automatisk översättning."
+
+#: src/js/ate/status-bar/components/constants.js:85
+#. %s is replaced by the language(s) name.
+msgid "Your language, %s, must be mapped to a supported language in order to use automatic translation."
+msgid_plural "The following languages on your site must be mapped to a supported language in order to use automatic translation: %s"
+msgstr[0] "Ditt språk, %s, måste mappas till ett språk som stöds för att kunna använda automatisk översättning."
+msgstr[1] "Följande språk på din webbplats måste mappas till ett språk som stöds för att kunna använda automatisk översättning: %s"
+
+#: src/js/ate/status-bar/components/constants.js:95
+msgid ""
+"Content in those languages: %s, cannot be automatically translated unless "
+"you map them to a language that's different from the default."
+msgstr "Innehåll på dessa språk: %s, kan inte översättas automatiskt om du inte mappar dem till ett annat språk än standard."
+
 #: src/js/ate/status-bar/components/credit/index.js:100
 msgid "Account credits used"
-msgstr "Kontokrediter använda"
+msgstr "Använda kontokrediter"
 
 #: src/js/ate/status-bar/components/credit/index.js:110
 msgid ""
 "Once you’ve used all your prepaid credits, we’ll invoice you for any "
 "additional credits you use after the end of the month"
-msgstr "När du har använt alla dina förbetalda krediter kommer vi att fakturera dig för eventuella ytterligare krediter du använder efter slutet av månaden"
+msgstr "När du har använt alla dina förbetalda krediter fakturerar vi dig för eventuella ytterligare krediter du använder efter månadens slut"
 
 #: src/js/ate/status-bar/components/credit/index.js:115
 msgid "Payment limit:"
@@ -156,14 +177,14 @@ msgstr "Använda krediter:"
 
 #: src/js/ate/status-bar/components/credit/index.js:123
 msgid "Credits left:"
-msgstr "Kvarvarande krediter:"
+msgstr "Krediter kvar:"
 
 #: src/js/ate/status-bar/components/credit/index.js:133
 msgid ""
 "The number of credit you will receive an invoice for at the end of the "
 "month. View your pay-as-you-go details in your site’s automatic translation "
 "settings."
-msgstr "Antalet krediter du kommer att få en faktura för i slutet av månaden. Se dina pay-as-you-go-detaljer i din webbplats automatiska översättningsinställningar."
+msgstr "Antalet krediter du kommer att faktureras för i slutet av månaden. Se dina pay-as-you-go-detaljer i din webbplats automatiska översättningsinställningar."
 
 #: src/js/ate/status-bar/components/credit/index.js:139
 msgid "Calculating"
@@ -181,21 +202,45 @@ msgstr "Förbetalda krediter kvar"
 msgid "Pay-as-you-go credits used"
 msgstr "Använda pay-as-you-go-krediter"
 
+#: src/js/ate/status-bar/components/minimum-requirements/MinimumRequirementsNotification.js:25
+msgid "Your site doesn't meet WPML's minimum requirements"
+msgstr "Din webbplats uppfyller inte WPML:s minimikrav"
+
+#: src/js/ate/status-bar/components/minimum-requirements/MinimumRequirementsNotification.js:31
+msgid "Fix it"
+msgstr "Åtgärda det"
+
 #: src/js/ate/status-bar/model/notification-center-action-presets.js:17
 msgid "Stop"
 msgstr "Stoppa"
 
 #: src/js/ate/status-bar/model/notification-center-action-presets.js:26
-msgid "Fix it"
-msgstr "Åtgärda det"
+#: src/js/ate/status-icons/StatusUpdater.js:133
+msgid "Pay now"
+msgstr "Betala nu"
 
 #: src/js/ate/status-bar/model/notification-center-action-presets.js:34
-msgid "Assign credits now"
-msgstr "Tilldela krediter nu"
+#: src/js/ate/status-icons/StatusUpdater.js:134
+msgid "Get more credits"
+msgstr "Skaffa fler krediter"
+
+#: src/js/ate/status-bar/model/notification-center-action-presets.js:42
+msgid "Assign credits"
+msgstr "Tilldela krediter"
+
+#: src/js/ate/status-bar/model/notification-center-action-presets.js:50
+msgid "Go to Translation Jobs"
+msgstr "Gå till översättningsjobb"
 
 #: src/js/ate/status-bar/model/notification-center-action-presets.js:8
 msgid "Resume"
 msgstr "Återuppta"
+
+#: src/js/ate/status-icons/StatusUpdater.js:159
+msgid ""
+"This translation couldn't be completed due to an unexpected error. Please "
+"try resending it."
+msgstr "Denna översättning kunde inte slutföras på grund av ett oväntat fel. Försök att skicka den igen."
 
 #: src/js/ate/status-icons/StatusUpdater.js:80
 msgid "Refreshing translation status"
@@ -221,7 +266,7 @@ msgstr "Välj ditt innehåll från översättningspanelen nedan och skapa ditt f
 msgid ""
 "Change your <a>automatic translation settings</a> (in-progress translation "
 "jobs will be completed with the current settings)."
-msgstr "Ändra dina <a>inställningar för automatisk översättning</a> (pågående översättningsjobb kommer att slutföras med de nuvarande inställningarna)."
+msgstr "Ändra dina <a>inställningar för automatisk översättning</a> (pågående översättningsjobb kommer att slutföras med de aktuella inställningarna)."
 
 #: src/js/ate/translate-everything/components/Status/index.js:115
 msgid "Read more about translating your site automatically."
@@ -237,8 +282,8 @@ msgstr "Beräknar..."
 
 #: src/js/ate/translate-everything/components/Status/index.js:88
 msgid "Do not close WP admin!"
-msgstr "Stäng inte WP-admin!"
+msgstr "Stäng inte WP admin!"
 
 #: src/js/ate/translate-everything/components/Status/index.js:96
 msgid "The number of translations"
-msgstr "Antalet översättningar"
+msgstr "Antal översättningar"

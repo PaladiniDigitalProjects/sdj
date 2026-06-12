@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/components/language/LanguagePairs.js:57
 msgid "From:"
@@ -15,13 +17,17 @@ msgstr "--Επιλέξτε γλώσσα--"
 msgid "to:"
 msgstr "προς:"
 
+#: src/js/components/language/LanguagePairs.js:93
+msgid "Select %s"
+msgstr "Επιλέξτε %s"
+
 #: src/js/components/language/SelectLanguagePairs.js:39
 msgid "Set language pair(s) for Translator %s:"
-msgstr "Ορίστε ζεύγος/η γλωσσών για τον Μεταφραστή %s:"
+msgstr "Ορίστε ζεύγος(-η) γλωσσών για τον μεταφραστή %s:"
 
-#: src/js/components/language/SelectLanguagePairs.js:64
+#: src/js/components/language/SelectLanguagePairs.js:69
 msgid "+ Add more language pairs for this translator"
-msgstr "+ Προσθέστε περισσότερα ζεύγη γλωσσών για αυτόν τον μεταφραστή"
+msgstr "+ Προσθήκη περισσότερων ζευγών γλωσσών για αυτόν τον μεταφραστή"
 
 #: src/js/components/roles/CreateUser.js:100
 msgid "First Name"
@@ -35,15 +41,19 @@ msgstr "Επώνυμο"
 msgid "Role"
 msgstr "Ρόλος"
 
-#: src/js/components/roles/CreateUser.js:137
+#: src/js/components/roles/CreateUser.js:138
 msgid "(required)"
 msgstr "(απαιτείται)"
+
+#: src/js/components/roles/CreateUser.js:214
+msgid "Select a role for the user"
+msgstr "Επιλέξτε έναν ρόλο για τον χρήστη"
 
 #: src/js/components/roles/CreateUser.js:46
 msgid ""
 "Make sure that you have provided a correct email address e.g. "
 "name@domain.com"
-msgstr "Βεβαιωθείτε ότι έχετε δώσει μια σωστή διεύθυνση email π.χ. name@domain.com"
+msgstr "Βεβαιωθείτε ότι έχετε δώσει μια σωστή διεύθυνση email, π.χ. name@domain.com"
 
 #: src/js/components/roles/CreateUser.js:64
 msgid "This field is required"
@@ -51,7 +61,7 @@ msgstr "Αυτό το πεδίο είναι υποχρεωτικό"
 
 #: src/js/components/roles/CreateUser.js:84
 msgid "A translator can be any WordPress role."
-msgstr "Ένας μεταφραστής μπορεί να έχει οποιονδήποτε ρόλο WordPress."
+msgstr "Ένας μεταφραστής μπορεί να έχει οποιονδήποτε ρόλο στο WordPress."
 
 #: src/js/components/roles/CreateUser.js:98
 msgid "Username"
@@ -61,50 +71,62 @@ msgstr "Όνομα χρήστη"
 msgid "Email"
 msgstr "Email"
 
-#: src/js/components/roles/ExistingUserSelect.js:46
+#: src/js/components/roles/ExistingUserSelect.js:59
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: src/js/components/translation-managers/AddManagerDialog.js:47
-msgid "user"
-msgstr "χρήστη"
+#: src/js/components/roles/ExistingUserSelect.js:70
+msgid "Your site has a large number of users, please enter the exact username."
+msgstr "Ο ιστότοπός σας έχει μεγάλο αριθμό χρηστών, παρακαλούμε εισαγάγετε το ακριβές όνομα χρήστη."
 
-#: src/js/components/translation-managers/AddManagerDialog.js:47
-msgid "Editor"
-msgstr "Συντάκτης"
-
-#: src/js/components/translation-managers/AddManagerDialog.js:61
-msgid "Select an existing %s and set as Translation Manager"
-msgstr "Επιλέξτε έναν υπάρχοντα %s και ορίστε τον ως Διαχειριστή Μετάφρασης"
-
-#: src/js/components/translation-managers/AddManagerDialog.js:72
-msgid "Create a new %s and set as Translation Manager"
-msgstr "Δημιουργήστε έναν νέο %s και ορίστε τον ως Διαχειριστή Μετάφρασης"
-
-#: src/js/components/translation-managers/AddManagerDialog.js:85
-#: src/js/components/translators/AddTranslatorDialog.js:121
+#: src/js/components/translation-managers/AddManagerDialog.js:118
+#: src/js/components/translators/AddTranslatorDialog.js:152
 #: src/js/components/translators/EditLanguagesDialog.js:73
 #: src/js/setup/components/Steps/AddLanguagesModal.js:496
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: src/js/components/translation-managers/AddManagerDialog.js:90
+#: src/js/components/translation-managers/AddManagerDialog.js:123
 msgid "Add Translation Manager"
-msgstr "Προσθήκη Διαχειριστή Μετάφρασης"
+msgstr "Προσθήκη διαχειριστή μεταφράσεων"
+
+#: src/js/components/translation-managers/AddManagerDialog.js:47
+msgid "user"
+msgstr "χρήστης"
+
+#: src/js/components/translation-managers/AddManagerDialog.js:47
+msgid "Editor"
+msgstr "Επεξεργαστής"
+
+#: src/js/components/translation-managers/AddManagerDialog.js:71
+msgid "Select an existing %s and set as Translation Manager"
+msgstr "Επιλέξτε έναν υπάρχοντα %s και ορίστε τον ως Διαχειριστή Μεταφράσεων"
+
+#: src/js/components/translation-managers/AddManagerDialog.js:97
+msgid "Create a new %s and set as Translation Manager"
+msgstr "Δημιουργήστε έναν νέο %s και ορίστε τον ως Διαχειριστή Μεταφράσεων"
 
 #: src/js/components/translation-managers/ManagerSection.js:27
 msgid "Add a Translation Manager"
-msgstr "Προσθέστε έναν Διαχειριστή Μετάφρασης"
+msgstr "Προσθήκη διαχειριστή μεταφράσεων"
 
-#: src/js/components/translators/AddTranslatorDialog.js:111
+#: src/js/components/translators/AddTranslatorDialog.js:101
+msgid "Select an existing user and set as Translator"
+msgstr "Επιλέξτε έναν υπάρχοντα χρήστη και ορίστε τον ως Μεταφραστή"
+
+#: src/js/components/translators/AddTranslatorDialog.js:125
+msgid "Create a new user and set as Translator"
+msgstr "Δημιουργήστε έναν νέο χρήστη και ορίστε τον ως Μεταφραστή"
+
+#: src/js/components/translators/AddTranslatorDialog.js:142
 msgid "Set language pair(s)"
-msgstr "Ορίστε ζεύγος/η γλωσσών"
+msgstr "Ορισμός ζεύγους(-ων) γλωσσών"
 
-#: src/js/components/translators/AddTranslatorDialog.js:126
+#: src/js/components/translators/AddTranslatorDialog.js:157
 msgid "Previous"
 msgstr "Προηγούμενο"
 
-#: src/js/components/translators/AddTranslatorDialog.js:129
+#: src/js/components/translators/AddTranslatorDialog.js:160
 #: src/js/components/translators/EditLanguagesDialog.js:78
 msgid "Save"
 msgstr "Αποθήκευση"
@@ -112,36 +134,36 @@ msgstr "Αποθήκευση"
 #: src/js/components/translators/AddTranslatorDialog.js:65
 #: src/js/components/translators/UserSection.js:45
 msgid "Add a Translator"
-msgstr "Προσθέστε έναν Μεταφραστή"
-
-#: src/js/components/translators/AddTranslatorDialog.js:91
-msgid "Select an existing user and set as Translator"
-msgstr "Επιλέξτε έναν υπάρχοντα χρήστη και ορίστε τον ως Μεταφραστή"
-
-#: src/js/components/translators/AddTranslatorDialog.js:95
-msgid "Create a new user and set as Translator"
-msgstr "Δημιουργήστε έναν νέο χρήστη και ορίστε τον ως Μεταφραστή"
+msgstr "Προσθήκη μεταφραστή"
 
 #: src/js/components/translators/EditLanguagesDialog.js:55
 msgid "Edit language pair(s) for translator"
-msgstr "Επεξεργαστείτε το/τα ζεύγος/η γλωσσών για τον μεταφραστή"
+msgstr "Επεξεργασία ζεύγους(-ων) γλωσσών για μεταφραστή"
 
-#: src/js/components/translators/TranslatorsTable.js:128
+#: src/js/components/translators/TranslatorsTable.js:136
 #: src/js/setup/components/Steps/AddLanguagesModal.js:346
 msgid "Name"
 msgstr "Όνομα"
 
-#: src/js/components/translators/TranslatorsTable.js:140
+#: src/js/components/translators/TranslatorsTable.js:148
 msgid "Language Pairs"
-msgstr "Ζεύγη Γλωσσών"
+msgstr "Ζεύγη γλωσσών"
 
-#: src/js/components/translators/TranslatorsTable.js:144
+#: src/js/components/translators/TranslatorsTable.js:152
 msgid "You can translate to and from all languages"
-msgstr "Μπορείτε να μεταφράσετε προς και από όλες τις γλώσσες"
+msgstr "Μπορείτε να μεταφράσετε από και προς όλες τις γλώσσες"
+
+#: src/js/components/translators/TranslatorsTable.js:59
+msgid "Edit language pair(s)"
+msgstr "Επεξεργασία ζεύγους(-ων) γλωσσών"
+
+#: src/js/components/translators/TranslatorsTable.js:62
+msgid "Delete language pair(s)"
+msgstr "Διαγραφή ζεύγους(-ων) γλωσσών"
 
 #: src/js/setup/components/Steps/AddLanguages/Flag.js:48
 msgid "%s file upload failed."
-msgstr "Η μεταφόρτωση του αρχείου %s απέτυχε."
+msgstr "Η μεταφόρτωση αρχείου %s απέτυχε."
 
 #: src/js/setup/components/Steps/AddLanguages/Flag.js:69
 msgid "Flag"
@@ -159,7 +181,7 @@ msgstr "Μόλις προσθέσατε γλώσσα. Στη συνέχεια, �
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:162
 msgid "Language added"
-msgstr "Η γλώσσα προστέθηκε"
+msgstr "Προστέθηκε γλώσσα"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:192
 msgid "The value \"%s\" already exists"
@@ -167,13 +189,13 @@ msgstr "Η τιμή “%s” υπάρχει ήδη"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:215
 msgid "Add a new language"
-msgstr "Προσθέστε μια νέα γλώσσα"
+msgstr "Προσθήκη νέας γλώσσας"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:224
 msgid ""
 "Create a country-specific language by choosing the general language from "
 "the list below. Then, choose the country it should be localized for."
-msgstr "Δημιουργήστε μια γλώσσα συγκεκριμένης χώρας επιλέγοντας τη γενική γλώσσα από την παρακάτω λίστα. Στη συνέχεια, επιλέξτε τη χώρα για την οποία πρέπει να τοπικοποιηθεί."
+msgstr "Δημιουργήστε μια γλώσσα ειδική για χώρα επιλέγοντας τη γενική γλώσσα από την παρακάτω λίστα. Στη συνέχεια, επιλέξτε τη χώρα για την οποία θα πρέπει να εντοπιστεί."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:229
 msgid ""
@@ -184,7 +206,7 @@ msgstr "Επιλέγοντας έναν συνδυασμό που υπάρχει
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:242
 msgid "Cannot find?"
-msgstr "Δεν μπορείτε να βρείτε;?"
+msgstr "Δεν μπορείτε να βρείτε;"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:244
 msgid "Click here"
@@ -194,7 +216,7 @@ msgstr "Κάντε κλικ εδώ"
 msgid ""
 "The wrong format. It may contain only small letters and \"-\". E.g: \"fr\" "
 ", \"pt-br\", \"zh-hans\""
-msgstr "Λάθος μορφή. Μπορεί να περιέχει μόνο μικρά γράμματα και “-”. Π.χ: “fr”, “pt-br”, “zh-hans”"
+msgstr "Λανθασμένη μορφή. Μπορεί να περιέχει μόνο μικρά γράμματα και “-”. Π.χ.: “fr”, “pt-br”, “zh-hans”"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:308
 msgid "Language"
@@ -218,7 +240,7 @@ msgstr "Αντιστοίχιση γλώσσας"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:404
 msgid "Don't map this language"
-msgstr "Μην αντιστοιχίσετε αυτή τη γλώσσα"
+msgstr "Να μην γίνει αντιστοίχιση αυτής της γλώσσας"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:418
 msgid "Default locale"
@@ -228,7 +250,7 @@ msgstr "Προεπιλεγμένη τοπική ρύθμιση"
 msgid ""
 "The wrong format. It may contain only small letters and \"_\". E.g: \"de\" "
 ", \"de_DE\", \"zh_Hant_TW\""
-msgstr "Λάθος μορφή. Μπορεί να περιέχει μόνο μικρά γράμματα και “_”. Π.χ: “de”, “de_DE”, “zh_Hant_TW”"
+msgstr "Λανθασμένη μορφή. Μπορεί να περιέχει μόνο μικρά γράμματα και “_”. Π.χ.: “de”, “de_DE”, “zh_Hant_TW”"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:435
 msgid "hreflang"
@@ -236,7 +258,7 @@ msgstr "hreflang"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:449
 msgid "Encode url?"
-msgstr "Κωδικοποίηση url;?"
+msgstr "Κωδικοποίηση URL;"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:45
 msgid "Flags must be:"
@@ -260,7 +282,7 @@ msgstr "Παρακαλώ συμπληρώστε το πεδίο"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:49
 msgid "PNG, SVG, or JPG files"
-msgstr "Αρχεία PNG, SVG, ή JPG"
+msgstr "Αρχεία PNG, SVG ή JPG"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:501
 msgid "Save language"
@@ -294,20 +316,20 @@ msgid ""
 "to use for spellcheck and automatic translation. If you don't map your "
 "custom language to an existing language, spellcheck and automatic "
 "translation features will be unavailable in that language."
-msgstr "Εάν η προσαρμοσμένη γλώσσα σας είναι παρόμοια με μια υπάρχουσα γλώσσα, μπορείτε να χρησιμοποιήσετε τον ορθογραφικό έλεγχο και την αυτόματη μετάφραση της υπάρχουσας γλώσσας. Για παράδειγμα, εάν η προσαρμοσμένη γλώσσα σας είναι τα Ελβετικά Γερμανικά, μπορείτε να την αντιστοιχίσετε στα Γερμανικά ως γλώσσα για χρήση στον ορθογραφικό έλεγχο και την αυτόματη μετάφραση. Εάν δεν αντιστοιχίσετε την προσαρμοσμένη γλώσσα σας σε μια υπάρχουσα γλώσσα, οι λειτουργίες ορθογραφικού ελέγχου και αυτόματης μετάφρασης δεν θα είναι διαθέσιμες σε αυτή τη γλώσσα."
+msgstr "Εάν η προσαρμοσμένη γλώσσα σας είναι παρόμοια με μια υπάρχουσα γλώσσα, μπορείτε να χρησιμοποιήσετε τον ορθογραφικό έλεγχο και την αυτόματη μετάφραση της υπάρχουσας γλώσσας. Για παράδειγμα, εάν η προσαρμοσμένη γλώσσα σας είναι τα Ελβετικά-Γερμανικά, μπορείτε να αντιστοιχίσετε στα Γερμανικά ως τη γλώσσα που θα χρησιμοποιηθεί για τον ορθογραφικό έλεγχο και την αυτόματη μετάφραση. Εάν δεν αντιστοιχίσετε την προσαρμοσμένη γλώσσα σας σε μια υπάρχουσα γλώσσα, οι λειτουργίες ορθογραφικού ελέγχου και αυτόματης μετάφρασης δεν θα είναι διαθέσιμες σε αυτήν τη γλώσσα."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:66
 msgid ""
 "The value WPML checks when loading translations from MO and PO files. The "
 "default locale is included in the filenames in your /wp-content/languages/ "
 "folder in your WordPress setup."
-msgstr "Η τιμή που ελέγχει το WPML κατά τη φόρτωση μεταφράσεων από αρχεία MO και PO. Η προεπιλεγμένη τοπική ρύθμιση περιλαμβάνεται στα ονόματα αρχείων στον φάκελο  /wp-content/languages/ στην εγκατάσταση WordPress σας."
+msgstr "Η τιμή που ελέγχει το WPML κατά τη φόρτωση μεταφράσεων από αρχεία MO και PO. Η προεπιλεγμένη τοπική ρύθμιση περιλαμβάνεται στα ονόματα αρχείων στον φάκελο /wp-content/languages/ στην εγκατάσταση του WordPress."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:69
 msgid ""
 "Google uses the hreflang attribute to direct users to sites in their "
 "relevant language and location. Examples:"
-msgstr "Η Google χρησιμοποιεί το χαρακτηριστικό hreflang για να κατευθύνει τους χρήστες σε ιστότοπους στη σχετική γλώσσα και τοποθεσία τους. Παραδείγματα:"
+msgstr "Η Google χρησιμοποιεί το χαρακτηριστικό hreflang για να κατευθύνει τους χρήστες σε ιστότοπους στην αντίστοιχη γλώσσα και τοποθεσία τους. Παραδείγματα:"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:71
 msgid "All English-speaking users: en"
@@ -315,25 +337,25 @@ msgstr "Όλοι οι αγγλόφωνοι χρήστες: en"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:72
 msgid "English for UK users: en-gb"
-msgstr "Αγγλικά για χρήστες του Ηνωμένου Βασιλείου: en-gb"
+msgstr "Αγγλικά για χρήστες Ηνωμένου Βασιλείου: en-gb"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:73
 msgid "English for US users: en-us"
-msgstr "Αγγλικά για χρήστες των ΗΠΑ: en-us"
+msgstr "Αγγλικά για χρήστες ΗΠΑ: en-us"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:81
 msgid ""
 "Determines if URLs in this language are encoded or use ASCII characters (if "
 "unsure, leave it as \"No\")."
-msgstr "Καθορίζει εάν τα URL σε αυτή τη γλώσσα είναι κωδικοποιημένα ή χρησιμοποιούν χαρακτήρες ASCII (αν δεν είστε σίγουροι, αφήστε το ως “Όχι”)."
+msgstr "Καθορίζει εάν τα URL σε αυτήν τη γλώσσα κωδικοποιούνται ή χρησιμοποιούν χαρακτήρες ASCII (αν δεν είστε σίγουροι, αφήστε το ως “Όχι”)."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:98
 msgid "adding a custom language"
-msgstr "προσθήκη μιας προσαρμοσμένης γλώσσας"
+msgstr "προσθήκη προσαρμοσμένης γλώσσας"
 
 #: src/js/setup/components/Steps/Languages.js:110
 msgid "What are the languages of your site?"
-msgstr "Ποιες είναι οι γλώσσες του ιστότοπού σας;?"
+msgstr "Ποιες είναι οι γλώσσες του ιστότοπού σας;"
 
 #: src/js/setup/components/Steps/Languages.js:120
 msgid "Default language"
@@ -341,7 +363,7 @@ msgstr "Προεπιλεγμένη γλώσσα"
 
 #: src/js/setup/components/Steps/Languages.js:122
 msgid "What is the current language of your website?"
-msgstr "Ποια είναι η τρέχουσα γλώσσα του ιστότοπού σας;?"
+msgstr "Ποια είναι η τρέχουσα γλώσσα του ιστότοπού σας;"
 
 #: src/js/setup/components/Steps/Languages.js:133
 msgid "Translation languages"
@@ -349,15 +371,15 @@ msgstr "Γλώσσες μετάφρασης"
 
 #: src/js/setup/components/Steps/Languages.js:135
 msgid "Which languages do you want to translate your site into?"
-msgstr "Σε ποιες γλώσσες θέλετε να μεταφράσετε τον ιστότοπό σας;?"
+msgstr "Σε ποιες γλώσσες θέλετε να μεταφράσετε τον ιστότοπό σας;"
 
 #: src/js/setup/components/Steps/Languages.js:149
-msgid "If you cannot find languages that you need in the list"
-msgstr "Εάν δεν μπορείτε να βρείτε γλώσσες που χρειάζεστε στη λίστα"
+msgid "If you cannot find languages that you need in the list,"
+msgstr "Εάν δεν μπορείτε να βρείτε τις γλώσσες που χρειάζεστε στη λίστα,"
 
 #: src/js/setup/components/Steps/Languages.js:150
 msgid "create a custom language"
-msgstr "δημιουργήστε μια προσαρμοσμένη γλώσσα"
+msgstr "δημιουργία προσαρμοσμένης γλώσσας"
 
 #: src/js/translation-roles-ui/components/Managers.js:12
 msgid ""
@@ -365,24 +387,24 @@ msgid ""
 "your site. %sTranslation Managers%s can add new local translators or "
 "professional translation services, create and assign translation jobs, "
 "review completed translations, and change translation-related settings."
-msgstr "Μπορείτε να προσθέσετε ένα αφοσιωμένο άτομο για να επιβλέπει όλα τα σχετικά με τη μετάφραση στον ιστότοπό σας. Οι %sΔιαχειριστές Μετάφρασης%s μπορούν να προσθέσουν νέους τοπικούς μεταφραστές ή επαγγελματικές υπηρεσίες μετάφρασης, να δημιουργήσουν και να αναθέσουν εργασίες μετάφρασης, να ελέγξουν ολοκληρωμένες μεταφράσεις και να αλλάξουν ρυθμίσεις σχετικές με τη μετάφραση."
+msgstr "Μπορείτε να προσθέσετε ένα ειδικό άτομο για να επιβλέπει οτιδήποτε σχετίζεται με τη μετάφραση στον ιστότοπό σας. Οι %sΔιαχειριστές Μεταφράσεων%s μπορούν να προσθέσουν νέους τοπικούς μεταφραστές ή επαγγελματικές υπηρεσίες μετάφρασης, να δημιουργήσουν και να αναθέσουν εργασίες μετάφρασης, να ελέγξουν ολοκληρωμένες μεταφράσεις και να αλλάξουν ρυθμίσεις που σχετίζονται με τη μετάφραση."
 
 #: src/js/translation-roles-ui/components/Managers.js:22
 msgid "Translation Managers"
-msgstr "Διαχειριστές Μετάφρασης"
+msgstr "Διαχειριστές μεταφράσεων"
 
 #: src/js/translation-roles-ui/components/Managers.js:25
 msgid ""
 "Note: All Administrators are automatically given Translation Manager "
 "privileges."
-msgstr "Σημείωση: Όλοι οι Διαχειριστές λαμβάνουν αυτόματα δικαιώματα Διαχειριστή Μετάφρασης."
+msgstr "Σημείωση: Όλοι οι Διαχειριστές λαμβάνουν αυτόματα προνόμια Διαχειριστή Μεταφράσεων."
 
 #: src/js/translation-roles-ui/components/Users.js:14
 msgid ""
 "%sLocal translators%s are users of your site that can log in and add, edit, "
 "and review your site's translations. Add a translator and their associated "
 "translation pairs to assign them translation jobs."
-msgstr "%sΟι τοπικοί μεταφραστές%s είναι χρήστες του ιστότοπού σας που μπορούν να συνδεθούν και να προσθέσουν, να επεξεργαστούν και να αναθεωρήσουν τις μεταφράσεις του ιστότοπού σας. Προσθέστε έναν μεταφραστή και τα σχετικά ζεύγη μετάφρασής του για να τους αναθέσετε εργασίες μετάφρασης."
+msgstr "Οι %sΤοπικοί μεταφραστές%s είναι χρήστες του ιστότοπού σας που μπορούν να συνδεθούν και να προσθέσουν, να επεξεργαστούν και να ελέγξουν τις μεταφράσεις του ιστότοπού σας. Προσθέστε έναν μεταφραστή και τα σχετικά ζεύγη μεταφράσεων για να τους αναθέσετε εργασίες μετάφρασης."
 
 #: src/js/translation-roles-ui/components/Users.js:23
 msgid ""

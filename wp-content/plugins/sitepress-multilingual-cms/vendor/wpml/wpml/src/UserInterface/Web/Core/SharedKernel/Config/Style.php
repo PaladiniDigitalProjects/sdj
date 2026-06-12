@@ -2,7 +2,7 @@
 
 namespace WPML\UserInterface\Web\Core\SharedKernel\Config;
 
-class Style {
+class Style implements AssetInterface {
 
   /** @var string $id */
   private $id;
@@ -52,6 +52,12 @@ class Style {
   public function setDependencies( $dependencies ) {
     $this->dependencies = $dependencies;
     return $this;
+  }
+
+
+  public function supportsHMR(): bool {
+    // Styles don't need extra setup for HMR - so all support HMR right away.
+    return true;
   }
 
 

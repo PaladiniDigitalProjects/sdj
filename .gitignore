@@ -84,3 +84,7 @@ Dockerfile
 /revistasanjuandedios14/
 /revistasanjuandedios15/
 /revistasanjuandedios16/
+# Theme backup files
+wp-content/themes/**/*.zip
+wp-content/themes/**/*.bak
+wp-content/themes/**/*.zip

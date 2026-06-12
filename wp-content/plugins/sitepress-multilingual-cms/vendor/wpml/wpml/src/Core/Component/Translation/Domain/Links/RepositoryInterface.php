@@ -7,6 +7,9 @@ use WPML\PHP\Exception\InvalidTypeException;
 interface RepositoryInterface {
 
 
+  public function addDatabaseTablesIfNotExist(): bool;
+
+
   /** @throws InvalidTypeException */
   public function get( int $id, string $type ): Item;
 

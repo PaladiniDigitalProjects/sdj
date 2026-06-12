@@ -151,7 +151,8 @@ class TranslateWpmlString {
 		) {
 			load_textdomain(
 				$domain,
-				$this->fileManager->getFilepath( $domain, $locale )
+				$this->fileManager->getFilepath( $domain, $locale ),
+				$locale
 			);
 
 			self::$loadedDomains[ $locale ][ $domain ] = true;

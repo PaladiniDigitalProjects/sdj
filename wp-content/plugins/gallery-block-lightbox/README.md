@@ -2,7 +2,7 @@
 
 - Stable tag: trunk
 - Requires at least: 5.4
-- Tested up to: 6.7
+- Tested up to: 6.9
 - Requires PHP: 5.3
 - License: GPLv2 or later
 - License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -19,6 +19,10 @@ This WordPress Plugin adds a simple & lightweight Lightbox to the standard WordP
 There is no lock in effect. It does not add a new Block Editor/Gutenberg Block and relies solo on the standard WordPress Gallery and Image Block. You can deactivate this plugin at any time and your Gallery and Image Blocks will work as they've done before. Just without the lightbox.
 
 Just **one important thing to remember**: You always have to select *Link* → *Link to image file* or *Link images to media file* (see screenshots below) for all of your Image & Gallery Blocks to work properly. If you choose *None* or *Link to attachment page* it will not work. But that's fine if you don't want the Lightbox for a specific Image or Gallery.
+
+Take a look at the [YouTube video from Jakson](https://youtu.be/qfLOH22cUNM) where he reviews this plugin:
+
+https://www.youtube.com/watch?v=qfLOH22cUNM
 
 ### Features
 
@@ -39,7 +43,6 @@ Here are the features of baguetteBox.js:
 - Gallery (Default Classic Editor Gallery)
 - CoBlocks Gallery Collage / Masonry / Offset / Stacked
 - Meow Gallery (+ Gallery Block)
-- GenerateBlocks Image (Set `Enable Dynamic Data` → `Link source` to `Single image`)
 
 Don't forget to select Link to → Media File for all of your Galleries & Images to work properly.
 
@@ -122,6 +125,10 @@ Or disable the animation completely with `'false'`:
 add_filter( 'baguettebox_animation', function () { return 'false'; } );
 ```
 
+### Can I exclude single images from applying the lightbox?
+
+You can remove the link from the image or add the CSS class `no-lightbox` to the image link. Not to the image directly; you have to add the class to the link.
+
 ## Screenshots
 
 1. Simple, modern and minimalistic Lightbox for your Gallery Block<br>![Lightbox for the Gallery Block](https://github.com/goaround/gallery-block-lightbox/blob/master/.wordpress-org/screenshot-1.png)
@@ -131,6 +138,11 @@ add_filter( 'baguettebox_animation', function () { return 'false'; } );
 If you would like to have this as a default behaviour, go to `yourblog.com/wp-admin/options.php` and search for `image_default_link_type`. Set the value to `file` and hit save. This will apply to all new Image & Gallery Blocks.
 
 ## Changelog
+
+
+### 1.16.1
+
+- No changes, just a version fix.
 
 ### 1.16
 

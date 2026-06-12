@@ -15,6 +15,7 @@ use WPML\TM\API\Jobs;
 use WPML\TM\API\Translators;
 use WPML\Core\WP\App\Resources;
 use WPML\FP\Obj;
+use WPML\TM\ATE\UpdateTranslation\UpdateTranslation;
 use function WPML\FP\pipe;
 use function WPML\FP\spreadArgs;
 
@@ -56,7 +57,9 @@ class ReviewTranslation implements \IWPML_Frontend_Action, \IWPML_Backend_Action
 				     $translator = Translators::getCurrent();
 
 				     if ( $translator->ID ) {
-					     $postId = $args[2];
+						 // Third-party plugins may pass WP_Post object instead of post ID in $args[2].
+						 // For example: current_user_can( 'edit_post', $post ).
+						 $postId = is_object( $args[2] ) && $args[2] instanceof \WP_Post ? $args[2]->ID : $args[2];
 					     $job    = Jobs::getPostJob( $postId, Post::getType( $postId ), WPMLPost::getLang( $postId ) );
 
 					     if ( ReviewStatus::doesJobNeedReview( $job ) && self::canEditLanguage( $translator, $job ) ) {

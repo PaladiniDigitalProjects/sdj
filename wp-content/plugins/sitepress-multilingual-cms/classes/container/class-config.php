@@ -51,6 +51,7 @@ class Config {
 			\WPML_Term_Translation::class     => [ \WPML_Term_Translation::class, 'getGlobalInstance' ],
 			\WPML_URL_Converter::class        => [ \WPML_URL_Converter::class, 'getGlobalInstance' ],
 			\WPML_Post_Status::class          => 'wpml_get_post_status_helper',
+			\WPML\ATE\Proxies\ProxyInterceptorLoader::class => [ \WPML\ATE\Proxies\ProxyInterceptorLoader::class, 'get' ],
 			'\WPML_Language_Resolution'       => function () {
 				global $wpml_language_resolution;
 

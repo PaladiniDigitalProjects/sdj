@@ -122,10 +122,12 @@ function wpml_tm_load( $sitepress = null ) {
 		\WPML\TM\AutomaticTranslation\Actions\ActionsFactory::class,
 		\WPML\TM\ATE\Review\ReviewTranslation::class,
 		\WPML\TM\ATE\Hooks\JobActionsFactory::class,
+		\WPML\TM\ATE\UpdateTranslation\UpdateTranslationFrontend::class,
 		'\WPML\ATE\Proxies\Widget',
 		'WPML_TM_Upgrade_Loader_Factory',
 		\WPML\TM\AutomaticTranslation\Actions\AutomaticTranslationJobCreationFailureNoticeFactory::class,
 		\WPML\ATE\Proxies\Dashboard::class,
+		\WPML\TM\ATE\ClonedSites\AliasDomainCheckHandler::class,
 	];
 	$action_filter_loader->load( $global_actions );
 
@@ -156,13 +158,17 @@ function wpml_tm_load( $sitepress = null ) {
 			'WPML_TM_Reset_Options_Filter_Factory',
 			\WPML\TM\User\Hooks::class,
 			\WPML\TM\Jobs\ExtraFieldDataInEditorFactory::class,
+			\WPML\TM\ATE\Sitekey\DirectSync::class,
 			\WPML\TM\ATE\Sitekey\Sync::class,
+			\WPML\TM\ATE\Sitekey\UnassignDirectSync::class,
+			\WPML\TM\ATE\Sitekey\UnassignSync::class,
 			\WPML\TM\ATE\Review\ReviewCompletedNotice::class,
 			\WPML\TM\Settings\CustomFieldChangeDetector::class,
 			\WPML\MediaTranslation\AddMediaDataToTranslationPackageFactory::class,
 			\WPML\MediaTranslation\MediaTranslationEditorLayoutFactory::class,
 			\WPML\MediaTranslation\MediaTranslationStatusFactory::class,
 			\WPML\TranslationManagement\Dashboard\Loader::class,
+			\WPML\TM\Troubleshooting\PostHogRecording::class
 		];
 		$action_filter_loader->load( $actions );
 
@@ -190,6 +196,7 @@ function wpml_tm_load( $sitepress = null ) {
 			'WPML_TM_ATE_Translator_Message_Classic_Editor_Factory',
 			'WPML_TM_Old_Editor_Factory',
 			\WPML\TM\ATE\Log\Hooks::class,
+			\WPML\TM\Jobs\Log\Hooks::class,
 			\WPML\TM\ATE\Hooks\ReturnedJobActionsFactory::class,
 			WPML\TM\ATE\ClonedSites\Loader::class,
 			\WPML\TM\ATE\Loader::class,
@@ -201,6 +208,7 @@ function wpml_tm_load( $sitepress = null ) {
 			\WPML\TM\Editor\ManualJobCreationErrorNotice::class,
 			\WPML\ICLToATEMigration\Loader::class,
 			\WPML\Support\ATE\Hooks::class,
+			\WPML\Support\TmJobs\Hooks::class,
 			\WPML\TM\ATE\AutoTranslate\Hooks\JobsCountCacheInvalidateAction::class,
 			\WPML\TranslationManagement\Dashboard\Loader::class,
 		];
@@ -235,24 +243,6 @@ function wpml_tm_support_info( array $blocks ) {
 	return $ui->filter_blocks( $blocks );
 }
 
-
-/**
- * Migration from ICL 2.0
- */
-function wpml_tm_icl20_migration() {
-	// @todo Remove `|| ( defined( 'WPML_TP_ICL_20_MIGRATION_OFF' ) && WPML_TP_ICL_20_MIGRATION_OFF )` after testing?
-	if ( defined( 'WPML_TP_ICL_20_MIGRATION_OFF' ) && WPML_TP_ICL_20_MIGRATION_OFF ) {
-		return;
-	}
-
-	global $sitepress;
-	$loader = new WPML_TM_ICL20_Migration_Loader( $sitepress->get_wp_api(), new WPML_TM_ICL20_Migration_Factory() );
-	$loader->run();
-}
-
-if ( ! empty( $GLOBALS['sitepress'] ) && is_admin() ) {
-	add_action( 'wpml_tm_loaded', 'wpml_tm_icl20_migration' );
-}
 
 /**
  * WPML reset user options filter.

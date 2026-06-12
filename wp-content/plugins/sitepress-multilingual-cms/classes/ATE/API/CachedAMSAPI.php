@@ -17,7 +17,11 @@ class CachedAMSAPI {
 	/** @var Storage */
 	private $storage;
 
-	private $cachedFns = [ 'getGlossaryCount' ];
+	private $cachedFns = [ 'getGlossaryCount', 'get_translation_engines' ];
+	private $clearCacheFns = [ 'update_translation_engine' ];
+
+	/** Functions which don't return a collection. */
+	private $noCollectionAsReturnType = [ 'get_translation_engines' ];
 
 	/**
 	 * @param \WPML_TM_AMS_API $amsApi
@@ -28,6 +32,9 @@ class CachedAMSAPI {
 	}
 
 	public function __call( $name, $args ) {
+		if ( Lst::includes( $name, $this->clearCacheFns ) ) {
+			$this->storage->delete( self::CACHE_OPTION );
+		}
 		return Lst::includes( $name, $this->cachedFns ) ? $this->callWithCache( $name, $args ) : call_user_func_array( [ $this->amsApi, $name ], $args );
 	}
 
@@ -36,11 +43,16 @@ class CachedAMSAPI {
 		$key  = $this->getKey( $args );
 
 		if ( ! array_key_exists( $fnName, $data ) || ! array_key_exists( $key, $data[ $fnName ] ) ) {
-			return call_user_func_array( [ $this->amsApi, $fnName ], $args )->map( $this->cacheValue( $fnName, $args ) );
+			$data = call_user_func_array( [ $this->amsApi, $fnName ], $args );
+
+			return Lst::includes( $fnName, $this->noCollectionAsReturnType )
+				? $this->cacheValue( $fnName, $args, $data )
+				: $data->map( $this->cacheValue( $fnName, $args ) );
 		}
 
-		return Maybe::of( $data[ $fnName ][ $key ] );
-
+		return Lst::includes( $fnName, $this->noCollectionAsReturnType )
+			? $data[ $fnName ][ $key ]
+			: Maybe::of( $data[ $fnName ][ $key ] );
 	}
 
 	public function cacheValue( $functionName = null, $args = null, $result = null ) {
@@ -63,5 +75,11 @@ class CachedAMSAPI {
 	private function getKey( $parameters ) {
 		// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize
 		return \serialize( $parameters );
+	}
+
+
+	public static function clearCache() {
+		$storage = new \WPML\TM\ATE\API\CacheStorage\Transient();
+		$storage->delete( self::CACHE_OPTION );
 	}
 }

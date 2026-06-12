@@ -98,9 +98,10 @@ class WPML_TM_Batch_Report {
 	/**
 	 * @return array
 	 */
-	public function get_unassigned_translators() {
-		$assigned_translators = array_keys( $this->get_jobs() );
-		$blog_translators = wp_list_pluck( $this->blog_translators->get_blog_translators() , 'ID');
+	public function get_unassigned_translators( $batch_jobs = null ) {
+		$batch_jobs           = $batch_jobs ?: $this->get_jobs();
+		$assigned_translators = array_keys( $batch_jobs );
+		$blog_translators     = wp_list_pluck( $this->blog_translators->get_blog_translators() , 'ID');
 
 		return array_diff( $blog_translators, $assigned_translators );
 	}
@@ -259,64 +260,108 @@ class WPML_TM_Batch_Report {
 	}
 
 	/**
+	 * @param int    $translatorId
+	 * @param string $languagePairName
+	 *
+	 * @return bool
+	 */
+	private function validate_jobs_assignment( $translatorId, $languagePairName ) {
+		// For unassigned jobs, we will
+		if ( 0 === (int) $translatorId ) {
+			return true;
+		}
+
+		if ( ! WPML_User_Jobs_Notification_Settings::is_new_job_notification_enabled( $translatorId ) ) {
+			return false;
+		}
+
+		$languages = explode( '|', $languagePairName );
+		$args      = array(
+			'lang_from' => $languages[0],
+			'lang_to'   => $languages[1]
+		);
+
+		return $this->blog_translators->is_translator( $translatorId, $args );
+	}
+
+	/**
 	 * @return array
 	 */
 	public function get_jobs() {
-		$jobs = get_option( self::BATCH_REPORT_OPTION ) ? get_option( self::BATCH_REPORT_OPTION ) : array();
+		$jobs         = get_option( self::BATCH_REPORT_OPTION, [] );
+		$jobIds       = [];
+		$filteredJobs = [];
+		$manualJobs   = [];
 
-		$jobIds = [];
+		// Get only jobs with a defined job_id that are either unassigned or assigned to a capable translator.
 		foreach ( $jobs as $translatorId => $languagePairs ) {
 			if ( ! is_array( $languagePairs ) ) {
 				continue;
 			}
 
 			foreach ( $languagePairs as $languagePairName => $languagePairItems ) {
-				foreach ( $languagePairItems as $languagePairItem ) {
-					if ( isset( $languagePairItem['job_id'] ) ) {
-						$jobIds[] = $languagePairItem['job_id'];
-					}
+				if ( ! $this->validate_jobs_assignment( $translatorId, $languagePairName ) ) {
+					continue;
 				}
+
+				$languagePairItems = array_filter( $languagePairItems, function( $languagePairItem ) use ( &$jobIds ) {
+					if ( ! isset( $languagePairItem['job_id'] ) ) {
+						return false;
+					}
+					$jobIds[] = (int) $languagePairItem['job_id'];
+					return true;
+				} );
+
+				if ( empty( $languagePairItems ) ) {
+					continue;
+				}
+
+				$filteredJobs[ $translatorId ][ $languagePairName ] = array_values( $languagePairItems );
 			}
 		}
 
 		if ( empty( $jobIds ) ) {
+			// TODO Review this, we should be probably returning just an empty array.
 			return $jobs;
 		}
 
-		$jobIdsIn        = wpml_prepare_in( $jobIds, '%d' );
-		$automaticJobIds = $this->wpdb->get_col( $this->wpdb->prepare(
-			"
-			SELECT job_id
-			FROM {$this->wpdb->prefix}icl_translate_job
-			WHERE job_id IN({$jobIdsIn}) AND automatic = 1
-			LIMIT %d
-			",
-			count( $jobIds )
-		) );
-		$automaticJobIds = array_map('intval', is_array( $automaticJobIds ) ? $automaticJobIds : [] );
+		$jobIdsIn             = wpml_prepare_in( $jobIds, '%d' );
+		$jobsAutommaticStatus = $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"
+				SELECT job_id, automatic
+				FROM {$this->wpdb->prefix}icl_translate_job
+				WHERE job_id IN ({$jobIdsIn})
+				LIMIT %d
+				",
+				count( $jobIds )
+			),
+			OBJECT_K
+		);
 
-		$filteredJobs = [];
-		foreach ( $jobs as $translatorId => $languagePairs ) {
+		if ( empty( $jobsAutommaticStatus ) || ! is_array( $jobsAutommaticStatus ) ) {
+			return $filteredJobs;
+		}
+
+		// Keep only jobs that are not set to automatic translation.
+		foreach ( $filteredJobs as $translatorId => $languagePairs ) {
 			foreach ( $languagePairs as $languagePairName => $languagePairItems ) {
-				foreach ( $languagePairItems as $languagePairItem ) {
-					if ( ! isset( $languagePairItem['job_id'] ) || in_array( (int) $languagePairItem['job_id'], $automaticJobIds ) ) {
-						continue;
+				$languagePairItems = array_filter( $languagePairItems, function( $languagePairItem ) use ( $jobsAutommaticStatus ) {
+					if ( ! array_key_exists( $languagePairItem['job_id'] , $jobsAutommaticStatus ) ) {
+						return false;
 					}
+					return (bool) $jobsAutommaticStatus[ $languagePairItem['job_id'] ]->automatic === false;
+				} );
 
-					if ( ! isset( $filteredJobs[ $translatorId ] ) ) {
-						$filteredJobs[ $translatorId ] = [];
-					}
-
-					if ( ! isset( $filteredJobs[ $translatorId ][ $languagePairName ] ) ) {
-						$filteredJobs[ $translatorId ][ $languagePairName ] = [];
-					}
-
-					$filteredJobs[ $translatorId ][ $languagePairName ][] = $languagePairItem;
+				if ( empty( $languagePairItems ) ) {
+					continue;
 				}
+
+				$manualJobs[ $translatorId ][ $languagePairName ] = array_values( $languagePairItems );
 			}
 		}
 
-		return $filteredJobs;
+		return $manualJobs;
 	}
 
 	public function process_jobs_with_delay() {

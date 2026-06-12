@@ -32,4 +32,16 @@ interface OptionsInterface {
   public function delete( string $optionName );
 
 
+  /**
+   * Add option atomically (only if it doesn't exist)
+   *
+   * @param string $optionName
+   * @param mixed  $value
+   * @param bool   $autoload
+   *
+   * @return bool True if option was added, false if it already exists
+   */
+  public function add( string $optionName, $value, bool $autoload = true ): bool;
+
+
 }

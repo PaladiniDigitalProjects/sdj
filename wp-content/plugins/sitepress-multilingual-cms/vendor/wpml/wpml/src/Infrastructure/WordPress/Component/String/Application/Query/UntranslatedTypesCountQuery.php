@@ -39,12 +39,18 @@ class UntranslatedTypesCountQuery implements UntranslatedTypesCountQueryInterfac
   }
 
 
+  public function forKind() {
+    return UntranslatedTypesCountQueryInterface::KIND_STRING;
+  }
+
+
   /** @return UntranslatedTypeCountDto[] */
-  public function get(): array {
+  public function get( array $queryData = [] ): array {
     $languageCrossJoin = $this->buildLanguageCrossJoin();
 
     $sql = "
-			SELECT COUNT( DISTINCT strings.id ) as count
+      SELECT
+        COUNT( DISTINCT strings.id ) as count
 			FROM {$this->queryPrepare->prefix()}icl_strings strings
 			{$languageCrossJoin}
 			LEFT JOIN {$this->queryPrepare->prefix()}icl_string_translations translations
@@ -69,8 +75,54 @@ class UntranslatedTypesCountQuery implements UntranslatedTypesCountQueryInterfac
     }
 
     return [
-      new UntranslatedTypeCountDto( 'Strings', 'String', $count )
+      new UntranslatedTypeCountDto( 'Strings', 'String', $count, 'string', '' )
     ];
+  }
+
+
+  /**
+   * @param int $numberOfIdsToFetch
+   * @param int $offset
+   * @param string $type
+   *
+   * @return int[]
+   */
+  public function getSomeIds( $numberOfIdsToFetch, $offset, $type = '' ) {
+    $languageCrossJoin = $this->buildLanguageCrossJoin();
+
+    $sql = "
+      SELECT DISTINCT
+        strings.id
+			FROM {$this->queryPrepare->prefix()}icl_strings strings
+			{$languageCrossJoin}
+			LEFT JOIN {$this->queryPrepare->prefix()}icl_string_translations translations
+				ON strings.id = translations.string_id AND translations.language = langs.code
+			WHERE strings.string_type = 1
+				AND ( translations.status IS NULL OR translations.status = 0 )
+				AND EXISTS (
+	        SELECT 1
+	        FROM {$this->queryPrepare->prefix()}icl_string_positions positions
+	        WHERE positions.string_id = strings.id
+	          AND positions.kind = %d
+	    	) AND strings.language = 'en'
+			ORDER BY strings.id ASC
+      LIMIT %d OFFSET %d
+    ";
+
+    try {
+      /** @var int[] $ids */
+      $ids = $this->queryHandler->queryColumn(
+        $this->queryPrepare->prepare(
+          $sql,
+          6, // only frontend strings.
+          $numberOfIdsToFetch,
+          $offset
+        )
+      );
+      return $ids;
+    } catch ( DatabaseErrorException $e ) {
+      return [];
+    }
   }
 
 

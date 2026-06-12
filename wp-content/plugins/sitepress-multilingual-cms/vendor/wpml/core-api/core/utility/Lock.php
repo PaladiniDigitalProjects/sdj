@@ -75,7 +75,8 @@ class Lock implements ILock {
 
 			// There must exist an expired lock, clear it and re-gain it.
 			$this->release();
-			return $this->create( $release_timeout );
+			// Using self to make sure only current create method is called if it is being called recursively.
+			return self::create( $release_timeout );
 		}
 
 		// Update the lock, as by this point we've definitely got a lock, just need to fire the actions.

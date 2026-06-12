@@ -1,6 +1,8 @@
 <?php
 
 use WPML\Legacy\Translation\Save\SyncParentPost\SyncParentPost;
+use WPML\Translation\TranslationElements\FieldCompression;
+use WPML\Hooks\WpmlSavePostHooks;
 
 class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With_API {
 
@@ -8,6 +10,11 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 		'wp_navigation',
 		'wp_template_part'
 	];
+
+	/**
+	 * @var \SitePress $sitepress
+	 */
+	private $sitepress;
 
 	/** @var WPML_TM_Records $tm_records */
 	private $tm_records;
@@ -25,6 +32,7 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 	public function __construct( $data, $tm_records ) {
 		global $wpdb, $ICL_Pro_Translation, $sitepress, $wpml_post_translations;
 		parent::__construct();
+		$this->sitepress                         = $sitepress;
 		$this->data                              = $data;
 		$this->tm_records                        = $tm_records;
 		$translate_link_targets_global_state     = new WPML_Translate_Link_Target_Global_State( $sitepress );
@@ -67,7 +75,7 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 				if ( substr( $fieldname, 0, 6 ) === 'field-' ) {
 					$field = apply_filters( 'wpml_tm_save_translation_cf', $field, $fieldname, $data );
 				}
-				$this->save_translation_field( $field['tid'], $field );
+				$this->save_translation_field( $field['tid'], $field, $data['job_id'] );
 				if ( ! isset( $field['finished'] ) || ! $field['finished'] ) {
 					$is_incomplete = true;
 				}
@@ -166,17 +174,24 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 
 					// it's an update and user do not want to translate urls so do not change the url
 					if ( $element_id ) {
-						if ( $sitepress->get_setting( 'translated_document_page_url' ) !== 'translate' ) {
-							$postarr['post_name'] = $wpdb->get_var(
-								$wpdb->prepare(
-									"SELECT post_name
-																				 FROM {$wpdb->posts}
-																			     WHERE ID=%d
-																			     LIMIT 1",
-									$element_id
-								)
-							);
-						}
+                        switch ( $sitepress->get_setting( 'translated_document_page_url' ) ) {
+                            case 'translate':
+                                $postarr['post_name'] = $wpdb->get_var(
+								    $wpdb->prepare(
+									    "SELECT post_name
+                                            FROM {$wpdb->posts}
+                                            WHERE ID=%d
+                                            LIMIT 1",
+									    $element_id
+								    )
+							    );
+                                break;
+                            case 'force-generate':
+                                // by passing a empty post_name, it will be generated automatically from the post_title
+                                // null is not used, as array_filter may be applied to $postarr, which will disable the generation.
+                                $postarr['post_name'] = '';
+                                break;
+                        }
 
 						$existing_post            = get_post( $element_id );
 						$postarr['post_date']     = $existing_post->post_date;
@@ -226,7 +241,7 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 					foreach ( $job->elements as $job_element ) {
 						if ( $job_element->field_type === 'body' ) {
 							$fields_data_translated = apply_filters( 'wpml_tm_job_data_post_content', $new_post_content );
-							$fields_data_translated = $this->encode_field_data( $fields_data_translated );
+							$fields_data_translated = FieldCompression::compressAndTrack( $fields_data_translated, false, $data['job_id'] );
 							$wpdb->update(
 								$wpdb->prefix . 'icl_translate',
 								array( 'field_data_translated' => $fields_data_translated ),
@@ -283,6 +298,8 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 							'text' => $user_message,
 						)
 					);
+					$this->clear_page_name_cache( $new_post_id );
+					WPML_Pre_Option_Page::maybe_clear_privacy_policy_cache( $original_post->ID, $postarr['post_type'] );
 				}
 
 				if ( $this->get_tm_setting( array( 'notification', 'completed' ) ) != ICL_TM_NOTIFICATION_NONE
@@ -306,6 +323,7 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 
 				do_action( 'icl_pro_translation_completed', $new_post_id, $data['fields'], $job );
 				do_action( 'wpml_pro_translation_completed', $new_post_id, $data['fields'], $job );
+				$this->sitepress->executeSavePostHookOnPostTranslationSave( $new_post_id );
 
 				$translation_status->update( [
 					'status'       => apply_filters( 'wpml_tm_applied_job_status', ICL_TM_COMPLETE, $job, $new_post_id ),
@@ -334,6 +352,23 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 	}
 
 	/**
+	 * Clear page name query filter cache after translation is completed.
+	 *
+	 * @param int $post_id The translated post ID.
+	 */
+	private function clear_page_name_cache( $post_id ) {
+		$post = get_post( $post_id );
+
+		if ( ! $post || 'page' !== $post->post_type ) {
+			return;
+		}
+
+		$base_key = 'get_single_slug_adjusted_IDs' . $post->post_type . $post->post_name;
+		wp_cache_delete( $base_key . $post->post_parent, 'WPML_Page_Name_Query_Filter' );
+		wp_cache_delete( $base_key, 'WPML_Page_Name_Query_Filter' );
+	}
+
+	/**
 	 * Returns false if after saving the translation no redirection is to happen or the target of the redirection
 	 * in case saving the data is followed by a redirect.
 	 *
@@ -344,12 +379,12 @@ class WPML_Save_Translation_Data_Action extends WPML_Translation_Job_Helper_With
 		return $this->redirect_target;
 	}
 
-	private function save_translation_field( $tid, $field ) {
+	private function save_translation_field( $tid, $field, $job_id = null ) {
 		global $wpdb;
 
 		$update = [];
 		if ( isset( $field['data'] ) ) {
-			$update['field_data_translated'] = $this->encode_field_data( $field['data'] );
+			$update['field_data_translated'] = FieldCompression::compressAndTrack( $field['data'], false, $job_id );
 		}
 		$update['field_finished'] = isset( $field['finished'] ) && $field['finished'] ? 1 : 0;
 

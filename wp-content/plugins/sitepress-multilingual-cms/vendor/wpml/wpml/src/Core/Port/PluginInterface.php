@@ -25,4 +25,13 @@ interface PluginInterface {
   public function isSetupComplete();
 
 
+  public function getLanguageHomeUrl( string $languageCode ): string;
+
+
+  public function getATEHost(): string;
+
+
+  public function getAMSHost(): string;
+
+
 }

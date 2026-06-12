@@ -2,10 +2,12 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: sv_SE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/translationServices/components/AuthorizeModal.js:22
 msgid "Connect this site to your %s account"
-msgstr "Anslut denna webbplats till ditt %s-konto"
+msgstr "Anslut den här webbplatsen till ditt %s-konto"
 
 #: src/js/translationServices/components/AuthorizeModal.js:45
 msgid "Error"
@@ -25,7 +27,11 @@ msgid ""
 "to connect to <service_name /> to send and receive jobs."
 msgstr "Besök <link_to_service /> för att begära en API-token. Denna token tillåter WPML att ansluta till <service_name /> för att skicka och ta emot jobb."
 
-#: src/js/translationServices/components/SearchForm.js:13
+#: src/js/translationServices/components/SearchForm.js:10
+msgid "Search translation services"
+msgstr "Sök översättningstjänster"
+
+#: src/js/translationServices/components/SearchForm.js:12
 msgid "Search"
 msgstr "Sök"
 
@@ -40,6 +46,18 @@ msgid ""
 "service, please change your translation mode on the <LinkToSettingsPage /> "
 "page."
 msgstr "Det är för närvarande inte möjligt att ansluta en översättningstjänst när WPML är inställt på att översätta din webbplats innehåll automatiskt. För att använda en översättningstjänst, vänligen ändra ditt översättningsläge på sidan <LinkToSettingsPage />."
+
+#: src/js/translationServices/components/ServicesList.js:105
+msgid "Sort descending"
+msgstr "Sortera fallande"
+
+#: src/js/translationServices/components/ServicesList.js:106
+msgid "Sort ascending"
+msgstr "Sortera stigande"
+
+#: src/js/translationServices/components/ServicesList.js:107
+msgid "Cancel sorting"
+msgstr "Avbryt sortering"
 
 #: src/js/translationServices/components/ServicesList.js:41
 msgid "Documentation"

@@ -16,5 +16,4 @@ return array(
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
     'PhpMyAdmin\\SqlParser\\' => array($vendorDir . '/wpml/sql-parser/src'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
-    'Auryn\\' => array($vendorDir . '/rdlowrey/auryn/lib'),
 );

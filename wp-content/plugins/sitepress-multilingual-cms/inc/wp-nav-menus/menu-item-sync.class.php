@@ -369,28 +369,50 @@ class WPML_Menu_Item_Sync extends WPML_Menu_Sync_Functionality {
 	 * @param int $menuItemId
 	 */
 	private function sync_custom_fields_set_to_copy( $menuItemId ) {
-		$copy = new WPML_Sync_Custom_Fields(
-			new WPML_Translation_Element_Factory( $this->sitepress ),
-			$this->sitepress->get_custom_fields_translation_settings( WPML_COPY_CUSTOM_FIELD )
-		);
-		$copy->sync_all_custom_fields( $menuItemId );
+		$settings     = $this->sitepress->get_custom_fields_translation_settings( WPML_COPY_CUSTOM_FIELD );
+		$itemMetaKeys = array_keys( get_post_meta( $menuItemId ) );
+		$fieldsToSync = array_intersect( $settings, $itemMetaKeys );
+
+		if ( ! empty( $fieldsToSync ) ) {
+			$copy = new WPML_Sync_Custom_Fields(
+				new WPML_Translation_Element_Factory( $this->sitepress ),
+				$fieldsToSync
+			);
+			$copy->sync_all_custom_fields( $menuItemId );
+		}
 	}
 
 	/**
 	 * @param int $menuItemId
 	 */
 	private function sync_custom_fields_set_to_copy_once( $menuItemId ) {
-		$getItemTranslations = function( $menuItemId ) {
+		$originalElementId = $this->post_translations->get_original_element( $menuItemId );
+		$originalElementId = $originalElementId ? $originalElementId : $menuItemId;
+
+		$hasFieldsToCopy = function () use ( $originalElementId ) {
+			$settings     = $this->sitepress->get_custom_fields_translation_settings( WPML_COPY_ONCE_CUSTOM_FIELD );
+			$itemMetaKeys = array_keys( get_post_meta( $originalElementId ) );
+			$fieldsToSync = array_intersect( $settings, $itemMetaKeys );
+
+			return ! empty( $fieldsToSync );
+		};
+
+		$getItemTranslations = function ( $menuItemId ) {
 			return $this->sitepress->get_element_translations(
 				$this->sitepress->get_element_trid( $menuItemId, self::MENU_ITEM_POST_TYPE ),
 				self::MENU_ITEM_POST_TYPE
 			);
 		};
 
+		$isNotOriginalOrSelf = function ( $id ) use ( $menuItemId, $originalElementId ) {
+			return (int) $id !== (int) $menuItemId && (int) $id !== (int) $originalElementId;
+		};
+
 		Maybe::of( $menuItemId )
+			->filter( $hasFieldsToCopy )
 			->map( $getItemTranslations )
 			->map( Lst::pluck( 'element_id' ) )
-			->map( Fns::reject( Relation::equals( $menuItemId ) ) )
+			->map( Fns::filter( $isNotOriginalOrSelf ) )
 			->map( Fns::map( [ make( WPML_Copy_Once_Custom_Field::class ), 'copy' ] ) );
 	}
 

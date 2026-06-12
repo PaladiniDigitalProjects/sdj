@@ -282,7 +282,27 @@ WPML_core.languageSwitcher = (function( $, wpml_ls ) {
 				updatePreview(subform);
 			}
 		});
-	};
+    node.find('.js-wpml-ls-colorpicker-wrapper').each(function () {
+      const $wrapper = $(this);
+      const $button = $wrapper.find('.wp-color-result');
+
+      if ($button.length) {
+        // use the heading and the associated Normal or Hover column
+        // to build the aria label for the button
+        const $row = $wrapper.closest('tr');
+        const $labelCell = $row.find('td[id^="color_label_"]');
+        const tdIndex = $wrapper.closest('td').index();
+        const $headerRow = $row.closest('table').find('tr').first();
+        const $schemeHeader = $headerRow.find('th').eq(tdIndex - 1);
+
+        if ($labelCell.length && $schemeHeader.length) {
+          const labelText = $labelCell.text().trim();
+          const schemeText = $schemeHeader.text().trim();
+          $button.attr('aria-label', `${labelText}, ${schemeText}`);
+        }
+      }
+    });
+  };
 
 	var attachDialogEvents = function() {
 		$('.js-wpml-ls-dialog-close').on('click', function(e) {

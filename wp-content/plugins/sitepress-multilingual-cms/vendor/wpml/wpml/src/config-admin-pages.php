@@ -2,8 +2,10 @@
 
 namespace WPML;
 
+use WPML\UserInterface\Web\Core\Component\ATE\Application\Endpoint\GetWebsiteContext\GetWebsiteContextController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\DashboardController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\DashboardRequirements;
+use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\AutomaticTranslation\CancelAllAutomaticJobsController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetCredits\GetCreditsController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetHierarchicalPosts\GetHierarchicaPostsController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetLocalTranslatorById\GetTranslatorByIdController;
@@ -18,6 +20,10 @@ use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetTran
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetTranslationEditorType\GetTranslationEditorTypeController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetTranslationStatus\GetTranslationStatusController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetUntranslatedTypesCount\GetUntranslatedTypesCountController;
+use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetWordsToTranslate\GetCreditsPerWordController;
+use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetWordsToTranslate\GetWordsToTranslateForItemsController;
+use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetWordsToTranslate\GetWordsToTranslateForTypesController;
+use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\HasPostsUsingNativeEditor\HasPostsUsingNativeEditorController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\SaveTranslatorNote\SaveTranslatorNoteController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\SendToTranslation\SendToTranslationController;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\SetReviewTranslationOption\SetReviewTranslationOptionController;
@@ -32,6 +38,11 @@ use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\Validat
 use WPML\UserInterface\Web\Core\Component\Preferences\Application\AutomaticTranslationsSectionController;
 use WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint\GetEngines\GetEnginesController;
 use WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint\SaveAutomaticTranslationsSettings\SaveAutomaticTranslationsSettingsController;
+use WPML\UserInterface\Web\Core\Component\Troubleshooting\Application\Endpoint\EnableAliasDomainController;
+use WPML\UserInterface\Web\Core\Component\Troubleshooting\Application\Endpoint\ResetAliasDomainController;
+use WPML\UserInterface\Web\Core\Component\Troubleshooting\Application\Endpoint\UpdatePostHogStateController;
+use WPML\UserInterface\Web\Core\Component\Troubleshooting\Application\TroubleshootingController;
+use WPML\UserInterface\Web\Core\SharedKernel\Config\Endpoint\MethodType;
 
 /**
  * Page properties
@@ -64,6 +75,10 @@ use WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint\SaveA
  *                              (must implement ScriptPrerequisitesInterface).
  *   - dataProvider (optional)  Classname of data provider
  *                              (must implement ScriptDataProviderInterface).
+ *   - supportsHMR (optional)   Does the script support HMR (Hot Module Replacement).
+ *                              Default: false
+ *                              Before enabling this, make sure that the necessary
+ *                              HMR code is added to the script.
  *  - styles (optional)         Array of styles or single style.
  *                              Can also just be a string (for src).
  *   - id (optional)            Style id, if not set the page id is used.
@@ -86,24 +101,65 @@ use WPML\UserInterface\Web\Core\Component\Preferences\Application\Endpoint\SaveA
  *                              Page capability is used if not set.
  */
 return [
-  'tm/menu/main.php' => [ // Keeping the old id 'tm/menu/main.php' as long as not all tabs are migrated from legacy.
-    'title' => __( 'Translation Management', 'wpml' ),
+  'sitepress-multilingual-cms/menu/troubleshooting.php' => [
+    'controller'                     => TroubleshootingController::class,
+    'legacyExtension'                => 'after_setup_complete_troubleshooting_functions',
+    'requiresWPMLSetupToBeCompleted' => true,
+    'dependencies'                   => [
+      'wpml-node-modules',
+      'wp-i18n',
+      'lodash'
+    ],
+    'scripts'                        => [
+      [
+        'id'            => 'wpml-troubleshooting',
+        'src'           => 'public/js/wpml-troubleshooting.js',
+        'dependencies'  => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ],
+        'dataProvider'  => TroubleshootingController::class,
+        'prerequisites' => TroubleshootingController::class,
+      ],
+    ],
+    'styles'                         => [
+      'src' => 'public/css/wpml-troubleshooting.css',
+    ],
+    'endpoints'                      => [
+      'updateposthogstate' => [
+        'path'    => '/troubleshooting/posthog',
+        'method'  => MethodType::POST,
+        'handler' => UpdatePostHogStateController::class,
+      ],
+      'enablealiasdomain' => [
+        'path'    => '/troubleshooting/enable-alias-domain',
+        'method'  => MethodType::POST,
+        'handler' => EnableAliasDomainController::class,
+      ],
+      'resetaliasdomain' => [
+        'path'    => '/troubleshooting/reset-alias-domain',
+        'method'  => MethodType::POST,
+        'handler' => ResetAliasDomainController::class,
+      ],
+    ],
+  ],
+  'tm/menu/main.php'                          => [ // Keeping the old id 'tm/menu/main.php' as long as not all tabs are migrated from legacy.
+    'title' => __( 'Translation Dashboard', 'wpml' ),
 
     'controller' => DashboardController::class,
 
     'legacyParentId' => 'WPML',
     'position'       => 1,
 
-    'requirements' => DashboardRequirements::class,
+    'requirements'                   => DashboardRequirements::class,
+    'requiresWPMLSetupToBeCompleted' => true,
 
     // If more than one script is needed a multi array can be used.
-    'scripts'         => [
+    'scripts'                        => [
       [
         'id'            => 'wpml-dashboard',
         'src'           => 'public/js/dashboard.js',
         'prerequisites' => DashboardController::class,
         'dataProvider'  => DashboardController::class,
-        'dependencies'  => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ]
+        'dependencies'  => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ],
+        'supportsHMR'   => true,
       ],
       [ // Move 'wpml-notice-glossary' to config-admin-notices.php
         'id'            => 'wpml-notice-glossary',
@@ -115,109 +171,115 @@ return [
 
     // If there is only one style for the page and it has no
     // dependencies, it can be defined simply like this:
-    'styles'         => [
+    'styles'                         => [
       'src'          => 'public/css/dashboard.css',
       'dependencies' => [ 'otgs-icons' ]
     ],
 
     // Endpoints only used by this page.
-    'endpoints'      => [
-      'getpopulateditemsections' => [
-        'path' => '/item-sections/populated',
+    'endpoints'                      => [
+      'getpopulateditemsections'       => [
+        'path'    => '/item-sections/populated',
         'handler' => GetPopulatedItemSectionsController::class,
       ],
-      'getposts'                   => [
+      'getposts'                       => [
         'path'    => '/posts',
         'handler' => GetPostControllerInterface::class,
       ],
-      'getpostscount'              => [
+      'getpostscount'                  => [
         'path'    => '/posts/count',
         'handler' => GetPostsCountController::class,
       ],
-      'sendtotranslation'          => [
+      'sendtotranslation'              => [
         'path'    => '/send-to-translation',
         'handler' => SendToTranslationController::class,
         'method'  => 'POST',
         'useAjax' => true,
       ],
-      'validatetranslationoptions' => [
+      'validatetranslationoptions'     => [
         'path'    => '/send-to-translation/validate-translation-options',
         'handler' => ValidateSelectedTranslationMethodsController::class,
         'method'  => 'POST',
       ],
-      'getdefaultbatchname'        => [
+      'getdefaultbatchname'            => [
         'path'    => '/send-to-translation/default-batch-name',
         'handler' => GetTranslationBatchDefaultName::class,
         'method'  => 'GET',
       ],
-      'validatebatchname'          => [
+      'validatebatchname'              => [
         'path'    => '/send-to-translation/validate-batch-name',
         'handler' => ValidateTranslationBatchNameController::class,
         'method'  => 'POST',
       ],
-      'setreviewtranslationoption' => [
+      'setreviewtranslationoption'     => [
         'path'    => '/set-review-translation-option',
         'handler' => SetReviewTranslationOptionController::class,
         'method'  => 'POST',
       ],
-      'gethierarchicalposts'       => [
+      'gethierarchicalposts'           => [
         'path'    => '/posts/hierarchical',
         'handler' => GetHierarchicaPostsController::class,
       ],
-      'getposttaxonomies'          => [
+      'getposttaxonomies'              => [
         'path'    => '/posts/taxonomies',
         'handler' => GetPostTaxonomiesController::class,
       ],
-      'getpostterms'               => [
+      'getpostterms'                   => [
         'path'    => '/posts/terms',
         'handler' => GetPostTermsController::class,
       ],
-      'enabletranslateeverything'  => [
+      'enabletranslateeverything'      => [
         'path'    => '/translate-everything/enable',
         'handler' => EnableController::class,
         'method'  => 'POST',
       ],
-      'disabletranslateeverything' => [
+      'disabletranslateeverything'     => [
         'path'    => '/translate-everything/disable',
         'handler' => DisableController::class,
         'method'  => 'POST',
       ],
-      'getuntranslatedtypescount'  => [
+      'cancelallautomaticjobs'     => [
+        'path'    => '/cancelallautomaticjobs',
+        'handler' => CancelAllAutomaticJobsController::class,
+        'method'  => 'GET',
+      ],
+
+      'getuntranslatedtypescount'      => [
         'path'    => '/getuntranslatedtypescount',
         'handler' => GetUntranslatedTypesCountController::class,
         'method'  => 'GET',
       ],
-      'savetranslatornote'         => [
+      'savetranslatornote'             => [
         'path'    => '/save-translator-note',
         'handler' => SaveTranslatorNoteController::class,
         'method'  => 'POST',
       ],
-      'getcredits'                 => [
+      'getcredits'                     => [
         'path'    => '/credits',
         'handler' => GetCreditsController::class,
         'method'  => 'GET',
       ],
-      'committotranslationproxy'   => [
+      'committotranslationproxy'       => [
         'path'    => '/translation-proxy/commit-batch',
         'handler' => SendCommitRequestController::class,
         'method'  => 'POST',
       ],
-      'getlastpickedup'            => [
+      'getlastpickedup'                => [
         'path'    => '/tranlsation-proxy/getlastpickedup',
         'handler' => GetLastPickedUpController::class,
         'method'  => 'GET',
       ],
-      'getremotejobscount'         => [
+      'getremotejobscount'             => [
         'path'    => '/translation-proxy/getRemoteJobsCount',
         'handler' => GetRemoteJobsCountController::class,
         'method'  => 'GET',
       ],
-      'gettranslationstatus'       => [
+      'gettranslationstatus'           => [
         'path'    => '/gettranslationstatus',
         'handler' => GetTranslationStatusController::class,
         'method'  => 'GET',
       ],
-      'getlocaltranslatorbyid' => [
+      'getlocaltranslatorbyid'         => [
         'path'    => '/getlocaltranslatorbyid',
         'handler' => GetTranslatorByIdController::class,
         'method'  => 'GET',
@@ -227,13 +289,13 @@ return [
         'handler' => GetRemoteTranslationServiceController::class,
         'method'  => 'GET',
       ],
-      'gettranslationeditortype' => [
+      'gettranslationeditortype'       => [
         'path'    => '/gettranslationeditortype',
         'handler' => GetTranslationEditorTypeController::class,
         'method'  => 'GET',
-        ],
+      ],
 
-      'translateexistingcontent' => [
+      'translateexistingcontent'        => [
         'path'    => '/translate-existing-content',
         'handler' => TranslateExistingContentController::class,
         'method'  => 'POST',
@@ -243,23 +305,53 @@ return [
         'handler' => GetNeedsUpdateCreatedInCteController::class,
         'method'  => 'GET',
       ],
-      'getengines' => [
+      'getengines'                      => [
         'path'    => '/get-engines',
         'handler' => GetEnginesController::class,
         'method'  => 'GET',
       ],
+      'getwebsitecontext'                      => [
+        'path'    => '/website-contexts',
+        'handler' => GetWebsiteContextController::class,
+        'method'  => 'GET',
+      ],
+      'haspostsusingnativeeditor'       => [
+        'path'    => '/has-posts-using-native-editor',
+        'handler' => HasPostsUsingNativeEditorController::class,
+        'method'  => 'GET',
+      ],
+      'getcreditsperword' => [
+        'path'    => '/get-credits-per-word',
+        'handler' => GetCreditsPerWordController::class,
+        'method'  => 'GET',
+      ],
+      'getwordstotranslateforitems' => [
+        'path'    => '/get-words-to-translate-for-items',
+        'handler' => GetWordsToTranslateForItemsController::class,
+        'method'  => 'POST',
+      ],
+      'getwordstotranslatefortypes' => [
+        'path'    => '/get-words-to-translate-for-types',
+        'handler' => GetWordsToTranslateForTypesController::class,
+        'method'  => 'POST',
+      ],
     ],
   ],
-  'automatic-translations-settings' => [
+  'automatic-translations-settings'           => [
     'title' => __( 'Automatic translation settings', 'wpml' ),
 
-    'controller'    => AutomaticTranslationsSectionController::class,
-    'prerequisites' => AutomaticTranslationsSectionController::class,
-    'dependencies'  => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ],
+    'controller'                     => AutomaticTranslationsSectionController::class,
+    'prerequisites'                  => AutomaticTranslationsSectionController::class,
+    'requiresWPMLSetupToBeCompleted' => true,
+    'dependencies'                   => [
+      'wpml-node-modules',
+      'wp-i18n',
+      'lodash'
+    ],
 
     'legacyExtension' => 'load-wpml_page_tm/menu/settings',
 
-    'scripts'         => [
+    'scripts' => [
       [
         'id'            => 'wpml-automatic-translations-settings',
         'src'           => 'public/js/automatic-translations-settings.js',
@@ -275,7 +367,7 @@ return [
     ],
 
     'endpoints' => [
-      'getengines' => [
+      'getengines'                       => [
         'path'    => '/get-engines',
         'handler' => GetEnginesController::class,
         'method'  => 'GET',
@@ -286,5 +378,63 @@ return [
         'method'  => 'POST',
       ],
     ],
+  ],
+  'sitepress-multilingual-cms/menu/setup.php' => [
+    'title'                          => __( 'WPML Setup', 'wpml' ),
+    'requiresWPMLSetupToBeCompleted' => false,
+    'dependencies'                   => [
+      'wpml-node-modules',
+      'wp-i18n',
+      'lodash'
+    ],
+
+    'legacyExtension' => 'load-sitepress-multilingual-cms/menu/setup.php',
+
+    'scripts' => [
+      [
+        'id'           => 'wc-minimum-requirements.js',
+        'src'          => 'public/js/wc-minimum-requirements.js',
+        'dependencies' => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ]
+      ],
+      [
+        'id'           => 'wc-minimum-requirements-warning-banner.js',
+        'src'          => 'public/js/wc-minimum-requirements-warning-banner.js',
+        'dependencies' => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ]
+      ],
+    ],
+
+    'styles' => [
+      'src'          => 'public/css/tailwind.css',
+      'dependencies' => []
+    ]
+  ],
+  'sitepress-multilingual-cms/menu/support.php' => [
+    'title'                          => __( 'WPML Support', 'wpml' ),
+    'requiresWPMLSetupToBeCompleted' => false,
+    'dependencies'                   => [
+      'wpml-node-modules',
+      'wp-i18n',
+      'lodash'
+    ],
+
+    'legacyExtension' => 'load-sitepress-multilingual-cms/menu/support.php',
+
+    'scripts' => [
+      [
+        'id'           => 'wc-minimum-requirements.js',
+        'src'          => 'public/js/wc-minimum-requirements.js',
+        'dependencies' => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ]
+      ],
+      [
+        'id'           => 'wc-minimum-requirements-warning-banner.js',
+        'src'          => 'public/js/wc-minimum-requirements-warning-banner.js',
+        'dependencies' => [ 'wpml-node-modules', 'wp-i18n', 'lodash' ]
+      ],
+    ],
+
+    'styles' => [
+      'src'          => 'public/css/tailwind.css',
+      'dependencies' => []
+    ]
   ],
 ];

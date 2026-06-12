@@ -10,6 +10,8 @@ use WPML\Core\Component\ATE\Application\Service\Dto\UpdateEngineDto;
 use WPML\Core\Component\ATE\Application\Service\EngineServiceException;
 use WPML\Core\Component\ATE\Application\Service\EnginesServiceInterface;
 use WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface;
+use WPML\TM\API\ATE\CachedLanguageMappings;
+use WPML\TM\ATE\API\CachedAMSAPI;
 
 /**
  * @phpstan-type LanguageFormalityInputArray array{
@@ -119,6 +121,12 @@ class EnginesService implements EnginesServiceInterface {
     } catch ( \Throwable $e ) {
       throw new EngineServiceException( 'The engines settings could not be saved' );
     }
+  }
+
+
+  public function flushCache() {
+    CachedLanguageMappings::clearCache();
+    CachedAMSAPI::clearCache();
   }
 
 

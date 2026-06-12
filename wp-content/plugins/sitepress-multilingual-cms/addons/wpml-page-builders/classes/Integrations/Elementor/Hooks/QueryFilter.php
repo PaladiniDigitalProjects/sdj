@@ -48,15 +48,21 @@ class QueryFilter implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 	public function translateQueryIds( $value, $object_id, $meta_key, $single ) {
 		if ( WPML_Elementor_Data_Settings::META_KEY_DATA === $meta_key && $single ) {
 			return Maybe::of( get_post_meta( $object_id, WPML_Elementor_Data_Settings::META_KEY_DATA, true ) )
-				->map( function ( $data ) {
-					return DataConvert::unserialize( $data, false );
-				} )
-				->map( function( $data ) {
-					return $this->recursivelyTranslateQueryIds( $data ); }
+				->map(
+					function ( $data ) {
+						return DataConvert::unserialize( $data, false );
+					}
 				)
-				->map( function ( $data ) {
-					return DataConvert::serialize( $data, false );
-				} )
+				->map(
+					function ( $data ) {
+						return $this->recursivelyTranslateQueryIds( $data );
+					}
+				)
+				->map(
+					function ( $data ) {
+						return DataConvert::serialize( $data, false );
+					}
+				)
 				->getOrElse( $value );
 		}
 
@@ -77,18 +83,76 @@ class QueryFilter implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 			if ( ! empty( $data->elements ) ) {
 				$data->elements = $this->recursivelyTranslateQueryIds( $data->elements );
 			}
-			if ( ! empty( $data->settings->post_query_include_term_ids ) ) {
-				$data->settings->post_query_include_term_ids = $this->convertTermTaxonomyIds( $data->settings->post_query_include_term_ids );
+
+			$data = $this->translateSettingsIds( $data );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param object $data
+	 *
+	 * @return object
+	 */
+	private function translateSettingsIds( $data ) {
+		if ( empty( $data->settings ) ) {
+			return $data;
+		}
+
+		$termIdProperties = $this->getTermIdProperties();
+		foreach ( $termIdProperties as $property ) {
+			if ( ! empty( $data->settings->$property ) ) {
+				$data->settings->$property = $this->convertTermTaxonomyIds( $data->settings->$property );
 			}
-			if ( ! empty( $data->settings->post_query_exclude_term_ids ) ) {
-				$data->settings->post_query_exclude_term_ids = $this->convertTermTaxonomyIds( $data->settings->post_query_exclude_term_ids );
-			}
-			if ( ! empty( $data->settings->post_query_posts_ids ) ) {
-				$data->settings->post_query_posts_ids = Ids::convert( $data->settings->post_query_posts_ids, Ids::ANY_POST );
+		}
+
+		$postIdProperties = $this->getPostIdProperties();
+		foreach ( $postIdProperties as $property ) {
+			if ( ! empty( $data->settings->$property ) ) {
+				$data->settings->$property = Ids::convert( $data->settings->$property, Ids::ANY_POST );
 			}
 		}
 
 		return $data;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function getTermIdProperties() {
+		$properties = [
+			'post_query_include_term_ids',
+			'post_query_exclude_term_ids',
+			'product_query_include_term_ids',
+			'product_query_exclude_term_ids',
+			'query_include_term_ids',
+			'query_exclude_term_ids',
+		];
+
+		/**
+		 * Filters the list of Elementor settings properties containing term IDs to translate.
+		 *
+		 * @param string[] $properties Property names containing term taxonomy IDs.
+		 */
+		return apply_filters( 'wpml_pb_elementor_query_term_id_properties', $properties );
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function getPostIdProperties() {
+		$properties = [
+			'post_query_posts_ids',
+			'query_posts_ids',
+		];
+
+		/**
+		 * Filters the list of Elementor settings properties containing post IDs to translate.
+		 *
+		 * @param string[] $properties Property names containing post IDs.
+		 */
+		return apply_filters( 'wpml_pb_elementor_query_post_id_properties', $properties );
 	}
 
 	/**

@@ -144,7 +144,7 @@ class SendToTranslationDto implements ConstructableFromArrayInterface {
    */
   public static function fromArray( $array ): SendToTranslationDto {
     if ( ! isset( $array['targetLanguageMethods'] ) ) {
-      throw new InvalidArgumentException( 'Language pairs cannot be empty' );
+      throw new InvalidArgumentException( __( 'Language pairs cannot be empty', 'wpml' ) );
     }
 
     $targetLanguageMethods = [];
@@ -153,19 +153,22 @@ class SendToTranslationDto implements ConstructableFromArrayInterface {
     }
 
     if ( ! isset( $array['batchName'] ) ) {
-      throw new InvalidArgumentException( 'Batch name cannot be empty' );
+      throw new InvalidArgumentException( __( 'Batch name cannot be empty', 'wpml' ) );
     }
 
     if ( ! isset( $array['sourceLanguageCode'] ) ) {
-      throw new InvalidArgumentException( 'Source language code cannot be empty' );
+      throw new InvalidArgumentException( __( 'Source language code cannot be empty', 'wpml' ) );
     }
 
     if ( ! isset( $array['posts'] )
          && ! isset( $array['stringPackages'] )
          && ! isset( $array['strings'] ) ) {
       throw new InvalidArgumentException(
-        'Posts, packages and strings cannot be empty. 
-        At least one of those elements must be specified.'
+        __(
+          'Posts, packages and strings cannot be empty.
+          At least one of those elements must be specified.',
+          'wpml'
+        )
       );
     }
 

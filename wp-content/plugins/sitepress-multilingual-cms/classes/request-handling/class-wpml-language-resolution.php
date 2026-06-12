@@ -60,8 +60,9 @@ class WPML_Language_Resolution {
 			} elseif ( $this->use_cookie_language() ) {
 				$lang = $wpml_request_handler->get_cookie_lang();
 			}
+
+			$this->current_request_lang = $this->filter_for_legal_langs( $lang );
 		}
-		$this->current_request_lang = $this->filter_for_legal_langs( $lang );
 
 		return $this->current_request_lang;
 	}

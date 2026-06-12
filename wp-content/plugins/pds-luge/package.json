@@ -1,0 +1,31 @@
+{
+  "name": "pds-luge",
+  "version": "1.0.0",
+  "description": "Animaciones con luge usando block attributes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production",
+    "plugin-zip": "wp-scripts plugin-zip"
+  },
+  "keywords": [
+    "pds",
+    "luge"
+  ],
+  "author": "PDS",
+  "license": "ISC",
+  "dependencies": {
+    "@waaark/luge": "^0.6.20-beta",
+    "gsap": "^3.12.7",
+    "jquery": "^3.7.1",
+    "stream-http": "^3.2.0"
+  },
+  "devDependencies": {
+		"@wordpress/scripts": "^30.7.0",
+    "@babel/core": "^7.26.7",
+    "@babel/preset-env": "^7.26.7",
+    "babel-loader": "^9.2.1",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

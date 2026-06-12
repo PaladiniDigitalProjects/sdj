@@ -91,15 +91,17 @@ class OTGS_Installer_Subscription {
 	}
 
 	/**
-	 * @param int $expiredForPeriod
-	 * @return bool
+	 * @param int $expiredForPeriod Grace offset in seconds (e.g. Account notices).
 	 */
 	private function is_expired( $expiredForPeriod = 0 ) {
-		return ! $this->is_lifetime()
-		       && (
-			       self::SUBSCRIPTION_STATUS_EXPIRED === $this->get_status()
-			       || ( $this->get_expiration() && strtotime( $this->get_expiration() ) <= time() - $expiredForPeriod )
-		       );
+		if ( $this->is_lifetime() ) {
+			return false;
+		}
+
+		$expiration = $this->get_expiration();
+		$date_has_expired = $expiration && strtotime($expiration) < strtotime('today') - $expiredForPeriod;
+
+		return self::SUBSCRIPTION_STATUS_EXPIRED === $this->get_status() || $date_has_expired;
 	}
 
 	/**

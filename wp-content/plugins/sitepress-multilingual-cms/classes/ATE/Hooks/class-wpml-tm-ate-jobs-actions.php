@@ -19,6 +19,7 @@ use function WPML\FP\partialRight;
 use function WPML\FP\pipe;
 use WPML\TM\API\ATE\LanguageMappings;
 use WPML\Element\API\Languages;
+use WPML\TM\Jobs\JobLog;
 
 /**
  * @author OnTheGo Systems
@@ -58,6 +59,9 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 	 */
 	private $current_screen;
 
+	/** @var WPML_WP_API */
+	private $wp_api;
+
 	/**
 	 * WPML_TM_ATE_Jobs_Actions constructor.
 	 *
@@ -66,20 +70,22 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 	 * @param \SitePress                                 $sitepress
 	 * @param \WPML_Current_Screen                       $current_screen
 	 * @param \WPML_TM_AMS_Translator_Activation_Records $translator_activation_records
+	 * @param \WPML_WP_API                               $wp_api
 	 */
 	public function __construct(
 		WPML_TM_ATE_API $ate_api,
 		WPML_TM_ATE_Jobs $ate_jobs,
 		SitePress $sitepress,
 		WPML_Current_Screen $current_screen,
-		WPML_TM_AMS_Translator_Activation_Records $translator_activation_records
-
+		WPML_TM_AMS_Translator_Activation_Records $translator_activation_records,
+		WPML_WP_API $wp_api
 	) {
 		$this->ate_api                       = $ate_api;
 		$this->ate_jobs                      = $ate_jobs;
 		$this->sitepress                     = $sitepress;
 		$this->current_screen                = $current_screen;
 		$this->translator_activation_records = $translator_activation_records;
+		$this->wp_api                        = $wp_api;
 	}
 
 	public function add_hooks() {
@@ -133,31 +139,43 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 	 * @throws \RuntimeException
 	 */
 	public function added_translation_jobs( array $jobs, $sentFrom = null, \WPML_TM_Translation_Batch $batch = null ) {
-		$oldEditor = wpml_tm_load_old_jobs_editor();
-		$job_ids   = Fns::reject( [ $oldEditor, 'shouldStickToWPMLEditor' ], Obj::propOr( [], 'local', $jobs ) );
+		$additionalErrorMsg            = '';
+		$translationModeSetInDashboard = null; // This value can be null. We handle it inside $this->getJobType().
 
-		if ( ! $job_ids ) {
-			return;
+		try {
+			$oldEditor = wpml_tm_load_old_jobs_editor();
+			$job_ids   = Fns::reject( [ $oldEditor, 'shouldStickToWPMLEditor' ], Obj::propOr( [], 'local', $jobs ) );
+
+			if ( ! $job_ids ) {
+				return;
+			}
+
+			$applyTranslationMemory = $this->shouldApplyTranslationMemory( $batch );
+
+			$jobs = Fns::map(
+				function ( $jobId ) use ( $applyTranslationMemory ) {
+					return wpml_tm_create_ATE_job_creation_model( $jobId, $applyTranslationMemory );
+				},
+				$job_ids
+			);
+
+			$translationModeSetInDashboard = $this->getTranslationModeFromBatch( $batch );
+			$responses                     = Fns::map(
+				Fns::unary( partialRight( [ $this, 'create_jobs' ], $sentFrom ) ),
+				$this->getChunkedJobs( $jobs, $translationModeSetInDashboard )
+			);
+			$created_jobs                  = $this->getResponsesJobs( $responses, $jobs );
+		} catch ( \Throwable $throwable ) {
+			$created_jobs       = [];
+			$additionalErrorMsg = $this->getErrorMessage( $throwable );
+			$this->maybeLogRuntimeError( $additionalErrorMsg );
+
+			// If there is an error in wpml_tm_load_old_jobs_editor() or getting $job_ids, we should skip.
+			// The jobs can be fixed by troubleshooting button.
+			if ( empty( $oldEditor ) || empty( $job_ids ) ) {
+				return;
+			}
 		}
-
-		$translationModeSetInDashboard = $batch ? $batch->getTranslationMode() : null;
-		if ( $translationModeSetInDashboard === 'auto' ) {
-			$applyTranslationMemory = ! $batch || $batch->getHowToHandleExisting() === \WPML_TM_Translation_Batch::HANDLE_EXISTING_LEAVE;
-		} else {
-			// We don't want to clear Translation Memory for manual jobs.
-			// Most likely, such job will be almost immediately completed in ATE, but it is expected by users.
-			$applyTranslationMemory = true;
-		}
-
-		$jobs = Fns::map( function ( $jobId ) use ( $applyTranslationMemory ) {
-			return wpml_tm_create_ATE_job_creation_model( $jobId, $applyTranslationMemory );
-		}, $job_ids );
-
-		$responses = Fns::map(
-			Fns::unary( partialRight( [ $this, 'create_jobs' ], $sentFrom ) ),
-			$this->getChunkedJobs( $jobs, $translationModeSetInDashboard )
-		);
-		$created_jobs = $this->getResponsesJobs( $responses, $jobs );
 
 		if ( $created_jobs ) {
 
@@ -179,24 +197,24 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 				}
 			}
 
-			$message = __( '%1$s jobs added to the Advanced Translation Editor.', 'wpml-translation-management' );
+			$message = __( '%1$s jobs added to the Advanced Translation Editor.', 'sitepress' );
 			$this->add_message( 'updated', sprintf( $message, count( $created_jobs ) ), 'wpml_tm_ate_create_job' );
 
 			do_action( 'wpml_tm_ate_jobs_created', $created_jobs );
 		} else {
 			if ( Lst::includes( $sentFrom, [ Jobs::SENT_AUTOMATICALLY, Jobs::SENT_RETRY ] ) ) {
 				if ( $sentFrom === Jobs::SENT_RETRY ) {
-					$updateJob = function ($jobId) {
-						Jobs::incrementRetryCount($jobId);
+					$updateJob = function ( $jobId ) {
+						Jobs::incrementRetryCount( $jobId );
 						$this->logRetryError( $jobId );
 					};
 				} else {
-					$updateJob = function ( $jobId ) use ( $oldEditor, $translationModeSetInDashboard ) {
-						$this->logError( $jobId );
+					$updateJob = function ( $jobId ) use ( $oldEditor, $translationModeSetInDashboard, $additionalErrorMsg ) {
+						$this->logError( $jobId, $additionalErrorMsg );
 
 						$translationJob = wpml_tm_load_job_factory()->get_translation_job( $jobId, false, 0, true );
 						if ( $translationJob ) {
-                            $jobType        = $this->getJobType( $translationJob, $translationModeSetInDashboard );
+                            $jobType = $this->getJobType( $translationJob, $translationModeSetInDashboard );
                             if ( $jobType === 'auto' ) {
                                 Jobs::setStatus( $jobId, ICL_TM_ATE_NEEDS_RETRY );
                                 $oldEditor->set( $jobId, WPML_TM_Editors::ATE );
@@ -208,15 +226,6 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 
 				wpml_collect( $job_ids )->map( $updateJob );
 			}
-
-			$this->add_message(
-				'error',
-				__(
-					'Jobs could not be created in Advanced Translation Editor. Please try again or contact the WPML support for help.',
-					'wpml-translation-management'
-				),
-				'wpml_tm_ate_create_job'
-			);
 		}
 	}
 
@@ -369,9 +378,9 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 			$code    = 0;
 			$message = $response->get_error_message();
 			if ( $response->error_data && is_array( $response->error_data ) ) {
-				foreach ( $response->error_data as $http_code => $error_data ) {
-					$code    = (int) Obj::pathOr(0, [0, 'status'], $error_data );
-					$message = '';
+				foreach ( $response->error_data as $error_data ) {
+					$code    = (int) Obj::pathOr( 0, [ 0, 'status' ], $error_data );
+					$message = ( $code ? $code . ' ' : '' ) . Obj::pathOr( '', [ 0, 'message' ], $error_data ) . "\n\n";
 
 					switch ( $code ) {
 						case self::RESPONSE_ATE_NOT_ACTIVE_ERROR:
@@ -384,29 +393,17 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 								$wp_admin_url
 							);
 							$mcsetup_page .= '#ml-content-setup-sec-1';
-
-							$resend_link = '<a href="' . $mcsetup_page . '">'
-										   . esc_html__( 'Resend that email', 'wpml-translation-management' )
-										   . '</a>';
-							$message    .= '<p>'
-											. esc_html__( 'WPML cannot send these documents to translation because the Advanced Translation Editor is not fully set-up yet.', 'wpml-translation-management' )
-											. '</p><p>'
-											. esc_html__( 'Please open the confirmation email that you received and click on the link inside it to confirm your email.', 'wpml-translation-management' )
-											. '</p><p>'
-											. $resend_link
-											. '</p>';
+							$message      .= __( 'WPML cannot send these documents to translation because the Advanced Translation Editor is not fully set-up yet.', 'wpml-translation-management' )
+											. "\n\n"
+											. __( 'Please open the confirmation email that you received and click on the link inside it to confirm your email.', 'wpml-translation-management' )
+											. "\n\n"
+											. '<a href="' . esc_attr( $mcsetup_page ) . '">' . esc_html__( 'Resend that email.', 'wpml-translation-management' ) . '</a>';
 							break;
 						case self::RESPONSE_ATE_DUPLICATED_SOURCE_ID:
 						case self::RESPONSE_ATE_UNEXPECTED_ERROR:
 						default:
-							$message = '<p>'
-									   . __( 'Advanced Translation Editor error:', 'wpml-translation-management' )
-									   . '</p><p>'
-									   . $error_data[0]['message']
-									   . '</p>';
+							$message .= __( 'Advanced Translation Editor error.', 'wpml-translation-management' );
 					}
-
-					$message = '<p>' . $message . '</p>';
 				}
 			}
 			/** @var WP_Error $response */
@@ -530,16 +527,21 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 	}
 
 	/**
-	 * @param int $jobId
+	 * @param int    $jobId
+	 * @param string $additionalErrorMsg Log any error message.
 	 */
-	private function logError( $jobId ) {
+	private function logError( $jobId, string $additionalErrorMsg = '' ) {
 		$job = Jobs::get( $jobId );
 		if ( $job ) {
-			Storage::add( Entry::retryJob( $jobId, [
-					'retry_count' => 0,
-					'comment'     => 'Sending job to ate failed, queued to be sent again.',
-				]
-			) );
+			$extraData = [
+				'retry_count' => 0,
+				'comment'     => 'Sending job to ate failed, queued to be sent again.',
+			];
+			if ( $additionalErrorMsg ) {
+				$extraData['errorMessage'] = $additionalErrorMsg;
+			}
+
+			Storage::add( Entry::retryJob( $jobId, $extraData ) );
 		}
 	}
 
@@ -559,5 +561,68 @@ class WPML_TM_ATE_Jobs_Actions implements IWPML_Action {
 			return $translationJob->get_source_language_code() === Languages::getDefaultCode() &&
 				   Jobs::isEligibleForAutomaticTranslations( $translationJob->get_id() ) ? 'auto' : 'manual';
 		}
+	}
+
+	/**
+	 * Determines whether translation memory should be applied based on batch settings.
+     *
+     * IMPORTANT: This is a global per batch setting, which can be later overridden by individual jobs
+     * in wpml_tm_create_ATE_job_creation_model.
+	 *
+	 * @param \WPML_TM_Translation_Batch|null $batch The translation batch.
+	 *
+	 * @return bool True if translation memory should be applied, false otherwise.
+	 */
+	private function shouldApplyTranslationMemory(\WPML_TM_Translation_Batch $batch = null) {
+		if ( $this->getTranslationModeFromBatch( $batch ) === 'auto' ) {
+            // Do not apply translation memory only if a user explicitly said so.
+			return ! ( $batch &&  $batch->getHowToHandleExisting() === \WPML_TM_Translation_Batch::HANDLE_EXISTING_OVERRIDE );
+		} else {
+			// We don't want to clear Translation Memory for manual jobs.
+			// Most likely, such job will be almost immediately completed in ATE, but it is expected by users.
+			return true;
+		}
+	}
+
+	/**
+	 * Gets the translation mode from a batch.
+	 *
+	 * @param \WPML_TM_Translation_Batch|null $batch The translation batch.
+	 *
+	 * @return 'auto'|'manual'|null The translation mode or null if batch is null.
+	 */
+	private function getTranslationModeFromBatch(\WPML_TM_Translation_Batch $batch = null) {
+		return $batch ? $batch->getTranslationMode() : null;
+	}
+
+	/**
+	 * Log error in PHP error log if `WP_DEBUG` is enabled.
+	 *
+	 * @param string $message
+	 *
+	 * @return void
+	 */
+	private function maybeLogRuntimeError( string $message ) {
+		JobLog::addError(
+			'WPML_TM_ATE_Jobs_Actions error',
+			[
+				'message' => $message,
+			]
+		);
+
+		if ( $this->wp_api->constant( 'WP_DEBUG' ) ) {
+			$this->wp_api->error_log( $message );
+		}
+	}
+
+	/**
+	 * Get human-readable error message from Throwable.
+	 *
+	 * @param \Throwable $throwable
+	 *
+	 * @return string
+	 */
+	private function getErrorMessage( \Throwable $throwable ): string {
+		return 'Error: ' . $throwable->getMessage() . ' in ' . $throwable->getFile() . ':' . $throwable->getLine();
 	}
 }

@@ -1,0 +1,10 @@
+{
+   "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "wordpress": {
+      "type": "local",
+      "command": ["docker", "exec", "-i", "wordpress-mcp", "php", "/app/bin/wordpress-mcp"],
+      "enabled": true
+    }
+  }
+}

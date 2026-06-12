@@ -32,7 +32,7 @@ class WPML_PB_Register_Shortcodes {
 		WPML_PB_String_Registration $handle_strings,
 		WPML_PB_Shortcode_Strategy $shortcode_strategy,
 		WPML_PB_Shortcode_Encoding $encoding,
-		WPML_PB_Reuse_Translations_By_Strategy $reuse_translations = null
+		$reuse_translations = null
 	) {
 		$this->handle_strings     = $handle_strings;
 		$this->shortcode_strategy = $shortcode_strategy;
@@ -41,16 +41,16 @@ class WPML_PB_Register_Shortcodes {
 	}
 
 	/**
-	 * @param string|int    $post_id
-	 * @param string        $content
-	 * @param StringCleanUp $externalStringCleanUp
+	 * @param string|int         $post_id
+	 * @param string             $content
+	 * @param StringCleanUp|null $externalStringCleanUp
 	 *
 	 * @return bool
 	 */
 	public function register_shortcode_strings(
 		$post_id,
 		$content,
-		StringCleanUp $externalStringCleanUp = null
+		$externalStringCleanUp = null
 	) {
 
 		$any_registered = false;

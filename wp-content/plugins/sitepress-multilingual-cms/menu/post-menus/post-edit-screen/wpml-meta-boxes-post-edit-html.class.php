@@ -92,11 +92,6 @@ class WPML_Meta_Boxes_Post_Edit_HTML {
 		<div id="icl_document_language_dropdown" class="icl_box_paragraph"
 		     data-metabox-refresh-nonce="<?php echo wp_create_nonce( WPML_Meta_Boxes_Post_Edit_Ajax::ACTION_GET_META_BOXES ) ?>"
 		     data-admin-ls-refresh-nonce="<?php echo wp_create_nonce( WPML_Meta_Boxes_Post_Edit_Ajax::ACTION_GET_ADMIN_LS ) ?>">
-			<p>
-				<label for="icl_post_language">
-                    <strong><?php printf( esc_html__( 'Language of this %s', 'sitepress' ), esc_html( $this->post_type_label ) ); ?></strong>
-                </label>
-			</p>
 
 			<?php
 			$disabled_language = disabled( false, $this->can_translate_post, false );
@@ -428,7 +423,7 @@ class WPML_Meta_Boxes_Post_Edit_HTML {
 		$not_show_flags = ! apply_filters( 'wpml_setting', true, 'show_translations_flag' );
 		?>
         <div class="icl_box_paragraph">
-            <p><b><?php esc_html_e( 'Translations', 'sitepress' ) ?></b>
+            <p id="icl_translated_title"><b><?php esc_html_e( 'Translations', 'sitepress' ) ?></b>
           (<a class="icl_toggle_show_translations" href="#" <?php if ( $not_show_flags ) : ?>style="display:none;"<?php endif; ?>><?php esc_html_e( 'hide', 'sitepress' ); ?></a><a class="icl_toggle_show_translations" href="#" <?php if ( ! $not_show_flags ) : ?>style="display:none;"<?php endif; ?>><?php esc_html_e( 'show', 'sitepress' ) ?></a>)
             </p>
 
@@ -544,7 +539,15 @@ class WPML_Meta_Boxes_Post_Edit_HTML {
 				    }
 
 				    ?>
-				    <input<?php disabled( true, $disabled_duplication ); ?> type="checkbox" name="icl_dupes[]" value="<?php echo esc_attr( $lang['code'] ); ?>" title="<?php echo $disabled_duplication_title ?>"/>
+				    <input
+						<?php disabled( true, $disabled_duplication ); ?>
+						type="checkbox"
+						name="icl_dupes[]"
+						value="<?php echo esc_attr( $lang['code'] ); ?>"
+						title="<?php echo $disabled_duplication_title ?>"
+						class="wpml-checkbox-native"
+						aria-label="<?php echo $disabled_duplication_title . __(' for ', 'sitepress') . esc_attr( $lang['display_name'] ); ?>"
+					/>
 				</td>
 
 			<?php
@@ -612,6 +615,11 @@ class WPML_Meta_Boxes_Post_Edit_HTML {
 		$source_lang = filter_var( isset( $_GET['source_lang'] ) ? $_GET['source_lang'] : '', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$source_lang = 'all' === $source_lang ? $this->sitepress->get_default_language() : $source_lang;
 		$lang        = filter_var( isset( $_GET['lang'] ) ? $_GET['lang'] : '', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( ! $lang ) {
+			$lang = $this->sitepress->get_language_for_element( $post->ID, 'post_' . $post->post_type );
+		}
+
 		$source_lang = ! $source_lang && isset( $_GET['post'] ) && $lang !== $this->sitepress->get_default_language()
 				? $this->post_translation->get_source_lang_code( $post->ID ) : $source_lang;
 
@@ -627,6 +635,10 @@ class WPML_Meta_Boxes_Post_Edit_HTML {
 	}
 
 	private function media_options( $post ) {
+		if ( \WPML\Media\Option::shouldHandleMediaAuto() ) {
+			return;
+		}
+
 		echo '<br /><br /><strong>' . esc_html__( 'Media attachments', 'sitepress' ) . '</strong>';
 
 		$original_post_id = (int) $this->post_translation->get_original_post_ID( $this->trid );

@@ -96,49 +96,26 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 	 * @return bool
 	 */
 	private function should_translate_template() {
-		return $this->is_WP_widget_call()
-		|| $this->is_shortcode_call()
-		|| $this->is_template_widget_call()
-		|| $this->is_form_ajax_handler_call();
-	}
+		$wpWidgetCall        = [ 'ElementorPro\Modules\Library\WP_Widgets\Elementor_Library', 'widget' ];
+		$shortcodeCall       = [ 'ElementorPro\Modules\Library\Classes\Shortcode', 'shortcode' ];
+		$templateWidgetCall  = [ 'ElementorPro\Modules\Library\Widgets\Template', 'render' ];
+		$formAjaxHandlerCall = [ 'ElementorPro\Modules\Forms\Classes\Ajax_Handler', 'ajax_send_form' ];
+		$refreshLoopGridCall = [ 'ElementorPro\Modules\LoopFilter\Data\Endpoints\Refresh_Loop', 'get_updated_loop_widget_markup' ];
+		$navMenuCall         = [ 'ElementorPro\Modules\NavMenu\Widgets\Nav_Menu', 'render' ];
+		$megaMenuCall        = [ 'ElementorPro\Modules\MegaMenu\Widgets\Mega_Menu', 'render' ];
+		$themeBuilderCall    = [ 'ElementorPro\Modules\ThemeBuilder\Classes\Locations_Manager', 'do_location' ];
 
-	/**
-	 * @return bool
-	 */
-	private function is_WP_widget_call() {
-		return $this->debug_backtrace->is_class_function_in_call_stack(
-			'ElementorPro\Modules\Library\WP_Widgets\Elementor_Library',
-			'widget'
-		);
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function is_shortcode_call() {
-		return $this->debug_backtrace->is_class_function_in_call_stack(
-			'ElementorPro\Modules\Library\Classes\Shortcode',
-			'shortcode'
-		);
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function is_template_widget_call() {
-		return $this->debug_backtrace->is_class_function_in_call_stack(
-			'ElementorPro\Modules\Library\Widgets\Template',
-			'render'
-		);
-	}
-
-	/**
-	 * @return bool
-	 */
-	private function is_form_ajax_handler_call() {
-		return $this->debug_backtrace->is_class_function_in_call_stack(
-			'ElementorPro\Modules\Forms\Classes\Ajax_Handler',
-			'ajax_send_form'
+		return $this->debug_backtrace->are_functions_in_call_stack(
+			[
+				$wpWidgetCall,
+				$shortcodeCall,
+				$templateWidgetCall,
+				$formAjaxHandlerCall,
+				$refreshLoopGridCall,
+				$navMenuCall,
+				$megaMenuCall,
+				$themeBuilderCall,
+			]
 		);
 	}
 
@@ -194,6 +171,10 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 	private function translate_id( $element_id, $element_type = null ) {
 		if ( ! $element_type || 'any_child_of' === $element_type ) {
 			$element_type = get_post_type( $element_id );
+		}
+
+		if ( false === $element_type ) {
+			return $element_id;
 		}
 
 		$translated_id = apply_filters( 'wpml_object_id', $element_id, $element_type, true );
@@ -366,5 +347,4 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		}
 		return get_post_type( $id );
 	}
-
 }

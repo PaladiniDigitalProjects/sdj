@@ -240,14 +240,14 @@ if ( ! function_exists( 'icl_js_escape' ) ) {
  *
  * @return string|null The generated/stored ID or null if it wasn't possible to generate/store the value.
  */
-function wpml_get_site_id( $scope = WPML_Site_ID::SITE_SCOPES_GLOBAL, $create_new = false ) {
+function wpml_get_site_id( $scope = WPML_Site_ID::SITE_SCOPES_GLOBAL ) {
 	static $site_id;
 
 	if ( ! $site_id ) {
 		$site_id = new WPML_Site_ID();
 	}
 
-	return $site_id->get_site_id( $scope, $create_new );
+	return $site_id->get_site_id( $scope );
 }
 
 function _icl_tax_has_objects_recursive( $id, $term_id = -1, $rec = 0 ) {
@@ -809,8 +809,9 @@ function wpml_is_rest_request() {
 /**
  * @return bool
  */
-function wpml_is_rest_enabled() {
-	return make( \WPML\Core\REST\Status::class )->isEnabled();
+function wpml_is_rest_enabled(bool $useCache = true) {
+	global $wpml_dic;
+	return $wpml_dic->make( WPML\Infrastructure\WordPress\SharedKernel\Server\Application\CheckRestIsEnabled::class )->isEnabled($useCache);
 }
 
 function wpml_is_cli() {
@@ -920,4 +921,29 @@ if ( ! function_exists( 'wpml_get_flag_file_name' ) ) {
 
 function wpml_is_st_loaded(): bool {
 	return defined( 'WPML_ST_VERSION' );
+}
+
+/**
+ * Triggers a user-level error/warning/notice message with WordPress 6.0+ compatibility.
+ *
+ * This function provides a backward-compatible wrapper for wp_trigger_error() (introduced in WP 6.4).
+ * On WordPress 6.4+, it uses wp_trigger_error() which respects WP_DEBUG settings.
+ * On older WordPress versions (6.0-6.3), it falls back to trigger_error().
+ *
+ * @since 4.6.13
+ *
+ * @param string $function_name The function name where the error occurred.
+ * @param string $message       The error message to display.
+ * @param int    $error_level   Optional. The error level. Default E_USER_NOTICE.
+ *                              Accepts E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE, E_USER_DEPRECATED.
+ *
+ * @return void
+ */
+function wpml_trigger_error( $function_name, $message, $error_level = E_USER_NOTICE ) {
+	if ( function_exists( 'wp_trigger_error' ) ) {
+		wp_trigger_error( $function_name, $message, $error_level );
+	} else {
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error
+		trigger_error( $message, $error_level );
+	}
 }

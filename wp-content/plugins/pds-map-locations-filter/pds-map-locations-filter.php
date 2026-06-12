@@ -61,13 +61,6 @@ function mlf_get_template_part( $template_name, $variables = [], $block_name = n
     return sprintf( '<div class="error">%s %s %s.</div>', esc_html__( 'Template', 'pds-map-locations-filter' ), esc_html( $template_name ), esc_html__( 'not found', 'pds-map-locations-filter' ) );
 }
 
-add_action( 'plugins_loaded', function () {
-	load_plugin_textdomain(
-		'pds-map-locations-filter',
-		false,
-		dirname( plugin_basename( __FILE__ ) ) . '/languages'
-	);
-});
 
 /**
  * Main plugin class for PDS Map Locations Filter.

@@ -34,10 +34,10 @@ class SearchPopulatedTypesQueryBuilder implements SearchPopulatedTypesQueryBuild
           AND source_t.element_type = CONCAT('post_', p.post_type)
           AND source_t.language_code = '{$sourceLanguage}'
       
-      LEFT JOIN wp_icl_translations target_t
+      LEFT JOIN {$this->queryPrepare->prefix()}icl_translations target_t
          ON target_t.trid = source_t.trid
              AND target_t.language_code IN ({$gluedEscapedLanguageCodes})
-       LEFT JOIN wp_icl_translation_status target_ts
+       LEFT JOIN {$this->queryPrepare->prefix()}icl_translation_status target_ts
          ON target_ts.translation_id = target_t.translation_id
       
       WHERE

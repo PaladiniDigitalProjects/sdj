@@ -35,6 +35,16 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 	 */
 	private $sitepress;
 
+	/**
+	 * @var bool
+	 */
+	private $hasCachedTermMetaValue = false;
+
+	/**
+	 * @var mixed
+	 */
+	private $cachedTermMetaValue;
+
 	public function __construct( SitePress $sitepress ) {
 		$this->sitepress = $sitepress;
 	}
@@ -43,6 +53,9 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		WPHooks::onFilter( 'wpml_active_string_package_kinds' )
 			->then( spreadArgs( [ $this, 'addPackageKind' ] ) );
 
+		WPHooks::onFilter( 'option_' . $this->getWpSeoOptionName() )
+			->then( spreadArgs( [ $this, 'maybeTranslateStrings' ] ) );
+
 		if ( is_admin() ) {
 			WPHooks::onAction( 'add_option', 10, 2 )
 				->then( spreadArgs( [ $this, 'registerStrings' ] ) );
@@ -50,8 +63,42 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 				->then( spreadArgs( [ $this, 'registerUpdatedStrings' ] ) );
 		}
 
-		WPHooks::onFilter( 'option_' . $this->getWpSeoOptionName() )
-			->then( spreadArgs( [ $this, 'translateStrings' ] ) );
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			\WP_CLI::add_hook(
+				'before_invoke:yoast',
+				function () {
+					add_filter( 'wpml_disable_term_adjust_id', '__return_true' );
+				}
+			);
+		}
+	}
+
+	/**
+	 * @param mixed $value
+	 *
+	 * @return mixed
+	 */
+	public function maybeTranslateStrings( $value ) {
+		$shouldTranslateInContext = ! is_admin() || $this->isYoastBuildingTermIndexable();
+		$isSitemapRequest         = Utils::isSitemapRequest();
+
+		if ( $shouldTranslateInContext && ! $isSitemapRequest ) {
+			if ( ! $this->hasCachedTermMetaValue ) {
+				$this->cachedTermMetaValue    = $this->translateStrings( $value );
+				$this->hasCachedTermMetaValue = true;
+			}
+
+			return $this->cachedTermMetaValue;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * @return bool
+	 */
+	private function isYoastBuildingTermIndexable() {
+		return doing_action( 'created_term' ) || doing_action( 'edited_term' );
 	}
 
 	/**
@@ -96,6 +143,10 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 
 		foreach ( $value as $taxonomy => $terms ) {
 			if ( ! is_array( $terms ) ) {
+				continue;
+			}
+
+			if ( ! $this->sitepress->is_translated_taxonomy( $taxonomy ) ) {
 				continue;
 			}
 
@@ -173,6 +224,10 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 				continue;
 			}
 
+			if ( ! $this->sitepress->is_translated_taxonomy( $taxonomy ) ) {
+				continue;
+			}
+
 			foreach ( $terms as $termId => $termMeta ) {
 				if ( ! is_array( $termMeta ) ) {
 					continue;
@@ -182,21 +237,26 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 					continue;
 				}
 
-				foreach ( self::FIELDS as $field => $fieldTitle ) {
-					if ( ! empty( $termMeta[ $field ] ) ) {
-						$translatedValue = apply_filters(
-							'wpml_translate_string',
-							$termMeta[ $field ],
-							$this->buildStringName( $taxonomy, $termId, $field ),
-							$package
-						);
+				$trid         = $this->sitepress->get_element_trid( $termId, 'tax_' . $taxonomy );
+				$translations = $this->sitepress->get_element_translations( $trid, 'tax_' . $taxonomy );
+				foreach ( $translations as $translation ) {
+					if ( $termId !== (int) $translation->element_id ) {
+						$this->sitepress->switch_lang( $translation->language_code );
+						foreach ( self::FIELDS as $field => $fieldTitle ) {
+							if ( ! empty( $termMeta[ $field ] ) ) {
+								$translatedValue = apply_filters(
+									'wpml_translate_string',
+									$termMeta[ $field ],
+									$this->buildStringName( $taxonomy, $termId, $field ),
+									$package
+								);
 
-						if ( $translatedValue && $translatedValue !== $value[ $taxonomy ][ $termId ][ $field ] ) {
-							$translatedTermId = $this->sitepress->get_object_id( $termId, $taxonomy, false );
-							if ( $translatedTermId ) {
-								$value[ $taxonomy ][ $translatedTermId ][ $field ] = $translatedValue;
+								if ( $translatedValue ) {
+									$value[ $taxonomy ][ (int) $translation->element_id ][ $field ] = $translatedValue;
+								}
 							}
 						}
+						$this->sitepress->switch_lang();
 					}
 				}
 			}

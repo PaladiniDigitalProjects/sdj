@@ -152,6 +152,17 @@ class Editor {
 				}
 
 				/**
+				 * If the job editor is 'wpml', it means an existing in-progress CTE job is being reused
+				 * (not a newly created job). Since we reached this point, $shouldOpenCTE already confirmed
+				 * this job should be migrated to ATE.
+				 *
+				 * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmldev-6608
+				 */
+				if ( $jobObject->get_basic_data_property( 'editor' ) === \WPML_TM_Editors::WPML ) {
+					return $this->createATECounterpartForExistingWPMLJob( $params, $jobObject );
+				}
+
+				/**
 				 * The new job has been created because either there was no translation at all or translation was "needs update".
 				 * The ATE job could not be created inside WPML_TM_ATE_Jobs_Actions::added_translation_jobs ,and we have to return the error message.
 				 */

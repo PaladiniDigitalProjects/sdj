@@ -37,4 +37,12 @@ interface ConfigInterface {
   public function getClassDefinitions();
 
 
+  /** @return void */
+  public function loadContentStatsScripts();
+
+
+  /** @return void */
+  public function loadCheckPosthogShouldRecordScript();
+
+
 }

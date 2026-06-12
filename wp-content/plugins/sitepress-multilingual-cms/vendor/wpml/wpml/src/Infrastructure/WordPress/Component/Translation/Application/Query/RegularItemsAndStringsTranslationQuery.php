@@ -50,4 +50,9 @@ class RegularItemsAndStringsTranslationQuery implements TranslationQueryInterfac
   }
 
 
+  public function getJobIdsByBatchId( int $batchId ): array {
+    return $this->regularTranslationQuery->getJobIdsByBatchId( $batchId );
+  }
+
+
 }

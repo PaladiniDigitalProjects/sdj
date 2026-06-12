@@ -90,7 +90,8 @@ class LanguagesQuery implements LanguagesQueryInterface {
     $result = new LanguageDto(
       $details['code'],
       $details['english_name'],
-      $details['native_name']
+      $details['native_name'],
+      $details['default_locale']
     );
 
     /** @var string $flagUrl */

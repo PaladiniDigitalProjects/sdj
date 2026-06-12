@@ -3,94 +3,61 @@
 namespace WPML\UserInterface\Web\Infrastructure\CompositionRoot\Config\Updates;
 
 use WPML\Core\Port\Persistence\OptionsInterface;
-use WPML\Core\Port\PluginInterface;
 
 class Repository {
   const OPTION = 'wpml-updates-log';
-  const OPTION_KEY_UPDATED_TO = 'updated_to';
   const OPTION_KEY_UPDATES = 'updates';
 
   const UPDATES_KEY_STATUS = 'status';
 
-  const STATUS_IN_PROGRESS = 'in-progress';
-  const STATUS_COMPLETED = 'completed';
-  const STATUS_FAILED = 'failed';
+  const STATUS_IN_PROGRESS = 1;
+  const STATUS_COMPLETED = 2;
+  const STATUS_FAILED = 3;
+
+  const STATUS_TRY_ONLY_ONCE_STUCK = 4; // A try-only-once update ran into a timeout.
+  const STATUS_TRY_ONLY_ONCE_FAILED = 5;
 
   /** @var OptionsInterface $options */
   private $options;
 
-  /** @var PluginInterface $plugin */
-  private $plugin;
 
-
-  public function __construct( OptionsInterface $options, PluginInterface $plugin ) {
+  public function __construct( OptionsInterface $options ) {
     $this->options = $options;
-    $this->plugin = $plugin;
   }
 
 
   /**
-   * @param array<string, Update> $allUpdates
-   * @return array<string, Update>
+   * @param array<int, Update> $allUpdates
+   * @return array<int, Update>
    */
   public function getUpdatesToPerform( $allUpdates ) {
     $log = $this->getLog();
-    $currentVersion = $this->plugin->getVersionWithoutSuffix();
-    $updatedTo = $log[ self::OPTION_KEY_UPDATED_TO ];
-
-    if ( version_compare( $currentVersion, $updatedTo ) === 0 ) {
-      // Everything updated.
-      return [];
-    }
 
     $updatesToPerform = [];
-    $updatesInTheLog = isset( $log[ self::OPTION_KEY_UPDATES ] )
-      ? $log[ self::OPTION_KEY_UPDATES ]
-      : [];
-
-    $updatesInProgress = array_filter(
-      $updatesInTheLog,
-      function( $update ) {
-        return $update[self::UPDATES_KEY_STATUS] === self::STATUS_IN_PROGRESS;
-      }
-    );
-
-    $updatesFailed = array_filter(
-      $updatesInTheLog,
-      function( $update ) {
-        return $update[self::UPDATES_KEY_STATUS] === self::STATUS_FAILED;
-      }
-    );
 
     foreach ( $allUpdates as $update ) {
-      if (
-        version_compare( $updatedTo, $update->includedIn() ) >= 0
-        || version_compare( $currentVersion, $update->includedIn() ) < 0
-      ) {
-        // Already updated or for a future version.
-        // Can't think of a case where a future version is useful, but it's here for completeness.
+      if ( ! $update instanceof Update ) {
         continue;
       }
 
-      $updateLog = $updatesInTheLog[ $update->id() ] ?? null;
+      $updateLog = $log[ self::OPTION_KEY_UPDATES ][ $update->id() ] ?? null;
+
       if (
         $updateLog
-        && in_array( $updateLog[ self::UPDATES_KEY_STATUS ], [ self::STATUS_COMPLETED, self::STATUS_IN_PROGRESS ] )
+          && in_array(
+            $updateLog[ self::UPDATES_KEY_STATUS ],
+            [
+              self::STATUS_COMPLETED,
+              self::STATUS_IN_PROGRESS,
+              self::STATUS_TRY_ONLY_ONCE_STUCK,
+              self::STATUS_TRY_ONLY_ONCE_FAILED
+            ]
+          )
       ) {
         continue;
       }
 
       $updatesToPerform[ $update->id() ] = $update;
-    }
-
-    if (
-      count( $updatesToPerform ) === 0
-      && count( $updatesInProgress ) === 0
-      && count( $updatesFailed ) === 0
-    ) {
-      // All updates proceed.
-      $this->setUpdatedTo( $currentVersion );
-      return [];
     }
 
     return $updatesToPerform;
@@ -125,7 +92,25 @@ class Repository {
 
 
   /**
-   * @return array{updated_to: string, updates?: array<string, array{status: string}>}
+   * @param Update $update
+   * @return void
+   */
+  public function setUpdateTryOnlyOnceStuck( $update ) {
+    $this->setUpdate( $update, self::STATUS_TRY_ONLY_ONCE_STUCK );
+  }
+
+
+  /**
+   * @param Update $update
+   * @return void
+   */
+  public function setUpdateTryOnlyOnceFailed( $update ) {
+    $this->setUpdate( $update, self::STATUS_TRY_ONLY_ONCE_FAILED );
+  }
+
+
+  /**
+   * @return array{updates: array<int, array{status: int}>}
    *
    * No need to proof the option structure as it's class internal.
    * @psalm-suppress MoreSpecificReturnType
@@ -133,25 +118,23 @@ class Repository {
    */
   private function getLog() {
     $option = $this->options->get( self::OPTION, false );
-    if ( ! is_array( $option ) ) {
-      $installVersion = $this->plugin->getVersionWhenSetupRanWithoutSuffix();
-      $this->setUpdatedTo( $installVersion );
-      return [ self::OPTION_KEY_UPDATED_TO => $installVersion ];
+    if (
+      ! is_array( $option )
+      || array_key_exists( 'updated_to', $option )
+      || ! array_key_exists( self::OPTION_KEY_UPDATES, $option )
+    ) {
+      // Legacy option format detected.
+      // Retrun fresh log.
+      return $this->freshLog();
     }
 
-    $log = [];
-    $log[ self::OPTION_KEY_UPDATED_TO ] = $option[ self::OPTION_KEY_UPDATED_TO ] ?? '0.0.0';
-    if ( isset( $option[ self::OPTION_KEY_UPDATES ] ) ) {
-      $log[ self::OPTION_KEY_UPDATES ] = $option[ self::OPTION_KEY_UPDATES ];
-    }
-
-    return $log;
+    return $option;
   }
 
 
   /**
    * @param Update $update
-   * @param string $status
+   * @param int $status
    * @return void
    */
   private function setUpdate( $update, $status ) {
@@ -178,17 +161,20 @@ class Repository {
 
 
   /**
-   * @param string $version
-   *
-   * @return void
+   * @return array{updates: array<int, array{status: int}>}
    */
-  private function setUpdatedTo( $version ) {
-      $this->options->save(
-        self::OPTION,
-        // 'updates' key can be removed from the log when everything ran.
-        [ self::OPTION_KEY_UPDATED_TO => $version ],
-        true
-      );
+  private function freshLog() {
+    $freshLog = [
+      self::OPTION_KEY_UPDATES => [],
+    ];
+
+    $this->options->save(
+      self::OPTION,
+      $freshLog,
+      true
+    );
+
+    return $freshLog;
   }
 
 

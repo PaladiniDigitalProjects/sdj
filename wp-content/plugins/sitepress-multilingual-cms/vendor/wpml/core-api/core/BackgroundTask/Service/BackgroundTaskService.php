@@ -61,7 +61,11 @@ class BackgroundTaskService {
 	 * @return BackgroundTask|null
 	 */
 	public function startByTaskId( $taskId ) {
-		$task     = $this->backgroundTaskRepository->getByTaskId( $taskId );
+		$task = $this->backgroundTaskRepository->getByTaskId( $taskId );
+		if ( ! $task ) {
+			throw new TaskIsNotRunnableException();
+		}
+
 		$taskEndpoint = make( $task->getTaskType() );
 		if ( ! $taskEndpoint instanceof TaskEndpointInterface ) {
 			throw new TaskIsNotRunnableException();

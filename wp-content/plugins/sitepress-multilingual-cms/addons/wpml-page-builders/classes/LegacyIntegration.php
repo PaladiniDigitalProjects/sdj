@@ -2,6 +2,8 @@
 
 namespace WPML\PB;
 
+use WPML\PB\Integrations\Divi\Helper;
+
 use function WPML\Container\make;
 
 class LegacyIntegration {
@@ -10,7 +12,9 @@ class LegacyIntegration {
 		/** @var \SitePress $sitepress */
 		global $sitepress;
 
-		$integrationClasses = [];
+		$integrationClasses = [
+			\WPML\PB\FullSiteEditing\TemplateTranslationHooks::class,
+		];
 
 		// WPBakery Page Builder (a.k.a. Visual Composer).
 		if ( defined( 'WPB_VC_VERSION' ) ) {
@@ -37,6 +41,7 @@ class LegacyIntegration {
 			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\Backend\Hooks::class;
 			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\DynamicContent::class;
 			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\FormContent::class;
+			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\FormNotifications::class;
 			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\Hooks\Editor::class;
 			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\Hooks\TranslationJobLabels::class;
 			$integrationClasses[] = \WPML\Compatibility\FusionBuilder\Hooks\TranslationJobImages::class;
@@ -68,14 +73,23 @@ class LegacyIntegration {
 			$integrationClasses[] = \WPML\Compatibility\Divi\DoubleQuotes::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\WooShortcodes::class; // @todo: replace with config - wpmlpb-275
 			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\Editor::class;
+			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\EditorFrontend::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\DomainsBackendEditor::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\GutenbergUpdate::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\TranslationJobLabels::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\TranslationJobImages::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\Hooks\TranslationGuiLabels::class;
 			$integrationClasses[] = \WPML\Compatibility\Divi\ConvertThemeOptions::class;
-		}
+			$integrationClasses[] = \WPML\Compatibility\Divi\DynamicContent\Hooks::class;
 
+			if ( Helper::isRunningDivi5() ) {
+				$integrationClasses[] = \WPML\Compatibility\Divi\V5\DynamicContent::class;
+				$integrationClasses[] = \WPML\Compatibility\Divi\V5\LanguageSwitcher::class;
+				$integrationClasses[] = \WPML\Compatibility\Divi\V5\MediaUrls::class;
+				$integrationClasses[] = \WPML\Compatibility\Divi\V5\CanvasHooks::class;
+				$integrationClasses[] = \WPML\Compatibility\Divi\V5\WooCommerce\ProductDescriptionCache::class;
+			}
+		}
 		$loader = new \WPML_Action_Filter_Loader();
 		$loader->load( $integrationClasses );
 	}

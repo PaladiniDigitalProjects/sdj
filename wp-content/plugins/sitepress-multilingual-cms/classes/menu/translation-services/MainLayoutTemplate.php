@@ -44,12 +44,6 @@ class MainLayoutTemplate {
 
 		$translationServicesUrl = 'https://wpml.org/documentation/translating-your-contents/professional-translation-via-wpml/?utm_source=plugin&utm_medium=gui&utm_campaign=wpmltm';
 
-		/* Translators: %s is documentation link for Translation Services */
-		$sectionDescription = sprintf(
-			'WPML integrates with dozens of professional <a target="_blank" href="%s">translation services</a>. Connect to your preferred service to send and receive translation jobs from directly within WPML.',
-			$translationServicesUrl
-		);
-
 		return [
 			'active_service'        => $activeServiceRenderer(),
 			'services'              => $services,
@@ -64,7 +58,13 @@ class MainLayoutTemplate {
 			'lsp_logo_placeholder'  => WPML_TM_URL . '/res/img/lsp-logo-placeholder.png',
 			'strings'               => [
 				'translation_services'                => __( 'Translation Services', 'wpml-translation-management' ),
-				'translation_services_description'    => __( $sectionDescription, 'wpml-translation-management' ),
+				'translation_services_description'    => sprintf(
+					__(
+						'WPML integrates with dozens of professional <a target="_blank" href="%s">translation services</a>. Connect to your preferred service to send and receive translation jobs from directly within WPML.',
+						'sitepress'
+					),
+					esc_url( $translationServicesUrl )
+				),
 				'enable_unlisted_translation_service' => __( 'Activate a translation service that\'s not listed here', 'sitepress' ),
 				'ts'                                  => [
 					'different'   => __( 'Looking for a different translation service?', 'wpml-translation-management' ),

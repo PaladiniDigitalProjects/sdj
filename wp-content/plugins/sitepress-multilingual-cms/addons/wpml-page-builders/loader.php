@@ -17,11 +17,11 @@
 /**
  * WARNING: INCREASE THIS LOADER VERSION ON EVERY NEW RELEASE.
  */
-$wpml_page_builders_version = 29;
+$wpml_page_builders_version = 35;
 
 add_action(
 	'init',
-	function() use ( $wpml_page_builders_version ) {
+	function () use ( $wpml_page_builders_version ) {
 		if ( defined( 'WPML_PAGE_BUILDERS_LOADED' ) ) {
 			// A more recent version of WPML Page Builders is already active.
 			return;

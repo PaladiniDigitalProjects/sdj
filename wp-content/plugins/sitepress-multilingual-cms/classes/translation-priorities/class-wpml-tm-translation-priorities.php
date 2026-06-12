@@ -45,6 +45,7 @@ class WPML_TM_Translation_Priorities {
 	 * @return int|bool
 	 */
 	public static function insert_missing_translation( $term_taxonomy_id, $original_name, $target_language ) {
+		/** @var SitePress */
 		global $sitepress;
 
 		$trid              = (int) $sitepress->get_element_trid( $term_taxonomy_id, 'tax_' . self::TAXONOMY );
@@ -55,7 +56,15 @@ class WPML_TM_Translation_Priorities {
 			$sitepress->switch_locale( $target_language );
 
 			$name            = __( $original_name, 'sitepress' );
-			$slug            = WPML_Terms_Translations::term_unique_slug( sanitize_title( $name ), self::TAXONOMY, $target_language );
+			$suffix          = '';
+			if ( $name === $original_name ) {
+				// Add language suffix if priority term translation is missing to avoid duplicate term error.
+				// Since 4.8 either we need to switch the language or provide unique slug as `term_unique_slug`
+				// will return same slug if does not exist in current language.
+				$suffix = ' ' . $target_language;
+			}
+
+			$slug            = WPML_Terms_Translations::term_unique_slug( sanitize_title( $name . $suffix ), self::TAXONOMY, $target_language );
 			$translated_term = wp_insert_term( $name, self::TAXONOMY, array( 'slug' => $slug ) );
 
 			if ( $translated_term && ! is_wp_error( $translated_term ) ) {

@@ -1,3 +1,5 @@
+@use "variables";
+
 
 .wp-block-list {
     &.is-style-list-ratllat {
@@ -5,6 +7,7 @@
         list-style-type: none;
         border-bottom: 1px solid gray;
         padding-left: 0;
+
         li {
             padding: 0.35rem 0 0.35rem 0;
             border-top: 1px solid gray;
@@ -19,6 +22,7 @@
         display: block;
         list-style-type: none;
         padding-left: 0;
+
         li {
             padding: 0.35rem 0 0.35rem 0;
             margin-top: 0;
@@ -26,61 +30,84 @@
     }
 }
 
-.listado_noticia {
-    
+.listado {
+
     .noticia {
-        position:relative;
+        position: relative;
 
         .noticia_header {
             position: absolute;
-            bottom:0;
+            bottom: 0;
             left: 0;
             right: 0;
-            padding: 1rem;
+            padding: 5rem 0.75rem 0.5rem 0.75rem;
             border-radius: 0 0 0.3rem 0.3rem;
+            background: linear-gradient(180deg, #004a6400 0%, #004a64ee 100%) !important;
 
-            a {
-                transition: 0.3s;
-                text-decoration: none;
+            .wp-block-post-title {
+                margin: 0.5rem 0 0 0;
+
+                a {
+                    transition: 0.3s;
+                    text-decoration: none;
+                    @include variables.font-size(14);
+                    line-height: 120%;
+                    font-style: normal;
+                    font-weight: 300;
+
+                    &:hover {
+                        text-decoration: none;
+                        opacity: 0.9;
+                    }
+                }
             }
 
-            a:hover {
-                text-decoration: none;
-                opacity: 0.7;
-            }
-        }
+            .taxonomy-category a[rel=tag] {
+                font-weight: 100 !important;
+                @include variables.font-size(11);
+                line-height: 125%;
+                margin-bottom: 0.5rem;
 
-        
-
-        .taxonomy-category  {
-            @include font-size(10);
-            font-weight: 600;
-            letter-spacing: 0.035rem;
-            line-height: 125%;
-            margin-bottom: 0.5rem;
-        }
-    
-    }
-
-    @include laptop {
-        .noticia {
-            .taxonomy-category  {
-                @include font-size(11);
-                margin-bottom: 1rem;
             }
         }
     }
 
-    @include large {
+    @include variables.laptop {
         .noticia {
             .noticia_header {
-                padding: 1.5rem;
-            }
-            .taxonomy-category  {
-                @include font-size(12);
+                padding: 5rem 1.25rem 1.25rem 1.25rem;
+
+                .wp-block-post-title {
+
+                    a {
+                        @include variables.font-size(16);
+                    }
+                }
+
+                .taxonomy-category a[rel=tag] {
+                    @include variables.font-size(12);
+                }
             }
         }
     }
 
+    /*
+    @include variables.large {
+        .noticia {
+            .noticia_header {
+                padding: 1rem;
 
+                .wp-block-post-title {
+                    margin-bottom: 0;
+                    @include variables.font-size(40);
+                }
+            }
+
+        }
+    }
+*/
+}
+
+.wp-block-post-featured-image__overlay.has-background-dim {
+    background-color: #0d5374 !important;
 }

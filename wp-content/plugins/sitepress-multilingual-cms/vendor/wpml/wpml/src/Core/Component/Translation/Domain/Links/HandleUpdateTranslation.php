@@ -43,6 +43,8 @@ class HandleUpdateTranslation {
 
     // Adjust the links for other posts that are linked to the current post.
     $this->triggerOtherPostsLinksAdjustment( $item );
+
+    $this->flushCache( $item );
   }
 
 
@@ -80,6 +82,23 @@ class HandleUpdateTranslation {
 
     $this->adjustLinks->adjust( $item, $triggerItem );
     $this->adjustedItems[ $itemIdAndType ] = true;
+  }
+
+
+  /** @return void */
+  private function flushCache( Item $item ) {
+    if ( $item->getType() !== 'post' ) {
+      return;
+    }
+
+    $itemId   = $item->getId();
+    $postType = get_post_field( 'post_type', $itemId );
+
+    if ( ! $postType ) {
+      return;
+    }
+
+    clean_object_term_cache( $itemId, $postType );
   }
 
 

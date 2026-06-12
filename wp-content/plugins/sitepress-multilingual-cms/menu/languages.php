@@ -116,16 +116,6 @@ $resource( [
 	<h2><?php esc_html_e( 'Setup WPML', 'sitepress' ) ?></h2>
 
 	<?php
-	$compatibility_reports_args = array(
-		'plugin_name'        => 'WPML',
-		'plugin_uri'         => 'http://wpml.org',
-		'plugin_site'        => 'wpml.org',
-		'use_styles'         => true,
-		'privacy_policy_url' => 'https://wpml.org/documentation/privacy-policy-and-gdpr-compliance/?utm_source=plugin&utm_medium=gui&utm_campaign=wpmlcore',
-		'plugin_repository'  => 'wpml',
-	);
-
-
 		if ( count( $active_languages ) > 1 ): ?>
 				<p>
 					<strong><?php esc_html_e( 'This screen contains the language settings for your site.', 'sitepress' ); ?></strong>
@@ -140,9 +130,8 @@ $resource( [
 						'#lang-sec-8'   => __( 'Make themes work multilingual', 'sitepress' ),
 						'#lang-sec-9'   => __( 'Browser language redirect', 'sitepress' ),
 						'#lang-sec-9-5' => __( 'SEO Options', 'sitepress' ),
-						'#lang-sec-9-6'  => __( 'Theme and plugins reporting', 'sitepress' ),
 						'#cookie'       => __( 'Language filtering for AJAX operations', 'sitepress' ),
-						'#lang-sec-10'  => __( 'WPML love', 'sitepress' ),
+						'#lang-sec-10'  => __( 'Show your love for WPML', 'sitepress' ),
 					);
 
 					if ( $should_hide_admin_language && array_key_exists( '#lang-sec-4', $navigation_items ) ) {
@@ -240,8 +229,10 @@ $resource( [
 										<label for="wpml-language-<?php echo $lang['code']; ?>">
 											<input type="checkbox" id="wpml-language-<?php echo esc_attr( $lang['code'] ); ?>"
 												   class="wpml-checkbox-native"
-												   value="<?php echo esc_attr( $lang['code'] ); ?>" <?php echo $checked . ' ' . $disabled; ?>/>
-											<?php echo $sitepress->get_flag_image($lang['code']) ?>
+												   value="<?php echo esc_attr( $lang['code'] ); ?>" <?php echo $checked . ' ' . $disabled; ?>
+												   aria-description="<?php echo __('Enable', 'sitepress'); ?>"
+											/>
+											<span role="presentation" aria-hidden="true"><?php echo $sitepress->get_flag_image($lang['code']) ?></span>
 											<?php echo esc_html( $lang['display_name'] ); ?>
 										</label>
 									</li>
@@ -315,8 +306,8 @@ $resource( [
 								$icl_folder_url_enabled = $validator->validate_langs_in_dirs();
 								?>
 								<li>
-									<label>
-										<input class="wpml-radio-native" type="radio" name="icl_language_negotiation_type" value="1" <?php checked( 1 == $language_negotiation_type ); ?> />
+									<label for="icl_language_negotiation_type_1">
+										<input id="icl_language_negotiation_type_1" class="wpml-radio-native" type="radio" name="icl_language_negotiation_type" value="1" <?php checked( 1 == $language_negotiation_type ); ?> />
 										<?php esc_html_e( 'Different languages in directories', 'sitepress' ); ?>
 										<span class="explanation-text">
 										(
@@ -334,7 +325,7 @@ $resource( [
 										?>
 										display:none;<?php endif; ?>" >
 										<p class="sub-section">
-											<label>
+											<label for="icl_use_directory">
 												<input class="wpml-checkbox-native" type="checkbox" name="use_directory" id="icl_use_directory" value="1"
 													<?php checked( ! empty( $setting_urls['directory_for_default_language'] ) ); ?> />
 												<?php esc_html_e( 'Use directory for default language', 'sitepress' ); ?>
@@ -821,24 +812,9 @@ $resource( [
 	$seo_ui->render_menu();
 	?>
 
-	<div class="wpml-section wpml-section-wpml-theme-and-plugins-reporting" id="lang-sec-9-6">
-		<div class="wpml-section-header">
-			<h3><?php esc_html_e( 'Reporting to wpml.org', 'sitepress' ) ?></h3>
-		</div>
-		<div class="wpml-section-content">
-			<?php
-			$compatibility_reports_after_setup_args                   = $compatibility_reports_args;
-			$compatibility_reports_after_setup_args['custom_heading'] = '';
-			$compatibility_reports_after_setup_args['use_radio']      = false;
-
-			do_action( 'otgs_installer_render_local_components_setting', $compatibility_reports_after_setup_args );
-			?>
-		</div>
-	</div>
-
 	<div class="wpml-section wpml-section-wpml-love" id="lang-sec-10">
         <div class="wpml-section-header">
-            <h3><?php esc_html_e( 'WPML love', 'sitepress' ) ?></h3>
+            <h3><?php esc_html_e( 'Show your love for WPML', 'sitepress' ) ?></h3>
         </div>
         <div class="wpml-section-content">
             <form id="icl_promote_form" name="icl_promote_form" action="">

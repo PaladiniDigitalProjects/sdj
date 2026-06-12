@@ -2,7 +2,6 @@
 
 namespace WPML\Compatibility\Divi\Hooks;
 
-use WPML\FP\Fns;
 use WPML\FP\Obj;
 use WPML\FP\Relation;
 use WPML\LIB\WP\Hooks;

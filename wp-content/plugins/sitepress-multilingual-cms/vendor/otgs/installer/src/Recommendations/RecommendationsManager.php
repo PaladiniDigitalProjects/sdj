@@ -3,6 +3,7 @@
 namespace OTGS\Installer\Recommendations;
 
 use OTGS_Installer_Subscription;
+use WP_Installer;
 
 class RecommendationsManager {
 	/**
@@ -29,28 +30,52 @@ class RecommendationsManager {
 	 * RecommendationsManager constructor.
 	 *
 	 * @param \OTGS_Installer_Repositories $repositories
-	 * @param array $settings
 	 * @param Storage $settings
 	 */
-	public function __construct( \OTGS_Installer_Repositories $repositories, $settings, Storage $noticesStorage ) {
+	public function __construct( \OTGS_Installer_Repositories $repositories, Storage $noticesStorage ) {
 		$this->repositories   = $repositories;
-		$this->settings       = $settings;
 		$this->noticesStorage = $noticesStorage;
 	}
 
-	public function addHooks() {
-		add_action( 'activated_plugin', [ $this, 'activatedPluginRecommendation' ] );
-		add_action( 'deactivated_plugin', [ $this, 'deactivatedPluginRecommendation' ] );
-		add_action( 'wp_ajax_installer_recommendation_success', [ $this, 'recommendationSuccess' ] );
-
-		add_filter( 'wpml_installer_get_stored_recommendation_notices', [ $this, 'getRecommendationStoredNotices' ] );
+	private function settings() {
+		if ( $this->settings === null ) {
+			$this->settings = WP_Installer::instance()->get_settings()['repositories'];
+		}
+		return $this->settings;
 	}
 
-	public function activatedPluginRecommendation( $plugin ) {
-		$pluginData = $this->getPluginData( $plugin );
-		$gluePluginData = $pluginData->getGluePluginData();
-		if ( $gluePluginData && ! $this->isGluePluginActive( $gluePluginData['glue_plugin_slug'] ) ) {
-			$this->noticesStorage->save( $pluginData->getPluginSlug(), $gluePluginData );
+	public function addHooks() {
+		add_action( 'deactivated_plugin', [ $this, 'deactivatedPluginRecommendation' ] );
+		add_action( 'wp_ajax_installer_recommendation_success', [ $this, 'recommendationSuccess' ] );
+		add_action( 'current_screen', [ $this, 'checkAllInstalledPluginsForRecommendations' ] );
+
+		add_filter( 'wpml_installer_get_stored_recommendation_notices', [ $this, 'getRecommendationNotices' ] );
+	}
+
+
+
+	public function checkAllInstalledPluginsForRecommendations( $screen = null ) {
+		// Only run on plugins page
+		if ( ! $screen || $screen->id !== 'plugins' ) {
+			return;
+		}
+
+		$installedPlugins = $this->getInstalledPlugins();
+
+		foreach ( $installedPlugins as $pluginSlug => $pluginData ) {
+			if ( ! $pluginData['is_active'] ) {
+				continue;
+			}
+
+			$pluginInfo     = $this->getPluginData( $pluginSlug . '/plugin.php' );
+			$gluePluginData = $pluginInfo->getGluePluginData();
+
+			if ( $gluePluginData
+			     && ! $this->isGluePluginActive( $gluePluginData['glue_plugin_slug'] )
+			     &&  $this->noticesStorage->missing( $pluginSlug, $gluePluginData['repository_id'] )
+			) {
+				$this->noticesStorage->save($pluginSlug, $gluePluginData );
+			}
 		}
 	}
 
@@ -87,8 +112,8 @@ class RecommendationsManager {
 		$language = $this->getCurrentLanguage();
 
 		foreach ( $this->repositoriesForRecommendation as $repositoryId ) {
-			$downloads = isset( $this->settings[ $repositoryId ]['data']['downloads']['plugins'] )
-				? $this->settings[ $repositoryId ]['data']['downloads']['plugins'] : [];
+			$downloads = isset( $this->settings()[ $repositoryId ]['data']['downloads']['plugins'] )
+				? $this->settings()[ $repositoryId ]['data']['downloads']['plugins'] : [];
 			foreach ( $downloads as $pluginData ) {
 				$gluePluginSlug = isset( $pluginData['glue_check_slug'] ) ? $pluginData['glue_check_slug'] : false;
 				if ( $gluePluginSlug && $activatedPluginSlug === $pluginData['glue_check_slug'] ) {
@@ -107,8 +132,8 @@ class RecommendationsManager {
 		$language = $this->getCurrentLanguage();
 
 		foreach ( $this->repositoriesForRecommendation as $repositoryId ) {
-			$downloads = isset( $this->settings[ $repositoryId ]['data']['downloads']['plugins'] )
-				? $this->settings[ $repositoryId ]['data']['downloads']['plugins'] : [];
+			$downloads = isset( $this->settings()[ $repositoryId ]['data']['downloads']['plugins'] )
+				? $this->settings()[ $repositoryId ]['data']['downloads']['plugins'] : [];
 			if ( isset( $downloads[ $gluePluginSlug ] ) ) {
 				$pluginData = $downloads[ $gluePluginSlug ];
 
@@ -138,10 +163,10 @@ class RecommendationsManager {
 		foreach ( $this->repositoriesForRecommendation as $repositoryId ) {
 			$repository = $this->repositories->get( $repositoryId );
 
-			if ( $this->settings[ $repositoryId ]['data']['downloads']['plugins']
-			     && $this->settings[ $repositoryId ]['data']['recommendation_sections'] ) {
-				$downloads = $this->settings[ $repositoryId ]['data']['downloads']['plugins'];
-				$sections  = $this->settings[ $repositoryId ]['data']['recommendation_sections'];
+			if ( $this->settings()[ $repositoryId ]['data']['downloads']['plugins']
+			     && $this->settings()[ $repositoryId ]['data']['recommendation_sections'] ) {
+				$downloads = $this->settings()[ $repositoryId ]['data']['downloads']['plugins'];
+				$sections  = $this->settings()[ $repositoryId ]['data']['recommendation_sections'];
 			} else {
 				continue;
 			}
@@ -194,14 +219,12 @@ class RecommendationsManager {
 			$recommendationsForInstallerPlugins = $this->prepareRecommendationsForInstalledPlugins( $repositoryId, $subscription, $downloads, $installedPlugins, $pluginsRecommendations, $pluginsData );
 			$pluginsData = $recommendationsForInstallerPlugins->getPluginsData();
 
-			foreach ( $recommendationsForInstallerPlugins->getRecommendations() as $section => $plugins_recommendation ) {
-				// Use current site lang if available, otherwise 'en'.
-				$lang = array_key_exists( $language, $sections[ $section ] )
-					? $language
-					: 'en';
+			$pluginsRecommendations = $recommendationsForInstallerPlugins->getRecommendations();
 
-				$pluginsRecommendations[ $section ]['title'] = $sections[ $section ][ $lang ]['name'];
-				$pluginsRecommendations[ $section ]['order'] = $sections[ $section ][ $lang ]['order'];
+			foreach ( $recommendationsForInstallerPlugins->getRecommendations() as $section => $plugins_recommendation ) {
+				$pluginsRecommendations[ $section ]['title'] = $sections[ $section ][ $language ]['name'] ?? $sections[ $section ]['en']['name'] ?? '';
+				$pluginsRecommendations[ $section ]['order'] = $sections[ $section ][ $language ]['order'] ?? $sections[ $section ]['en']['order'] ?? '';
+
 			}
 		}
 
@@ -225,13 +248,16 @@ class RecommendationsManager {
 	private function prepareRecommendationsForInstalledPlugins( $repositoryId, OTGS_Installer_Subscription $subscription, $downloads, $installedPlugins, $pluginsRecommendations, $pluginsData ) {
 		$language = $this->getCurrentLanguage();
 
-		if ( isset($this->settings[ $repositoryId ]['data']['glue_plugins_mapping']) ) {
-			$gluePluginsMapping = $this->settings[ $repositoryId ]['data']['glue_plugins_mapping'];
+		if ( isset($this->settings()[ $repositoryId ]['data']['glue_plugins_mapping']) ) {
+			$gluePluginsMapping = $this->settings()[ $repositoryId ]['data']['glue_plugins_mapping'];
 		} else {
 			return new RecommendationsForInstallerPlugins( $pluginsRecommendations, $pluginsData );
 		}
 
 		foreach ( $installedPlugins as $pluginSlug => $pluginData ) {
+			if(isset($pluginData['is_active']) && !$pluginData['is_active']) {
+				continue;
+			}
 
 			if ( isset( $gluePluginsMapping[ $pluginSlug ] ) ) {
 				$gluePluginSlug = $gluePluginsMapping[ $pluginSlug ]['glue_plugin'];
@@ -395,9 +421,10 @@ class RecommendationsManager {
 		);
 	}
 
-	public function getRecommendationStoredNotices( $existingNotices ) {
-		$storedRecommendations = Storage::getAll();
-		foreach ( $storedRecommendations as $repositoryId => $recommendations ) {
+	public function getRecommendationNotices( $existingNotices ) {
+		$notices = [];
+
+		foreach ( Storage::getAll() as $repositoryId => $recommendations ) {
 			$repository = $this->repositories->get( $repositoryId );
 
 			$subscription = $repository->get_subscription();
@@ -406,7 +433,12 @@ class RecommendationsManager {
 			}
 
 			foreach ( $recommendations as $recommendationSlug => $recommendation ) {
-				if (!$this->isGluePluginActive($recommendation['glue_plugin_slug'])){
+				// Skip dismissed notices
+				if ( isset( $recommendation['notice_dismissed'] ) && $recommendation['notice_dismissed'] === true ) {
+					continue;
+				}
+
+				if ( ! $this->isGluePluginActive( $recommendation['glue_plugin_slug'] ) ) {
 					$url = $this->appendSiteKeyToDownloadUrl( $recommendation['download_data']['url'], $subscription->get_site_key(), $subscription->get_site_url() );
 
 					$appendedDownloadData = [
@@ -416,14 +448,15 @@ class RecommendationsManager {
 						'nonce'         => wp_create_nonce( 'install_plugin_' . $url ),
 					];
 
-					$storedRecommendations[ $repositoryId ][ $recommendationSlug ]['download_data'] = $appendedDownloadData;
-				}else {
-					Storage::delete($recommendationSlug, $repositoryId );
+					$notices[ $repositoryId ][ $recommendationSlug ] = $recommendation;
+					$notices[ $repositoryId ][ $recommendationSlug ]['download_data'] = $appendedDownloadData;
+				} else {
+					Storage::delete( $recommendationSlug, $repositoryId );
 				}
 			}
 		}
 
-		return array_merge( $existingNotices, $storedRecommendations );
+		return array_merge( $existingNotices, $notices );
 	}
 
 	/**
@@ -437,8 +470,8 @@ class RecommendationsManager {
 
 		if ( ! $gluePluginData ) {
 			foreach ( $this->repositoriesForRecommendation as $repositoryId ) {
-				if ( isset( $this->settings[ $repositoryId ]['data']['glue_plugins_mapping'] ) ) {
-					$gluePluginsMapping = $this->settings[ $repositoryId ]['data']['glue_plugins_mapping'];
+				if ( isset( $this->settings()[ $repositoryId ]['data']['glue_plugins_mapping'] ) ) {
+					$gluePluginsMapping = $this->settings()[ $repositoryId ]['data']['glue_plugins_mapping'];
 
 					if ( isset( $gluePluginsMapping[ $pluginSlug ] ) ) {
 						$gluePluginSlug = $gluePluginsMapping[ $pluginSlug ]['glue_plugin'];

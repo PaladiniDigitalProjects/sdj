@@ -128,6 +128,9 @@ Note that the plugin only adds some tags to the image to show the caption, and o
 
 == Changelog ==
 
+= 1.26 =
+* Added additional sanitization to the caption box to prevent script injection from admin input
+
 = 1.25.1 =
 * Rollback: Disabled nested figure filter for now as it created some codification problems
 

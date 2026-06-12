@@ -62,6 +62,10 @@ abstract class AbstractTaskEndpoint implements TaskEndpointInterface {
 		Collection $data
 	) {
 		try {
+			if ( ! isset( $data['taskId'] ) ) {
+				throw new TaskIsNotRunnableException();
+			}
+
 			$taskId     = $data['taskId'];
 			$task       = $this->backgroundTaskService->startByTaskId( $taskId );
 			$task       = $this->runBackgroundTask( $task );

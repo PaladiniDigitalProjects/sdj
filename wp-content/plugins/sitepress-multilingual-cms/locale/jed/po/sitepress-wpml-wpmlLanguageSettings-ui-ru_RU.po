@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: ru_RU\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: src/js/wpmlLanguageSettings/DefaultFlagsFormat/Section.js:30
 msgid "Choose the image file type for flags"
@@ -11,13 +13,13 @@ msgstr "Выберите тип файла изображения для фла�
 msgid ""
 "This option affects only the built-in WPML flags, not the custom uploaded "
 "ones."
-msgstr "Этот параметр влияет только на встроенные флаги WPML, а не на загруженные пользователем."
+msgstr "Эта опция влияет только на встроенные флаги WPML, а не на загруженные пользовательские."
 
-#: src/js/wpmlLanguageSettings/DefaultFlagsFormat/Section.js:41
+#: src/js/wpmlLanguageSettings/DefaultFlagsFormat/Section.js:46
 msgid "%s format"
-msgstr "формат %s"
+msgstr "Формат %s"
 
-#: src/js/wpmlLanguageSettings/DefaultFlagsFormat/Section.js:56
+#: src/js/wpmlLanguageSettings/DefaultFlagsFormat/Section.js:63
 msgid "Save"
 msgstr "Сохранить"
 

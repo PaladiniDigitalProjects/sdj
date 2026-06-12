@@ -46,7 +46,7 @@ $bunny_fonts = mtnc_add_bunny_fonts();
 		wp_site_icon();
 	}
 	?>
-	<meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, minimum-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="<?php echo esc_attr( $site_description ); ?>"/>
 	<meta http-equiv="X-UA-Compatible" content="" />
 	<meta property="og:site_name" content="<?php echo esc_attr( $site_title ) . ' - ' . esc_attr( $site_description ); ?>"/>

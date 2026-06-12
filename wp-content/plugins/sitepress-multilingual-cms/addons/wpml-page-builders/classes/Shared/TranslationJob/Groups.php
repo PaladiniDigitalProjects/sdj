@@ -2,10 +2,8 @@
 
 namespace WPML\PB\TranslationJob;
 
-use WPML\FP\Fns;
 use WPML\FP\Lst;
 use WPML\FP\Str;
-use WPML\Jobs\ExtraData;
 
 use function WPML\FP\pipe;
 
@@ -13,7 +11,6 @@ class Groups {
 
 	const PATH_SEPARATOR  = '/';
 	const LABEL_SEPARATOR = ': ';
-	const EXTRADATA_PATH  = [ 'attributes', 'extradata' ];
 
 	const TOP_LEVEL_WIDGETS_ID          = 'Widgets-0';
 	const TOP_LEVEL_WIDGETS_DESCRIPTION = 'Widgets';
@@ -30,12 +27,12 @@ class Groups {
 			return $elements;
 		}
 
-		$flattenGroup = function( $element ) use ( $groups ) {
-			if ( ! isset( $element['attributes']['extradata'] ) ) {
+		$flattenGroup = function ( $element ) use ( $groups ) {
+			if ( ! isset( $element['extradata'] ) ) {
 				return $element;
 			}
 
-			$extradata = ExtraData::decode( $element['attributes']['extradata'] );
+			$extradata = $element['extradata'];
 
 			if ( ! isset( $extradata['group_id'], $extradata['group'] ) ) {
 				return $element;
@@ -51,7 +48,7 @@ class Groups {
 					$extradata['group_id'] = self::removeAllExceptLastCrumb( $extradata['group_id'] );
 					$extradata['group']    = self::removeAllExceptLastCrumb( $extradata['group'] );
 				}
-				$element['attributes']['extradata'] = ExtraData::encode( $extradata );
+				$element['extradata'] = $extradata;
 			}
 
 			return $element;
@@ -78,9 +75,7 @@ class Groups {
 	 */
 	public static function extractGroupIds( $elements ) {
 		return pipe(
-			Lst::pluck( 'attributes' ),
 			Lst::pluck( 'extradata' ),
-			Fns::map( ExtraData::class . '::decode' ),
 			Lst::pluck( 'group_id' )
 		)( $elements );
 	}
@@ -143,7 +138,7 @@ class Groups {
 	 *
 	 * @return string[]
 	 */
-	private static function getBlockGroup( string $groupIds ) : array {
+	private static function getBlockGroup( string $groupIds ): array {
 		$blockId = null;
 
 		if ( preg_match( '/block-\d+/', $groupIds, $matches ) ) {
@@ -215,12 +210,12 @@ class Groups {
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $groupLabel
 	 *
 	 * @return array{string[], string}
 	 */
-	public static function parseGroupLabel( $string ) {
-		list( $groups, $title ) = explode( self::LABEL_SEPARATOR, $string, 2 );
+	public static function parseGroupLabel( $groupLabel ) {
+		list( $groups, $title ) = explode( self::LABEL_SEPARATOR, $groupLabel, 2 );
 
 		return [
 			explode( self::PATH_SEPARATOR, $groups ),
@@ -230,14 +225,13 @@ class Groups {
 
 	/**
 	 * @param string $groupLabel
-	 * @param string $imageId
+	 * @param int    $imageId
 	 *
 	 * @return string
 	 */
 	public static function appendImageIdToGroupLabel( $groupLabel, $imageId ) {
 		list( $group, $title ) = explode( self::LABEL_SEPARATOR, $groupLabel, 2 );
 
-		return $group . '-' . $imageId . self::LABEL_SEPARATOR . $title;
+		return $group . '-' . (string) $imageId . self::LABEL_SEPARATOR . $title;
 	}
-
 }

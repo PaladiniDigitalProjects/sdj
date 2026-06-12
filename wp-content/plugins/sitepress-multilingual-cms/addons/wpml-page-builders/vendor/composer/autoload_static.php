@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
+class ComposerStaticInitf88003bda9d5d10d5be3c7029cfa879d
 {
     public static $files = array (
         'b45b351e6b6f7487d819961fef2fda77' => __DIR__ . '/..' . '/jakeasmith/http_build_url/src/http_build_url.php',
@@ -12,6 +12,7 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'IWPML_PB_Media_Find_And_Translate' => __DIR__ . '/../..' . '/classes/Shared/media/interface-iwpml-pb-media-find-and-translate.php',
         'IWPML_PB_Media_Nodes_Iterator' => __DIR__ . '/../..' . '/classes/Shared/media/interface-iwpml-pb-media-nodes-iterator.php',
         'IWPML_PB_Media_Update' => __DIR__ . '/../..' . '/classes/Shared/media/interface-iwpml-pb-media-update.php',
         'IWPML_PB_Media_Update_Factory' => __DIR__ . '/../..' . '/classes/Shared/media/interface-iwpml-pb-media-update-factory.php',
@@ -27,8 +28,10 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\Compatibility\\Divi\\DiviOptionsEncoding' => __DIR__ . '/../..' . '/classes/Integrations/Divi/divi-options-encoding.php',
         'WPML\\Compatibility\\Divi\\DoubleQuotes' => __DIR__ . '/../..' . '/classes/Integrations/Divi/DoubleQuotes.php',
         'WPML\\Compatibility\\Divi\\DynamicContent' => __DIR__ . '/../..' . '/classes/Integrations/Divi/dynamic-content.php',
+        'WPML\\Compatibility\\Divi\\DynamicContent\\Hooks' => __DIR__ . '/../..' . '/classes/Integrations/Divi/DynamicContent/Hooks.php',
         'WPML\\Compatibility\\Divi\\Hooks\\DomainsBackendEditor' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Hooks/DomainsBackendEditor.php',
         'WPML\\Compatibility\\Divi\\Hooks\\Editor' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Hooks/Editor.php',
+        'WPML\\Compatibility\\Divi\\Hooks\\EditorFrontend' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Hooks/EditorFrontend.php',
         'WPML\\Compatibility\\Divi\\Hooks\\GutenbergUpdate' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Hooks/GutenbergUpdate.php',
         'WPML\\Compatibility\\Divi\\Hooks\\TranslationGuiLabels' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Hooks/TranslationGuiLabels.php',
         'WPML\\Compatibility\\Divi\\Hooks\\TranslationJobImages' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Hooks/TranslationJobImages.php',
@@ -37,6 +40,11 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\Compatibility\\Divi\\ThemeBuilder' => __DIR__ . '/../..' . '/classes/Integrations/Divi/theme-builder.php',
         'WPML\\Compatibility\\Divi\\ThemeBuilderFactory' => __DIR__ . '/../..' . '/classes/Integrations/Divi/theme-builder-factory.php',
         'WPML\\Compatibility\\Divi\\TinyMCE' => __DIR__ . '/../..' . '/classes/Integrations/Divi/TinyMCE.php',
+        'WPML\\Compatibility\\Divi\\V5\\CanvasHooks' => __DIR__ . '/../..' . '/classes/Integrations/Divi/V5/CanvasHooks.php',
+        'WPML\\Compatibility\\Divi\\V5\\DynamicContent' => __DIR__ . '/../..' . '/classes/Integrations/Divi/V5/DynamicContent.php',
+        'WPML\\Compatibility\\Divi\\V5\\LanguageSwitcher' => __DIR__ . '/../..' . '/classes/Integrations/Divi/V5/LanguageSwitcher.php',
+        'WPML\\Compatibility\\Divi\\V5\\MediaUrls' => __DIR__ . '/../..' . '/classes/Integrations/Divi/V5/MediaUrls.php',
+        'WPML\\Compatibility\\Divi\\V5\\WooCommerce\\ProductDescriptionCache' => __DIR__ . '/../..' . '/classes/Integrations/Divi/V5/WooCommerce/ProductDescriptionCache.php',
         'WPML\\Compatibility\\Divi\\WooShortcodes' => __DIR__ . '/../..' . '/classes/Integrations/Divi/WooShortcodes.php',
         'WPML\\Compatibility\\Enfold\\Hooks\\TranslationGuiLabels' => __DIR__ . '/../..' . '/classes/Integrations/Enfold/Hooks/TranslationGuiLabels.php',
         'WPML\\Compatibility\\Enfold\\Hooks\\TranslationJobImages' => __DIR__ . '/../..' . '/classes/Integrations/Enfold/Hooks/TranslationJobImages.php',
@@ -45,6 +53,7 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\Compatibility\\FusionBuilder\\BaseHooks' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/abstracts/BaseHooks.php',
         'WPML\\Compatibility\\FusionBuilder\\DynamicContent' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/DynamicContent.php',
         'WPML\\Compatibility\\FusionBuilder\\FormContent' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/FormContent.php',
+        'WPML\\Compatibility\\FusionBuilder\\FormNotifications' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/FormNotifications.php',
         'WPML\\Compatibility\\FusionBuilder\\Frontend\\Hooks' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/frontend/Hooks.php',
         'WPML\\Compatibility\\FusionBuilder\\Hooks\\Editor' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/Hooks/Editor.php',
         'WPML\\Compatibility\\FusionBuilder\\Hooks\\MultilingualOptions' => __DIR__ . '/../..' . '/classes/Integrations/FusionBuilder/Hooks/MultilingualOptions.php',
@@ -84,9 +93,18 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\PB\\Cornerstone\\Modules\\ModuleWithItemsFromConfig' => __DIR__ . '/../..' . '/classes/Integrations/Cornerstone/modules/ModuleWithItemsFromConfig.php',
         'WPML\\PB\\Cornerstone\\Styles\\Hooks' => __DIR__ . '/../..' . '/classes/Integrations/Cornerstone/Styles/Hooks.php',
         'WPML\\PB\\Cornerstone\\Utils' => __DIR__ . '/../..' . '/classes/Integrations/Cornerstone/class-wpml-cornerstone-utils.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Cache' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Cache.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Factory' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Factory.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Generator' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Generator.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Hooks' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Hooks.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Processors\\AtomicWidgetProcessor' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Processors/AtomicWidgetProcessor.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Processors\\ClassicWidgetProcessor' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Processors/ClassicWidgetProcessor.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Processors\\ControlNameFilter' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Processors/ControlNameFilter.php',
+        'WPML\\PB\\Elementor\\AutoConfig\\Processors\\WidgetProcessorInterface' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/AutoConfig/Processors/WidgetProcessorInterface.php',
         'WPML\\PB\\Elementor\\Config\\DynamicElements\\Button' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/Button.php',
         'WPML\\PB\\Elementor\\Config\\DynamicElements\\ContainerPopup' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/ContainerPopup.php',
         'WPML\\PB\\Elementor\\Config\\DynamicElements\\EssentialAddons\\ContentTimeline' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/EssentialAddons/ContentTimeline.php',
+        'WPML\\PB\\Elementor\\Config\\DynamicElements\\EssentialAddons\\TeamMember' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/EssentialAddons/TeamMember.php',
         'WPML\\PB\\Elementor\\Config\\DynamicElements\\FormPopup' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/FormPopup.php',
         'WPML\\PB\\Elementor\\Config\\DynamicElements\\Hotspot' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/Hotspot.php',
         'WPML\\PB\\Elementor\\Config\\DynamicElements\\IconList' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/Config/DynamicElements/IconList.php',
@@ -131,6 +149,7 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\PB\\Elementor\\LanguageSwitcher\\WidgetAdaptor' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/LanguageSwitcher/WidgetAdaptor.php',
         'WPML\\PB\\Elementor\\Media\\Modules\\AllNodes' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/media/modules/AllNodes.php',
         'WPML\\PB\\Elementor\\Media\\Modules\\ContactButtons' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/media/modules/ContactButtons.php',
+        'WPML\\PB\\Elementor\\Media\\Modules\\EImage' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/media/modules/EImage.php',
         'WPML\\PB\\Elementor\\Media\\Modules\\Gallery' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/media/modules/Gallery.php',
         'WPML\\PB\\Elementor\\Media\\Modules\\Hotspot' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/media/modules/Hotspot.php',
         'WPML\\PB\\Elementor\\Media\\Modules\\LinkInBio' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/media/modules/LinkInBio.php',
@@ -139,6 +158,12 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\PB\\Elementor\\Modules\\ModuleWithItemsFromConfig' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/modules/ModuleWithItemsFromConfig.php',
         'WPML\\PB\\Elementor\\Modules\\MultipleGallery' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/modules/MultipleGallery.php',
         'WPML\\PB\\Elementor\\Modules\\Reviews' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/modules/Reviews.php',
+        'WPML\\PB\\Elementor\\V4\\Component\\Cache' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/V4/Component/Cache.php',
+        'WPML\\PB\\Elementor\\V4\\Component\\Overrides' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/V4/Component/Overrides.php',
+        'WPML\\PB\\Elementor\\V4\\Component\\QueryHooks' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/V4/Component/QueryHooks.php',
+        'WPML\\PB\\Elementor\\V4\\Hooks' => __DIR__ . '/../..' . '/classes/Integrations/Elementor/V4/Hooks.php',
+        'WPML\\PB\\FullSiteEditing\\TemplateLocalizer' => __DIR__ . '/../..' . '/classes/Shared/FullSiteEditing/TemplateLocalizer.php',
+        'WPML\\PB\\FullSiteEditing\\TemplateTranslationHooks' => __DIR__ . '/../..' . '/classes/Shared/FullSiteEditing/TemplateTranslationHooks.php',
         'WPML\\PB\\GutenbergCleanup\\Package' => __DIR__ . '/../..' . '/classes/Shared/GutenbergCleanup/Package.php',
         'WPML\\PB\\GutenbergCleanup\\ShortcodeHooks' => __DIR__ . '/../..' . '/classes/Shared/GutenbergCleanup/ShortcodeHooks.php',
         'WPML\\PB\\Gutenberg\\ConvertIdsInBlock\\Base' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/IdsInBlock/Base.php',
@@ -150,6 +175,7 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\PB\\Gutenberg\\Hooks\\TranslationJobImages' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/Hooks/TranslationJobImages.php',
         'WPML\\PB\\Gutenberg\\Integration' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/interface-integration.php',
         'WPML\\PB\\Gutenberg\\Integration_Composite' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/class-integration-composite.php',
+        'WPML\\PB\\Gutenberg\\MediaHooksIntegration' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/MediaHooksIntegration.php',
         'WPML\\PB\\Gutenberg\\Navigation\\Frontend' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/Navigation/Frontend.php',
         'WPML\\PB\\Gutenberg\\ReusableBlocks\\Blocks' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/reusable-blocks/class-blocks.php',
         'WPML\\PB\\Gutenberg\\ReusableBlocks\\Integration' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/reusable-blocks/class-integration.php',
@@ -170,7 +196,9 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML\\PB\\Gutenberg\\Widgets\\Block\\Strings' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/Widgets/Block/Strings.php',
         'WPML\\PB\\Gutenberg\\XPath' => __DIR__ . '/../..' . '/classes/Integrations/Gutenberg/XPath.php',
         'WPML\\PB\\Helper\\LanguageNegotiation' => __DIR__ . '/../..' . '/classes/Shared/Helper/LanguageNegotiation.php',
+        'WPML\\PB\\Integrations\\Divi\\Helper' => __DIR__ . '/../..' . '/classes/Integrations/Divi/Helper.php',
         'WPML\\PB\\LegacyIntegration' => __DIR__ . '/../..' . '/classes/LegacyIntegration.php',
+        'WPML\\PB\\Media\\Hooks' => __DIR__ . '/../..' . '/classes/Shared/media/Hooks.php',
         'WPML\\PB\\OldPlugin' => __DIR__ . '/../..' . '/classes/OldPlugin.php',
         'WPML\\PB\\ShortCodesInGutenbergBlocks' => __DIR__ . '/../..' . '/classes/Shared/st/ShortCodesInGutenbergBlocks.php',
         'WPML\\PB\\Shortcode\\AdjustIdsHooks' => __DIR__ . '/../..' . '/classes/Shared/Shortcode/AdjustIdsHooks.php',
@@ -318,11 +346,17 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
         'WPML_Page_Builders_App' => __DIR__ . '/../..' . '/classes/Shared/st/class-wpml-page-builders-app.php',
         'WPML_Page_Builders_Defined' => __DIR__ . '/../..' . '/classes/Shared/st/compatibility/class-wpml-page-builders-defined.php',
         'WPML_Page_Builders_Integration' => __DIR__ . '/../..' . '/classes/Shared/st/class-page-builder-integration.php',
+        'WPML_Page_Builders_Media_Find_Usage' => __DIR__ . '/../..' . '/classes/Shared/media/class-wpml-page-builders-media-find-usage.php',
+        'WPML_Page_Builders_Media_Find_Usage_Noop' => __DIR__ . '/../..' . '/classes/Shared/media/class-wpml-page-builders-media-find-usage-noop.php',
+        'WPML_Page_Builders_Media_Gutenberg' => __DIR__ . '/../..' . '/classes/Shared/media/gutenberg/class-wpml-page-builders-media-gutenberg.php',
+        'WPML_Page_Builders_Media_Gutenberg_Update' => __DIR__ . '/../..' . '/classes/Shared/media/gutenberg/class-wpml-page-builders-media-gutenberg-update.php',
+        'WPML_Page_Builders_Media_Gutenberg_Update_Factory' => __DIR__ . '/../..' . '/classes/Shared/media/gutenberg/class-wpml-page-builders-media-gutenberg-update-factory.php',
         'WPML_Page_Builders_Media_Hooks' => __DIR__ . '/../..' . '/classes/Shared/media/class-wpml-page-builders-media-hooks.php',
         'WPML_Page_Builders_Media_Shortcodes' => __DIR__ . '/../..' . '/classes/Shared/media/shortcodes/class-wpml-page-builders-media-shortcodes.php',
         'WPML_Page_Builders_Media_Shortcodes_Update' => __DIR__ . '/../..' . '/classes/Shared/media/shortcodes/class-wpml-page-builders-media-shortcodes-update.php',
         'WPML_Page_Builders_Media_Shortcodes_Update_Factory' => __DIR__ . '/../..' . '/classes/Shared/media/shortcodes/class-wpml-page-builders-media-shortcodes-update-factory.php',
         'WPML_Page_Builders_Media_Translate' => __DIR__ . '/../..' . '/classes/Shared/media/class-wpml-page-builders-media-translate.php',
+        'WPML_Page_Builders_Media_Update_Factory' => __DIR__ . '/../..' . '/classes/Shared/media/class-wpml-page-builders-media-update-factory.php',
         'WPML_Page_Builders_Media_Usage' => __DIR__ . '/../..' . '/classes/Shared/media/class-wpml-page-builders-media-usage.php',
         'WPML_Page_Builders_Page_Built' => __DIR__ . '/../..' . '/classes/Shared/utilities/class-wpml-page-builders-page-built-with-built.php',
         'WPML_Page_Builders_Register_Strings' => __DIR__ . '/../..' . '/classes/Shared/st/compatibility/class-wpml-page-builders-register-strings.php',
@@ -340,7 +374,7 @@ class ComposerStaticInit4e01dfa6072681a09272eb2696479fc0
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit4e01dfa6072681a09272eb2696479fc0::$classMap;
+            $loader->classMap = ComposerStaticInitf88003bda9d5d10d5be3c7029cfa879d::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -4,6 +4,7 @@ namespace WPML\UserInterface\Web\Infrastructure\CompositionRoot\Config;
 
 use WPML\ConfigInterface;
 use WPML\Core\Component\Communication\Application\Query\DismissedNoticesQuery;
+use WPML\Core\Port\PluginInterface;
 use WPML\DicInterface;
 use WPML\PHP\Exception\Exception;
 use WPML\UserInterface\Web\Core\Port\Script\ScriptDataProviderInterface;
@@ -40,6 +41,14 @@ class Config implements ConfigInterface {
   /** @var string[]|null $_noticesDismissed */
   private $_noticesDismissed;
 
+  /**
+   * @var RegisterNoticesInterface
+   */
+  private $registerNotices;
+
+  /** @var PluginInterface $plugin */
+  private $plugin;
+
 
   public function __construct(
     Parser $config,
@@ -47,7 +56,9 @@ class Config implements ConfigInterface {
     ApiInterface $api,
     PageInterface $page,
     UpdatesHandlerInterface $update,
-    DismissedNoticesQuery $dismissedNoticesQuery
+    DismissedNoticesQuery $dismissedNoticesQuery,
+    RegisterNoticesInterface $registerNotices,
+    PluginInterface $plugin
   ) {
     $this->parser = $config;
     $this->dic = $dic;
@@ -55,6 +66,8 @@ class Config implements ConfigInterface {
     $this->page = $page;
     $this->updatesHandler = $update;
     $this->noticesQuery = $dismissedNoticesQuery;
+    $this->registerNotices = $registerNotices;
+    $this->plugin = $plugin;
   }
 
 
@@ -127,18 +140,48 @@ class Config implements ConfigInterface {
 
 
   /**
-   * @throws Exception
    * @return void
+   * @throws Exception
+   * @throws \InvalidArgumentException
    */
   public function loadAdminScripts() {
     $config = $this->parser->parseScripts();
     foreach ( $config->scripts() as $script ) {
+      /** @var ScriptPrerequisitesInterface|null $scriptPreRequisitesClass */
+      $scriptPreRequisitesClass = $this->loadScriptPrerequisitesClass( $script );
+
+      if (
+        $scriptPreRequisitesClass &&
+        ! $scriptPreRequisitesClass->scriptPrerequisitesMet()
+      ) {
+        // Skip loading the script as prerequisites are not met.
+        continue;
+      }
+
       if ( ! $script->usedOnAdmin() ) {
         continue;
       }
+
       $script->onlyRegister()
         ? $this->page->registerScript( $script )
         : $this->page->loadScript( $script );
+
+      if ( $dataProviderClass = $script->dataProvider() ) {
+        $dataProvider = $this->dic->make( $dataProviderClass );
+
+        if ( ! $dataProvider instanceof ScriptDataProviderInterface ) {
+          throw new \InvalidArgumentException(
+            'Invalid data provider. It must implement ' .
+            ScriptDataProviderInterface::class
+          );
+        }
+
+        $this->page->provideDataForScript(
+          $script,
+          $dataProvider->jsWindowKey(),
+          $dataProvider->initialScriptData()
+        );
+      }
     }
   }
 
@@ -158,7 +201,34 @@ class Config implements ConfigInterface {
   }
 
 
-  /** @return void */
+  /**
+   * @return void
+   * @throws Exception
+   * @throws \InvalidArgumentException
+   */
+  public function loadContentStatsScripts() {
+    $scripts = $this->parser->parseContentStatsScripts();
+    $this->loadScripts( $scripts );
+  }
+
+
+  /**
+   * @return void
+   * @throws Exception
+   * @throws \InvalidArgumentException
+   */
+  public function loadCheckPosthogShouldRecordScript() {
+    $scripts = $this->parser->parseCheckPosthogShouldRecordScript();
+    $this->loadScripts( $scripts );
+  }
+
+
+  /**
+   * @param Page $page
+   *
+   * @return void
+   * @throws \InvalidArgumentException
+   */
   public function onLoadPage( Page $page ) {
     $this->initPage( $page );
     $this->loadScripts( $page->scripts() );
@@ -185,7 +255,12 @@ class Config implements ConfigInterface {
   }
 
 
-  /** @return void */
+  /**
+   * @param Notice $notice
+   *
+   * @return void
+   * @throws \InvalidArgumentException
+   */
   public function loadNotice( Notice $notice ) {
     $this->initAdminNotice( $notice );
 
@@ -197,9 +272,9 @@ class Config implements ConfigInterface {
     $this->loadStyles( $notice->styles() );
 
     if ( $pageToRenderNotice = $notice->onPageActive() ) {
-      $pageToRenderNotice->renderNotice( $notice );
+      $this->registerNotices->register( [$pageToRenderNotice, 'renderNotice'], [$notice] );
     } else {
-      $notice->render();
+      $this->registerNotices->register( [$notice, 'render'] );
     }
   }
 
@@ -231,33 +306,49 @@ class Config implements ConfigInterface {
 
 
   /**
-   * @param array<Script> $scripts
+   * @param Script $script
+   *
+   * @return ScriptPrerequisitesInterface|null
+   * @throws \InvalidArgumentException
+   */
+  private function loadScriptPrerequisitesClass( Script $script ) {
+    if ( $scriptPrerequisitesClass = $script->prerequisites() ) {
+      $scriptPrerequisitesClass = $this->dic->make( $scriptPrerequisitesClass );
+      if ( ! $scriptPrerequisitesClass instanceof ScriptPrerequisitesInterface ) {
+        throw new \InvalidArgumentException(
+          'Invalid script prerequisites. It must implement ' .
+          ScriptPrerequisitesInterface::class
+        );
+      }
+    }
+
+    return $scriptPrerequisitesClass;
+  }
+
+
+  /**
+   * @param Script[] $scripts
+   *
    * @return void
+   * @throws \InvalidArgumentException
    */
   private function loadScripts( $scripts ) {
     foreach ( $scripts as $script ) {
-      if ( $scriptPrerequisitesClass = $script->prerequisites() ) {
-        /** @var ScriptPrerequisitesInterface $ */
-        $scriptPrerequisites = $this->dic->make( $scriptPrerequisitesClass );
+      /** @var ScriptPrerequisitesInterface|null */
+      $scriptPrerequisitesClass = $this->loadScriptPrerequisitesClass( $script );
 
-        if ( ! $scriptPrerequisites instanceof ScriptPrerequisitesInterface ) {
-          throw new \InvalidArgumentException(
-            'Invalid script prerequisites. It must implement ' .
-            ScriptPrerequisitesInterface::class
-          );
-        }
-
-        if ( ! $scriptPrerequisites->scriptPrerequisitesMet() ) {
-          // Skip loading the script as prerequisites are not met.
-          continue;
-        }
+      if (
+        $scriptPrerequisitesClass &&
+        ! $scriptPrerequisitesClass->scriptPrerequisitesMet()
+      ) {
+        // Skip loading the script as prerequisites are not met.
+        continue;
       }
 
       $this->page->loadScript( $script );
 
       // Check if there is a dataProvider defined in the config.
       if ( $dataProviderClass = $script->dataProvider() ) {
-        /** @var ScriptDataProviderInterface $dataProvider */
         $dataProvider = $this->dic->make( $dataProviderClass );
 
         if ( ! $dataProvider instanceof ScriptDataProviderInterface ) {
@@ -329,6 +420,12 @@ class Config implements ConfigInterface {
    * @throws \InvalidArgumentException
    */
   private function pageRequirementsMet( Page $page ): bool {
+    if ( $page->requiresWPMLSetupToBeCompleted()
+         && ! $this->plugin->isSetupComplete()
+    ) {
+      return false;
+    }
+
     if ( $requirementsClassName = $page->requirementsClassName() ) {
       $requirements = $this->dic->make( $requirementsClassName );
 

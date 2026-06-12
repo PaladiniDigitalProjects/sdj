@@ -98,10 +98,11 @@ class WPML_TM_Dashboard_Document_Row {
 
 		$post_view_link = '';
 		$post_edit_link = '';
+		$view_link_label = __( 'View', 'sitepress' );
 		if ( ! $this->is_external_type() ) {
 			$post_link_factory = new WPML_TM_Post_Link_Factory( $this->sitepress );
 			$post_edit_link    = $post_link_factory->edit_link_anchor( $current_document->ID, __( 'Edit', 'sitepress' ) );
-			$post_view_link    = $post_link_factory->view_link_anchor( $current_document->ID, __( 'View', 'sitepress' ) );
+			$post_view_link    = $post_link_factory->view_link_anchor( $current_document->ID, $view_link_label );
 		}
 
 		$jobs = ( new PostJobsRepository() )->getJobsGroupedByLang( $current_document->ID, $element_type );
@@ -111,7 +112,7 @@ class WPML_TM_Dashboard_Document_Row {
 			$post_actions[] = "<span class='edit'>" . $post_edit_link . '</span>';
 		}
 
-		$post_view_link = apply_filters( 'wpml_document_view_item_link', $post_view_link, __( 'View', 'sitepress' ), $current_document, $element_type, $this->get_type() );
+		$post_view_link = apply_filters( 'wpml_document_view_item_link', $post_view_link, $view_link_label, $current_document, $element_type, $this->get_type() );
 		if ( $post_view_link && ! in_array( $this->get_type(), [ 'wp_template_part', 'wp_template', 'wp_navigation' ] ) ) {
 			$post_actions[] = "<span class='view'>" . $post_view_link . '</span>';
 		}

@@ -11,12 +11,14 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpml\n"
+"Language: th\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Add glossary terms"
 msgstr "เพิ่มคำศัพท์ในอภิธานศัพท์"
 
 msgid "Minimize"
-msgstr "ย่อ"
+msgstr "ย่อเล็กสุด"
 
 msgid "Expand"
 msgstr "ขยาย"
@@ -25,13 +27,13 @@ msgid "There's nothing yet in the Glossary"
 msgstr "ยังไม่มีอะไรในอภิธานศัพท์"
 
 msgid "Looks like you're not yet using the glossary. Glossary can help you:"
-msgstr "ดูเหมือนว่าคุณยังไม่ได้ใช้อภิธานศัพท์ อภิธานศัพท์สามารถช่วยคุณ:"
+msgstr "ดูเหมือนว่าคุณยังไม่ได้ใช้อภิธานศัพท์ อภิธานศัพท์สามารถช่วยคุณได้:"
 
 msgid "Improve the quality of the translation"
 msgstr "ปรับปรุงคุณภาพของการแปล"
 
 msgid "Ensure translation consistency"
-msgstr "รับรองความสอดคล้องในการแปล"
+msgstr "รับรองความสอดคล้องของการแปล"
 
 msgid "Reduce translation costs"
 msgstr "ลดค่าใช้จ่ายในการแปล"
@@ -40,9 +42,8 @@ msgid "Improve SEO in translation languages"
 msgstr "ปรับปรุง SEO ในภาษาที่แปล"
 
 msgid "How to Use the Glossary for Accurate Translations"
-msgstr "วิธีใช้อภิธานศัพท์เพื่อการแปลที่แม่นยำ"
+msgstr "วิธีใช้อภิธานศัพท์เพื่อการแปลที่ถูกต้อง"
 
 msgid "%d item in the <a>Glossary</a>"
 msgid_plural "%d items in the <a>Glossary</a>"
-msgstr[0] "%d รายการใน<a>อภิธานศัพท์</a>"
-msgstr[1] "%d รายการใน<a>อภิธานศัพท์</a>"
+msgstr[0] "มี %d รายการใน <a>อภิธานศัพท์</a>"

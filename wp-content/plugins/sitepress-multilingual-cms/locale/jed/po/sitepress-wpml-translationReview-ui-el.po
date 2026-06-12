@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/translationReview/components/AcceptedMessage.js:8
 msgid "Accepted"
@@ -14,7 +16,7 @@ msgstr "Εγκρίθηκε!"
 #: src/js/translationReview/components/AcceptedText.js:9
 #: src/js/translationReview/components/PublishedText.js:9
 msgid "Loading the next translation for review..."
-msgstr "Φόρτωση της επόμενης μετάφρασης για αξιολόγηση..."
+msgstr "Φορτώνεται η επόμενη μετάφραση για έλεγχο..."
 
 #: src/js/translationReview/components/BackButton.js:7
 msgid "Back"
@@ -24,11 +26,11 @@ msgstr "Πίσω"
 msgid ""
 "Turn off to not automatically load the next translation after finishing "
 "this review."
-msgstr "Απενεργοποιήστε για να μη φορτώνεται αυτόματα η επόμενη μετάφραση μετά την ολοκλήρωση αυτής της αξιολόγησης."
+msgstr "Απενεργοποιήστε για να μην φορτώνεται αυτόματα η επόμενη μετάφραση μετά την ολοκλήρωση αυτής της αναθεώρησης."
 
 #: src/js/translationReview/components/ContinueReviewToggle.js:18
 msgid "Turn on to automatically load the next translation after finishing this  ."
-msgstr "Ενεργοποιήστε για να φορτώνεται αυτόματα η επόμενη μετάφραση μετά την ολοκλήρωση αυτής της αξιολόγησης."
+msgstr "Ενεργοποιήστε για να φορτώνεται αυτόματα η επόμενη μετάφραση μετά την ολοκλήρωση αυτής της αναθεώρησης."
 
 #: src/js/translationReview/components/EditButton.js:10
 msgid "Edit"
@@ -38,13 +40,9 @@ msgstr "Επεξεργασία"
 msgid "Edit translation"
 msgstr "Επεξεργασία μετάφρασης"
 
-#: src/js/translationReview/components/InProgressText.js:8
-msgid "Please wait, applying translation.."
-msgstr "Παρακαλώ περιμένετε, εφαρμόζεται η μετάφραση.."
-
 #: src/js/translationReview/components/NextTranslationReview.js:22
 msgid "Next review"
-msgstr "Επόμενη αξιολόγηση"
+msgstr "Επόμενη αναθεώρηση"
 
 #: src/js/translationReview/components/PublishButton.js:10
 msgid "Publish this translation"
@@ -58,10 +56,14 @@ msgstr "Αποδοχή αυτής της μετάφρασης"
 msgid "Published!"
 msgstr "Δημοσιεύτηκε!"
 
-#: src/js/translationReview/hooks/useATESync.js:34
-msgid "Someone is already reviewing this translation. Please try again later."
-msgstr "Κάποιος αξιολογεί ήδη αυτή τη μετάφραση. Παρακαλώ δοκιμάστε ξανά αργότερα."
+#: src/js/updateTranslationFrontend/components/InProgressText.js:8
+msgid "Please wait, applying translation.."
+msgstr "Παρακαλώ περιμένετε, εφαρμόζεται η μετάφραση.."
 
-#: src/js/translationReview/store.js:29
+#: src/js/updateTranslationFrontend/store.js:29
 msgid "There was an error in applying translation."
-msgstr "Υπήρξε ένα σφάλμα κατά την εφαρμογή της μετάφρασης."
+msgstr "Παρουσιάστηκε σφάλμα κατά την εφαρμογή της μετάφρασης."
+
+#: src/js/updateTranslationFrontend/useATESync.js:34
+msgid "Someone is already reviewing this translation. Please try again later."
+msgstr "Κάποιος άλλος ελέγχει ήδη αυτή τη μετάφραση. Παρακαλώ δοκιμάστε ξανά αργότερα."

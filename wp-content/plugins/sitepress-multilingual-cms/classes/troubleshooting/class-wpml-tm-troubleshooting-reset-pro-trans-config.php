@@ -74,7 +74,7 @@ class WPML_TM_Troubleshooting_Reset_Pro_Trans_Config extends WPML_TM_AJAX_Factor
 	 * Registering WP scripts.
 	 */
 	public function register_resources() {
-		wp_register_script( self::SCRIPT_HANDLE, WPML_TM_URL . '/res/js/reset-pro-trans-config.js', array( 'jquery', 'jquery-ui-dialog' ), false, true );
+		wp_register_script( self::SCRIPT_HANDLE, WPML_TM_URL . '/res/js/reset-pro-trans-config.js', array( 'jquery', 'jquery-ui-dialog' ), ICL_SITEPRESS_SCRIPT_VERSION, true );
 	}
 
 	/**
@@ -187,9 +187,9 @@ class WPML_TM_Troubleshooting_Reset_Pro_Trans_Config extends WPML_TM_AJAX_Factor
 
 		$this->sitepress->save_settings();
 
-		$this->wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}icl_core_status" );
+		$this->wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}icl_core_status" );
 		$this->wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}icl_content_status" );
-		$this->wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}icl_string_status" );
+		$this->wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}icl_string_status" );
 		$this->wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}icl_node" );
 		$this->wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}icl_reminders" );
 

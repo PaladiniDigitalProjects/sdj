@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-<?php return array('dependencies' => array(), 'version' => '8affda2424e3f731574e');
-=======
-<?php return array('dependencies' => array(), 'version' => 'aca14459b144943befbd');
->>>>>>> main
+<?php return array('dependencies' => array(), 'version' => '4b9389f7e0135810c541');

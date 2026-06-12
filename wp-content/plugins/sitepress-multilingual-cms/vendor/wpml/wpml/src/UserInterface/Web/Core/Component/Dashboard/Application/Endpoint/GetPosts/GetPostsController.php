@@ -100,27 +100,28 @@ class GetPostsController implements GetPostControllerInterface {
         );
 
         return [
-          'id'             => $post->getId(),
-          'title'          => $post->getTitle(),
-          'status'         => $post->getStatus(),
-          'createdAt'      => $post->getCreatedAt(),
-          'translations'   => $translations,
-          'wordCount'      => $post->getWordCount(),
-          'translatorNote' => $post->getTranslatorNote(),
-          'viewLink'       => $this->filter->filterViewLink(
+          'id'                => $post->getId(),
+          'title'             => $post->getTitle(),
+          'status'            => $post->getStatus(),
+          'createdAt'         => $post->getCreatedAt(),
+          'translations'      => $translations,
+          'wordCount'         => $post->getWordCount(),
+          'translatorNote'    => $post->getTranslatorNote(),
+          'viewLink'          => $this->filter->filterViewLink(
             $viewLink,
             $post->getId(),
             $post->getPostType(),
             $languageCode
           ),
-          'editLink'       => $this->filter->filterEditLink(
+          'editLink'          => $this->filter->filterEditLink(
             '',
             $post->getId(),
             $post->getPostType(),
             $languageCode
           ),
-          'isBlocked'      => false,
-          'image'          => null,
+          'isBlocked'         => false,
+          'image'             => null,
+          'usingNativeEditor' => $post->getUsingNativeEditor(),
         ];
       },
       $items->getResults()

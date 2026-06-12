@@ -4,8 +4,10 @@ namespace WPML;
 
 use WPML\UserInterface\Web\Core\Component\Notices\PromoteUsingDashboard\Application\Endpoint\DismissNoticeController;
 use WPML\UserInterface\Web\Core\Component\Notices\PromoteUsingDashboard\Application\StartUsingDashboardNoticeController;
+use WPML\UserInterface\Web\Core\Component\Notices\SwitchToAte\Application\SwitchToAteNoticeController;
 use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\ExistingPage\PostEditPage;
 use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\ExistingPage\PostListingPage;
+use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\ExistingPage\WpmlDashboardPage;
 
 /**
  * Notice properties
@@ -85,6 +87,21 @@ return [
         'path'    => '/usetmdashboardnotice/dismiss',
         'handler' => DismissNoticeController::class,
       ],
+    ],
+  ],
+  'wpml-switch-to-ate-notice' => [
+    'controller' => SwitchToAteNoticeController::class,
+    'onPages'    => [ WpmlDashboardPage::class ],
+    'capability' => 'manage_options',
+    'scripts'    => [
+      [
+        'id'            => 'wpml-switch-to-ate-notice',
+        'src'           => 'public/js/notice-switch-to-ate.js',
+        'dependencies'  => [ 'wpml-dashboard' ]
+      ],
+    ],
+    'styles'     => [
+      'src'          => 'public/css/notice-switch-to-ate.css'
     ],
   ],
 ];

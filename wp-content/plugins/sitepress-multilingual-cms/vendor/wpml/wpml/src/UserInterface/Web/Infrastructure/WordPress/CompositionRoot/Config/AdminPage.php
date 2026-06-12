@@ -2,6 +2,7 @@
 
 namespace WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config;
 
+use WPML\UserInterface\Web\Core\SharedKernel\Config\AssetInterface;
 use WPML\UserInterface\Web\Core\SharedKernel\Config\Page as DomainPage;
 use WPML\UserInterface\Web\Core\SharedKernel\Config\Script;
 use WPML\UserInterface\Web\Core\SharedKernel\Config\Style;
@@ -48,7 +49,7 @@ class AdminPage implements PageInterface {
   public function loadStyle( Style $style ) {
       wp_enqueue_style(
         $style->id(),
-        plugins_url( $style->src() ?: '', WPML_PUBLIC_DIR ),
+        $this->assetUrl( $style ),
         $style->dependencies(),
         WPML_VERSION
       );
@@ -58,11 +59,11 @@ class AdminPage implements PageInterface {
   public function registerScript( Script $script ) {
       wp_register_script(
         $script->id(),
-        plugins_url( $script->src() ?: '', WPML_PUBLIC_DIR ),
+        $this->assetUrl( $script ),
         $script->dependencies(),
         WPML_VERSION,
         [
-          'in_footer' => true
+          'in_footer' => $script->inFooter(),
         ]
       );
   }
@@ -71,11 +72,11 @@ class AdminPage implements PageInterface {
   public function loadScript( Script $script ) {
       wp_enqueue_script(
         $script->id(),
-        plugins_url( $script->src() ?: '', WPML_PUBLIC_DIR ),
+        $this->assetUrl( $script ),
         $script->dependencies(),
         WPML_VERSION,
         [
-          'in_footer' => true
+          'in_footer' => $script->inFooter(),
         ]
       );
     wp_set_script_translations(
@@ -175,6 +176,17 @@ class AdminPage implements PageInterface {
       [ $page, 'render' ],
       $page->position()
     );
+  }
+
+
+  private function assetUrl( AssetInterface $asset ): string {
+    $relativePath = $asset->src() ?: '';
+
+    if ( defined( 'WPML_HMR_SERVER' ) && $asset->supportsHMR() ) {
+      return WPML_HMR_SERVER . preg_replace( '#public/(js|css)/#', '', $relativePath );
+    }
+
+      return plugins_url( $relativePath, WPML_PUBLIC_DIR );
   }
 
 

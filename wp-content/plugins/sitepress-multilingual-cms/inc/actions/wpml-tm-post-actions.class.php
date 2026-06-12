@@ -77,7 +77,6 @@ class WPML_TM_Post_Actions extends WPML_Translation_Job_Helper {
 						                                                                                            'needs_update'        => $needs_second_update,
 						                                                                                            'md5'                 => $md5,
 						                                                                                            'translation_service' => 'local',
-						                                                                                            'translation_package' => serialize( $translation_package )
 					                                                                                            ) );
 					if ( ! $update ) {
 						$job_id = $this->action_helper->add_translation_job( $rid, $user_id, $translation_package );
@@ -158,7 +157,6 @@ class WPML_TM_Post_Actions extends WPML_Translation_Job_Helper {
 							'translation_id'      => $translation->translation_id,
 							'needs_update'        => 1,
 							'md5'                 => $md5,
-							'translation_package' => serialize( $translation_package ),
 							'status'              => $status === ICL_TM_ATE_CANCELLED ? ICL_TM_NOT_TRANSLATED : $status,
 						];
 						$this->action_helper->get_tm_instance()->update_translation_status( $data );

@@ -13,11 +13,28 @@ class UntranslatedTypeCountDto {
   /** @var int */
   private $count;
 
+  /** @var 'post'|'package'|'string' */
+  private $kind;
 
-  public function __construct( string $namePlural, string $nameSingular, int $count ) {
+  /** @var string */
+  private $type;
+
+
+  /**
+   * @param 'post'|'package'|'string' $kind
+   */
+  public function __construct(
+    string $namePlural,
+    string $nameSingular,
+    int $count,
+    $kind,
+    string $type = ''
+  ) {
     $this->namePlural   = $namePlural;
     $this->nameSingular = $nameSingular;
     $this->count        = $count;
+    $this->kind         = $kind;
+    $this->type         = $type;
   }
 
 
@@ -37,13 +54,15 @@ class UntranslatedTypeCountDto {
 
 
   /**
-   * @return array{namePlural: string, nameSingular: string, count: int}
+   * @return array{namePlural: string, nameSingular: string, count: int, kind:string, type: string}
    */
   public function toArray(): array {
     return [
       'namePlural'   => $this->namePlural,
       'nameSingular' => $this->nameSingular,
       'count'        => $this->count,
+      'kind'         => $this->kind,
+      'type'         => $this->type,
     ];
   }
 

@@ -177,8 +177,8 @@ if ( ! class_exists( Settings::class ) ) :
 				'be',
 				'be_allowed_blocks',
 				[
-					'type'         => 'array',
-					'show_in_rest' => array(
+					'type'              => 'array',
+					'show_in_rest'      => array(
 						'schema' => array(
 							'items' => array(
 								'type'       => 'object',
@@ -194,6 +194,10 @@ if ( ! class_exists( Settings::class ) ) :
 												'name' => array(
 													'type' => 'string',
 												),
+												'isShownByDefault' => array(
+													'type' => 'boolean',
+													'default' => false,
+												),
 											),
 										),
 									),
@@ -201,7 +205,7 @@ if ( ! class_exists( Settings::class ) ) :
 							),
 						),
 					),
-					'default'      => [
+					'default'           => [
 						[
 							'featureName'   => 'withIcon',
 							'allowedBlocks' => $default_allowed_blocks['withIcon'],
@@ -239,6 +243,7 @@ if ( ! class_exists( Settings::class ) ) :
 							'allowedBlocks' => $default_allowed_blocks['withPosition'],
 						],
 					],
+					'sanitize_callback' => [ $this, 'sanitize_allowed_blocks' ],
 				]
 			);
 
@@ -247,8 +252,8 @@ if ( ! class_exists( Settings::class ) ) :
 				'be',
 				'be_breakpoints',
 				[
-					'type'         => 'object',
-					'show_in_rest' => array(
+					'type'              => 'object',
+					'show_in_rest'      => array(
 						'schema' => array(
 							'properties' => array(
 								'sm' => array(
@@ -287,7 +292,7 @@ if ( ! class_exists( Settings::class ) ) :
 							),
 						),
 					),
-					'default'      => [
+					'default'           => [
 						'sm' => [
 							'breakpoint' => '576px',
 							'mediaQuery' => '',
@@ -301,8 +306,90 @@ if ( ! class_exists( Settings::class ) ) :
 							'mediaQuery' => '@media (min-width: 1024px){##CONTENT##}',
 						],
 					],
+					'sanitize_callback' => [ $this, 'sanitize_breakpoints' ],
 				]
 			);
+		}
+
+		/**
+		 * Sanitize the allowed_blocks setting
+		 *
+		 * @param mixed $value
+		 * @return array
+		 */
+		public function sanitize_allowed_blocks( $value ) {
+			if ( ! is_array( $value ) ) {
+				return [];
+			}
+
+			$sanitized = [];
+
+			foreach ( $value as $feature ) {
+				if ( ! is_array( $feature ) || empty( $feature['featureName'] ) || ! is_string( $feature['featureName'] ) ) {
+					continue;
+				}
+
+				$feature_name = $feature['featureName'];
+				$allowed      = [];
+
+				if ( ! empty( $feature['allowedBlocks'] ) && is_array( $feature['allowedBlocks'] ) ) {
+					foreach ( $feature['allowedBlocks'] as $block ) {
+						if ( is_array( $block ) && ! empty( $block['name'] ) && is_string( $block['name'] ) ) {
+							$allowed[] = [
+								'name'             => sanitize_text_field( $block['name'] ),
+								'isShownByDefault' => $block['isShownByDefault'] ?? false,
+							];
+						}
+					}
+				}
+
+				$sanitized[] = [
+					'featureName'   => $feature_name,
+					'allowedBlocks' => $allowed,
+				];
+			}
+
+			return $sanitized;
+		}
+
+		/**
+		 * Sanitize breakpoints
+		 *
+		 * @param mixed $value
+		 * @return array
+		 */
+		public function sanitize_breakpoints( $value ) {
+			if ( ! is_array( $value ) ) {
+				return [];
+			}
+
+			$allowed_keys = [ 'sm', 'md', 'lg' ];
+			$sanitized    = [];
+
+			foreach ( $allowed_keys as $key ) {
+				if ( empty( $value[ $key ] ) || ! is_array( $value[ $key ] ) ) {
+					continue;
+				}
+
+				$breakpoint  = '';
+				$media_query = '';
+
+				if ( isset( $value[ $key ]['breakpoint'] ) ) {
+					$breakpoint = sanitize_text_field( $value[ $key ]['breakpoint'] );
+				}
+
+				if ( isset( $value[ $key ]['mediaQuery'] ) ) {
+					// Allow CSS-like content but strip tags
+					$media_query = wp_strip_all_tags( $value[ $key ]['mediaQuery'] );
+				}
+
+				$sanitized[ $key ] = [
+					'breakpoint' => $breakpoint,
+					'mediaQuery' => $media_query,
+				];
+			}
+
+			return $sanitized;
 		}
 
 		/**
@@ -354,7 +441,7 @@ if ( ! class_exists( Settings::class ) ) :
 		 * @param array $links
 		 * @return array
 		 */
-		public function plugin_settings_links( $links ) : array {
+		public function plugin_settings_links( $links ): array {
 			$label = esc_html__( 'Settings', 'block-enhancements' );
 			$slug  = 'be-settings';
 
@@ -388,31 +475,10 @@ if ( ! class_exists( Settings::class ) ) :
 		 * @return void
 		 */
 		public function get_docs( $request ) {
-			$cache_key   = 'be_docs';
-			$data        = get_transient( $cache_key );
-			$library_url = 'https://boldpatterns.net';
+			$cache_key = 'be_docs';
+			$data      = get_transient( $cache_key );
 
 			if ( false === $data ) {
-				$response = wp_remote_get(
-					$library_url . '/wp-json/api.boldblocks/v1/getBlockEnhancementsDocs',
-					[
-						'timeout'   => 120,
-						'sslverify' => false,
-					]
-				);
-
-				if ( ! is_wp_error( $response ) ) {
-					$data = json_decode( wp_remote_retrieve_body( $response ), true );
-
-					if ( $data && ! ( $data['code'] ?? false ) ) {
-						set_transient( $cache_key, $data, DAY_IN_SECONDS );
-					} else {
-						$data = false;
-					}
-				}
-			}
-
-			if ( ! $data ) {
 				$data = [
 					'videoTutorials' => [
 						[

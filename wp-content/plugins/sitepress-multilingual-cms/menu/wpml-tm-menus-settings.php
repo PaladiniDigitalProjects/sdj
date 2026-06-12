@@ -77,6 +77,8 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 			if ( ! empty( $iclTranslationManagement->admin_texts_to_translate ) && function_exists( 'icl_register_string' ) ) {
 				$this->mcsetup_sections['ml-content-setup-sec-9'] = esc_html__( 'Admin Strings to Translate', 'wpml-translation-management' );
 			}
+			// Add the Reporting to wpml.org section
+			$this->mcsetup_sections['ml-content-setup-sec-reporting'] = esc_html__( 'Get a proactive support', 'sitepress' );
 		}
 
 		$this->get_translate_link_targets_ui()->add_hooks();
@@ -139,16 +141,13 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 		$translate_link_targets = new WPML_Translate_Link_Target_Global_State( $sitepress );
 		if ( $translate_link_targets->is_rescan_required() ) {
 			?>
-			<div class="update-nag ant-alert ant-alert-info ant-alert-with-description" role="alert">
-				<span role="img" aria-label="info-circle" class="anticon anticon-info-circle ant-alert-icon">
-					<svg viewBox="64 64 896 896" focusable="false" data-icon="info-circle" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path><path d="M464 336a48 48 0 1096 0 48 48 0 10-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z"></path></svg>
-				</span>
+			<div class="update-nag scan-links-notice otgs-notice notice info" role="alert">
 				<div class="ant-alert-content">
-					<p class="ant-alert-message">
+					<p>
 						<?php
 						echo esc_html__(
-							'There is new translated content on this site. You can scan posts and strings to adjust links to point to translated content.',
-							'wpml-translation-management'
+							'New translations detected. Scan your content to update internal links so they point to the correct translated pages and posts.',
+							'sitepress'
 						);
 						?>
 					</p>
@@ -267,7 +266,7 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 													$default_editor_for_old_jobs = get_option( WPML_TM_Old_Jobs_Editor::OPTION_NAME, null );
 													$different_translation_designs_link = 'https://wpml.org/documentation/translating-your-contents/using-different-translation-editors-for-different-pages/?utm_source=plugin&utm_medium=gui&utm_campaign=core';
 													?>
-													<input name="wpml-old-jobs-editor" type="checkbox" value="<?php echo WPML_TM_Editors::ATE; ?>" <?php checked( $default_editor_for_old_jobs === WPML_TM_Editors::ATE ); ?> />
+													<input disabled="disabled" name="wpml-old-jobs-editor" type="checkbox" value="<?php echo WPML_TM_Editors::ATE; ?>" <?php checked( $default_editor_for_old_jobs === WPML_TM_Editors::ATE ); ?> />
 													<span><?php esc_html_e('Use also for old translations created with the classic editor', 'sitepress'); ?></span>
 												</label>
 										</td>
@@ -334,6 +333,26 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 				<!-- .wpml-section-content -->
 
 			</div><!-- #ml-content-setup-sec-1 -->
+			<div
+				class="wpml-js-warning-modal-ate-for-old-translations hidden"
+				data-ok-btn-txt="<?php esc_attr_e( 'Yes, use Advanced Translation Editor for existing content', 'sitepress' ); ?>"
+				data-close-btn-txt="<?php esc_attr_e( 'Cancel', 'sitepress' ); ?>"
+			>
+				<div class="wpml-modal-content">
+					<div class="wpml-icon-wrap">
+						<i class="otgs-ico otgs-ico-wpml-string-translation"></i>
+					</div>
+					<h4><?php esc_html_e( 'You are about to use Advanced Translation Editor for your existing translations', 'sitepress' ); ?></h4>
+					<p>
+						<?php
+						esc_html_e(
+							'Some of your content was translated using the Classic Translation Editor. If you proceed, re-translating may overwrite or delete those translations.',
+							'sitepress'
+						);
+						?>
+					</p>
+				</div>
+			</div>
 		<?php endif; ?>
 
 		<?php if ( $this->should_show_mcsetup_section( 'ml-content-setup-sec-2' ) ) : ?>
@@ -462,6 +481,22 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 										echo esc_html__(
 											'Auto-generate from title (default)',
 											'wpml-translation-management'
+										)
+										?>
+									</label>
+								</li>
+                                <li>
+									<label><input class="wpml-radio-native" type="radio" name="icl_translated_document_page_url"
+										value="force-generate"
+											<?php
+											if ( 'force-generate' === $sitepress_settings['translated_document_page_url'] ) :
+
+												?>
+												checked="checked"<?php endif; ?> />
+										<?php
+										echo esc_html__(
+											'Always auto-generate from title and overwrite any existing slug',
+											'sitepress'
 										)
 										?>
 									</label>
@@ -712,6 +747,56 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 			<?php echo $this->get_translate_link_targets_ui()->render(); ?><!-- #ml-content-setup-sec-links-target -->
 		<?php endif; ?>
 
+		<?php if ( $this->should_show_mcsetup_section( 'ml-content-setup-sec-reporting' ) ) : ?>
+			<?php
+
+			$compatibility_reports_args = array(
+				'plugin_name'           => 'WPML',
+				'plugin_uri'            => 'http://wpml.org',
+				'plugin_site'           => 'wpml.org',
+				'use_styles'            => true,
+				'privacy_policy_url'    => 'https://wpml.org/documentation/privacy-policy-and-gdpr-compliance/?utm_source=plugin&utm_medium=gui&utm_campaign=core',
+				'plugin_repository'     => 'wpml',
+			);
+			?>
+			<div class="wpml-section wpml-section-wpml-theme-and-plugins-reporting" id="ml-content-setup-sec-reporting">
+				<div class="wpml-section-header">
+					<h3><?php esc_html_e( 'Get a proactive support', 'sitepress' ); ?></h3>
+				</div>
+				<div class="wpml-section-content">
+					<?php
+					$compatibility_reports_after_setup_args                   = $compatibility_reports_args;
+					$compatibility_reports_after_setup_args['custom_heading'] = '';
+					$compatibility_reports_after_setup_args['use_radio']      = true;
+
+					$compatibility_reports_after_setup_args['custom_description'] = esc_html__(
+						'WPML can send information about your site’s plugins, theme and content stats to wpml.org. 
+						This allows our support team to help you much faster and to contact you about potential problems and their solutions.',
+						'wpml-translation-management'
+					);
+
+					$compatibility_reports_after_setup_args['sharing_data_details_text'] = esc_html__(
+						'Full details of the info we’re proposing to share',
+						'wpml-translation-management'
+					);
+
+					$compatibility_reports_after_setup_args['sharing_data_details_url'] = "https://wpml.org/documentation/privacy-policy-and-gdpr-compliance/optional-data-sharing/?utm_source=plugin&utm_medium=gui&utm_campaign=wpml-settings";
+
+					$compatibility_reports_after_setup_args['custom_radio_label_yes'] = esc_html__(
+						'Yes, send this information to wpml.org to improve my site’s maintenance and support',
+						'sitepress'
+					);
+					$compatibility_reports_after_setup_args['custom_radio_label_no']  = esc_html__(
+						'No, don\'t send this information and skip maintenance alerts',
+						'sitepress'
+					);
+
+					do_action( 'otgs_installer_render_local_components_setting', $compatibility_reports_after_setup_args );
+					?>
+				</div>
+			</div><!-- #ml-content-setup-sec-reporting -->
+		<?php endif; ?>
+
 		<?php
 		wp_enqueue_script( 'wpml-tm-mcs' );
 		wp_enqueue_script( 'wpml-tm-mcs-translate-link-targets' );
@@ -796,7 +881,7 @@ class WPML_TM_Menus_Settings extends WPML_TM_Menus {
 
 		if ( ! $this->translate_link_targets_ui ) {
 			$this->translate_link_targets_ui = new WPML_Translate_Link_Targets_UI(
-				__( 'Translate Link Targets', 'wpml-translation-management' ),
+				__( 'Update internal links', 'sitepress' ),
 				$wpdb,
 				$sitepress,
 				$ICL_Pro_Translation

@@ -1,46 +1,17 @@
-.menu-mobile {
+@use "variables";
 
 
-
-  .logo-nav {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 1rem;
-
-    button {
-      margin:0 1rem 0 0 !important;
-      padding: 0 !important;
-    } 
+// Sobreescriu el breakpoint del navigation block de WP (default: 600px → 1024px)
+@media only screen and (min-width: 600px) and (max-width: 1023px) {
+  .wp-block-navigation__responsive-container-open:not(.always-shown) {
+    display: flex !important;
   }
 
-  .menu-contacto {
-    margin: 0;
-    padding: 0;
-
-    ul {
-      margin: 1rem 0;
-      padding: 0;
-      gap: 1rem;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      li {
-        margin: 0;
-        padding: 0;
-      }
-    }
-  }
-
-  .wp-block-navigation__responsive-container.is-menu-open {
-    position: absolute;
-    background-color: red;
+  .wp-block-navigation__responsive-container:not(.hidden-by-default):not(.is-menu-open) {
+    display: none !important;
   }
 }
-.menu-desktop {
-  // background-color: gold;
-}
+
 
 // ICO MENU
 
@@ -55,19 +26,22 @@ body {
 }
 
 .wp-block-navigation__responsive-container-close,
-.wp-block-navigation__responsive-container-open{
+.wp-block-navigation__responsive-container-open {
   background-color: transparent;
   padding: 0 2rem;
+
   svg {
     height: 2rem !important;
-    width: 2rem !important;  
+    width: 2rem !important;
 
-    @include large {
+    @include variables.laptop {
       height: 3rem !important;
-      width: 3rem !important;  
+      width: 3rem !important;
     }
   }
 }
+
+
 
 /* LENGUAGE NAV */
 /*
@@ -115,182 +89,344 @@ header.wp-block-template-part {
 */
 
 
-.menu-butons{
+.menu-butons {
+
   #btn-open,
   #btn-close {
-    width: 30px;
-    height: 30px;
+    width: 2.75rem;
+    height: 2.75rem;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   #btn-close {
     display: none;
+
     &:hover {
-      cursor:pointer;
+      cursor: pointer;
     }
+
     &.active {
       display: block;
-      z-index: 1;
+      z-index: 99999;
       position: absolute;
       top: 2rem;
       right: 1rem;
-      justify-content:center;
-      
+      justify-content: center;
+
     }
   }
 
-  @include large {
-      #btn-open,
-      #btn-close {
+  @include variables.laptop {
+
+    #btn-open,
+    #btn-close {
+      width: 0 !important;
+      height: 0 !important;
+      display: none;
+
+      img {
         width: 0 !important;
-        height: 0 !important;
-        display: none;
-        img {
-          width: 0 !important;
-        }
       }
     }
+  }
+}
+
+// HEADER
+
+.head {
+  width: 100%;
+  align-content: flex-start;
+  padding-top: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  .brand {
+    width: 100%;
+
+    .wp-block-site-logo {
+      max-width: 14rem;
+      margin-top: 1rem;
+    }
+  }
+
+  .wp-block-navigation__responsive-container-open {
+    margin-top: -3rem;
+    margin-bottom: 3rem;
   }
 
 
 
+  .contactNav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    order: 2;
+    width: 100%;
+    max-width: 34rem;
+    gap: 1.5rem;
+    margin-top: -1rem;
+    z-index: 999;
 
-nav.menu {
+    .wp-block-navigation-item {
+      margin-left: 0;
 
-  .wp-block-navigation-item {
-    margin-left: 1rem;
-    a { 
-      color:$primary;
-      padding-bottom: 1.5rem;
-      &:hover {
-        text-decoration: none;
-      }
-    }
-    
-    &.submenu {
-      position: relative;
-      padding-right: 1rem;
-      &:after {
-        content:' ';
-        background:url('../images/ICO_SUBMENU.svg') center right no-repeat;
-        background-size: 100%;
-        position: absolute;
-        display: block;
-        right: -0.1rem;
-        top: .5rem;
-        width: 0.8rem;
-        height: 0.6rem;
-      }
-      &:hover {
-        &:after {
-          content:' ';
-          transform: rotate(180deg);
-        }
-      }
-    }
-    &.current-menu-item {
-      padding-right: 0;
       a {
-        color:$white !important;
-        border-radius: 1rem;
-        border:0.15rem solid $primary !important;
-        padding: 0.25rem 1rem 0.2rem;
-        transition: 0.2s;
-        background-color: $primary;
-        margin-top: -1.5rem;
+        color: variables.$gray !important;
+        font-weight: 200;
+        padding-bottom: 0;
       }
-      &.submenu {
-        &:after {
-           content:none;
-        }
-      }
-    }
-  } 
-}
 
-nav.menu-contacto {
-  margin-top: 1.5rem;
-  .wp-block-navigation-item {
-    margin-left: 1.5rem;
-    a {
-      color:$gray !important;
-      font-weight: 200;
-      padding-bottom: 0;
-    }
-    &.btn-centro {
-      a {
-        font-weight: 500;
-        color:$primary !important;
-        border-radius: 1.5rem;
-        border:0.15rem solid $primary !important;
-        padding: 0.35rem 1rem 0.3rem 2.2rem; 
-        transition: 0.2s;
-        &:hover {
-          text-decoration: none;
-        }
-        &:after {
-          content:' ';
-          background: url('../images/ICO_UBICACION.svg') center right no-repeat;
-          background-size: 90%;
-          position: absolute;
-          display: block;
-          left: .7rem;
-          top: .4rem;
-          width: 1.2rem;
-          height: 1.4rem;
-        }
-      }
-      &:hover {
+      &.btn-centro {
         a {
-          background-color: $primary;
-          color:$white !important;
+          font-weight: 500;
+          color: variables.$primary !important;
+          border-radius: 1.5rem;
+          border: 0.15rem solid variables.$primary !important;
+          padding: 0.35rem 1rem 0.3rem 2.2rem;
+          transition: 0.2s;
+
+          &:hover {
+            text-decoration: none;
+          }
+
           &:after {
-            filter: brightness(0) saturate(100%) invert(98%) sepia(100%) saturate(8%) hue-rotate(166deg) brightness(102%) contrast(104%);
+            content: ' ';
+            background: url('../images/ICO_UBICACION.svg') center right no-repeat;
+            background-size: 90%;
+            position: absolute;
+            display: block;
+            left: .7rem;
+            top: .4rem;
+            width: 1.2rem;
+            height: 1.4rem;
+          }
+        }
+
+        &:hover {
+          a {
+            background-color: variables.$primary;
+            color: variables.$white !important;
+
+            &:after {
+              filter: brightness(0) saturate(100%) invert(98%) sepia(100%) saturate(8%) hue-rotate(166deg) brightness(102%) contrast(104%);
+            }
           }
         }
       }
-    }
 
-    &.btn-donar {
-      a {
-        font-weight: 500;
-        color:$white !important;
-        border-radius: 1.5rem;
-        border:0.15rem solid $primary !important;
-        padding: 0.35rem 2.2rem 0.3rem 1rem;
-        transition: 0.2s;
-        background-color: $primary;
-        &:hover {
-          text-decoration: none;
-        }
-        &:after {
-          content:' ';
-          background: url('../images/ICO_CORAZON.svg') center right no-repeat;
-          background-size: 100%;
-          position: absolute;
-          display: block;
-          right: .65rem;
-          top: .5rem;
-          width: 1.2rem;
-          height: 1.2rem;
-        }
-      }
-      &:hover {
+      &.btn-donar {
         a {
-          background-color: $white;
-          color:$primary !important;
+          font-weight: 500;
+          color: variables.$white !important;
+          border-radius: 1.5rem;
+          border: 0.15rem solid variables.$primary !important;
+          padding: 0.35rem 2.2rem 0.3rem 1rem;
+          transition: 0.2s;
+          background-color: variables.$primary;
 
-           &:after {
-            filter: brightness(0) saturate(100%) invert(38%) sepia(90%) saturate(3431%) hue-rotate(172deg) brightness(85%) contrast(101%);
+          &:hover {
+            text-decoration: none;
+          }
+
+          &:after {
+            content: ' ';
+            background: url('../images/ICO_CORAZON.svg') center right no-repeat;
+            background-size: 100%;
+            position: absolute;
+            display: block;
+            right: .65rem;
+            top: .5rem;
+            width: 1.2rem;
+            height: 1.2rem;
+          }
+        }
+
+        &:hover {
+          a {
+            background-color: variables.$white;
+            color: variables.$primary !important;
+
+            &:after {
+              filter: brightness(0) saturate(100%) invert(38%) sepia(90%) saturate(3431%) hue-rotate(172deg) brightness(85%) contrast(101%);
+            }
           }
         }
       }
     }
   }
+
+
+  @include variables.laptop {
+    flex-direction: row;
+
+    .brand {
+      width: 20%;
+
+      .wp-block-site-logo {
+        margin-top: 0;
+        max-width: 19rem;
+      }
+    }
+
+
+
+    .menuNav {
+      flex-direction: column;
+      width: 80%;
+      gap: 1rem;
+
+      .contactNav {
+        order: 2;
+        margin-top: 0;
+      }
+
+      .menu {
+        order: 1;
+        position: absolute;
+        top: 1.5rem;
+        right: 0;
+        gap: 0;
+
+        .wp-block-navigation-item {
+          margin-left: 0;
+          padding-bottom: 0.75rem;
+
+          a {
+            color: variables.$primary;
+            padding: 0.5rem 1rem 1.5rem;
+            display: block;
+
+            &:hover {
+              text-decoration: none;
+            }
+          }
+
+          // .wp-block-navigation-submenu__toggle {
+          //   padding: 0 !important;
+          //   width: 5rem !important;
+
+          //   .wp-block-navigation-item {
+          //     background-color: red !important;
+          //     width: 5rem !important;
+          //   }
+
+          // }
+
+          .wp-block-navigation__submenu-icon {
+            height: 1em;
+            margin-left: 0;
+            padding: 0 0 0.8rem 0;
+            width: 1rem;
+            margin-left: 0.5rem;
+          }
+
+          &.submenu {
+            position: relative;
+            padding-right: 1rem;
+
+            &:after {
+              content: ' ';
+              background: url('../images/ICO_SUBMENU.svg') center right no-repeat;
+              background-size: 100%;
+              position: absolute;
+              display: block;
+              right: 0.5rem;
+              top: 0.85rem;
+              width: 0.8rem;
+              height: 0.6rem;
+            }
+
+            &:hover {
+              &:after {
+                content: ' ';
+                transform: rotate(180deg);
+              }
+            }
+          }
+
+          &.current-menu-item {
+            padding: 0 0 1.5rem 0;
+            margin: 1.5rem 0 0 0;
+
+            a {
+              color: variables.$white !important;
+              border-radius: 1rem;
+              border: 0.15rem solid variables.$primary !important;
+              padding: 0.25rem 1rem 0.2rem;
+              transition: 0.2s;
+              background-color: variables.$primary;
+              margin-top: -1.5rem;
+            }
+
+            &.submenu {
+              &:after {
+                content: none;
+              }
+            }
+          }
+        }
+
+        .wp-block-navigation__submenu-container {
+          flex-wrap: nowrap !important;
+          background-color: #ffffff;
+          padding: 0 !important;
+          width: 4rem !important;
+          max-width: 4rem !important;
+          min-width: 4rem !important;
+
+          .wp-block-navigation-item[data-wpml="language-item"] {
+            padding: 0 !important;
+            width: 4rem !important;
+            max-width: 4rem !important;
+            min-width: 4rem !important;
+            margin: 0 !important;
+            font-size: 0.85rem;
+
+            a {
+              padding: 0.5rem 1rem 1rem;
+              font-size: 0.85rem;
+            }
+          }
+        }
+      }
+
+      @include variables.laptop {
+        flex-direction: column;
+
+        .contactNav {
+          order: 1;
+          padding-top: 0.75rem;
+          justify-content: end;
+        }
+
+        .menu {
+          position: inherit;
+          top: 0;
+          right: 0;
+          width: 100%;
+          order: 2;
+        }
+      }
+    }
+
+  }
+
+
+
+  .wp-block-navigation__responsive-container-close,
+  .wp-block-navigation__responsive-container-open {
+    padding: 0 !important;
+  }
+
 }
+
+
+
 
 
 /* SUBMENUS */
-
 header.wp-block-template-part {
   .Sub_Menus {
     ul.wp-block-navigation__container {
@@ -298,36 +434,11 @@ header.wp-block-template-part {
       height: 235px;
       flex-wrap: wrap;
       gap: 0.5rem;
-      li {
-        width: 49%;
-<<<<<<< HEAD
-=======
-        &.MemoriaActividad {
-          display: none;
-        }
->>>>>>> main
-      }
-    } 
-  
-  }
-<<<<<<< HEAD
-}
-=======
-}
 
-
-footer.wp-block-template-part  {
-  .Sub_Menus {
-    ul.wp-block-navigation__container {
-      width: 100%;
-      height: 200px;
-      flex-wrap: wrap;
-      gap: 0;
       li {
         width: 49%;
       }
-    } 
-  
+    }
+
   }
 }
->>>>>>> main

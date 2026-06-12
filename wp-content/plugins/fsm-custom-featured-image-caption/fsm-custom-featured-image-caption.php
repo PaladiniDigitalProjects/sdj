@@ -2,7 +2,7 @@
 /**
 * Plugin Name: FSM Custom Featured Image Caption
 * Description: Allows adding custom captions to the featured image of posts and pages
-* Version: 1.25.1
+* Version: 1.26
 * Author: Fesomia
 * Author URI: http://wp.fesomia.cat
 
@@ -504,6 +504,9 @@ if ( ! class_exists( 'FSMCustomFeaturedImageCaption' ) ) {
 				$field_id    = '_FSMCFIC_featured_image_caption';
 				$field_value = isset($_POST[ $field_id ])?$_POST[ $field_id ]:'';
 				
+				//escape value to prevent script injection
+				$field_value = wp_kses_post($field_value);
+				
 				$field2_id = '_FSMCFIC_featured_image_nocaption';
 				$field2_value = isset($_POST[ $field2_id ])?$_POST[ $field2_id ]:'';
 				
@@ -684,8 +687,11 @@ function FSMCFIC_get_featured_image_caption($post,$args=array())
 	
 
 	
-	//escape html code if necessary
+	//escape html code if necessary, if not clean to prevent script injections
 	if (!$allow_html) { $caption = esc_html($caption); }
+	else {
+		$caption = wp_kses_post($caption);
+	}
 
 	//execute shortcodes
 	if ($allow_shortcodes) { $caption = do_shortcode($caption); }	

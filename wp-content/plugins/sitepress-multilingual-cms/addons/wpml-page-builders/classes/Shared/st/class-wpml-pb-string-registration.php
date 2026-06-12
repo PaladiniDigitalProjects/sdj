@@ -107,10 +107,6 @@ class WPML_PB_String_Registration {
 
 			} else {
 
-				if ( 'LINK' === $type && ! $this->translate_link_targets->is_internal_url( $content ) ) {
-					$type = 'LINE';
-				}
-
 				$string_value = $content;
 				$package      = $this->strategy->get_package_key( $post_id );
 				$string_title = $title ? $title : $string_value;
@@ -140,7 +136,7 @@ class WPML_PB_String_Registration {
 	 * Wrap tag is used for SEO significance, can contain values as h1 ... h6, etc.
 	 *
 	 * @param int    $string_id String id.
-	 * @param string $location  String location inside of the page builder content.
+	 * @param int    $location  String location inside of the page builder content.
 	 * @param string $wrap_tag  String wrap tag for SEO significance.
 	 */
 	private function update_string_data( $string_id, $location, $wrap_tag ) {

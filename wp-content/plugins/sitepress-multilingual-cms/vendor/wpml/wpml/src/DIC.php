@@ -2,7 +2,7 @@
 
 namespace WPML\Infrastructure\WordPress\CompositionRoot;
 
-use Auryn\Injector;
+use WPML\PHP\Auryn\Injector;
 
 /**
  * DIC implemmentation using Auryn.
@@ -26,7 +26,7 @@ class DIC {
    * @param class-string<T> $classname
    * @param array<string>|array<string,mixed> $args
    *
-   * @throws \Auryn\InjectionException
+   * @throws \WPML\PHP\Auryn\InjectionException
    *
    * Auryn returns 'mixed' so we need to ignore the type checking here.
    * @psalm-suppress MixedInferredReturnType
@@ -44,7 +44,7 @@ class DIC {
    *
    * @param string|object $classnameOrObject
    *
-   * @throws \Auryn\ConfigException
+   * @throws \WPML\PHP\Auryn\ConfigException
    *
    * @return void
    */
@@ -85,7 +85,7 @@ class DIC {
    * @param string $interfaceName
    * @param string $implementationName
    *
-   * @throws \Auryn\ConfigException
+   * @throws \WPML\PHP\Auryn\ConfigException
    *
    * @return void
    */

@@ -126,6 +126,6 @@ class WPML_TM_Overdue_Jobs_Report {
 			'Content-type: text/html; charset=UTF-8',
 		);
 
-		wp_mail( $to, $subject, $message, $headers );
+		WPML_Mail_Sender::send( $to, $subject, $message, $headers, array(), 'overdue-jobs-report' );
 	}
 }

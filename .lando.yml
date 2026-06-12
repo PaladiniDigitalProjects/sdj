@@ -20,7 +20,7 @@ services:
         PHP_IDE_CONFIG: "serverName=devsjd.lndo.site"
 
   database:
-    type: mysql:5.7
+    type: mysql:8.0
     portforward: true
 
   pma:

@@ -39,14 +39,7 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 	}
 
 	public function add_hooks() {
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-			return;
-		}
-
-		$request_uri = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
-		$extension   = substr( $request_uri, -4 );
-
-		if ( stripos( $request_uri, 'sitemap' ) !== false && in_array( $extension, [ '.xml', '.xsl' ], true ) ) {
+		if ( Utils::isSitemapRequest() ) {
 			$this->add_sitemap_hooks();
 		}
 	}

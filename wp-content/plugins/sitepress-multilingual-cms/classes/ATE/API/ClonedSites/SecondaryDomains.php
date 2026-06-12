@@ -67,6 +67,8 @@ class SecondaryDomains {
 	public function getInfo() {
 		$domains = $this->get();
 
+		$domains = $this->checkIfTheOriginalSiteUrlIsInAliasDomains( $domains );
+
 		if ( ! $domains ) {
 			return null;
 		}
@@ -75,6 +77,11 @@ class SecondaryDomains {
 			'originalSiteUrl' => Option::get( self::ORIGINAL_SITE_URL ),
 			'aliasDomains'    => $domains,
 		];
+	}
+
+	public function reset() {
+		Option::delete( self::OPTION );
+		Option::delete( self::ORIGINAL_SITE_URL );
 	}
 
 	/**
@@ -91,5 +98,23 @@ class SecondaryDomains {
 	 */
 	private function isRegistered( $domain ) {
 		return in_array( $domain, $this->get(), true );
+	}
+
+	/**
+	 * @param string[] $domains
+	 *
+	 * @return string[]|null
+	 */
+	private function checkIfTheOriginalSiteUrlIsInAliasDomains( $domains ) {
+		$originalSiteUrl = Option::get( self::ORIGINAL_SITE_URL );
+		if ( in_array( $originalSiteUrl, $domains, true ) ) {
+			// Delete these options so they will not be available in next migrations.
+			Option::delete( self::OPTION );
+			Option::delete( self::ORIGINAL_SITE_URL );
+
+			return null;
+		}
+
+		return $domains;
 	}
 }

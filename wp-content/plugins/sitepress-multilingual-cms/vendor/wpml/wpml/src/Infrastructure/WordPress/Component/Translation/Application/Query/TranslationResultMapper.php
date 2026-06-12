@@ -41,7 +41,7 @@ class TranslationResultMapper {
         $this->mapMethod( $row ),
         $row['translation_service'] !== 'local' ?
           new NoneEditor() :
-          $this->mapEditor( $row['editor'] ),
+          $this->mapEditor( $row['editor'], isset( $row['editor_job_id'] ) ? $row['editor_job_id'] : null ),
         (bool) $row['job_completed'],
         $row['translation_service'] !== 'local' ?
           (int) $row['translation_service'] :
@@ -64,10 +64,16 @@ class TranslationResultMapper {
   }
 
 
-  private function mapEditor( string $editor ): EditorInterface {
+  /**
+   * @param string   $editor
+   * @param int|null $editorJobId
+   *
+   * @return EditorInterface
+   */
+  private function mapEditor( string $editor, $editorJobId = null ): EditorInterface {
     switch ( $editor ) {
       case TranslationEditorType::ATE:
-        return new AteEditor();
+        return new AteEditor( $editorJobId );
       case TranslationEditorType::WORDPRESS:
         return new WordpressEditor();
       case TranslationEditorType::CLASSIC:

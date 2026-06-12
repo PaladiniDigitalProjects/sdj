@@ -1,37 +1,38 @@
-@import './variables.scss';
-@import './generics.scss';
-@import './header.scss';
-@import './buttons.scss';
-@import './animacions.scss';
-@import './wpforms.scss';
-@import './localizaciones.scss';
-@import './nav.scss';
-@import './listados.scss';
-@import './single.scss';
-@import './category.scss';
-@import './nutrities.scss';
-@import './components.scss';
-@import './event.scss';
-@import './page.scss';
-@import './grid.scss';
+@use 'variables.scss';
+@use 'helpers.scss';
+@use 'generics.scss';
+@use 'header.scss';
+@use 'buttons.scss';
+@use 'animacions.scss';
+@use 'wpforms.scss';
+@use 'localizaciones.scss';
+@use 'nav.scss';
+@use 'listados.scss';
+@use 'single.scss';
+@use 'category.scss';
+@use 'nutrities.scss';
+@use 'components.scss';
+@use 'event.scss';
+@use 'page.scss';
+@use 'grid.scss';
 
-// LANDING PAGES
-
-@import './landings/desnudos.scss';
-@import './landings/nutrities.scss';
 
 // BLOCKS
 
-@import './blocks/slider.scss';
+@use 'blocks/slider.scss';
 // @import './blocks/block-menu.scss';
 // @import './blocks/related.scss';
 // @import './blocks/events.scss';
 // @import './blocks/projects-slider.scss';
-@import './blocks/carousell.scss';
+@use 'blocks/carousell.scss';
 // @import './blocks/ticker.scss';
 // @import './blocks/mapa.scss';
-@import './blocks/noticias.scss';
-@import './blocks/relacionado.scss';
+@use 'blocks/noticias.scss';
+@use 'blocks/relacionado.scss';
 // @import './blocks/donaciones.scss';
 // @import './blocks/descargas.scss';
 // @import './blocks/redes-sociales.scss';
+// LANDING PAGES
+
+@use 'landings/desnudos.scss';
+@use 'landings/_nutrities.scss' as nutrities2;

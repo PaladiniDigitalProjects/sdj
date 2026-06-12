@@ -25,4 +25,10 @@ interface EnginesServiceInterface {
   public function update( array $engines );
 
 
+  /**
+   * @return void
+   */
+  public function flushCache();
+
+
 }

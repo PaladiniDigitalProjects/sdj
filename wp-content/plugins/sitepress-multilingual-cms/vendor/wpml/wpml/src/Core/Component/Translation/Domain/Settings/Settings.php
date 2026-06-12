@@ -2,7 +2,7 @@
 
 namespace WPML\Core\Component\Translation\Domain\Settings;
 
-use WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting;
+use WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting;
 
 class Settings {
 

@@ -45,23 +45,20 @@ class SendToTranslationController implements EndpointInterface {
     } catch ( InvalidArgumentException $e ) {
       return [
         'success' => false,
-        'data'    => __(
-          'The request data for SendToTranslation is not valid.',
-          'wpml'
+        'data' => sprintf(
+          __( 'The request data for SendToTranslation is not valid: %s', 'wpml' ),
+          $e->getMessage()
         )
       ];
     } catch ( TranslationService\TranslationServiceException $e ) {
       return [
         'success' => false,
-        'data'    => $e->getMessage()
+        'data'    => 'TranslationServiceException: ' . $e->getMessage()
       ];
     } catch ( Exception $e ) {
       return [
         'success' => false,
-        'data'    => __(
-          'An error occurred while sending the translation.',
-          'wpml'
-        )
+        'data'    => $e->getMessage()
       ];
     }
   }

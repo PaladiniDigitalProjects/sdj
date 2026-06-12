@@ -13,12 +13,18 @@ class Account implements AccountInterface {
   /**
    * @return CreditInfoDto
    * @throws AccountException
+   *
+   * Disable cyclomatic complexity check as it's just caused by ?? usages.
+   * phpcs:disable Generic.Metrics.CyclomaticComplexity.TooHigh
    */
   public function getCredits(): CreditInfoDto {
     $apiResult = \WPML\TM\API\ATE\Account::getCredits();
 
     $apiResult = $this->handleLegacyResult( $apiResult, __( 'Error getting credits', 'wpml' ) );
     $apiResult = is_array( $apiResult ) ? $apiResult : [];
+    $subscriptionDebt = isset( $apiResult['subscription_debt'] )
+      ? (int) $apiResult['subscription_debt']
+      : 0;
 
     return new CreditInfoDto(
       $apiResult['free_credits_amount'] ?? 0,
@@ -28,7 +34,8 @@ class Account implements AccountInterface {
       $apiResult['total_credits_deposited'] ?? 0,
       $apiResult['total_credits_spent'] ?? 0,
       $apiResult['pay_as_you_go'] ?? false,
-      $apiResult['subscription_max_limit'] ?? null
+      $apiResult['subscription_max_limit'] ?? null,
+      $subscriptionDebt
     );
   }
 

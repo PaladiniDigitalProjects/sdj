@@ -18,24 +18,17 @@ class DatabaseAlter implements DatabaseAlterInterface {
 
 
   /**
-   * @param \wpdb $wpdb Type defined here to allow injecting the global.
+   * @param \wpdb                 $wpdb Type defined here to allow injecting the global.
    * @param QueryPrepareInterface $queryPrepare
    */
   public function __construct( $wpdb, QueryPrepareInterface $queryPrepare ) {
-    $this->wpdb = $wpdb;
+    $this->wpdb         = $wpdb;
     $this->queryPrepare = $queryPrepare;
   }
 
 
   /**
-   * @param string          $table
-   * @param string|string[] $fields
-   * @parame string|null    $name   Optional. If not provided the first field name is used.
-   *
-   * @return bool
-   *
-   * @throws DatabaseErrorException
-   * @throws InvalidArgumentException
+   * @inheritDoc
    */
   public function addIndex( string $table, $fields, string $name = null ) {
     // Validate the fields.
@@ -70,6 +63,98 @@ class DatabaseAlter implements DatabaseAlterInterface {
     // Create the index.
     $this->wpdb->query(
       "ALTER TABLE `$table` ADD INDEX `$name` ( `" . implode( '`, `', $fields ) . "` )"
+    );
+
+    if ( $this->wpdb->last_error ) {
+      throw new DatabaseErrorException( $this->wpdb->last_error );
+    }
+
+    return true;
+  }
+
+
+  /**
+   * @inheritDoc
+   */
+  public function addColumn( string $table, string $column, $type, $default = null ) {
+    $column = $this->queryPrepare->escString( $column );
+
+    /** @var string $table */
+    $table = $this->wpdb->prefix . $this->queryPrepare->escString( $table );
+
+    // Check if the index already exists.
+    $fieldExists = $this->wpdb->get_results(
+      "SHOW COLUMNS FROM `$table` LIKE '$column'"
+    );
+
+    if ( $fieldExists ) {
+      return true;
+    }
+
+    $default = $default !== null
+      ? "DEFAULT $default"
+      : 'NULL';
+
+    // Add the column.
+    $this->wpdb->query(
+      "ALTER TABLE `$table` ADD $column $type $default"
+    );
+
+    if ( $this->wpdb->last_error ) {
+      throw new DatabaseErrorException( $this->wpdb->last_error );
+    }
+
+    return true;
+  }
+
+
+  /**
+   * @inheritDoc
+   */
+  public function dropColumn( string $table, string $column ) {
+    if ( empty( $table ) || empty( $column ) ) {
+      throw new InvalidArgumentException( 'Table and column names must be non-empty strings.' );
+    }
+
+    $table  = $this->wpdb->prefix . $this->queryPrepare->escString( $table );
+    $column = $this->queryPrepare->escString( $column );
+
+    // Check if the column exists
+    $columnExists = $this->wpdb->get_results(
+      "SHOW COLUMNS FROM `$table` LIKE '$column'"
+    );
+
+    if ( ! $columnExists ) {
+      return true;
+    }
+
+    // Drop the column
+    $this->wpdb->query(
+      "ALTER TABLE `$table` DROP COLUMN `$column`"
+    );
+
+    if ( $this->wpdb->last_error ) {
+      throw new DatabaseErrorException( $this->wpdb->last_error );
+    }
+
+    return true;
+  }
+
+
+  /**
+   * @inheritDoc
+   */
+  public function truncateColumn( string $table, string $column ) {
+    if ( empty( $table ) || empty( $column ) ) {
+      throw new InvalidArgumentException( 'Table and column names must be non-empty strings.' );
+    }
+
+    $table  = $this->wpdb->prefix . $this->queryPrepare->escString( $table );
+    $column = $this->queryPrepare->escString( $column );
+
+    // Truncate the column by setting all values to NULL
+    $this->wpdb->query(
+      "UPDATE `$table` SET `$column` = NULL"
     );
 
     if ( $this->wpdb->last_error ) {

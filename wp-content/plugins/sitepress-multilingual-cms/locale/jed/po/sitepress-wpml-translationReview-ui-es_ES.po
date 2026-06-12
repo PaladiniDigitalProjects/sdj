@@ -2,14 +2,16 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/translationReview/components/AcceptedMessage.js:8
 msgid "Accepted"
-msgstr "Aceptada"
+msgstr "Aceptado"
 
 #: src/js/translationReview/components/AcceptedText.js:8
 msgid "Approved!"
-msgstr "¡Aprobada!"
+msgstr "¡Aprobado!"
 
 #: src/js/translationReview/components/AcceptedText.js:9
 #: src/js/translationReview/components/PublishedText.js:9
@@ -18,17 +20,17 @@ msgstr "Cargando la siguiente traducción para revisión..."
 
 #: src/js/translationReview/components/BackButton.js:7
 msgid "Back"
-msgstr "Volver"
+msgstr "Atrás"
 
 #: src/js/translationReview/components/ContinueReviewToggle.js:17
 msgid ""
 "Turn off to not automatically load the next translation after finishing "
 "this review."
-msgstr "Desactive esta opción para no cargar la siguiente traducción automáticamente después de finalizar esta revisión."
+msgstr "Desactivar para no cargar automáticamente la siguiente traducción después de finalizar esta revisión."
 
 #: src/js/translationReview/components/ContinueReviewToggle.js:18
 msgid "Turn on to automatically load the next translation after finishing this  ."
-msgstr "Activar para cargar la siguiente traducción después de finalizar esta"
+msgstr "Activar para cargar automáticamente la siguiente traducción después de finalizar esta."
 
 #: src/js/translationReview/components/EditButton.js:10
 msgid "Edit"
@@ -37,10 +39,6 @@ msgstr "Editar"
 #: src/js/translationReview/components/EditButton.js:9
 msgid "Edit translation"
 msgstr "Editar traducción"
-
-#: src/js/translationReview/components/InProgressText.js:8
-msgid "Please wait, applying translation.."
-msgstr "Espere, por favor. Aplicando traducción..."
 
 #: src/js/translationReview/components/NextTranslationReview.js:22
 msgid "Next review"
@@ -58,10 +56,14 @@ msgstr "Aceptar esta traducción"
 msgid "Published!"
 msgstr "¡Publicado!"
 
-#: src/js/translationReview/hooks/useATESync.js:34
-msgid "Someone is already reviewing this translation. Please try again later."
-msgstr "Ya hay alguien revisando esta traducción. Inténtelo de nuevo más tarde."
+#: src/js/updateTranslationFrontend/components/InProgressText.js:8
+msgid "Please wait, applying translation.."
+msgstr "Espere, aplicando traducción..."
 
-#: src/js/translationReview/store.js:29
+#: src/js/updateTranslationFrontend/store.js:29
 msgid "There was an error in applying translation."
-msgstr "Ocurrió un error al aplicar la traducción."
+msgstr "Hubo un error al aplicar la traducción."
+
+#: src/js/updateTranslationFrontend/useATESync.js:34
+msgid "Someone is already reviewing this translation. Please try again later."
+msgstr "Alguien ya está revisando esta traducción. Por favor, inténtelo de nuevo más tarde."

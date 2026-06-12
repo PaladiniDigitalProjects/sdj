@@ -81,8 +81,8 @@ class Hooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 		return Maybe::of( $post->ID )
 			->map( [ self::class, 'getPackages' ] )
 			->map( Fns::map( $joinPackageStringHashes ) )
-			->filter()
 			->map( Lst::join( self::HASH_SEP ) )
+			->filter()
 			->getOrElse( $content );
 	}
 
@@ -129,7 +129,7 @@ class Hooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 		// $resaveElement :: \WPML_Post_Element → null
 		$resaveElement = Fns::unary( partialRight( [ $this->pbIntegration, 'resave_post_translation_in_shutdown' ], false ) );
 
-		$callAction = function( \WPML_Post_Element $post ) {
+		$callAction = function ( \WPML_Post_Element $post ) {
 			$postId = $post->get_element_id();
 
 			/**
@@ -153,7 +153,7 @@ class Hooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 	 * @return bool
 	 */
 	private function isPageBuilder( $postId ) {
-		$isPbPostWithoutStrings = function( $postId ) {
+		$isPbPostWithoutStrings = function ( $postId ) {
 			$post = get_post( $postId );
 
 			return $post instanceof \WP_Post

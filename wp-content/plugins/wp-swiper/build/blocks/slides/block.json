@@ -1,4 +1,5 @@
 {
+  "apiVersion": 3,
   "name": "da/wp-swiper-slides",
   "category": "media",
   "supports": {
@@ -14,9 +15,6 @@
     "align": {
       "type": "string",
       "default": ""
-    },
-    "txtColor": {
-      "type": "string"
     },
     "overlayColor": {
       "type": "object",
@@ -179,6 +177,10 @@
       "type": "boolean",
       "default": true
     },
+    "sliderHeight": {
+      "type": "string",
+      "default": "500px"
+    },
     "freeMode": {
       "type": "boolean",
       "default": false
@@ -222,6 +224,14 @@
     "overflowVisible": {
       "type": "boolean",
       "default": false
+    },
+    "navigationColor": {
+      "type": "string",
+      "default": ""
+    },
+    "paginationColor": {
+      "type": "string",
+      "default": ""
     }
   }
 }

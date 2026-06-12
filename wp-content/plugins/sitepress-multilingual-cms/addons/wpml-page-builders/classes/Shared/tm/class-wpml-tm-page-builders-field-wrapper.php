@@ -118,7 +118,7 @@ class WPML_TM_Page_Builders_Field_Wrapper {
 				return false;
 			}
 			$package_strings = wp_list_pluck( $package_strings, 'type', 'id' );
-			$result          = $package_strings[ $this->get_string_id() ];
+			$result          = $package_strings[ $this->get_string_id() ] ?? false;
 		}
 
 		return $result;

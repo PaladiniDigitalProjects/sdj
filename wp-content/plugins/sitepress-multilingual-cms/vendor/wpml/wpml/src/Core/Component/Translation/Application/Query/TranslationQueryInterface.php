@@ -44,4 +44,12 @@ interface TranslationQueryInterface {
   ): array;
 
 
+  /**
+   * @param int $batchId
+   *
+   * @return int[]
+   */
+  public function getJobIdsByBatchId( int $batchId ): array;
+
+
 }

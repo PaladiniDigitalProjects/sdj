@@ -1,0 +1,43 @@
+.pds-multilang-logo {
+	img {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	&--empty,
+	.components-placeholder {
+		width: 100%;
+	}
+}
+
+.pds-multilang-logo__lang-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.pds-multilang-logo__lang-label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.pds-multilang-logo__flag {
+	width: 18px;
+	height: auto;
+	display: block;
+}
+
+.pds-multilang-logo__default-badge {
+	font-size: 11px;
+	opacity: 0.6;
+}
+
+.pds-multilang-logo__lang-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}

@@ -22,7 +22,7 @@ class WPML_WP_In_Subdir_URL_Filters_Factory implements IWPML_Frontend_Action_Loa
 			$uri_without_subdir = wpml_strip_subdir_from_url( $request_uri );
 
 			if ( trim( $request_uri, '/' ) !== trim( $uri_without_subdir, '/' ) ) {
-				$backtrace = new WPML_Debug_BackTrace( null, 5 );
+				$backtrace = new WPML_Debug_BackTrace( null, 10 );
 				return new WPML_WP_In_Subdir_URL_Filters( $backtrace, $sitepress, $wpml_url_converter, $uri_without_subdir );
 			}
 		}

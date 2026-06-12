@@ -215,6 +215,8 @@ abstract class WPML_Post_Translation extends WPML_Element_Translation {
 		// Flush object cache.
 		$this->flush_object_cache_for_groups( array( 'ls_languages', WPML_ELEMENT_TRANSLATIONS_CACHE_GROUP ) );
 
+		WPML_Pre_Option_Page::maybe_clear_privacy_policy_cache( $original_id, $post_vars['post_type'] );
+
 		do_action( 'wpml_after_save_post', $post_vars['ID'], $trid, $language_code, $source_language );
 	}
 

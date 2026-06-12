@@ -166,8 +166,11 @@ class Parser {
 			// If the navigation LS has submenu block inside the same parent navigation block,
 			// we inherit the values of openOnClick and showArrow settings from the parent block,
 			// otherwise the values from navigation LS attributes will be used
-			$openOnClick = Obj::propOr( null, 'openSubmenusOnClick', $context );
-			$showArrow   = Obj::propOr( null, 'showSubmenuIcon', $context );
+			$submenuVisibility = Obj::propOr( null, 'submenuVisibility', $context );
+			$openOnClick       = null !== $submenuVisibility
+				? 'click' === $submenuVisibility
+				: Obj::propOr( null, 'openSubmenusOnClick', $context );
+			$showArrow         = Obj::propOr( null, 'showSubmenuIcon', $context );
 		}
 
 		if ( $openOnClick !== null ) {

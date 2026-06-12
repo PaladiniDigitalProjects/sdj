@@ -15,6 +15,7 @@ use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\Admin
 use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\Api;
 use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\ConfigEvents;
 use WPML\Infrastructure\WordPress\Component\Communication\Domain\DismissedNoticesStorage;
+use WPML\UserInterface\Web\Infrastructure\WordPress\CompositionRoot\Config\RegisterNotices;
 
 if ( defined( 'WPML_VERSION' ) ) {
   // Already loaded.
@@ -26,11 +27,14 @@ require_once __DIR__ . '/src/constants.php';
 global $sitepress;
 $plugin = new Plugin( $sitepress );
 
+global $wpml_dic;
 $dic = new Dic();
+$wpml_dic = $dic;
 $configArray = require_once __DIR__ . '/src/config.php';
 $api = new Api();
 $adminPage = new AdminPage( $api );
-$updatesRepository = new UpdatesRepository( new Options(), $plugin );
+$updatesRepository = new UpdatesRepository( new Options() );
+$registerNotices = new RegisterNotices();
 
 $compositionRoot = new CompositionRoot(
   $dic,
@@ -46,7 +50,9 @@ $compositionRoot = new CompositionRoot(
       new UpdatesUpdateHandler( $api, $updatesRepository ),
       $plugin
     ),
-    new DismissedNoticesQuery( new DismissedNoticesStorage() )
+    new DismissedNoticesQuery( new DismissedNoticesStorage() ),
+    $registerNotices,
+    $plugin
   ),
   new ConfigEvents( $dic )
 );
@@ -72,22 +78,23 @@ add_action(
   }
 );
 
-
-// REST Api.
+// Admin.
 add_action(
   'admin_init',
   function () use ( $compositionRoot ) {
+    $compositionRoot->prepareUpdates();
     $compositionRoot->loadAdminNotices();
     $compositionRoot->loadAjaxEndpoints();
   }
 );
 
 
-// Scripts for admin.
+// Admin Scripts.
 add_action(
   'admin_enqueue_scripts',
   function () use ( $compositionRoot ) {
-    $compositionRoot->prepareUpdates();
     $compositionRoot->loadAdminScripts();
+    $compositionRoot->loadContentStatsScripts();
+    $compositionRoot->loadCheckPosthogShouldRecordScript();
   }
 );

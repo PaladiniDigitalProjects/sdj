@@ -5,6 +5,7 @@ namespace WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchQ
 use WPML\Core\Component\Post\Application\Query\Criteria\SearchCriteria;
 use WPML\Core\Component\Post\Application\Query\Dto\PostWithTranslationStatusDto;
 use WPML\Core\Component\Post\Application\Query\Dto\TranslationStatusDto;
+use WPML\Core\Component\Translation\Application\Service\CompletedTranslationService;
 use WPML\Core\Port\Persistence\ResultCollection;
 use WPML\Core\Port\Persistence\ResultCollectionInterface;
 use WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorType;
@@ -28,9 +29,17 @@ class ItemWithTranslationStatusDtoMapper {
     'post_status',
     'post_date',
     'post_type',
-    'word_count',
-    'translator_note'
+    'translator_note',
+    'use_native_editor'
   ];
+
+  /** @var CompletedTranslationService */
+  private $completedTranslationService;
+
+
+  public function __construct( CompletedTranslationService $completedTranslationService ) {
+    $this->completedTranslationService = $completedTranslationService;
+  }
 
 
   /**
@@ -89,8 +98,9 @@ class ItemWithTranslationStatusDtoMapper {
       $rawData['post_date'],
       $rawData['post_type'],
       $translationStatuses,
-      is_numeric( $rawData['word_count'] ) ? (int) $rawData['word_count'] : null,
-      $rawData['translator_note']
+      isset( $rawData['word_count'] ) && is_numeric( $rawData['word_count'] ) ? (int) $rawData['word_count'] : null,
+      $rawData['translator_note'],
+      in_array( $rawData['use_native_editor'], [ 'yes', 'no' ], true ) ? $rawData['use_native_editor'] : ''
     );
   }
 
@@ -115,7 +125,13 @@ class ItemWithTranslationStatusDtoMapper {
 
       $status = TranslationStatus::getPostDisplayStatus( $job )->get();
 
-      $isTranslated = (int) $job['element_id'] > 0;
+      $isTranslated = $this->completedTranslationService->isTranslationCompleted(
+        $status,
+        (bool) $job['needs_update'],
+        (int) $job['translation_id'],
+        (int) $job['element_id']
+      );
+
       $editor       = $this->parseEditor( $job['editor'] );
       $method       = $this->getMethod(
         $status,
@@ -131,7 +147,8 @@ class ItemWithTranslationStatusDtoMapper {
         $method,
         $editor,
         $isTranslated,
-        $job['translator_id'] ? (int) $job['translator_id'] : null
+        $job['translator_id'] ? (int) $job['translator_id'] : null,
+        isset( $job['editor_job_id'] ) ? (int) $job['editor_job_id'] : null
       );
     }
 

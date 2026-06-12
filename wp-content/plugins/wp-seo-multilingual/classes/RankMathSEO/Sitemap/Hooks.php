@@ -38,13 +38,13 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 	/**
 	 * @param array  $url
 	 * @param string $type
-	 * @param object $object
+	 * @param object $obj
 	 *
 	 * @return array|null
 	 */
-	public function filterEntry( $url, $type, $object ) {
+	public function filterEntry( $url, $type, $obj ) {
 		if ( $url && 'post' === $type ) {
-			return $this->replaceHomePageInSecondaryLanguages( $url, $object );
+			return $this->replaceHomePageInSecondaryLanguages( $url, $obj );
 		}
 
 		return $url;
@@ -52,17 +52,17 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
 	/**
 	 * @param array  $url
-	 * @param object $object
+	 * @param object $obj
 	 *
 	 * @return array
 	 */
-	private function replaceHomePageInSecondaryLanguages( $url, $object ) {
+	private function replaceHomePageInSecondaryLanguages( $url, $obj ) {
 		if ( null === $this->secondaryHomesById ) {
 			/** @var Callable(object):bool $isInDefaultLang */
 			$isInDefaultLang = Relation::propEq( 'language_code', $this->sitepress->get_default_language() );
 
 			// $getIdAndUrl :: \stdClass -> []
-			$getIdAndUrl = function( $translation ) {
+			$getIdAndUrl = function ( $translation ) {
 				return [
 					(int) $translation->element_id,
 					$this->urlConverter->convert_url( home_url(), $translation->language_code ),
@@ -81,7 +81,7 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 			'loc',
 			Obj::propOr(
 				$url['loc'],
-				(int) Obj::prop( 'ID', $object ),
+				(int) Obj::prop( 'ID', $obj ),
 				$this->secondaryHomesById
 			),
 			$url

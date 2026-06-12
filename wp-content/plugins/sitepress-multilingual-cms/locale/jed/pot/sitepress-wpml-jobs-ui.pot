@@ -405,7 +405,7 @@ msgid "The translator has been assigned to the job"
 msgstr ""
 
 #: src/js/jobs/model/store/assignTranslator.js:22
-#: src/js/jobs/model/store/openEditor.js:29
+#: src/js/jobs/model/store/openEditor.js:37
 msgid "The translator could not be assigned to the job"
 msgstr ""
 

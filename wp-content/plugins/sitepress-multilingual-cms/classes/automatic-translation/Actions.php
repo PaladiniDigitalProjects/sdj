@@ -34,15 +34,15 @@ class Actions implements \IWPML_Action {
 	/** @var \WPML_Translation_Element_Factory */
 	private $translationElementFactory;
 
-  /** @var PackageDefinitionQuery */
-  private $packageDefinitionQuery;
+	/** @var PackageDefinitionQuery */
+	private $packageDefinitionQuery;
 
 	public function __construct(
 		\WPML_Translation_Element_Factory $translationElementFactory,
-    $packageDefinitionQuery = null
+		$packageDefinitionQuery = null
 	) {
 		$this->translationElementFactory = $translationElementFactory;
-    $this->packageDefinitionQuery = $packageDefinitionQuery ?: new PackageDefinitionQuery();
+		$this->packageDefinitionQuery    = $packageDefinitionQuery ?: new PackageDefinitionQuery();
 	}
 
 	public function add_hooks() {
@@ -216,17 +216,25 @@ class Actions implements \IWPML_Action {
 			return;
 		}
 
-		$isNotCompleteAndUpToDate = Logic::complement( self::isCompleteAndUpToDateJob() );
+		$isNotCompleteAndUpToDate      = Logic::complement( self::isCompleteAndUpToDateJob() );
+		$isPostElementAndUsingTmEditor = $this->isPostElementAndUsingNativeEditor( $translationElement );
 
-		$sendToTranslation = function ( $language ) use ( $translationElement, $isNotCompleteAndUpToDate ) {
+		$sendToTranslation = function ( $language ) use (
+			$translationElement,
+			$isNotCompleteAndUpToDate,
+			$isPostElementAndUsingTmEditor
+		) {
 			/** @var \stdClass|false $job */
 			$job = Jobs::getElementJob( $translationElement->get_element_id(), $translationElement->get_wpml_element_type(), $language );
 
 			if (
-				! $job
-				|| (
-					$isNotCompleteAndUpToDate( $job )
-					&& $this->canJobBeReTranslatedAutomatically( $job->job_id )
+				$isPostElementAndUsingTmEditor
+				&& (
+					! $job
+					|| (
+						$isNotCompleteAndUpToDate( $job )
+						&& $this->canJobBeReTranslatedAutomatically( $job->job_id )
+					)
 				)
 			) {
 				$this->createJob( $translationElement, $language );
@@ -242,7 +250,11 @@ class Actions implements \IWPML_Action {
 	 * @return bool
 	 */
 	private function canJobBeReTranslatedAutomatically( $jobId ) {
-		return wpml_tm_load_old_jobs_editor()->get( $jobId ) === \WPML_TM_Editors::ATE;
+		$wpmlTmLoadOldJobsEditor = wpml_tm_load_old_jobs_editor();
+		$editorForOldJobs        = $wpmlTmLoadOldJobsEditor->get( $jobId );
+		$currentJobEditor        = $wpmlTmLoadOldJobsEditor->get_current_editor( $jobId );
+
+		return $editorForOldJobs === \WPML_TM_Editors::ATE || $currentJobEditor === \WPML_TM_Editors::WP;
 	}
 
 	/**
@@ -333,5 +345,18 @@ class Actions implements \IWPML_Action {
 			->map( Obj::addProp( 'elementType', Fns::always( $elementType === 'st-batch' ? 'st-batch_strings' : $elementType ) ) )
 			->map( Obj::addProp( 'jobId', $getJobId ) )
 			->toArray();
+	}
+
+	/**
+	 * Check if element type is Post and not using native editor.
+	 *
+	 * @param \WPML_Translation_Element $translationElement
+	 *
+	 * @return bool
+	 */
+	private function isPostElementAndUsingNativeEditor( \WPML_Translation_Element $translationElement ): bool {
+		return $translationElement->get_element_type() === 'post'
+			? \WPML_TM_Post_Edit_TM_Editor_Mode::is_using_tm_editor( null, $translationElement->get_element_id(), false )
+			: true;
 	}
 }

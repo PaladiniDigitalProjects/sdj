@@ -8,13 +8,13 @@ interface IWPML_PB_Strategy {
 	public function register_strings( $post );
 
 	/**
-	 * @param int                             $post_id
-	 * @param string                          $content
-	 * @param WPML\PB\Shortcode\StringCleanUp $stringCleanUp
+	 * @param int                                  $post_id
+	 * @param string                               $content
+	 * @param WPML\PB\Shortcode\StringCleanUp|null $stringCleanUp
 	 *
 	 * @return bool - true if strings were added.
 	 */
-	public function register_strings_in_content( $post_id, $content, WPML\PB\Shortcode\StringCleanUp $stringCleanUp = null );
+	public function register_strings_in_content( $post_id, $content, $stringCleanUp = null );
 
 	/**
 	 * @param WPML_PB_Factory $factory

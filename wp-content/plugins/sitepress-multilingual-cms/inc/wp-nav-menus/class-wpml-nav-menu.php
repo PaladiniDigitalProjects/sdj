@@ -418,7 +418,7 @@ class WPML_Nav_Menu {
 					jQuery(document).ready(function () {
 						addLoadEvent(function () {
 							var update_menu_form = jQuery('#update-nav-menu');
-							update_menu_form.find('.publishing-action:first').before('<?php echo addslashes_gpc( $langsel ); ?>');
+							update_menu_form.find('.publishing-action:first').before(<?php echo wp_json_encode( $langsel ); ?>);
 							jQuery('#side-sortables').before('<?php $this->languages_menu(); ?>');
 				<?php if ( $this->current_lang != $default_language ) : ?>
 							jQuery('.nav-tabs .nav-tab').each(function () {

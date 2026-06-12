@@ -7,7 +7,6 @@ use WPML\TM\Jobs\Query\OrderQueryHelper;
 use WPML\TM\Jobs\Query\PackageQuery;
 use WPML\TM\Jobs\Query\PostQuery;
 use WPML\TM\Jobs\Query\QueryBuilder;
-use WPML\TM\Jobs\Query\StringQuery;
 use WPML\TM\Jobs\Query\StringsBatchQuery;
 use WPML\FP\Obj;
 use function WPML\Container\make;
@@ -173,23 +172,6 @@ if ( ! \WPML\Plugins::isTMActive() && ( ! wpml_is_setup_complete() || false !== 
 		}
 
 		return $translate_independently;
-	}
-
-	/**
-	 * @return WPML_Translation_Proxy_Basket_Networking
-	 */
-	function wpml_tm_load_basket_networking() {
-		global $iclTranslationManagement, $wpdb;
-
-		if ( ! defined( 'WPML_TM_PATH' ) ) {
-			return null;
-		}
-
-		require_once WPML_TM_PATH . '/inc/translation-proxy/wpml-translationproxy-basket-networking.class.php';
-
-		$basket = new WPML_Translation_Basket( $wpdb );
-
-		return new WPML_Translation_Proxy_Basket_Networking( $basket, $iclTranslationManagement );
 	}
 
 	/**
@@ -487,20 +469,16 @@ if ( ! \WPML\Plugins::isTMActive() && ( ! wpml_is_setup_complete() || false !== 
 		$job->id		= $job_id;
 		$job->source_id = $rid;
 
-		$previousStatus = \WPML_TM_ICL_Translation_Status::makeByRid( $rid )->previous();
-		if ( $previousStatus->map( Obj::prop( 'status' ) )->getOrElse( null ) === (string) ICL_TM_ATE_CANCELLED ) {
+		$previousStatus = \WPML\Translation\PreviousStateServiceFactory::create()->get( $translation_job->get_translation_id() );
+    if ( $previousStatus && (int) $previousStatus['status'] === ICL_TM_ATE_CANCELLED ) {
 			wpml_tm_load_job_factory()->update_job_data( $job_id, array( 'editor' => WPML_TM_Editors::ATE ) );
 			$job->existing_ate_id = make( \WPML\TM\ATE\JobRecords::class )->get_ate_job_id( $job_id );
 		} else {
-			/**
-			 * We have to use the previous state because in this place the job has already changed its status from COMPLETED to IN PROGRESS.
-			 */
-			$apply_memory = (bool) $previousStatus->map( function ( $job ) use ( $applyTranslationMemoryForCompletedJobs ) {
-				$result = (int) Obj::prop( 'status', $job ) === ICL_TM_COMPLETE && ! Obj::prop( 'needs_update', $job ) ? $applyTranslationMemoryForCompletedJobs : true;
+			$completedTranslationService = ( new \WPML\Translation\CompletedTranslationServiceFactory() )->create();
 
-				// I have to cast it to int because if I return bool FALSE, Maybe internal mechanism treats it as nullable and default value from `getOrElse` is returned instead of $result.
-				return (int) $result;
-			} )->getOrElse( $applyTranslationMemoryForCompletedJobs );
+			$hasBeenCompletedBefore = $completedTranslationService->hasJobBeenCompletedBeforeResending( $job_id );
+			$isStringBatchJob       = strpos( $translation_job->get_basic_data_property( 'original_post_type' ) ?? '', 'st-batch_' ) === 0;
+			$apply_memory           = ( $hasBeenCompletedBefore || $isStringBatchJob ) ? $applyTranslationMemoryForCompletedJobs : true;
 
 			$job->source_language->code = $translation_job->get_source_language_code();
 			$job->source_language->name = $translation_job->get_source_language_code( true );
@@ -509,31 +487,31 @@ if ( ! \WPML\Plugins::isTMActive() && ( ! wpml_is_setup_complete() || false !== 
 			$job->deadline              = strtotime( $translation_job->get_deadline_date() );
 			$job->apply_memory          = $apply_memory;
 			$job->job_sender            = \WPML\TM\ATE\JobSender\JobSenderRepository::get();
-			/*
-			 * wpmldev-1840
-			 *
-			 * With wpmldev-1730 WPML estimates the credits, which the site will
-			 * require by fetching post content, title and excerpt.
-			 * In the future this estimation should happen on ATE, but for that
-			 * they need to get the WPML calculated chars per job to compare
-			 * with the real costs for the translation.
-			 * Once ATE is providing the calculation and does no longer need
-			 * the `wpml_chars_count` parameter, the following block
-			 * until "END" can be deleted.
-			 *
-			 * Also the property "wpml_chars_count" can be removed from
-			 * ./classes/ATE/models/class-wpml-tm-ate-models-job-create.php
-			 */
-			$fields    = $translation_job->get_original_fields();
-			foreach ( $fields as $key => $value ) {
-				if (
-					! empty( $value ) &&
-					in_array( $key, [ 'title', 'body', 'excerpt' ], true )
-				) {
-					$job->wpml_chars_count += apply_filters( 'wpml_word_count_chars', 0, $value );
-				}
+
+			try {
+				global $wpml_dic;
+				/** @var \WPML\Core\Component\WordsToTranslate\Application\Service\WordsToTranslateService $wordsToTranslateService */
+				$wordsToTranslateService = $wpml_dic->make( \WPML\Core\Component\WordsToTranslate\Application\Service\WordsToTranslateService::class );
+				/** @var \WPML\Core\Component\WordsToTranslate\Domain\Job\JobDTO $wtt */
+				$wtt = $wordsToTranslateService->getForJob( $job_id, ! $apply_memory );
+
+				$job->wpml_words_to_translate_count    = $wtt->getWordsToTranslate();
+				$job->wpml_automatic_translation_costs = $wtt->getAutomaticTranslationCosts();
+				$job->ate_previous_job_ids             = $wtt->getPreviousAteJobIds();
+
+				wpml_tm_load_job_factory()->update_job_data(
+					$job->id,
+					array(
+						'wpml_words_to_translate_count' => $job->wpml_words_to_translate_count,
+						'wpml_automatic_translation_costs' => $job->wpml_automatic_translation_costs,
+					)
+				);
+			} catch ( Exception $e ) {
+				// Let ATE calculate.
+				$job->wpml_words_to_translate_count    = null;
+				$job->wpml_automatic_translation_costs = null;
+				$job->ate_previous_job_ids			   = [];
 			}
-			/* END */
 
 			$job->permalink = '#';
 			if ( $translation_job instanceof WPML_Post_Translation_Job ) {
@@ -694,12 +672,11 @@ if ( ! \WPML\Plugins::isTMActive() && ( ! wpml_is_setup_complete() || false !== 
 	 * It returns a single instance of the class.
 	 *
 	 * @param bool $forceReload
-	 * @param bool $loadObsoleteStringQuery
 	 * @param bool $dontCache
 	 *
 	 * @return \WPML_TM_Jobs_Repository
 	 */
-	function wpml_tm_get_jobs_repository( $forceReload = false, $loadObsoleteStringQuery = true, $dontCache = false ) {
+	function wpml_tm_get_jobs_repository( $forceReload = false, $dontCache = false ) {
 		static $repository;
 
 		if ( ! $repository || $forceReload ) {
@@ -716,13 +693,6 @@ if ( ! \WPML\Plugins::isTMActive() && ( ! wpml_is_setup_complete() || false !== 
 					$wpdb,
 					new QueryBuilder( $limit_helper, $order_helper )
 				);
-
-				if ( $loadObsoleteStringQuery ) {
-					$subqueries[] = new StringQuery(
-						$wpdb,
-						new QueryBuilder( $limit_helper, $order_helper )
-					);
-				}
 				$subqueries[] = new StringsBatchQuery(
 					$wpdb,
 					new QueryBuilder( $limit_helper, $order_helper )

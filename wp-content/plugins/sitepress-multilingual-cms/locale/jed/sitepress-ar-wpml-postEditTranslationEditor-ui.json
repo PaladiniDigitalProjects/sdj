@@ -3,28 +3,36 @@
    "locale_data": {
       "messages": {
          "": {
-            "domain": "messages"
+            "domain": "messages",
+            "plural_forms": "nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);",
+            "lang": "ar"
          },
+         "Translation Dashboard": [
+            "لوحة تحكم الترجمة"
+         ],
          "WPML Translation Editor": [
-            "محرر WPML للترجمة"
+            "محرر ترجمة WPML"
          ],
          "WordPress Editor": [
-            "محرر WordPress"
+            "محرر ووردبريس"
          ],
-         "Translate with the WordPress Editor when you want to create different designs for translations, or if you're translating content that's incompatible with WPML's Translation Editor.": [
-            "ترجم باستخدام محرر ووردبريس عندما تريد إنشاء تصميمات مختلفة للترجمات، أو إذا كنت تترجم محتوى غير متوافق مع محرر الترجمة الخاص بـ WPML."
+         "Also, switching back to WPML's Translation Editor later will require re-translating content that you translated with the WordPress editor.": [
+            "أيضًا، سيتطلب التبديل مرة أخرى إلى محرر ترجمة WPML لاحقًا إعادة ترجمة المحتوى الذي ترجمته باستخدام محرر ووردبريس."
          ],
-         "What do you want to translate with the WordPress Editor?": [
-            "ماذا تريد أن تترجم باستخدام محرر ووردبريس؟?"
+         "This will overwrite content you translated with the WordPress Editor. If you switch now, you'll have to translate selected content again.": [
+            "سيؤدي هذا إلى الكتابة فوق المحتوى الذي ترجمته باستخدام محرر ووردبريس. إذا قمت بالتبديل الآن، فسيتعين عليك ترجمة المحتوى المحدد مرة أخرى."
+         ],
+         "You are about to translate with the %s": [
+            "أنت على وشك الترجمة باستخدام %s"
+         ],
+         "Translate with the WordPress Editor if you need different designs per language or if the content isn't compatible with WPML's Translation Editor.": [
+            "ترجم باستخدام محرر ووردبريس إذا كنت بحاجة إلى تصميمات مختلفة لكل لغة أو إذا كان المحتوى غير متوافق مع محرر ترجمة WPML."
+         ],
+         "What do you want to translate?": [
+            "ماذا تريد أن تترجم؟"
          ],
          "I understand, switch to the WordPress Editor": [
-            "أفهم، انتقل إلى محرر ووردبريس"
-         ],
-         "What do you want to translate with WPML Translation Editor?": [
-            "ماذا تريد أن تترجم باستخدام محرر الترجمة الخاص بـ WPML؟?"
-         ],
-         "I understand, switch to WPML's Translation Editor": [
-            "أفهم، انتقل إلى محرر الترجمة الخاص بـ WPML"
+            "أتفهم، التبديل إلى محرر ووردبريس"
          ],
          "Apply": [
             "تطبيق"
@@ -32,29 +40,29 @@
          "Cancel": [
             "إلغاء"
          ],
+         "I understand, switch to %s": [
+            "أتفهم، التبديل إلى %s"
+         ],
          "Only this %s": [
-            "فقط هذا %s"
+            "هذا %s فقط"
          ],
          "Recommended": [
             "موصى به"
          ],
          "All %s": [
-            "جميع %s"
+            "كل %s"
          ],
          "All the site's content": [
             "كل محتوى الموقع"
          ],
-         "Are you sure?": [
-            "هل أنت متأكد؟?"
+         "I understand, switch to Translation Dashboard": [
+            "أتفهم، التبديل إلى لوحة تحكم الترجمة"
          ],
          "The WordPress Editor doesn't offer Automatic Translation, Translation Memory and other features that make translation easier.": [
-            "لا يوفر محرر ووردبريس الترجمة التلقائية وذاكرة الترجمة وميزات أخرى تجعل الترجمة أسهل."
+            "لا يقدم محرر ووردبريس الترجمة التلقائية، وذاكرة الترجمة، والميزات الأخرى التي تسهل الترجمة."
          ],
-         "And, if you switch back to WPML's Translation Editor, you will need to translate from scratch what you translated with the WordPress editor.": [
-            "وإذا عدت إلى محرر الترجمة الخاص بـ WPML، ستحتاج إلى ترجمة ما ترجمته باستخدام محرر ووردبريس من البداية."
-         ],
-         "When you update content that you previously translated with the WordPress Editor, you will need to translate from scratch.": [
-            "عند تحديث المحتوى الذي قمت بترجمته مسبقًا باستخدام محرر ووردبريس، ستحتاج إلى الترجمة من البداية."
+         "Translate items in batch after reviewing the cost of AI translation": [
+            "ترجمة العناصر دفعة واحدة بعد مراجعة تكلفة ترجمة AI"
          ]
       }
    }

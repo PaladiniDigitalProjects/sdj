@@ -42,6 +42,7 @@ class LanguageSwitcher {
 
 	private function registerLanguageSwitcherBlock() {
 		$blockSettings = [
+			'api_version'     => '3',
 			'render_callback' => [ $this->render, 'render_block' ],
 		];
 
@@ -50,6 +51,7 @@ class LanguageSwitcher {
 	}
 	private function registerNavigationLanguageSwitcherBlock() {
 		$blockSettings = [
+			'api_version'     => '3',
 			'render_callback' => [ $this->render, 'render_block' ],
 			'attributes'      => [
 				'navigationLsHasSubMenuInSameBlock' => [
@@ -69,6 +71,7 @@ class LanguageSwitcher {
 				'layout',
 				'showSubmenuIcon',
 				'openSubmenusOnClick',
+				'submenuVisibility',
 				'style',
 				'textColor',
 				'customTextColor',

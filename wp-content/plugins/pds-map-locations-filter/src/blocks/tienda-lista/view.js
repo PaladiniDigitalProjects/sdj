@@ -6,21 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const attrs = JSON.parse(blockWrapper.dataset.blockInit || '{}');
     const blockId = blockWrapper.id;
     const { ajax_url: ajaxUrl, nonce, i18n: globalI18n } = window.mlf_ajax;
-    const initialNumStores = parseInt(attrs.numStores, 10) || 12;
+    const initialNumStores = attrs.showAllResults ? -1 : (parseInt(attrs.numStores, 10) || 12);
     const initialStyle = attrs.displayStyle || 'list';
     const i18n = {
       loading: globalI18n.loadingLocations || globalI18n.loading,
       noResults: attrs.i18n?.noResults || 'No stores found matching your criteria.',
     };
-    const lockContainerHeight = () => {
-      const height = resultsContainer.offsetHeight;
-      resultsContainer.style.height = `${height}px`;
-    };
 
-    const releaseContainerHeight = () => {
-      resultsContainer.style.height = '';
-    };
-    
+ 
     const resultsContainer = blockWrapper.querySelector('.pds-tiendas-results-container');
     const searchInput = blockWrapper.querySelector(`#${blockId}-mlf-search-input`);
     const taxonomySelects = blockWrapper.querySelectorAll('.mlf-filters-select');
@@ -30,6 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentTaxonomies = {};
     let currentDisplayStyle = initialStyle;
     const numStores = initialNumStores;
+
+    // Browsers restore <input>/<select> values from the previous visit on
+    // back/forward navigation, which would leave the filter UI showing a
+    // value that no longer matches the freshly initialized (empty) state
+    // above. Reset the controls so the visible filter always matches the
+    // results that are about to be fetched.
+    const resetFilters = () => {
+      if (searchInput) searchInput.value = '';
+      taxonomySelects.forEach(select => { select.value = 'all'; });
+      currentSearch = '';
+      currentTaxonomies = {};
+    };
+    resetFilters();
 
    
     const applyDisplayStyle = () => {
@@ -42,8 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
    
     const fetchStores = debounce(async () => {
-      lockContainerHeight();
-
       resultsContainer.innerHTML = `<p class="pds-tiendas-loading">${i18n.loading}</p>`;
       blockWrapper.classList.add('is-loading');
 
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('nonce', nonce);
       formData.append('search', currentSearch);
       formData.append('taxonomies', JSON.stringify(currentTaxonomies));
-      formData.append('numStores', numStores);
+      formData.append('numStores', numStores); 
       formData.append('displayStyle', currentDisplayStyle);
 
       try {
@@ -63,19 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
           resultsContainer.innerHTML = data.data.html;
         } else {
           resultsContainer.innerHTML = `<p class="pds-tiendas-error">${i18n.noResults}</p>`;
+          console.error('AJAX error:', data.data);
         }
       } catch (err) {
         resultsContainer.innerHTML = `<p class="pds-tiendas-error">${i18n.noResults}</p>`;
+        console.error('Fetch error:', err);
       } finally {
         blockWrapper.classList.remove('is-loading');
-
-        // Allow the browser to render new content first
-        requestAnimationFrame(() => {
-          releaseContainerHeight();
-        });
       }
     }, 300);
-
 
     // Event listeners
 
@@ -103,8 +103,21 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-  
+
     fetchStores();
+
+    // On back/forward navigation (e.g. after visiting a location's "ficha"
+    // and going back), browsers restore <input>/<select> values from the
+    // previous visit — and on bfcache restores this script doesn't re-run at
+    // all — so the wrapper could keep showing a filter UI that no longer
+    // matches its results. `pageshow` fires in both cases (and on the
+    // initial load too), so reset and refetch every time to keep them in sync.
+    window.addEventListener('pageshow', () => {
+      currentDisplayStyle = initialStyle;
+      applyDisplayStyle();
+      resetFilters();
+      fetchStores();
+    });
   });
 
 

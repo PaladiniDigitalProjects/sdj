@@ -36,6 +36,9 @@ final class TranslationStatusDto implements ConstructableFromArrayInterface {
   /** @var int|null */
   private $translatorId;
 
+  /** @var int|null */
+  private $ateJobId;
+
 
   /**
    * @param int                          $status
@@ -45,6 +48,7 @@ final class TranslationStatusDto implements ConstructableFromArrayInterface {
    * @param TranslationEditorType::*     $editor
    * @param bool                         $isTranslated
    * @param int|null                     $translatorId
+   * @param int|null                     $ateJobId
    */
   public function __construct(
     int $status,
@@ -53,7 +57,8 @@ final class TranslationStatusDto implements ConstructableFromArrayInterface {
     $method = null,
     $editor = TranslationEditorType::NONE,
     bool $isTranslated = false,
-    int $translatorId = null
+    int $translatorId = null,
+    int $ateJobId = null
   ) {
     $this->status       = $status;
     $this->reviewStatus = $reviewStatus;
@@ -62,6 +67,7 @@ final class TranslationStatusDto implements ConstructableFromArrayInterface {
     $this->editor       = $editor;
     $this->isTranslated = $isTranslated;
     $this->translatorId = $translatorId;
+    $this->ateJobId     = $ateJobId;
   }
 
 
@@ -101,12 +107,23 @@ final class TranslationStatusDto implements ConstructableFromArrayInterface {
 
 
   /**
+   * @return int|null
+   */
+  public function getAteJobId() {
+    return $this->ateJobId;
+  }
+
+
+  /**
    * @return array{
    *  status: int,
    *  reviewStatus: ?ReviewStatus::*,
    *  jobId: int|null,
    *  method: ?TargetLanguageMethodType::*,
-   *  editor: TranslationEditorType::*
+   *  editor: TranslationEditorType::*,
+   *  isTranslated: bool,
+   *  translatorId: int|null,
+   *  ateJobId: int|null
    *  }
    */
   public function toArray(): array {
@@ -117,7 +134,8 @@ final class TranslationStatusDto implements ConstructableFromArrayInterface {
       'method'       => $this->method,
       'editor'       => $this->editor,
       'isTranslated' => $this->isTranslated,
-      'translatorId' => $this->translatorId
+      'translatorId' => $this->translatorId,
+      'ateJobId'     => $this->ateJobId
     ];
   }
 

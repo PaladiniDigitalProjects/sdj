@@ -20,15 +20,29 @@ use function WPML\FP\curryN;
 use function WPML\FP\invoke;
 use function WPML\FP\pipe;
 
+/**
+ * Low-level language mappings utility for ATE API calls.
+ *
+ * WARNING: Methods in this class make ATE API calls regardless of whether ATE is enabled.
+ * For most use cases, prefer using \WPML\TM\ATE\AutomaticTranslationCapabilities instead,
+ * which safely checks ATE status before making any API calls.
+ *
+ * @see \WPML\TM\ATE\AutomaticTranslationCapabilities
+ */
 class LanguageMappings {
 	const IGNORE_MAPPING_OPTION = 'wpml-languages-ignore-mapping';
 	const IGNORE_MAPPING_ID = - 1;
 
-
-	public static function getAllLanguagesWithAutomaticSupportInfo(): array {
-		return static::withCanBeTranslatedAutomatically( Languages::getActive() );
+	/**
+	 * @see \WPML\TM\ATE\AutomaticTranslationCapabilities::withCapabilityInfo() for a safe alternative
+	 */
+	public static function getAllLanguagesWithAutomaticSupportInfo( $sourceLang = null ): array {
+		return static::withCanBeTranslatedAutomatically( Languages::getActive(), $sourceLang );
 	}
 
+	/**
+	 * @see \WPML\TM\ATE\AutomaticTranslationCapabilities::doesDefaultLanguageSupport() for a safe alternative
+	 */
 	public static function doesDefaultLanguageSupportAutomaticTranslations(): bool {
 		$languages = static::getAllLanguagesWithAutomaticSupportInfo();
 
@@ -40,14 +54,17 @@ class LanguageMappings {
 		return false;
 	}
 
-	public static function withCanBeTranslatedAutomatically( $languages = null ) {
-		$fn = curryN( 1, function ( $languages ) {
+	/**
+	 * @see \WPML\TM\ATE\AutomaticTranslationCapabilities::withCapabilityInfo() for a safe alternative
+	 */
+	public static function withCanBeTranslatedAutomatically( $languages = null, $sourceLang = null ) {
+		$fn = curryN( 1, function ( $languages, $sourceLang = null ) {
 			if ( ! is_object( $languages ) && ! is_array( $languages ) ) {
 				return $languages;
 			}
 			$ateAPI             = static::getATEAPI();
 			$targetCodes        = Lst::pluck( 'code', Obj::values( $languages ) );
-			$supportedLanguages = $ateAPI->get_languages_supported_by_automatic_translations( $targetCodes )->getOrElse( [] );
+			$supportedLanguages = $ateAPI->get_languages_supported_by_automatic_translations( $targetCodes, $sourceLang )->getOrElse( [] );
 
 			$areThereAnySupportedLanguages = Lst::find( Logic::isNotNull(), $supportedLanguages );
 			$isSupportedCode               = pipe( Obj::prop( Fns::__, $supportedLanguages ), Logic::isNotNull() );
@@ -65,12 +82,25 @@ class LanguageMappings {
 				Logic::ifElse( $isDefaultCode, $isDefaultLangSupported, $isSupportedCode )
 			) );
 
-			return Fns::map( Obj::addProp( 'can_be_translated_automatically', $isSupported ), $languages );
+			$engine = function( $language ) use ( $supportedLanguages ) {
+				return $supportedLanguages->{$language['code']}->engine ?? null;
+			};
+
+			return Fns::map(
+				pipe(
+					Obj::addProp( 'engine', $engine ),
+					Obj::addProp( 'can_be_translated_automatically', $isSupported )
+				),
+				$languages
+			);
 		} );
 
 		return call_user_func_array( $fn, func_get_args() );
 	}
 
+	/**
+	 * @see \WPML\TM\ATE\AutomaticTranslationCapabilities::isLanguageEligible() for a safe alternative
+	 */
 	public static function isCodeEligibleForAutomaticTranslations( $languageCode = null ) {
 		$fn = Lst::includes( Fns::__, static::geCodesEligibleForAutomaticTranslations() );
 
@@ -145,6 +175,8 @@ class LanguageMappings {
 
 	/**
 	 * @return array
+	 *
+	 * @see \WPML\TM\ATE\AutomaticTranslationCapabilities::getEligibleLanguageCodes() for a safe alternative
 	 */
 	public static function getLanguagesEligibleForAutomaticTranslations() {
 		return Wrapper::of( Languages::getSecondaries() )
@@ -155,6 +187,8 @@ class LanguageMappings {
 
 	/**
 	 * @return string[]
+	 *
+	 * @see \WPML\TM\ATE\AutomaticTranslationCapabilities::getEligibleLanguageCodes() for a safe alternative
 	 */
 	public static function geCodesEligibleForAutomaticTranslations() {
 		return Lst::pluck( 'code', static::getLanguagesEligibleForAutomaticTranslations() );

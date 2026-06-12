@@ -19,13 +19,13 @@ class WPML_PB_API_Hooks_Strategy implements IWPML_PB_Strategy {
 	}
 
 	/**
-	 * @param string|int                      $post_id
-	 * @param string                          $content
-	 * @param WPML\PB\Shortcode\StringCleanUp $stringCleanUp
+	 * @param string|int                           $post_id
+	 * @param string                               $content
+	 * @param WPML\PB\Shortcode\StringCleanUp|null $stringCleanUp
 	 *
 	 * @return bool
 	 */
-	public function register_strings_in_content( $post_id, $content, WPML\PB\Shortcode\StringCleanUp $stringCleanUp = null ) {
+	public function register_strings_in_content( $post_id, $content, $stringCleanUp = null ) {
 		return false;
 	}
 
@@ -68,7 +68,5 @@ class WPML_PB_API_Hooks_Strategy implements IWPML_PB_Strategy {
 	}
 
 	public function migrate_location( $post_id, $post_content ) {
-
 	}
-
 }

@@ -20,6 +20,9 @@ class Proxy implements \IWPML_Frontend_Action, \IWPML_DIC_Action
 			function () {
 				$script = $this->get_script();
 				if ($script) {
+					while ( ob_get_level() > 0 ) {
+						ob_end_clean();
+					}
 					include $script;
 					die();
 				}

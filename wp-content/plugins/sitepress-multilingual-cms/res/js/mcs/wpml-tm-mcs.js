@@ -93,4 +93,53 @@ jQuery(function () {
   radioButtons.forEach(function(radio) {
     radio.addEventListener('change', updateTableClass);
   });
+
+  // Handle ATE for old translations' checkbox.
+  const useAteForOldTranslationModal = jQuery('.wpml-js-warning-modal-ate-for-old-translations');
+  const useAteForOldTranslationCheckbox = jQuery('input[name="wpml-old-jobs-editor"]');
+  const translationMethodFormSubmit = jQuery('#icl_doc_translation_method input[type="submit"]');
+
+  useAteForOldTranslationCheckbox.prop('disabled', false);
+  useAteForOldTranslationCheckbox.change(function () {
+    if (jQuery(this).prop('checked')) {
+      useAteForOldTranslationModal.data('submittedData', false);
+      useAteForOldTranslationModal.dialog('open');
+    } else {
+      translationMethodFormSubmit.click();
+    }
+  });
+
+  useAteForOldTranslationModal.dialog({
+    autoOpen: false,
+    modal: true,
+    dialogClass: 'wpml-dialog otgs-ui-dialog otgs-ui-dialog-no-border wpml-use-ate-confirmation-modal',
+    resizable: false,
+    close: function (e) {
+      if (!useAteForOldTranslationModal.data('submittedData')) {
+        useAteForOldTranslationCheckbox.prop('checked', false);
+      }
+    },
+    buttons:
+      [
+        {
+          text: useAteForOldTranslationModal.data('close-btn-txt'),
+          class: 'wpml-button base-btn button-secondary wpml-button--outlined',
+          click: function () {
+            jQuery(this).dialog("close");
+          }
+        },
+        {
+          text: useAteForOldTranslationModal.data('ok-btn-txt'),
+          class: 'button-primary wpml-button base-btn',
+          click: function () {
+            translationMethodFormSubmit.click();
+            useAteForOldTranslationModal.data('submittedData', true);
+            jQuery(this).dialog("close");
+          }
+        },
+      ],
+    focus: function () {
+      jQuery('.wpml-use-ate-confirmation-modal .ui-dialog-buttonpane .button-secondary').blur();
+    }
+  })
 });

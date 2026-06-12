@@ -4,6 +4,7 @@
  */
 
 use WPML\Infrastructure\WordPress\Component\Translation\Domain\Links\Repository;
+use WPML\TM\Upgrade\Commands\CreateUnsolvableJobsTable;
 use WPML\Upgrade\Commands\CreateBackgroundTaskTable;
 
 function icl_reset_language_data() {
@@ -140,6 +141,9 @@ function icl_sitepress_activate() {
                 `editor_job_id` BIGINT(20) UNSIGNED NULL,
                 `edit_timestamp` INT(11) UNSIGNED NULL,
                 `automatic` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                `ate_sync_count` INT(6) UNSIGNED DEFAULT 0,
+                `wpml_words_to_translate_count` INT(11) UNSIGNED NULL,
+                `wpml_automatic_translation_costs` INT(11) UNSIGNED NULL,
                 INDEX ( `rid` , `translator_id` )
                 ) {$charset_collate}
             ";
@@ -264,23 +268,6 @@ function icl_sitepress_activate() {
 			}
 		}
 
-		$table_name  = $wpdb->prefix . 'icl_string_status';
-		$found_table = (string) $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" );
-		if ( 0 !== strcasecmp( $found_table, $table_name ) ) {
-			$sql = "
-                  CREATE TABLE IF NOT EXISTS `{$table_name}` (
-                `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-                `rid` BIGINT NOT NULL ,
-                `string_translation_id` BIGINT NOT NULL ,
-                `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-                `md5` VARCHAR( 32 ) NOT NULL,
-                INDEX ( `string_translation_id` )
-                ) {$charset_collate}";
-			if ( $wpdb->query( $sql ) === false ) {
-				throw new Exception( $wpdb->last_error );
-			}
-		}
-
 		$table_name  = $wpdb->prefix . 'icl_string_positions';
 		$found_table = (string) $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" );
 		if ( 0 !== strcasecmp( $found_table, $table_name ) ) {
@@ -319,25 +306,6 @@ function icl_sitepress_activate() {
 			if ( $wpdb->query( $sql ) === false ) {
 				throw new Exception( $wpdb->last_error );
 			}
-		}
-
-		/* string translation - start */
-		$icl_translation_sql = "
-             CREATE TABLE IF NOT EXISTS {$wpdb->prefix}icl_core_status (
-            `id` BIGINT NOT NULL auto_increment,
-            `rid` BIGINT NOT NULL,
-            `module` VARCHAR( 16 ) NOT NULL ,
-            `origin` VARCHAR( 64 ) NOT NULL ,
-            `target` VARCHAR( 64 ) NOT NULL ,
-            `status` SMALLINT NOT NULL,
-            `tp_revision` INT NOT NULL DEFAULT 1,
-            `ts_status` TEXT NULL DEFAULT NULL,
-            PRIMARY KEY ( `id` ) ,
-            INDEX ( `rid` )
-            ) {$charset_collate}
-      ";
-		if ( $wpdb->query( $icl_translation_sql ) === false ) {
-			throw new Exception( $wpdb->last_error );
 		}
 
 		$icl_translation_sql = "
@@ -391,6 +359,11 @@ function icl_sitepress_activate() {
 			throw new Exception( $wpdb->last_error );
 		}
 
+		// Create tables for translate jobs errors.
+		$icl_translation_jobs_errors_table_task = CreateUnsolvableJobsTable::create_table_if_not_exists( $wpdb );
+		if ( ! $icl_translation_jobs_errors_table_task ) {
+			throw new Exception( $wpdb->last_error );
+		}
 	} catch ( Exception $e ) {
 		trigger_error( $e->getMessage(), E_USER_ERROR );
 		exit;

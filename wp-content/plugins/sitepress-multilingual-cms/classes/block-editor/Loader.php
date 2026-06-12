@@ -22,11 +22,14 @@ class Loader implements \IWPML_Backend_Action, \IWPML_REST_Action {
 	/** @var [string] Name of blocks which css is already loaded. */
 	private $cssLoaded = [];
 
+	/** @var bool */
+	private $keyboard_script_enqueued = false;
+
 	public function add_hooks() {
 		if ( \WPML_Block_Editor_Helper::is_active() ) {
 			Hooks::onAction( 'init' )
-			     ->then( [ $this, 'registerBlocks' ] )
-			     ->then( [ $this, 'maybeEnqueueNavigationBlockStyles' ] );
+				->then( [ $this, 'registerBlocks' ] )
+				->then( [ $this, 'maybeEnqueueNavigationBlockStyles' ] );
 
 			add_filter(
 				'render_block',
@@ -35,11 +38,11 @@ class Loader implements \IWPML_Backend_Action, \IWPML_REST_Action {
 				2
 			);
 
-			Hooks::onAction( 'enqueue_block_editor_assets' )
+			Hooks::onAction( 'enqueue_block_assets' )
 			     ->then( [ $this, 'enqueueBlockAssets' ] );
 
 			Hooks::onFilter( 'block_categories_all', 10, 2 )
-			     ->then( spreadArgs( [ $this, 'registerCategory' ] ) );
+				->then( spreadArgs( [ $this, 'registerCategory' ] ) );
 		}
 	}
 
@@ -73,14 +76,59 @@ class Loader implements \IWPML_Backend_Action, \IWPML_REST_Action {
 	 * @return void
 	 */
 	public function enqueueBlockAssets() {
+		// Only enqueue in editor context to avoid loading on frontend
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		$dependencies        = array_merge( [
 			'wp-blocks',
 			'wp-i18n',
 			'wp-element',
 		], $this->getEditorDependencies() );
 		$localizedScriptData = [ 'name' => 'WPMLBlocks', 'data' => $this->localizedScriptData ];
-		$enqueuedApp = Resources::enqueueAppWithoutVendor( 'blocks' );
-		$enqueuedApp( $localizedScriptData, $dependencies );
+		$this->enqueueBlocksApp( $localizedScriptData, $dependencies );
+	}
+
+	/**
+	 * Enqueue the block editor bundle with filemtime-based versioning so
+	 * iterative branch testing does not reuse stale cached assets.
+	 *
+	 * @param array    $localizedScriptData
+	 * @param string[] $dependencies
+	 *
+	 * @return void
+	 */
+	private function enqueueBlocksApp( array $localizedScriptData, array $dependencies ) {
+		$handle         = 'wpml-blocks-ui';
+		$scriptRelative = '/dist/js/blocks/app.js';
+		$styleRelative  = '/dist/css/blocks/styles.css';
+		$scriptPath     = WPML_PLUGIN_PATH . $scriptRelative;
+		$stylePath      = WPML_PLUGIN_PATH . $styleRelative;
+		$scriptVersion  = file_exists( $scriptPath ) ? (string) filemtime( $scriptPath ) : (string) ICL_SITEPRESS_SCRIPT_VERSION;
+		$styleVersion   = file_exists( $stylePath ) ? (string) filemtime( $stylePath ) : $scriptVersion;
+
+		wp_register_script(
+			$handle,
+			ICL_PLUGIN_URL . $scriptRelative,
+			$dependencies,
+			$scriptVersion,
+			false
+		);
+
+		wp_localize_script( $handle, $localizedScriptData['name'], $localizedScriptData['data'] );
+		wp_enqueue_script( $handle );
+
+		if ( file_exists( $stylePath ) ) {
+			wp_enqueue_style(
+				$handle,
+				ICL_PLUGIN_URL . $styleRelative,
+				[],
+				$styleVersion
+			);
+		}
+
+		wp_set_script_translations( $handle, 'sitepress', WPML_PLUGIN_PATH . '/locale/jed' );
 	}
 
 	public function frontendPrintStyleIfBlockIsUsed( $content, $block ) {
@@ -101,6 +149,7 @@ class Loader implements \IWPML_Backend_Action, \IWPML_REST_Action {
 
 		// Always include language switcher styles.
 		$css = $this->styleLanguageSwitcher();
+		$this->enqueueLanguageSwitcherKeyboardScript();
 
 		// Check if the navigation language switcher is used.
 		if ( self::BLOCK_LANGUAGE_SWITCHER_NAVIGATION === $block['blockName'] ) {
@@ -127,11 +176,38 @@ class Loader implements \IWPML_Backend_Action, \IWPML_REST_Action {
 		}
 
 		$this->cssLoaded[] = self::BLOCK_LANGUAGE_SWITCHER;
-		$css = file_get_contents(
+		$css               = file_get_contents(
 			WPML_PLUGIN_PATH . '/dist/css/blocks/language-switcher.css'
 		);
 
 		return $css ?: '';
+	}
+
+	/**
+	 * Enqueue the keyboard accessibility script for the Language Switcher blocks.
+	 *
+	 * @return void
+	 * @see \WPML_LS_Render::add_menu_accessibility_script()
+	 */
+	private function enqueueLanguageSwitcherKeyboardScript() {
+		if ( $this->keyboard_script_enqueued ) {
+			return;
+		}
+
+		$this->keyboard_script_enqueued = true;
+		$scriptRelativePath             = '/dist/js/language-switcher-block-keyboard-navigation/app.js';
+		$scriptPath                     = WPML_PLUGIN_PATH . $scriptRelativePath;
+		$scriptVersion                  = file_exists( $scriptPath ) ? (string) filemtime( $scriptPath ) : (string) ICL_SITEPRESS_SCRIPT_VERSION;
+
+		wp_register_script(
+			'wpml-language-switcher-block-keyboard-navigation',
+			ICL_PLUGIN_URL . $scriptRelativePath,
+			[],
+			$scriptVersion,
+			true
+		);
+
+		wp_enqueue_script( 'wpml-language-switcher-block-keyboard-navigation' );
 	}
 
 	/**
@@ -143,7 +219,7 @@ class Loader implements \IWPML_Backend_Action, \IWPML_REST_Action {
 		}
 
 		$this->cssLoaded[] = self::BLOCK_LANGUAGE_SWITCHER_NAVIGATION;
-		$css = file_get_contents(
+		$css               = file_get_contents(
 			WPML_PLUGIN_PATH . '/dist/css/blocks/language-switcher-navigation.css'
 		);
 

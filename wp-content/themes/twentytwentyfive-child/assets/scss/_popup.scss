@@ -1,5 +1,5 @@
 .show .custom-cover .wp-block-cover__inner-container {
-  z-index: 0 !important;
+  z-index: 0  ;
 }
 
 body.show {
@@ -7,22 +7,22 @@ body.show {
   position: fixed;
   width: 100%;
   &:after {
-    position: absolute !important;
+    position: absolute  ;
     content:' ';
     display: block;
     background: rgba(0, 0, 0, 0.4);
-    z-index: 5 !important;
+    z-index: 5  ;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    z-index: 10 !important;
+    z-index: 10  ;
     transition: background 0.15s linear;
   }
 }
 
 .wpforms-container {
-  padding: 0 !important;
+  padding: 0  ;
 }
 
 
@@ -57,7 +57,7 @@ body.show {
 
   div.wpforms-container-full button[type=submit],
   div.wpforms-container-full .wpforms-page-button {
-  background-color: $white !important;
+  background-color: $white;
   color: #000;
   float: right;
   border-radius: 0.3rem;
@@ -66,16 +66,16 @@ body.show {
 
 .show .custom-group {
   text-align: center;
-  opacity:1 !important;
-  z-index: 99 !important;
-  position: absolute !important;
+  opacity:1  ;
+  z-index: 99  ;
+  position: absolute  ;
   top: 0;
   left: calc(50% - 10rem);
   bottom: auto;
   right: calc(50% - 10rem);
   transform: translate(0, 0);
   background-color: #000000;
-  padding: 1rem 1rem 1rem 1rem !important;
+  padding: 1rem 1rem 1rem 1rem  ;
   height: inherit;
   width: 20rem;
   -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.58);
@@ -87,30 +87,30 @@ body.show {
   display: block;
 
   .wpforms-field-label-inline {
-    color:#ffffff !important;
-    text-align: left !important;
+    color:#ffffff  ;
+    text-align: left  ;
   }
   a {
-    color:#ffffff !important;
+    color:#ffffff ;
     text-decoration: underline;
   }
   .wpforms-field-medium {
-    color:#ffffff !important;
-    background: #000000 !important;
-    border-bottom:1px solid $white !important;
+    color:#000000 ;
+    background: #000000 ;
+    border-bottom:1px solid #000 ;
     &::placeholder {
-      color:$white !important;
+      color:$white  ;
     }
   }
 
   .wpforms-field-medium:focus {
-    color:$white !important;
-    border:1px solid $white !important;
-    background-color: #000000 !important;
+    color:#000 ;
+    border:1px solid #000 ;
+    background-color: $white ;
   }
 
   .wpforms-submit {
-    color:#000000 !important;
+    color:#000000  ;
   }
 
 
@@ -118,16 +118,16 @@ body.show {
   div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirection-message) {
     border: 1px solid #000000;
     box-sizing: border-box;
-    background-color: #000000 !important;
-    color:$white !important;
+    background-color: #000000 ;
+    color:$white ;
   }
 
   div.wpforms-container-full .wpforms-confirmation-container-full p,
   div[submit-success]>.wpforms-confirmation-container-full:not(.wpforms-redirection-message) p {
     color: #ffffff;
-    font-size: 1.4rem !important;
-    text-align: left !important;
-    background-color: #000000 !important;
+    font-size: 1.4rem  ;
+    text-align: left  ;
+    background-color: #000000  ;
   }
 
   div.wpforms-container-full .wpforms-confirmation-container-full,
@@ -144,7 +144,6 @@ body.show {
     top: 1.25rem;
     cursor: pointer;
     font-size: 2rem;
-    font-size: 28px;
   }
 }
 
@@ -153,7 +152,7 @@ body.show {
   .show .custom-group {
     left: calc(50% - 15rem);
     right: calc(50% - 15rem);
-    padding: 1.3rem 2rem 2rem !important;
+    padding: 1.3rem 2rem 2rem  ;
     width: 30rem;
   }
 }

@@ -6,7 +6,7 @@ use WPML\Core\Component\Translation\Application\Repository\SettingsRepository;
 use WPML\Core\Component\Translation\Application\Service\SettingsService;
 use WPML\Core\Port\Endpoint\EndpointInterface;
 use WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface;
-use WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting;
+use WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting;
 use WPML\PHP\Exception\Exception;
 
 class EnableController implements EndpointInterface {

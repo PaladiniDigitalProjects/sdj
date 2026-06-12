@@ -201,12 +201,13 @@ abstract class WPML_TM_MCS_Custom_Field_Settings_Menu {
 		?>
 		<input class="wpml-radio-native" type="radio" name="<?php echo $this->get_radio_name( $cf_key ); ?>"
 			   value="<?php echo esc_attr( $ref_status ); ?>"
-			   title="<?php echo esc_attr( $ref_status ); ?>" <?php echo $html_disabled; ?>
-			   <?php
+			   aria-label="<?php echo esc_attr( $this->custom_field_options[ $ref_status ] ); ?> <?php echo esc_attr( $cf_key ); ?>"
+			<?php echo $html_disabled; ?>
+			<?php
 				if ( $status == $ref_status ) :
 					?>
 					checked<?php endif; ?> />
-		<?php
+			<?php
 
 		return ob_get_clean();
 	}
@@ -232,16 +233,24 @@ abstract class WPML_TM_MCS_Custom_Field_Settings_Menu {
 					<?php echo esc_html( $this->get_column_header( 'name' ) ); ?>
 				</div>
 				<div class="wpml-flex-table-cell text-center">
-					<?php echo esc_html__( "Don't translate", 'wpml-translation-management' ); ?>
+					<span id="do_not_translate">
+						<?php echo esc_html__( "Don't translate", 'wpml-translation-management' ); ?>
+					</span>
 				</div>
 				<div class="wpml-flex-table-cell text-center">
-					<?php echo esc_html_x( 'Copy', 'Verb', 'wpml-translation-management' ); ?>
+					<span id="copy_from_original">
+						<?php echo esc_html_x( 'Copy', 'Verb', 'wpml-translation-management' ); ?>
+					</span>
 				</div>
 				<div class="wpml-flex-table-cell text-center">
-					<?php echo esc_html__( 'Copy once', 'wpml-translation-management' ); ?>
+					<span id="copy_once">
+						<?php echo esc_html__( 'Copy once', 'wpml-translation-management' ); ?>
+					</span>
 				</div>
 				<div class="wpml-flex-table-cell text-center">
-					<?php echo esc_html__( 'Translate', 'wpml-translation-management' ); ?>
+					<span id="translate">
+						<?php echo esc_html__( 'Translate', 'wpml-translation-management' ); ?>
+					</span>
 				</div>
 			</div>
 		</div>

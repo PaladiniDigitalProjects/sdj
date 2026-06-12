@@ -3,16 +3,24 @@ namespace WPML\WPSEO\Shared\Sitemap;
 
 use WPML\Element\API\Languages;
 use WPML\FP\Fns;
+use WPML\FP\Lst;
 use WPML\FP\Obj;
 
 use function WPML\FP\invoke;
-use function WPML\FP\partialRight;
 use function WPML\FP\pipe;
 
 abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
 	/** @var \WPML_Translation_Element_Factory $elementFactory */
 	protected $elementFactory;
+
+	/** @var array|null $activeLanguages */
+	private $activeLanguages = null;
+	/** @var array|null */
+	private $mapLangToHrefLang = null;
+
+	/** @var int[]|null */
+	private $fullResolutionPageIds = null;
 
 	const KEY = 'alternateLangs';
 
@@ -35,14 +43,24 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 	}
 
 	/**
+	 * @return string[]
+	 */
+	private function getActiveLanguages() {
+		if ( null === $this->activeLanguages ) {
+			$this->activeLanguages = array_keys( Languages::getActive() );
+		}
+
+		return $this->activeLanguages;
+	}
+
+	/**
 	 * @param array $link
 	 *
 	 * @return array
 	 */
 	public function addAlternateLangDataToFirstLink( $link ) {
 		$link[ self::KEY ] = [];
-		$activeLangs       = array_keys( Languages::getActive() );
-		foreach ( $activeLangs as $lang ) {
+		foreach ( $this->getActiveLanguages() as $lang ) {
 			$link[ self::KEY ][ $lang ] = apply_filters( 'wpml_permalink', $link['loc'], $lang );
 		}
 
@@ -64,14 +82,21 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		list( $elements, $getPermalink, $isIndexable ) = $this->getEntryHelpers( $type, $obj );
 
 		if ( $elements && $getPermalink && $isIndexable ) {
-			$mapPermalink = function ( $id, $language ) use ( $getPermalink ) {
-				return apply_filters( 'wpml_permalink', $getPermalink( $id ), $language );
+			/** @var callable(mixed, string):bool $isActiveLanguage */
+			$isActiveLanguage = function ( $element, $language ) {
+				return in_array( $language, $this->getActiveLanguages(), true );
+			};
+
+			/** @var callable(int, string):string $mapPermalink */
+			$mapPermalink = function ( $mixed_id, $language ) use ( $getPermalink ) {
+				return apply_filters( 'wpml_permalink', $getPermalink( $mixed_id ), $language, $this->needsFullResolution( $mixed_id ) );
 			};
 
 			/** @var callable(string):bool $isValidPermalink */
 			$isValidPermalink = Fns::unary( 'is_string' );
 
 			$entry[ static::KEY ] = wpml_collect( $elements )
+				->filter( $isActiveLanguage )
 				->filter( $isIndexable )
 				->map( $mapPermalink )
 				->filter( $isValidPermalink )
@@ -79,6 +104,52 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		}
 
 		return $entry;
+	}
+
+	/**
+	 * @param string|int|object $id - can be \WP_Term.
+	 */
+	private function needsFullResolution( $id ): bool {
+		if ( ! is_numeric( $id ) ) {
+			return false;
+		}
+
+		$id = (int) $id;
+
+		if ( 0 === $id ) {
+			return false;
+		}
+
+		if ( null === $this->fullResolutionPageIds ) {
+			$this->fullResolutionPageIds = $this->getFullResolutionPageIds();
+		}
+
+		if ( $this->fullResolutionPageIds ) {
+			return in_array( (int) $id, $this->fullResolutionPageIds, true );
+		}
+
+		return false;
+	}
+
+	private function getFullResolutionPageIds(): array {
+		if ( 'page' === get_option( 'show_on_front' ) ) {
+			$post_id = (int) get_option( 'page_on_front' );
+
+			$trid = apply_filters( 'wpml_element_trid', null, $post_id, 'post_post' );
+
+			$translations = apply_filters( 'wpml_get_element_translations', [], $trid, 'post_post' );
+
+			$ids = array_map(
+				function ( $element ) {
+					return (int) Obj::prop( 'element_id', $element );
+				},
+				$translations
+			);
+
+			return array_values( $ids );
+		}
+
+		return [];
 	}
 
 	/**
@@ -121,7 +192,7 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 				];
 			case 'user':
 				$getElements = function ( $userId ) {
-					return Fns::map( Fns::always( $userId ), Languages::getActive() );
+					return array_fill_keys( $this->getActiveLanguages(), $userId );
 				};
 				return [
 					$getElements( $obj->ID ),
@@ -160,7 +231,7 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 	 */
 	private function getAlternateLinks( $alternateLangs ) {
 		$buildAlternateLink = function ( $url, $lang ) {
-			return '<xhtml:link rel="alternate" hreflang="' . esc_attr( $lang ) . '" href="' . esc_url( $url ) . '" />';
+			return '<xhtml:link rel="alternate" hreflang="' . esc_attr( $this->getHrefLangForLang( $lang ) ) . '" href="' . esc_url( $url ) . '" />';
 		};
 
 		$links = wpml_collect( $alternateLangs )
@@ -168,5 +239,18 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 			->implode( "\n\t\t" );
 
 		return $links ? "\n\t\t" . $links : '';
+	}
+
+	/**
+	 * @param string $lang
+	 *
+	 * @return string
+	 */
+	private function getHrefLangForLang( $lang ) {
+		if ( is_null( $this->mapLangToHrefLang ) ) {
+			$this->mapLangToHrefLang = Lst::pluck( 'tag', (array) apply_filters( 'wpml_active_languages', null, [] ) );
+		}
+
+		return $this->mapLangToHrefLang[ $lang ] ?? $lang;
 	}
 }

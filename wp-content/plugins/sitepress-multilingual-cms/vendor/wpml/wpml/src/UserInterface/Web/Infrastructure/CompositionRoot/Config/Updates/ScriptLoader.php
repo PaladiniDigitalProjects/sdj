@@ -26,7 +26,7 @@ class ScriptLoader {
 
 
   /**
-   * @param array<string> $idsOfUpdatesToPerform
+   * @param array<int> $idsOfUpdatesToPerform
    * @param Endpoint $endpoint
    *
    * @return void

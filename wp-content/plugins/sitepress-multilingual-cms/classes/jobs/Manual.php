@@ -114,10 +114,17 @@ class Manual {
 		$languageCode = (string) filter_var( Obj::prop( 'language_code', $params ), FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		$job = null;
-		if ( $jobId ) {
-			$job = Jobs::get( $jobId );
-		} else if ( $trid && $languageCode ) {
+
+		/**
+		 * Get the last created job from trid and language code to prevent displaying the old job content
+		 * after reloading the CTE translation page.
+		 *
+		 * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmldev-2433
+		 */
+		if ( $trid && $languageCode ) {
 			$job = Jobs::getTridJob( $trid, $languageCode );
+		} elseif ( $jobId ) {
+			$job = Jobs::get( $jobId );
 		}
 
 		if ( is_object( $job ) ) {

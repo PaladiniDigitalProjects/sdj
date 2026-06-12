@@ -3,6 +3,7 @@
 namespace WPML\Core\Component\Translation\Application\Service;
 
 use WPML\Core\Component\Translation\Application\Service\Dto\SendToTranslationDto;
+use WPML\Core\Component\Translation\Application\Service\Event\CancelAllAutomaticJobsEvent;
 use WPML\Core\Component\Translation\Application\Service\Event\TranslationsSentEvent;
 use WPML\Core\Component\Translation\Application\Service\TranslationService\BatchBuilder\BatchBuilderInterface;
 use WPML\Core\Component\Translation\Application\Service\TranslationService\Dto\ResultDto;
@@ -77,6 +78,14 @@ class TranslationService {
     $this->eventDispatcher->dispatch( new TranslationsSentEvent( $result ) );
 
     return $result;
+  }
+
+
+  /**
+   * @return void
+   */
+  public function cancelAllAutomaticJobs() {
+      $this->eventDispatcher->dispatch( new CancelAllAutomaticJobsEvent() );
   }
 
 

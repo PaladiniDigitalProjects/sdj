@@ -52,6 +52,9 @@ class Page {
   /** @var ?class-string $requirementsClassName */
   private $requirementsClassName;
 
+  /** @var bool $requiresWPMLSetupToBeCompleted */
+  private $requiresWPMLSetupToBeCompleted = true;
+
 
   public function __construct( string $id ) {
     $this->id = $id;
@@ -295,6 +298,23 @@ class Page {
   public function setEndpoints( $endpoints ) {
     $this->endpoints = $endpoints;
     return $this;
+  }
+
+
+  public function requiresWPMLSetupToBeCompleted(): bool {
+    return $this->requiresWPMLSetupToBeCompleted;
+  }
+
+
+  /**
+   * @param bool $value
+   *
+   * @return void
+   */
+
+
+  public function setRequiresWPMLSetupToBeCompleted( bool $value ) {
+    $this->requiresWPMLSetupToBeCompleted = $value;
   }
 
 

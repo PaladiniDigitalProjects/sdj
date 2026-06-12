@@ -1,10 +1,10 @@
-=== Gutenberg Block Enhancements - Icon, Responsive Spacing, Typography, Alignment, Shadow, Transform, Transition, Hover Style ===
+=== Block Enhancements – Extended styling for the Block Editor ===
 Contributors:      Mr2P
 Tags:              blocks, responsive, button, icon, hover
 Requires PHP:      7.0
 Requires at least: 6.5
-Tested up to:      6.9
-Stable tag:        1.2.9
+Tested up to:      7.0
+Stable tag:        1.2.12
 License:           GPL-3.0
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 Donate link:       https://boldblocks.net?utm_source=wp.org&utm_campaign=readme&utm_medium=link&utm_content=BE+Donate
@@ -14,7 +14,7 @@ Add icon, responsive spacing, typography, alignment, shadow, transform, transiti
 == Description ==
 
 **Block Enhancements** adds powerful design options to core Gutenberg blocks, so you don't need to install heavy custom block libraries.
-It's the easiest way to make your existing blocks more flexible and responsive while keeping your site fast and clean. All dynamic styles are rendered in the document head instead of inline styles.
+It's the easiest way to make your existing blocks more flexible and responsive while keeping your site fast and clean. All dynamic styles are rendered in the document head instead of inline styles. If you deactivate the plugin, all customized styles are removed, and no leftover styles will affect your site.
 Unlike other similar plugins, this plugin is lightweight. It only loads what you need. You can enable or disable individual features per block type from the plugin's settings page.
 
 *It works with all Gutenberg-ready themes, however, the with-icon feature uses the CSS pseudo `::before` to add icons with the `mask-image` CSS property. It may conflict with other plugins or themes that use the same technique.*
@@ -31,25 +31,56 @@ Unlike other similar plugins, this plugin is lightweight. It only loads what you
 * Use transitions for smooth hover style changes.
 * Define responsive CSS positions (relative, absolute, sticky, static) with custom offsets.
 
+=== How responsive styles work ===
+
+Responsive styles are applied per device mode: Desktop, Tablet, and Mobile. When you edit a style for a block for the first time, the current device mode becomes the source, and the other modes will automatically inherit those styles.
+
+For example, if you set styles in Desktop mode first, Tablet and Mobile will inherit the Desktop styles by default. If you want different styles for Tablet or Mobile, switch to that mode and adjust the settings there. The same behavior applies if you start editing in Tablet or Mobile mode. Each device mode can be customized independently once it has been edited.
+
+By default, the breakpoints are:
+
+* Desktop: 1024px
+* Tablet: 768px
+
+If your theme or another plugin uses different breakpoints, you can change the defaults using the following filter:
+
+        apply_filters( 'block_enhancements_get_breakpoints', [
+          'sm' => [
+            'breakpoint' => '576px',
+            'mediaQuery' => '',
+          ],
+          'md' => [
+            'breakpoint' => '768px',
+            'mediaQuery' => '@media (min-width: 768px){##CONTENT##}',
+          ],
+          'lg' => [
+            'breakpoint' => '1024px',
+            'mediaQuery' => '@media (min-width: 1024px){##CONTENT##}',
+          ],
+        ] );
+
+This allows you to align responsive behavior with your theme’s breakpoint system.
+
 === Common use cases ===
 
 1. Add icons to blocks (button, heading, list, navigation).
-2. Change spacing (padding, margin, block spacing) for button, group, row, grid, columns, gallery blocks per device.
+2. Change spacing (padding, margin, block spacing) per device for button, group, row, grid, columns, gallery blocks.
 3. Change typography (font size, font weight, line-height, letter spacing) per device.
 4. Change text-alignment for group blocks per device. For example text-align center on mobile but text-align left on the desktop.
-6. Add 2D transforms with hover styles.
+6. Add 2D transforms (translate, scale, rotate, skew) hover effect for buttons, images, heading, group, etc.
 7. Add box-shadow, text-shadow with hover styles.
 8. Change text color, background color on mouse hover.
 
 === How to use a feature ===
 
 1. Select the block in the Block Editor.
-2. Choose the style tab from the inspector settings.
-3. Click on the plus (+) icon of the Block Enhancements panel to choose the feature and input your settings.
-4. If the feature does not show up, go to the setting page (Settings → Block Enhancements) to add the feature to your block type.
-5. To input settings for responsive features, you have to switch to between device mode (Desktop/Tablet/Mobile).
-6. The responsive text alignment settings is on the block toolbar not in the inspector settings.
-7. See the video tutorials and the screenshots for more details.
+2. Choose the Styles tab from the inspector settings.
+3. Click on the plus (+) icon of the Block Enhancements panel to choose a feature and input its settings.
+4. You can make a feature visible by default in the Block Enhancements panel from Settings → Block Enhancements → Manage Features.
+5. If a feature does not appear, go to Settings → Block Enhancements → Manage Features and enable that feature for your block type.
+6. For responsive features, switch between device modes (Desktop, Tablet, and Mobile) to input settings for each screen size.
+7. The responsive text alignment settings are available in the block toolbar, not in the inspector settings.
+8. See the video tutorials and the screenshots for more details.
 
 === Video tutorials ===
 
@@ -64,14 +95,14 @@ If this plugin is useful for you, please do a quick review and [rate it](https:/
 Please check out my other plugins if you're interested:
 
 - **[Content Blocks Builder](https://wordpress.org/plugins/content-blocks-builder)** - Build custom layouts and blocks visually in the Block Editor without needing a code editor, using only core blocks and native Gutenberg features.
-- **[Meta Field Block](https://wordpress.org/plugins/display-a-meta-field-as-block)** - A block to display custom fields as blocks on the front end. It supports custom fields for posts, terms, users, and setting fields. It can also be used in the Query Loop block.
+- **[Meta Field Block](https://wordpress.org/plugins/display-a-meta-field-as-block)** - A single block to display custom fields in the Block Editor without coding. It supports ACF, MetaBox, WooCommerce, meta, rest field, shortcode and more. Works everywhere: in the Site Editor (FSE), the Block Editor, inside Query Loop, WooCommerce Product Collection, Term Query blocks, and even in template files.
 - **[SVG Block](https://wordpress.org/plugins/svg-block)** - A block to display SVG images as blocks. Useful for images, icons, dividers, and buttons. It allows you to upload SVG images and load them into the icon library.
 - **[Icon separator](https://wordpress.org/plugins/icon-separator)** - A tiny block just like the core/separator block but with the ability to add an icon.
 - **[Breadcrumb Block](https://wordpress.org/plugins/breadcrumb-block)** - A simple breadcrumb trail block that supports JSON-LD structured data and is compatible with WooCommerce.
 - **[Counting Number Block](https://wordpress.org/plugins/counting-number-block)** - A block to display numbers with a counting effect
 - **[Better YouTube Embed Block](https://wordpress.org/plugins/better-youtube-embed-block)** - A block to solve the performance issue with embedded YouTube videos. It can also embed multiple videos and playlists.
 
-The plugin is developed using @wordpress/scripts.
+The plugin is developed using @wordpress/scripts. The source code is available in the trunk branch.
 
 == Installation ==
 
@@ -107,7 +138,7 @@ It supports any Gutenberg-ready theme.
 
 = Why does the text of the block break when I add an icon to it? =
 
-It is probably because you added an inline element such as bold, italic, highlight, etc. in the text. To fix it, there is a toggle setting named ‘Don't wrap text across lines.’ in the ‘With icon’ panel. Just turn it on to make the text work properly.
+It is probably because you added an inline element such as bold, italic, highlight, etc. in the text. To fix it, there is a toggle setting named ‘Wrap a <span> around the text to keep it on a single line.’ in the ‘With icon’ panel. Just turn it on to make the text work properly.
 
 == Screenshots ==
 
@@ -134,6 +165,24 @@ It is probably because you added an inline element such as bold, italic, highlig
 11. Add an icon to categories
 
 == Changelog ==
+
+= 1.2.12 =
+*Release Date - 14 May 2026*
+
+* Improved - Updated inspector control styles
+* Improved - Added a visualizer for padding and margin
+* Added    - New settings to choose which features are displayed by default in the Block Enhancements panel
+
+= 1.2.11 =
+*Release Date - 19 January 2026*
+
+* Improved - Added a setting to wrap list item text in a span to prevent it from breaking into multiple lines.
+
+= 1.2.10 =
+*Release Date - 12 January 2026*
+
+* Improved - Added sanitize_callback to setttings field registration
+* Added    - Removed settings fields on uninstall
 
 = 1.2.9 =
 *Release Date - 22 November 2025*

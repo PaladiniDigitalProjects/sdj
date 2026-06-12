@@ -2,80 +2,92 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: he_IL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/js/postEditTranslationEditor/components/PostTranslationEditorSettings.js:59
+#: src/js/postEditTranslationEditor/components/PostTranslationEditorSettings.js:115
+#: src/js/postEditTranslationEditor/components/SaveModal.js:24
+#: src/js/postEditTranslationEditor/components/showDashboardEditor.js:29
+msgid "Translation Dashboard"
+msgstr "לוח מחוונים לתרגום"
+
+#: src/js/postEditTranslationEditor/components/PostTranslationEditorSettings.js:132
 msgid "WPML Translation Editor"
-msgstr "עורך התרגומים של WPML"
+msgstr "עורך התרגום של WPML"
 
-#: src/js/postEditTranslationEditor/components/PostTranslationEditorSettings.js:67
+#: src/js/postEditTranslationEditor/components/PostTranslationEditorSettings.js:139
+#: src/js/postEditTranslationEditor/components/SaveModal.js:22
 msgid "WordPress Editor"
-msgstr "העורך של WordPress"
+msgstr "עורך וורדפרס"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:11
+#: src/js/postEditTranslationEditor/components/SaveModal.js:100
 msgid ""
-"Translate with the WordPress Editor when you want to create different "
-"designs for translations, or if you're translating content that's "
-"incompatible with WPML's Translation Editor."
-msgstr "תרגם באמצעות עורך וורדפרס כאשר ברצונך ליצור עיצובים שונים עבור תרגומים, או אם אתה מתרגם תוכן שאינו תואם לעורך התרגום של WPML."
+"Also, switching back to WPML's Translation Editor later will require "
+"re-translating content that you translated with the WordPress editor."
+msgstr "כמו כן, חזרה מאוחר יותר לעורך התרגום של WPML תדרוש תרגום מחדש של תוכן שתרגמת באמצעות עורך וורדפרס."
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:15
-msgid "What do you want to translate with the WordPress Editor?"
-msgstr "מה ברצונך לתרגם באמצעות עורך וורדפרס?"
+#: src/js/postEditTranslationEditor/components/SaveModal.js:107
+msgid ""
+"This will overwrite content you translated with the WordPress Editor. If "
+"you switch now, you'll have to translate selected content again."
+msgstr "פעולה זו תחליף תוכן שתרגמת באמצעות עורך וורדפרס. אם תעבור עכשיו, תצטרך לתרגם שוב תוכן נבחר."
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:16
+#: src/js/postEditTranslationEditor/components/SaveModal.js:35
+msgid "You are about to translate with the %s"
+msgstr "אתה עומד לתרגם באמצעות %s"
+
+#: src/js/postEditTranslationEditor/components/SaveModal.js:41
+msgid ""
+"Translate with the WordPress Editor if you need different designs per "
+"language or if the content isn't compatible with WPML's Translation Editor."
+msgstr "תרגם באמצעות עורך וורדפרס אם אתה זקוק לעיצובים שונים לכל שפה או אם התוכן אינו תואם לעורך התרגום של WPML."
+
+#: src/js/postEditTranslationEditor/components/SaveModal.js:51
+msgid "What do you want to translate?"
+msgstr "מה ברצונך לתרגם?"
+
+#: src/js/postEditTranslationEditor/components/SaveModal.js:7
 msgid "I understand, switch to the WordPress Editor"
 msgstr "אני מבין, עבור לעורך וורדפרס"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:17
-msgid "What do you want to translate with WPML Translation Editor?"
-msgstr "מה ברצונך לתרגם באמצעות עורך התרגום של WPML?"
-
-#: src/js/postEditTranslationEditor/components/SaveModal.js:18
-msgid "I understand, switch to WPML's Translation Editor"
-msgstr "אני מבין, עבור לעורך התרגום של WPML"
-
-#: src/js/postEditTranslationEditor/components/SaveModal.js:44
+#: src/js/postEditTranslationEditor/components/SaveModal.js:75
 msgid "Apply"
 msgstr "החל"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:45
+#: src/js/postEditTranslationEditor/components/SaveModal.js:76
 msgid "Cancel"
 msgstr "ביטול"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:52
-msgid "Only this %s"
-msgstr "רק את %s זה"
+#: src/js/postEditTranslationEditor/components/SaveModal.js:8
+msgid "I understand, switch to %s"
+msgstr "אני מבין, עבור אל %s"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:52
+#: src/js/postEditTranslationEditor/components/SaveModal.js:85
+msgid "Only this %s"
+msgstr "רק %s זה"
+
+#: src/js/postEditTranslationEditor/components/SaveModal.js:85
 msgid "Recommended"
 msgstr "מומלץ"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:53
+#: src/js/postEditTranslationEditor/components/SaveModal.js:86
 msgid "All %s"
-msgstr "כל ה-%s"
+msgstr "כל %s"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:54
+#: src/js/postEditTranslationEditor/components/SaveModal.js:87
 msgid "All the site's content"
 msgstr "כל תוכן האתר"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:61
-msgid "Are you sure?"
-msgstr "האם אתה בטוח?"
+#: src/js/postEditTranslationEditor/components/SaveModal.js:9
+msgid "I understand, switch to Translation Dashboard"
+msgstr "אני מבין, עבור ללוח המחוונים לתרגום"
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:66
+#: src/js/postEditTranslationEditor/components/SaveModal.js:97
 msgid ""
 "The WordPress Editor doesn't offer Automatic Translation, Translation "
 "Memory and other features that make translation easier."
-msgstr "עורך וורדפרס אינו מציע תרגום אוטומטי, זיכרון תרגום ותכונות אחרות שהופכות את התרגום לקל יותר."
+msgstr "עורך וורדפרס אינו מציע תרגום אוטומטי, זיכרון תרגום ותכונות נוספות שמקלות על התרגום."
 
-#: src/js/postEditTranslationEditor/components/SaveModal.js:69
-msgid ""
-"And, if you switch back to WPML's Translation Editor, you will need to "
-"translate from scratch what you translated with the WordPress editor."
-msgstr "ואם תחזור לעורך התרגום של WPML, תצטרך לתרגם מחדש את מה שתרגמת באמצעות עורך וורדפרס."
-
-#: src/js/postEditTranslationEditor/components/SaveModal.js:76
-msgid ""
-"When you update content that you previously translated with the WordPress "
-"Editor, you will need to translate from scratch."
-msgstr "כאשר תעדכן תוכן שתרגמת בעבר באמצעות עורך וורדפרס, תצטרך לתרגם מחדש."
+#: src/js/postEditTranslationEditor/components/showDashboardEditor.js:24
+msgid "Translate items in batch after reviewing the cost of AI translation"
+msgstr "תרגם פריטים בקבוצה לאחר סקירת עלות התרגום באמצעות AI"

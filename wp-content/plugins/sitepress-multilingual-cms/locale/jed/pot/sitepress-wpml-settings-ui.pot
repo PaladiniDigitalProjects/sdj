@@ -3,7 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
 
-#: src/js/settings/UI/TranslationMethod.js:51
+#: src/js/settings/UI/TranslationMethod.js:47
 msgid ""
 "You must use the Advanced Translation Editor if you want to translate your "
 "content automatically."

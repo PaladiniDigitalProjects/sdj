@@ -3,28 +3,36 @@
    "locale_data": {
       "messages": {
          "": {
-            "domain": "messages"
+            "domain": "messages",
+            "plural_forms": "nplurals=1; plural=0;",
+            "lang": "zh_CN"
          },
+         "Translation Dashboard": [
+            "翻译仪表盘"
+         ],
          "WPML Translation Editor": [
-            "Wpml 翻译编辑器"
+            "WPML 翻译编辑器"
          ],
          "WordPress Editor": [
-            "Wordpress 编辑器"
+            "WordPress 编辑器"
          ],
-         "Translate with the WordPress Editor when you want to create different designs for translations, or if you're translating content that's incompatible with WPML's Translation Editor.": [
-            "当您想为翻译创建不同的设计，或者正在翻译与WPML的翻译编辑器不兼容的内容时，请使用WordPress编辑器进行翻译。"
+         "Also, switching back to WPML's Translation Editor later will require re-translating content that you translated with the WordPress editor.": [
+            "此外，稍后切换回 WPML 翻译编辑器将需要重新翻译您使用 WordPress 编辑器翻译的内容。"
          ],
-         "What do you want to translate with the WordPress Editor?": [
-            "您想用WordPress编辑器翻译什么？"
+         "This will overwrite content you translated with the WordPress Editor. If you switch now, you'll have to translate selected content again.": [
+            "这将覆盖您使用 WordPress 编辑器翻译的内容。如果您现在切换，您将不得不再次翻译选定的内容。"
+         ],
+         "You are about to translate with the %s": [
+            "您即将使用 %s 进行翻译"
+         ],
+         "Translate with the WordPress Editor if you need different designs per language or if the content isn't compatible with WPML's Translation Editor.": [
+            "如果您需要每种语言的不同设计，或者内容与 WPML 翻译编辑器不兼容，请使用 WordPress 编辑器进行翻译。"
+         ],
+         "What do you want to translate?": [
+            "您想翻译什么？"
          ],
          "I understand, switch to the WordPress Editor": [
-            "我明白了，切换到WordPress编辑器"
-         ],
-         "What do you want to translate with WPML Translation Editor?": [
-            "您想用WPML翻译编辑器翻译什么？"
-         ],
-         "I understand, switch to WPML's Translation Editor": [
-            "我明白了，切换到WPML的翻译编辑器"
+            "我明白，切换到 WordPress 编辑器"
          ],
          "Apply": [
             "应用"
@@ -32,29 +40,29 @@
          "Cancel": [
             "取消"
          ],
+         "I understand, switch to %s": [
+            "我明白，切换到 %s"
+         ],
          "Only this %s": [
-            "仅此%s"
+            "仅此 %s"
          ],
          "Recommended": [
             "推荐"
          ],
          "All %s": [
-            "全部%s"
+            "所有 %s"
          ],
          "All the site's content": [
-            "网站的所有内容"
+            "所有网站内容"
          ],
-         "Are you sure?": [
-            "您确定吗？"
+         "I understand, switch to Translation Dashboard": [
+            "我明白，切换到翻译仪表盘"
          ],
          "The WordPress Editor doesn't offer Automatic Translation, Translation Memory and other features that make translation easier.": [
-            "WordPress编辑器不提供自动翻译、翻译记忆库和其他使翻译更容易的功能。"
+            "WordPress 编辑器不提供自动翻译、翻译记忆库和其他使翻译更轻松的功能。"
          ],
-         "And, if you switch back to WPML's Translation Editor, you will need to translate from scratch what you translated with the WordPress editor.": [
-            "而且，如果您切换回WPML的翻译编辑器，您将需要从头开始翻译您用WordPress编辑器翻译的内容。"
-         ],
-         "When you update content that you previously translated with the WordPress Editor, you will need to translate from scratch.": [
-            "当您更新之前使用WordPress编辑器翻译的内容时，您将需要从头开始翻译。"
+         "Translate items in batch after reviewing the cost of AI translation": [
+            "在审查 AI 翻译成本后批量翻译项目"
          ]
       }
    }

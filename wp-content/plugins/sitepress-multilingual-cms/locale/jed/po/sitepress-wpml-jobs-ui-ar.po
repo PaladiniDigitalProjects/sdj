@@ -2,10 +2,12 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
 
 #: src/js/jobs/components/Actions/BatchSync.js:39
 msgid "Start batch sync"
-msgstr "بدء المزامنة الجماعية"
+msgstr "بدء مزامنة الدفعة"
 
 #: src/js/jobs/components/Actions/Cancel.js:35
 msgid "Cancel job"
@@ -21,7 +23,7 @@ msgstr "بدء تنزيل ملف XLIFF"
 
 #: src/js/jobs/components/Actions/Edit.js:38
 msgid "Edit"
-msgstr "تحرير"
+msgstr "تعديل"
 
 #: src/js/jobs/components/Actions/GetTranslation.js:31
 msgid "Get translation"
@@ -42,7 +44,7 @@ msgstr "ترجمة"
 
 #: src/js/jobs/components/Actions/TakeAndTranslate.js:33
 msgid "Take and Translate"
-msgstr "أخذ وترجمة"
+msgstr "تولّي الترجمة"
 
 #: src/js/jobs/components/Actions/View.js:22
 msgid "View"
@@ -58,7 +60,7 @@ msgstr "الاحتفاظ بالترجمات كمسودة"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:63
 msgid "Never mind. I want to review these translations."
-msgstr "لا بأس. أريد مراجعة هذه الترجمات."
+msgstr "لا يهم. أريد مراجعة هذه الترجمات."
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:74
 #: src/js/jobs/components/Filters/ActionFilters.js:60
@@ -69,7 +71,7 @@ msgstr "إلغاء"
 msgid ""
 "This will remove the selected jobs from the Translations Queue without "
 "publishing them. What would you like to do with the translations?"
-msgstr "سيؤدي هذا إلى إزالة المهام المحددة من قائمة انتظار الترجمات دون نشرها. ماذا تريد أن تفعل بالترجمات؟?"
+msgstr "سيؤدي هذا إلى إزالة المهام المحددة من قائمة انتظار الترجمات دون نشرها. ماذا تريد أن تفعل بالترجمات؟"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:84
 msgid "Cancel Translation Review"
@@ -77,7 +79,7 @@ msgstr "إلغاء مراجعة الترجمة"
 
 #: src/js/jobs/components/BulkActions/BulkActions.js:39
 msgid "Bulk actions"
-msgstr "إجراءات جماعية"
+msgstr "إجراءات مجمّعة"
 
 #: src/js/jobs/components/BulkActions/BulkActions.js:81
 #: src/js/jobs/components/Filters/ActionFilters.js:61
@@ -88,17 +90,17 @@ msgstr "تطبيق"
 msgid ""
 "Actions applied to multiple translation jobs can take a few seconds. Please "
 "do not leave the page."
-msgstr "قد تستغرق الإجراءات المطبقة على مهام الترجمة المتعددة بضع ثوانٍ. يرجى عدم مغادرة الصفحة."
+msgstr "قد تستغرق الإجراءات المطبقة على مهام ترجمة متعددة بضع ثوانٍ. يرجى عدم مغادرة الصفحة."
 
 #: src/js/jobs/components/BulkActions/Info.js:9
 msgid ""
 "Actions applied to multiple translation jobs can take a few minutes. Please "
 "do not leave the page."
-msgstr "قد تستغرق الإجراءات المطبقة على مهام الترجمة المتعددة بضع دقائق. يرجى عدم مغادرة الصفحة."
+msgstr "قد تستغرق الإجراءات المطبقة على مهام ترجمة متعددة بضع دقائق. يرجى عدم مغادرة الصفحة."
 
 #: src/js/jobs/components/Cells/AssignTranslator.js:35
 msgid "Select translator"
-msgstr "اختيار المترجم"
+msgstr "تحديد المترجم"
 
 #: src/js/jobs/components/Cells/AssignTranslator.js:41
 msgid "Assign"
@@ -106,7 +108,7 @@ msgstr "تعيين"
 
 #: src/js/jobs/components/Cells/StatusCell.js:11
 msgid "Cancelled"
-msgstr "ملغى"
+msgstr "ملغاة"
 
 #: src/js/jobs/components/Cells/StatusCell.js:12
 #: src/js/jobs/model/store/columnsManagement.js:50
@@ -116,7 +118,7 @@ msgstr "يحتاج إلى ترجمة"
 #: src/js/jobs/components/Cells/StatusCell.js:13
 #: src/js/jobs/model/store/columnsManagement.js:46
 msgid "In progress"
-msgstr "قيد التنفيذ"
+msgstr "قيد التقدم"
 
 #: src/js/jobs/components/Cells/StatusCell.js:14
 #: src/js/jobs/model/store/columnsManagement.js:23
@@ -135,11 +137,11 @@ msgstr "يتم نشر %s على الفور لأنها لا تدعم وضع ال�
 
 #: src/js/jobs/components/Cells/StatusCell.js:37
 msgid "Published — Pending review"
-msgstr "منشور - قيد المراجعة"
+msgstr "منشور — بانتظار المراجعة"
 
 #: src/js/jobs/components/Cells/StatusCell.js:38
 msgid "Draft — Pending review"
-msgstr "مسودة - قيد المراجعة"
+msgstr "مسودة — بانتظار المراجعة"
 
 #: src/js/jobs/components/Cells/StatusCell.js:43
 msgid "Review in progress"
@@ -147,15 +149,15 @@ msgstr "المراجعة قيد التقدم"
 
 #: src/js/jobs/components/Cells/StatusCell.js:46
 msgid "Published — Review in progress"
-msgstr "منشور - المراجعة قيد التنفيذ"
+msgstr "منشور — المراجعة قيد التقدم"
 
 #: src/js/jobs/components/Cells/StatusCell.js:47
 msgid "Draft — Review in progress"
-msgstr "مسودة - المراجعة قيد التنفيذ"
+msgstr "مسودة — المراجعة قيد التقدم"
 
 #: src/js/jobs/components/Cells/StatusCell.js:51
 msgid "Insufficient funds"
-msgstr "رصيد غير كافٍ"
+msgstr "أموال غير كافية"
 
 #: src/js/jobs/components/Cells/StatusCell.js:57
 #: src/js/jobs/model/store/columnsManagement.js:42
@@ -168,17 +170,17 @@ msgstr "عرض الأصل"
 
 #: src/js/jobs/components/Cells/TitleCell.js:9
 msgid "(no title)"
-msgstr "(بدون عنوان)"
+msgstr "(لا يوجد عنوان)"
 
 #: src/js/jobs/components/Cells/TranslatorCell.js:21
 #: src/js/jobs/components/Filters/FiltersList.js:63
 #: src/js/jobs/components/Filters/TranslatedBy.js:32
 msgid "Automatic translation"
-msgstr "ترجمة آلية"
+msgstr "ترجمة تلقائية"
 
 #: src/js/jobs/components/Cells/TranslatorCell.js:42
 msgid "TP ID: %d"
-msgstr "معرف TP: %d"
+msgstr "معرّف TP: %d"
 
 #: src/js/jobs/components/Filters/Buttons.js:8
 msgid "Reset"
@@ -190,7 +192,7 @@ msgstr "تصفية"
 
 #: src/js/jobs/components/Filters/FiltersList.js:103
 msgid "ID (%s)"
-msgstr "المعرف (%s)"
+msgstr "المعرّف (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:105
 msgid "Title (%s)"
@@ -226,7 +228,7 @@ msgstr "الموعد النهائي (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:159
 msgid "Clear all filters"
-msgstr "مسح جميع عوامل التصفية"
+msgstr "مسح جميع الفلاتر"
 
 #: src/js/jobs/components/Filters/FiltersList.js:55
 #: src/js/jobs/components/Filters/TranslatedBy.js:37
@@ -260,23 +262,23 @@ msgstr "جميع الأنواع"
 
 #: src/js/jobs/components/Filters/VisibleColumns.js:16
 msgid "Select visible columns"
-msgstr "اختيار الأعمدة المرئية"
+msgstr "تحديد الأعمدة المرئية"
 
 #: src/js/jobs/components/Table.js:128
 msgid "Sort descending"
-msgstr "ترتيب تنازلي"
+msgstr "فرز تنازلي"
 
 #: src/js/jobs/components/Table.js:129
 msgid "Sort ascending"
-msgstr "ترتيب تصاعدي"
+msgstr "فرز تصاعدي"
 
 #: src/js/jobs/components/Table.js:130
 msgid "Cancel sorting"
-msgstr "إلغاء الترتيب"
+msgstr "إلغاء الفرز"
 
 #: src/js/jobs/components/Table.js:97
 msgid "The bulk action is running..."
-msgstr "الإجراء الجماعي قيد التنفيذ..."
+msgstr "الإجراء المجمّع قيد التشغيل..."
 
 #: src/js/jobs/components/XliffBox/Export.js:54
 msgid "Export all jobs to XLIFF 1.0"
@@ -308,7 +310,7 @@ msgstr "تصدير"
 
 #: src/js/jobs/components/XliffBox/Import.js:38
 msgid "Select File"
-msgstr "اختيار الملف"
+msgstr "تحديد ملف"
 
 #: src/js/jobs/components/XliffBox/Import.js:39
 msgid ".xliff .zip"
@@ -328,7 +330,7 @@ msgstr "استيراد / تصدير XLIFF"
 
 #: src/js/jobs/components/actionColumn.js:13
 msgid "Actions"
-msgstr "إجراءات"
+msgstr "الإجراءات"
 
 #: src/js/jobs/components/columns.js:113
 #: src/js/jobs/model/store/columnsManagement.js:90
@@ -390,7 +392,7 @@ msgstr "فشلت الموافقة على مراجعات الترجمات!"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:38
 msgid "Failed approving translations for the following posts: "
-msgstr "فشلت الموافقة على الترجمات للمنشورات التالية: "
+msgstr "فشلت الموافقة على الترجمات للمشاركات التالية: "
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:51
 msgid "Translations reviews approved successfully!"
@@ -398,32 +400,32 @@ msgstr "تمت الموافقة على مراجعات الترجمات بنجا�
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:57
 msgid "No valid jobs selected to approve translations reviews!"
-msgstr "لم يتم تحديد وظائف صالحة للموافقة على مراجعات الترجمات!"
+msgstr "لم يتم تحديد مهام صالحة للموافقة على مراجعات الترجمات!"
 
 #: src/js/jobs/model/store/assignTranslator.js:17
 msgid "The translator has been assigned to the job"
-msgstr "تم تعيين المترجم للوظيفة"
+msgstr "تم تعيين المترجم للمهمة"
 
 #: src/js/jobs/model/store/assignTranslator.js:22
-#: src/js/jobs/model/store/openEditor.js:29
+#: src/js/jobs/model/store/openEditor.js:37
 msgid "The translator could not be assigned to the job"
-msgstr "تعذر تعيين المترجم للوظيفة"
+msgstr "تعذر تعيين المترجم للمهمة"
 
 #: src/js/jobs/model/store/cancelJobs.js:22
 msgid "The jobs have been cancelled"
-msgstr "تم إلغاء الوظائف"
+msgstr "تم إلغاء المهام"
 
 #: src/js/jobs/model/store/cancelJobs.js:23
 msgid "The job has been cancelled"
-msgstr "تم إلغاء الوظيفة"
+msgstr "تم إلغاء المهمة"
 
 #: src/js/jobs/model/store/cancelJobs.js:30
 msgid "The jobs could not be cancelled"
-msgstr "تعذر إلغاء الوظائف"
+msgstr "تعذر إلغاء المهام"
 
 #: src/js/jobs/model/store/cancelJobs.js:31
 msgid "The job could not be cancelled"
-msgstr "تعذر إلغاء الوظيفة"
+msgstr "تعذر إلغاء المهمة"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:26
 msgid "Translation reviews have been canceled"
@@ -443,7 +445,7 @@ msgstr "تعذر إلغاء مراجعة الترجمة"
 
 #: src/js/jobs/model/store/columnsManagement.js:106
 msgid "Sent on"
-msgstr "أُرسل في"
+msgstr "أُرسلت في"
 
 #: src/js/jobs/model/store/columnsManagement.js:114
 msgid "Deadline"
@@ -455,11 +457,11 @@ msgstr "الحالة"
 
 #: src/js/jobs/model/store/columnsManagement.js:54
 msgid "Pending review"
-msgstr "قيد المراجعة"
+msgstr "بانتظار المراجعة"
 
 #: src/js/jobs/model/store/columnsManagement.js:65
 msgid "ID"
-msgstr "المعرف"
+msgstr "المعرّف"
 
 #: src/js/jobs/model/store/columnsManagement.js:77
 msgid "Type"
@@ -475,11 +477,11 @@ msgstr "تمت الترجمة بواسطة"
 
 #: src/js/jobs/model/store/downloadXliff.js:11
 msgid "Download XLIFF file couldn't be finished"
-msgstr "تعذر إكمال تنزيل ملف XLIFF"
+msgstr "تعذر إنهاء تنزيل ملف XLIFF"
 
 #: src/js/jobs/model/store/exportToXLIFF.js:20
 msgid "Could not load jobs for export"
-msgstr "تعذر تحميل الوظائف للتصدير"
+msgstr "تعذر تحميل المهام للتصدير"
 
 #: src/js/jobs/model/store/exportToXLIFF.js:44
 msgid "The export to XLIFF failed"
@@ -487,15 +489,15 @@ msgstr "فشل التصدير إلى XLIFF"
 
 #: src/js/jobs/model/store/importXLIFF.js:26
 msgid "Imported %d jobs"
-msgstr "تم استيراد %d وظيفة"
+msgstr "تم استيراد %d مهمة"
 
 #: src/js/jobs/model/store/importXLIFF.js:27
 msgid "Imported one job"
-msgstr "تم استيراد وظيفة واحدة"
+msgstr "تم استيراد مهمة واحدة"
 
 #: src/js/jobs/model/store/importXLIFF.js:41
 msgid "Could not import any job"
-msgstr "تعذر استيراد أي وظيفة"
+msgstr "تعذر استيراد أي مهمة"
 
 #: src/js/jobs/model/store/importXLIFF.js:45
 msgid "Import failed!"
@@ -507,35 +509,35 @@ msgstr "جارٍ تحميل قائمة انتظار الترجمات"
 
 #: src/js/jobs/model/store/jobs.js:19
 msgid "Loading translation jobs"
-msgstr "جارٍ تحميل وظائف الترجمة"
+msgstr "جارٍ تحميل مهام الترجمة"
 
 #: src/js/jobs/model/store/jobs.js:82
 msgid "Jobs could not be loaded"
-msgstr "تعذر تحميل الوظائف"
+msgstr "تعذر تحميل المهام"
 
 #: src/js/jobs/model/store/resign.js:12
 msgid "Specify some jobs to resign"
-msgstr "حدد بعض الوظائف للاستقالة منها"
+msgstr "حدد بعض المهام للاستقالة"
 
 #: src/js/jobs/model/store/resign.js:22
 msgid "We could not resign jobs: %s"
-msgstr "تعذر الاستقالة من الوظائف: %s"
+msgstr "تعذر علينا الاستقالة من المهام: %s"
 
 #: src/js/jobs/model/store/resign.js:34
 msgid "Resigned from jobs"
-msgstr "تمت الاستقالة من الوظائف"
+msgstr "تمت الاستقالة من المهام"
 
 #: src/js/jobs/model/store/resign.js:35
 msgid "Resigned from job"
-msgstr "تمت الاستقالة من الوظيفة"
+msgstr "تمت الاستقالة من المهمة"
 
 #: src/js/jobs/model/store/resign.js:39
 msgid "Failed to resign from jobs"
-msgstr "فشلت الاستقالة من الوظائف"
+msgstr "فشل الاستقالة من المهام"
 
 #: src/js/jobs/model/store/synchronizeATEJobs.js:27
 msgid "The Advanced Editor jobs synchronization has failed"
-msgstr "فشلت مزامنة وظائف المحرر المتقدم"
+msgstr "فشلت مزامنة مهام المحرر المتقدم"
 
 #: src/js/jobs/model/store/synchronizeTranslationProxyJobs.js:12
 msgid "Synchronization with the Professional Translation service has failed"
@@ -544,13 +546,17 @@ msgstr "فشلت المزامنة مع خدمة الترجمة الاحتراف�
 #: src/js/jobs/model/store/translationBatchSync.js:68
 msgid "%d translation has been downloaded"
 msgid_plural "%d translations have been downloaded"
-msgstr[0] "%d تم تنزيل الترجمة"
-msgstr[1] "%d تم تنزيل الترجمات"
+msgstr[0] "تم تنزيل %d ترجمة"
+msgstr[1] "تم تنزيل %d ترجمة"
+msgstr[2] "تم تنزيل %d ترجمة"
+msgstr[3] "تم تنزيل %d ترجمة"
+msgstr[4] "تم تنزيل %d ترجمة"
+msgstr[5] "تم تنزيل %d ترجمة"
 
 #: src/js/jobs/model/store/translationBatchSync.js:83
 msgid "Batch sync finished successfully!"
-msgstr "اكتملت المزامنة الدفعية بنجاح!"
+msgstr "اكتملت مزامنة الدفعة بنجاح!"
 
 #: src/js/jobs/model/store/translationBatchSync.js:88
 msgid "Batch sync couldn't be finished"
-msgstr "تعذر إكمال المزامنة الدفعية"
+msgstr "تعذر إنهاء مزامنة الدفعة"

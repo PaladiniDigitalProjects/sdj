@@ -7,7 +7,8 @@ use WPML\Core\Component\Translation\Domain\Settings\Settings;
 use WPML\Core\Component\Translation\Domain\Settings\TranslateAutomaticallyPerPostType;
 use WPML\Core\Component\Translation\Domain\Settings\TranslateEverything;
 use WPML\Core\Port\Persistence\OptionsInterface;
-use WPML\Core\SharedKernel\Component\Translation\Domain\TranslationEditorSetting;
+use WPML\Core\SharedKernel\Component\Setting\Application\Query\TranslationEditorQueryInterface;
+use WPML\Core\SharedKernel\Component\Setting\Domain\TranslationEditorSetting;
 
 class SettingsRepository {
 
@@ -19,9 +20,16 @@ class SettingsRepository {
   /** @var OptionsInterface */
   private $options;
 
+  /** @var TranslationEditorQueryInterface */
+  private $settingTranslationEditorQuery;
 
-  public function __construct( OptionsInterface $options ) {
+
+  public function __construct(
+    OptionsInterface $options,
+    TranslationEditorQueryInterface $settingTranslationEditorService
+  ) {
     $this->options = $options;
+    $this->settingTranslationEditorQuery = $settingTranslationEditorService;
   }
 
 
@@ -96,31 +104,7 @@ class SettingsRepository {
    * @return TranslationEditorSetting|null
    */
   private function getTranslationEditorSetting() {
-    /**
-     * @var array{
-     *   translation-management?: array{
-     *     doc_translation_method?: string
-     *   }
-     * } $rawSitepressOptions
-     */
-    $rawSitepressOptions = $this->getOptions( self::SITEPRESS_OPTIONS );
-
-    if ( ! isset( $rawSitepressOptions['translation-management']['doc_translation_method'] ) ) {
-      return null;
-    }
-
-    $editorSettings = new TranslationEditorSetting(
-      $this->getMappedTranslationEditorType(
-        $rawSitepressOptions['translation-management']['doc_translation_method']
-      )
-    );
-
-    if ( $editorSettings->getValue() === TranslationEditorSetting::ATE ) {
-      $optionValue = $this->options->get( 'wpml-old-jobs-editor' );
-      $editorSettings->setUseAteForOldTranslationsCreatedWithCte( $optionValue === 'ate' );
-    }
-
-    return $editorSettings;
+    return $this->settingTranslationEditorQuery->getTranslationEditorSetting();
   }
 
 
@@ -299,18 +283,6 @@ class SettingsRepository {
     $option = $this->options->get( $optionsKey );
 
     return is_array( $option ) ? $option : [];
-  }
-
-
-  private function getMappedTranslationEditorType( string $databaseValue ): string {
-    $translationEditorValues = [
-      'ATE' => TranslationEditorSetting::ATE,
-      '0'   => TranslationEditorSetting::MANUAL,
-      '1'   => TranslationEditorSetting::CLASSIC,
-      '2'   => TranslationEditorSetting::PRO,
-    ];
-
-    return $translationEditorValues[ $databaseValue ];
   }
 
 

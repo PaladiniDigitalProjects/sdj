@@ -3,181 +3,123 @@
    "locale_data": {
       "messages": {
          "": {
-            "domain": "messages"
+            "domain": "messages",
+            "plural_forms": "nplurals=2; plural=(n != 1);",
+            "lang": "it_IT"
          },
          "Close": [
-            ""
+            "Chiudi"
          ],
          "Please take a screenshot of this message and report this issue to <a>WPML support</a>.": [
-            ""
+            "Fai uno screenshot di questo messaggio e segnala il problema al <a>supporto WPML</a>."
          ],
-         "This copy of the site has the same content as the original site on %s, but it doesn’t have credits for automatic translation.": [
-            ""
-         ],
-         "If you want to use automatic translation for this site in the future, you can either <a1>add credits to this site</a1> or <a2>share the credits from the original site</a2>.": [
-            ""
-         ],
-         "There was an error checking for credits to share. Please take a screenshot of this message and report it in <a>WPML support</a>.": [
-            ""
+         "WPML has automatically unregistered your site as part of this wizard. After you close it, you’ll see a prompt to register the site again. This is expected, your content and translations are safe.": [
+            "WPML ha automaticamente annullato la registrazione del tuo sito come parte di questa procedura guidata. Dopo averla chiusa, vedrai un messaggio per registrare nuovamente il sito. Questo è previsto, i tuoi contenuti e le tue traduzioni sono al sicuro."
          ],
          "You’re all set": [
-            ""
+            "Tutto pronto"
          ],
-         "To allow the sites running on %s and %s to use the same credits for automatic translation, you need to:": [
-            ""
+         "This site is a copy of the original site %s and it doesn’t currently have any automatic translation credits.": [
+            "Questo sito è una copia del sito originale %s e attualmente non ha crediti di traduzione automatica."
          ],
-         "Follow <a>this link</a> to access the migration code (you can't get it by visiting %s manually)": [
-            ""
+         "If you’d like to use automatic translation here in the future, you can either <a1>add credits</a1> or <a2>share them from the original site</a2>.": [
+            "Se in futuro desideri usare la traduzione automatica qui, puoi <a1>aggiungere crediti</a1> o <a2>condividerli dal sito originale</a2>."
          ],
-         "Click on <b>Copy migration code</b>": [
-            ""
+         "To link %s and %s so they share automatic translation credits, follow these steps:": [
+            "Per collegare %s e %s in modo che condividano i crediti di traduzione automatica, segui questi passaggi:"
          ],
-         "Paste the migration code into the field below.": [
-            ""
+         "Open <a>this link</a> to access the original site’s admin area. (You can’t access this screen by visiting %s directly.)": [
+            "Apri <a>questo link</a> per accedere all'area amministrativa del sito originale. (Non puoi accedere a questa schermata visitando %s direttamente.)"
+         ],
+         "Click <b>Copy migration code</b> on that page.": [
+            "Fai clic su <b>Copia codice di migrazione</b> su quella pagina."
+         ],
+         "Paste the code below to complete the connection.": [
+            "Incolla il codice qui sotto per completare la connessione."
+         ],
+         "Can't access the original site? You can also get your migration code from your <a>wpml.org account</a>.": [
+            "Non riuscite ad accedere al sito originale? Potete anche ottenere il vostro codice di migrazione dal vostro <a>account wpml.org</a>."
          ],
          "Migration code": [
-            ""
+            "Codice di migrazione"
          ],
          "Continue": [
-            ""
+            "Continua"
+         ],
+         "Connect Automatic Translation Credits": [
+            "Collega i crediti di traduzione automatica"
          ],
          "Go back": [
-            ""
-         ],
-         "Let’s connect the automatic translation credits between the two copies of this site": [
-            ""
+            "Indietro"
          ],
          "WPML was unable to copy your site's translations, translation memory, and glossary to this new URL.": [
-            ""
+            "WPML non è riuscito a copiare le traduzioni, la memoria di traduzione e il glossario del tuo sito su questo nuovo URL."
          ],
          "Error with copying translation information to new URL": [
-            ""
+            "Errore durante la copia delle informazioni di traduzione sul nuovo URL"
          ],
-         "Great. Now this site and its copy on %s are sharing the credits for automatic translation.": [
-            ""
+         "This site and its copy on %s are now sharing automatic translation credits.": [
+            "Questo sito e la sua copia su %s stanno ora condividendo i crediti di traduzione automatica."
          ],
-         "Credits that you add on either site will be available on both sites. If you stop using this site, you don’t need to worry about losing credits.": [
-            ""
+         "Any credits you add to one site will be available on both. If you stop using this site, your credits will remain safe.": [
+            "Qualsiasi credito che aggiungi a un sito sarà disponibile su entrambi. Se smetti di usare questo sito, i tuoi crediti rimarranno al sicuro."
          ],
          "WPML was unable to connect your old and new URLs to share automatic translation credits.": [
-            ""
+            "WPML non è riuscito a collegare i tuoi vecchi e nuovi URL per condividere i crediti di traduzione automatica."
          ],
          "Error with sharing automatic translation credits": [
-            ""
+            "Errore durante la condivisione dei crediti di traduzione automatica"
          ],
-         "The site on %s has %d credits for automatic translation. Do you want to share these credits between %s and this new location (%s)?": [
-            ""
+         "The site on %s has %d credits for automatic translation. Do you want to share these credits with this new site %s?": [
+            "Il sito su %s ha %d crediti per la traduzione automatica. Vuoi condividere questi crediti con questo nuovo sito %s?"
          ],
          "The site on %s has a pay-as-you-go subscription for automatic translation. Do you want to share these credits between %s and this new location (%s)?": [
-            ""
+            "Il sito su %s ha un abbonamento Pagamento a consumo per la traduzione automatica. Vuoi condividere questi crediti tra %s e questa nuova posizione (%s)?"
+         ],
+         "Do you want to share automatic translation credits between the original site (%s) and this new site (%s)?": [
+            "Desiderate condividere i crediti per la traduzione automatica tra il sito originale (%s) e questo nuovo sito (%s)?"
          ],
          "Yes (recommended)": [
-            ""
+            "Sì (consigliato)"
          ],
-         "In the next step, you will receive instructions for how to approve the credits sharing": [
-            ""
+         "In the next step, you’ll approve the use of same credits on both sites.": [
+            "Nel prossimo passaggio, approverai l'uso degli stessi crediti su entrambi i siti."
          ],
          "No": [
-            ""
+            "No"
          ],
-         "You will need to assign credits or set up a pay-as-you-go plan for this site to use automatic translation": [
-            ""
-         ],
-         "What happens when you share credits for automatic translation between sites?": [
-            "Cosa succede quando condividi i crediti per la traduzione automatica tra siti?"
+         "You’ll need to assign new credits or set up pay-as-you-go.": [
+            "Dovrai assegnare nuovi crediti o configurare il Pagamento a consumo."
          ],
          "Translation credits for this site": [
             "Crediti di traduzione per questo sito"
          ],
-         "You can continue translating content normally on this site.": [
-            "Puoi continuare a tradurre normalmente i contenuti su questo sito."
+         "What happens when you share credits between sites?": [
+            "Cosa succede quando condividi i crediti tra i siti?"
          ],
-         "Please keep in mind that there shouldn’t be a copy of this site at %s. If there still is a copy of it there, you will not be able to translate content on that site.": [
-            "Tieni presente che non dovrebbe esserci una copia di questo sito su %s. Se c'è ancora una copia lì, non potrai tradurre i contenuti su quel sito."
-         ],
-         "You indicated that you’re no longer running a copy of this site at %s. This means that:": [
-            "Hai indicato che non stai più eseguendo una copia di questo sito su %s. Questo significa che:"
-         ],
-         "You will not be able to use automatic translation on the old site": [
-            "Non potrai usare la traduzione automatica sul vecchio sito"
-         ],
-         "If you access the old site, it will trigger warnings on this site": [
-            "Se accedi al vecchio sito, attiverà avvisi su questo sito"
-         ],
-         "I understand and am no longer running this site at %s": [
-            "Ho capito e non sto più eseguendo questo sito su %s"
-         ],
-         "Back": [
-            "Indietro"
-         ],
-         "Please check and confirm": [
-            "Per favore controlla e conferma"
-         ],
-         "WPML was unable to update our records with your new URL.": [
-            "WPML non è riuscito ad aggiornare i nostri registri con il tuo nuovo URL."
-         ],
-         "Error with moving translation information to new URL": [
-            "Errore nello spostamento delle informazioni di traduzione al nuovo URL"
-         ],
-         "Looks like this site was previously at %s and now it’s at %s.": [
-            "Sembra che questo sito fosse precedentemente su %s e ora è su %s."
-         ],
-         "Do you still have the same site running at %s?": [
-            "Hai ancora lo stesso sito in esecuzione su %s?"
-         ],
-         "Yes": [
-            "Sì"
-         ],
-         "This is only a copy - original site is still running": [
-            "Questa è solo una copia - il sito originale è ancora attivo"
-         ],
-         "I changed the address of the site to this new one": [
-            "Ho cambiato l'indirizzo del sito a questo nuovo"
-         ],
-         "WPML detected a new address for this site": [
-            "WPML ha rilevato un nuovo indirizzo per questo sito"
-         ],
-         "How to manage translations when migrating from development to production and more...": [
-            "Come gestire le traduzioni quando si migra dallo sviluppo alla produzione e altro..."
+         "WPML detected a change in your site's URL": [
+            "WPML ha rilevato una modifica nell'URL del tuo sito"
          ],
          "Looks like this site is a copy of a different site, or moved to a different URL. Please contact your translation manager to update Translation Management plugin configuration.": [
-            "Sembra che questo sito sia una copia di un sito diverso o sia stato spostato a un URL diverso. Contatta il tuo gestore delle traduzioni per aggiornare la configurazione del plugin Translation Management."
+            "Sembra che questo sito sia una copia di un sito diverso, o si sia spostato su un URL diverso. Contatta il tuo responsabile delle traduzioni per aggiornare la configurazione del plugin Translation Management."
          ],
          "Site Moved or Copied - Action Required": [
-            "Sito spostato o copiato - Azione richiesta"
+            "Sito spostato o copiato - azione richiesta"
          ],
-         "You or someone else moved this site to %s. Please keep in mind that:": [
-            "Tu o qualcun altro avete spostato questo sito su %s. Tieni presente che:"
+         "WPML noticed that your site is being accessed from a different domain or URL.": [
+            "WPML ha notato che il tuo sito è accessibile da un dominio o URL diverso."
          ],
-         "Translations that you do at %s will not appear on this site.": [
-            "Le traduzioni che fai su %s non appariranno su questo sito."
+         "To make sure everything continues working correctly, including automatic translation and site registration, we need to verify and update your site settings.": [
+            "Per assicurarti che tutto continui a funzionare correttamente, inclusa la traduzione automatica e la registrazione del sito, dobbiamo verificare e aggiornare le impostazioni del tuo sito."
          ],
-         "You cannot edit translations on this site.": [
-            "Non puoi modificare le traduzioni su questo sito."
+         "This will only take a moment.": [
+            "Ci vorrà solo un momento."
          ],
-         "The site at %s is using the same credits for automatic translation as this site.": [
-            "Il sito su %s sta usando gli stessi crediti per la traduzione automatica di questo sito."
+         "Start Migration": [
+            "Avvia migrazione"
          ],
-         "If you didn't intend to move this site to %s, you can <a>indicate that this site should be at %s</a>.": [
-            "Se non intendevi spostare questo sito su %s, puoi <a>indicare che questo sito dovrebbe essere su %s</a>."
-         ],
-         "This site has moved to a new location": [
-            "Questo sito è stato spostato in una nuova posizione"
-         ],
-         "If you prefer not to move this site, you can <a>mark it as a copy</a> and enable automatic translation for it.": [
-            "Se preferisci non spostare questo sito, puoi <a>segnalarlo come una copia</a> e abilitare la traduzione automatica per esso."
-         ],
-         "Moving the site back here will mean that you will be able to translate on this domain again, but you will not be able to update translations at %s.": [
-            "Spostare il sito di nuovo qui significherà che potrai tradurre di nuovo su questo dominio, ma non potrai aggiornare le traduzioni su %s."
-         ],
-         "Yes - move back here": [
-            "Sì - sposta di nuovo qui"
-         ],
-         "No - keep the site on %s": [
-            "No - mantieni il sito su %s"
-         ],
-         "Are you sure that this site should run on %s and not %s?": [
-            "Sei sicuro che questo sito dovrebbe funzionare su %s e non su %s?"
+         "Your domains use separate databases, so WPML turned off the alias domain setup. Complete the migration below to apply the correct settings.": [
+            "I vostri domini utilizzano database separati, quindi WPML ha disattivato la configurazione del dominio alias. Completate la migrazione di seguito per applicare le impostazioni corrette."
          ]
       }
    }

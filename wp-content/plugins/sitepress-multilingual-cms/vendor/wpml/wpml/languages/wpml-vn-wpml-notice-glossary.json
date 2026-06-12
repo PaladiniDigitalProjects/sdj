@@ -38,6 +38,9 @@
          "%d item in the <a>Glossary</a>": [
             "%d mục trong <a>Bảng chú giải</a>",
             "%d mục trong <a>Bảng chú giải</a>"
+         ],
+         "Dismiss": [
+            "Bỏ qua"
          ]
       }
    }

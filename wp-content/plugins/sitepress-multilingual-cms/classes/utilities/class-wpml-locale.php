@@ -90,6 +90,7 @@ class WPML_Locale {
 	 * @return bool|mixed
 	 */
 	public function locale() {
+		static $in_locale_determination = false;
 		if ( ! $this->locale_cache ) {
 			add_filter( 'language_attributes', array( $this, '_language_attributes' ) );
 
@@ -98,10 +99,12 @@ class WPML_Locale {
 			if ( $is_ajax && isset( $_REQUEST['action'], $_REQUEST['lang'] ) ) {
 				$locale_lang_code = preg_replace( '/[^-a-zA-Z0-9_]/', '', $_REQUEST['lang'] );
 			} elseif ( $wp_api->is_admin()
-					   && ( ! $is_ajax
-							|| $this->sitepress->check_if_admin_action_from_referer() )
+					   && ( ! $is_ajax || $this->sitepress->check_if_admin_action_from_referer() )
+					   && ! $in_locale_determination
 			) {
-				$locale_lang_code = $this->sitepress->user_lang_by_authcookie();
+				$in_locale_determination = true;
+				$locale_lang_code        = $this->sitepress->user_lang_by_authcookie();
+				$in_locale_determination = false;
 			} else {
 				$locale_lang_code = $this->sitepress->get_current_language();
 			}

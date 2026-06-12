@@ -2,26 +2,32 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: nl_NL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/components/language/LanguagePairs.js:57
 msgid "From:"
-msgstr "Vanuit:"
+msgstr "Van:"
 
 #: src/js/components/language/LanguagePairs.js:69
 msgid "--Choose language--"
-msgstr "--Taal selecteren--"
+msgstr "--Kies taal--"
 
 #: src/js/components/language/LanguagePairs.js:81
 msgid "to:"
 msgstr "naar:"
 
+#: src/js/components/language/LanguagePairs.js:93
+msgid "Select %s"
+msgstr "Selecteer %s"
+
 #: src/js/components/language/SelectLanguagePairs.js:39
 msgid "Set language pair(s) for Translator %s:"
-msgstr "Taalpaar(paren) instellen voor Vertaler %s:"
+msgstr "Stel taalpaar/talen in voor vertaler %s:"
 
-#: src/js/components/language/SelectLanguagePairs.js:64
+#: src/js/components/language/SelectLanguagePairs.js:69
 msgid "+ Add more language pairs for this translator"
-msgstr "+ Meer talenparen toevoegen voor deze vertaler"
+msgstr "+ Meer taalparen toevoegen voor deze vertaler"
 
 #: src/js/components/roles/CreateUser.js:100
 msgid "First Name"
@@ -35,15 +41,19 @@ msgstr "Achternaam"
 msgid "Role"
 msgstr "Rol"
 
-#: src/js/components/roles/CreateUser.js:137
+#: src/js/components/roles/CreateUser.js:138
 msgid "(required)"
 msgstr "(verplicht)"
+
+#: src/js/components/roles/CreateUser.js:214
+msgid "Select a role for the user"
+msgstr "Selecteer een rol voor de gebruiker"
 
 #: src/js/components/roles/CreateUser.js:46
 msgid ""
 "Make sure that you have provided a correct email address e.g. "
 "name@domain.com"
-msgstr "Zorg ervoor dat u een correct e-mailadres heeft opgegeven, bijv. name@domain.com"
+msgstr "Zorg ervoor dat u een correct e-mailadres hebt opgegeven, bijv. name@domain.com"
 
 #: src/js/components/roles/CreateUser.js:64
 msgid "This field is required"
@@ -61,9 +71,24 @@ msgstr "Gebruikersnaam"
 msgid "Email"
 msgstr "E-mail"
 
-#: src/js/components/roles/ExistingUserSelect.js:46
+#: src/js/components/roles/ExistingUserSelect.js:59
 msgid "Search"
 msgstr "Zoeken"
+
+#: src/js/components/roles/ExistingUserSelect.js:70
+msgid "Your site has a large number of users, please enter the exact username."
+msgstr "Uw site heeft een groot aantal gebruikers; voert u de exacte gebruikersnaam in."
+
+#: src/js/components/translation-managers/AddManagerDialog.js:118
+#: src/js/components/translators/AddTranslatorDialog.js:152
+#: src/js/components/translators/EditLanguagesDialog.js:73
+#: src/js/setup/components/Steps/AddLanguagesModal.js:496
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: src/js/components/translation-managers/AddManagerDialog.js:123
+msgid "Add Translation Manager"
+msgstr "Vertaalmanager toevoegen"
 
 #: src/js/components/translation-managers/AddManagerDialog.js:47
 msgid "user"
@@ -73,38 +98,35 @@ msgstr "gebruiker"
 msgid "Editor"
 msgstr "Redacteur"
 
-#: src/js/components/translation-managers/AddManagerDialog.js:61
+#: src/js/components/translation-managers/AddManagerDialog.js:71
 msgid "Select an existing %s and set as Translation Manager"
-msgstr "Selecteer een bestaande %s en stel in als Vertaalmanager"
+msgstr "Selecteer een bestaande %s en stel deze in als vertaalmanager"
 
-#: src/js/components/translation-managers/AddManagerDialog.js:72
+#: src/js/components/translation-managers/AddManagerDialog.js:97
 msgid "Create a new %s and set as Translation Manager"
-msgstr "Maak een nieuwe %s aan en stel in als Vertaalmanager"
-
-#: src/js/components/translation-managers/AddManagerDialog.js:85
-#: src/js/components/translators/AddTranslatorDialog.js:121
-#: src/js/components/translators/EditLanguagesDialog.js:73
-#: src/js/setup/components/Steps/AddLanguagesModal.js:496
-msgid "Cancel"
-msgstr "Annuleren"
-
-#: src/js/components/translation-managers/AddManagerDialog.js:90
-msgid "Add Translation Manager"
-msgstr "Vertaalmanager toevoegen"
+msgstr "Maak een nieuwe %s en stel deze in als vertaalmanager"
 
 #: src/js/components/translation-managers/ManagerSection.js:27
 msgid "Add a Translation Manager"
-msgstr "Een Vertaalmanager toevoegen"
+msgstr "Een vertaalmanager toevoegen"
 
-#: src/js/components/translators/AddTranslatorDialog.js:111
+#: src/js/components/translators/AddTranslatorDialog.js:101
+msgid "Select an existing user and set as Translator"
+msgstr "Selecteer een bestaande gebruiker en stel deze in als vertaler"
+
+#: src/js/components/translators/AddTranslatorDialog.js:125
+msgid "Create a new user and set as Translator"
+msgstr "Maak een nieuwe gebruiker en stel deze in als vertaler"
+
+#: src/js/components/translators/AddTranslatorDialog.js:142
 msgid "Set language pair(s)"
-msgstr "Taalpaar/paren instellen"
+msgstr "Taalpaar/talen instellen"
 
-#: src/js/components/translators/AddTranslatorDialog.js:126
+#: src/js/components/translators/AddTranslatorDialog.js:157
 msgid "Previous"
 msgstr "Vorige"
 
-#: src/js/components/translators/AddTranslatorDialog.js:129
+#: src/js/components/translators/AddTranslatorDialog.js:160
 #: src/js/components/translators/EditLanguagesDialog.js:78
 msgid "Save"
 msgstr "Opslaan"
@@ -112,36 +134,36 @@ msgstr "Opslaan"
 #: src/js/components/translators/AddTranslatorDialog.js:65
 #: src/js/components/translators/UserSection.js:45
 msgid "Add a Translator"
-msgstr "Een Vertaler toevoegen"
-
-#: src/js/components/translators/AddTranslatorDialog.js:91
-msgid "Select an existing user and set as Translator"
-msgstr "Selecteer een bestaande gebruiker en stel in als Vertaler"
-
-#: src/js/components/translators/AddTranslatorDialog.js:95
-msgid "Create a new user and set as Translator"
-msgstr "Maak een nieuwe gebruiker aan en stel in als Vertaler"
+msgstr "Een vertaler toevoegen"
 
 #: src/js/components/translators/EditLanguagesDialog.js:55
 msgid "Edit language pair(s) for translator"
-msgstr "Taalpaar/paren voor vertaler bewerken"
+msgstr "Taalpaar/talen bewerken voor vertaler"
 
-#: src/js/components/translators/TranslatorsTable.js:128
+#: src/js/components/translators/TranslatorsTable.js:136
 #: src/js/setup/components/Steps/AddLanguagesModal.js:346
 msgid "Name"
 msgstr "Naam"
 
-#: src/js/components/translators/TranslatorsTable.js:140
+#: src/js/components/translators/TranslatorsTable.js:148
 msgid "Language Pairs"
-msgstr "Taalcombinaties"
+msgstr "Taalparen"
 
-#: src/js/components/translators/TranslatorsTable.js:144
+#: src/js/components/translators/TranslatorsTable.js:152
 msgid "You can translate to and from all languages"
-msgstr "U kunt van en naar alle talen vertalen"
+msgstr "U kunt naar en van alle talen vertalen"
+
+#: src/js/components/translators/TranslatorsTable.js:59
+msgid "Edit language pair(s)"
+msgstr "Taalpaar/talen bewerken"
+
+#: src/js/components/translators/TranslatorsTable.js:62
+msgid "Delete language pair(s)"
+msgstr "Taalpaar/talen verwijderen"
 
 #: src/js/setup/components/Steps/AddLanguages/Flag.js:48
 msgid "%s file upload failed."
-msgstr "%s bestand uploaden is mislukt."
+msgstr "%s bestand uploaden mislukt."
 
 #: src/js/setup/components/Steps/AddLanguages/Flag.js:69
 msgid "Flag"
@@ -149,17 +171,17 @@ msgstr "Vlag"
 
 #: src/js/setup/components/Steps/AddLanguages/Flag.js:87
 msgid "Flag file"
-msgstr "Bestand markeren"
+msgstr "Vlagbestand"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:160
 msgid ""
 "You just added  language. Next, select it as the site's default language or "
 "a translation language."
-msgstr "Je heeft zojuist een taal toegevoegd. Vervolgens selecteer je deze als de standaardtaal van de site, of als een vertaaltaal."
+msgstr "U hebt zojuist een taal toegevoegd. Selecteer deze vervolgens als de standaardtaal van de site of als een vertaaltaal."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:162
 msgid "Language added"
-msgstr "Taal is toegevoegd"
+msgstr "Taal toegevoegd"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:192
 msgid "The value \"%s\" already exists"
@@ -167,24 +189,24 @@ msgstr "De waarde “%s” bestaat al"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:215
 msgid "Add a new language"
-msgstr "Voeg een nieuwe taal toe"
+msgstr "Nieuwe taal toevoegen"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:224
 msgid ""
 "Create a country-specific language by choosing the general language from "
 "the list below. Then, choose the country it should be localized for."
-msgstr "Maak een landspecifieke taal aan door de algemene taal uit de onderstaande lijst te kiezen. Kies vervolgens het land waarvoor de taal moet worden gelokaliseerd."
+msgstr "Maak een landspecifieke taal door de algemene taal uit de onderstaande lijst te kiezen. Kies vervolgens het land waarvoor deze moet worden gelokaliseerd."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:229
 msgid ""
 "By choosing a combination that already exists in the database, WPML can "
 "help fill out the necessary fields. Read more about "
 "<AddingACustomLanguageLink />."
-msgstr "Door een combinatie te kiezen die al in de database bestaat, kan WPML helpen met het invullen van de benodigde velden. Lees meer over <AddingACustomLanguageLink />."
+msgstr "Door een combinatie te kiezen die al in de database bestaat, kan WPML helpen de benodigde velden in te vullen. Lees meer over <AddingACustomLanguageLink />."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:242
 msgid "Cannot find?"
-msgstr "Kun je het niet vinden?"
+msgstr "Niet gevonden?"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:244
 msgid "Click here"
@@ -210,7 +232,7 @@ msgstr "Code"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:374
 msgid "The language will not be supported by automatic translations"
-msgstr "De taal zal niet worden ondersteund door automatische vertalingen"
+msgstr "De taal wordt niet ondersteund door automatische vertalingen"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:392
 msgid "Language mapping"
@@ -222,7 +244,7 @@ msgstr "Deze taal niet toewijzen"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:418
 msgid "Default locale"
-msgstr "Standaard lokalisatie"
+msgstr "Standaard locale"
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:423
 msgid ""
@@ -278,13 +300,13 @@ msgstr "Lees meer over "
 msgid ""
 "The name of your language as it will appear on your site's language "
 "switcher."
-msgstr "De naam van uw taal zoals deze zal verschijnen in de taalschakelaar van uw site."
+msgstr "De naam van uw taal zoals deze wordt weergegeven in de taalschakelaar van uw site."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:61
 msgid ""
 "A unique value that identifies the language in the database and URL. Once "
 "saved, the language code cannot be changed."
-msgstr "Een unieke waarde die de taal identificeert in de database en URL. Eenmaal opgeslagen kan de taalcode niet worden gewijzigd."
+msgstr "Een unieke waarde die de taal in de database en URL identificeert. Eenmaal opgeslagen kan de taalcode niet meer worden gewijzigd."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:62
 msgid ""
@@ -294,14 +316,14 @@ msgid ""
 "to use for spellcheck and automatic translation. If you don't map your "
 "custom language to an existing language, spellcheck and automatic "
 "translation features will be unavailable in that language."
-msgstr "Als uw aangepaste taal lijkt op een bestaande taal, kunt u de spellingscontrole en automatische vertaling van de bestaande taal gebruiken. Als uw aangepaste taal bijvoorbeeld Zwitserduits is, kunt u deze toewijzen aan Duits als de taal voor spellingscontrole en automatische vertaling. Als u uw aangepaste taal niet toewijst aan een bestaande taal, zijn de functies voor spellingscontrole en automatische vertaling niet beschikbaar in die taal."
+msgstr "Als uw aangepaste taal vergelijkbaar is met een bestaande taal, kunt u de spellingcontrole en automatische vertaling van de bestaande taal gebruiken. Als uw aangepaste taal bijvoorbeeld Zwitserduits is, kunt u deze toewijzen aan het Duits als de taal die moet worden gebruikt voor spellingcontrole en automatische vertaling. Als u uw aangepaste taal niet toewijst aan een bestaande taal, zijn de functies voor spellingcontrole en automatische vertaling niet beschikbaar in die taal."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:66
 msgid ""
 "The value WPML checks when loading translations from MO and PO files. The "
 "default locale is included in the filenames in your /wp-content/languages/ "
 "folder in your WordPress setup."
-msgstr "De waarde die WPML controleert bij het laden van vertalingen uit MO- en PO-bestanden. De standaard lokalisatie is opgenomen in de bestandsnamen in uw /wp-content/languages/ map in uw WordPress-installatie."
+msgstr "De waarde die WPML controleert bij het laden van vertalingen uit MO- en PO-bestanden. De standaard locale is opgenomen in de bestandsnamen in uw /wp-content/languages/-map in uw WordPress-installatie."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:69
 msgid ""
@@ -325,7 +347,7 @@ msgstr "Engels voor Amerikaanse gebruikers: en-us"
 msgid ""
 "Determines if URLs in this language are encoded or use ASCII characters (if "
 "unsure, leave it as \"No\")."
-msgstr "Bepaalt of URL's in deze taal gecodeerd zijn of ASCII-tekens gebruiken (bij twijfel, laat het op “Nee” staan)."
+msgstr "Bepaalt of URL's in deze taal worden gecodeerd of ASCII-tekens gebruiken (laat het op “Nee” staan als u het niet zeker weet)."
 
 #: src/js/setup/components/Steps/AddLanguagesModal.js:98
 msgid "adding a custom language"
@@ -352,12 +374,12 @@ msgid "Which languages do you want to translate your site into?"
 msgstr "In welke talen wilt u uw site vertalen?"
 
 #: src/js/setup/components/Steps/Languages.js:149
-msgid "If you cannot find languages that you need in the list"
-msgstr "Als u de talen die u nodig hebt niet kunt vinden in de lijst"
+msgid "If you cannot find languages that you need in the list,"
+msgstr "Als u de talen die u nodig hebt niet in de lijst kunt vinden,"
 
 #: src/js/setup/components/Steps/Languages.js:150
 msgid "create a custom language"
-msgstr "maak een aangepaste taal aan"
+msgstr "een aangepaste taal maken"
 
 #: src/js/translation-roles-ui/components/Managers.js:12
 msgid ""
@@ -365,7 +387,7 @@ msgid ""
 "your site. %sTranslation Managers%s can add new local translators or "
 "professional translation services, create and assign translation jobs, "
 "review completed translations, and change translation-related settings."
-msgstr "U kunt een toegewijde persoon toevoegen om toezicht te houden op alles wat met vertaling te maken heeft op uw site. %sVertaalmanagers%s kunnen nieuwe lokale vertalers of professionele vertaaldiensten toevoegen, vertaalopdrachten maken en toewijzen, voltooide vertalingen beoordelen en vertaalgerelateerde instellingen wijzigen."
+msgstr "U kunt een toegewijde persoon toevoegen om alles wat met vertalingen te maken heeft op uw site te overzien. %sVertaalmanagers%s kunnen nieuwe lokale vertalers of professionele vertaaldiensten toevoegen, vertaaltaken maken en toewijzen, voltooide vertalingen beoordelen en vertaalgerelateerde instellingen wijzigen."
 
 #: src/js/translation-roles-ui/components/Managers.js:22
 msgid "Translation Managers"
@@ -375,20 +397,20 @@ msgstr "Vertaalmanagers"
 msgid ""
 "Note: All Administrators are automatically given Translation Manager "
 "privileges."
-msgstr "Opmerking: Alle beheerders krijgen automatisch de rechten van Vertaalmanager."
+msgstr "Opmerking: Alle beheerders krijgen automatisch vertaalmanagerrechten."
 
 #: src/js/translation-roles-ui/components/Users.js:14
 msgid ""
 "%sLocal translators%s are users of your site that can log in and add, edit, "
 "and review your site's translations. Add a translator and their associated "
 "translation pairs to assign them translation jobs."
-msgstr "%sLokale vertalers%s zijn gebruikers van uw site die kunnen inloggen en vertalingen van uw site kunnen toevoegen, bewerken en beoordelen. Voeg een vertaler en hun bijbehorende taalparen toe om hen vertaalopdrachten toe te wijzen."
+msgstr "%sLokale vertalers%s zijn gebruikers van uw site die kunnen inloggen en de vertalingen van uw site kunnen toevoegen, bewerken en beoordelen. Voeg een vertaler en de bijbehorende vertaalparen toe om hen vertaaltaken toe te wijzen."
 
 #: src/js/translation-roles-ui/components/Users.js:23
 msgid ""
 "You can %shire an experienced translator%s to review your automatic "
 "translations for perfect quality."
-msgstr "U kunt %seen ervaren vertaler inhuren%s om uw automatische vertalingen te beoordelen voor perfecte kwaliteit."
+msgstr "U kunt %seen ervaren vertaler inhuren%s om uw automatische vertalingen te beoordelen op perfecte kwaliteit."
 
 #: src/js/translation-roles-ui/components/Users.js:33
 msgid "Translators"

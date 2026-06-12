@@ -67,6 +67,14 @@ class UntranslatedPosts extends AbstractUntranslatedElements{
 			return [];
 		}
 
+		// If post type using native editor then find posts those are not using native editor explicitly i.e. meta value "no".
+		// If post type NOT using native editor then find posts those are not using native editor
+		// OR no preference is defined at all i.e. meta value NULL.
+		$postMetaAdditionalCondition =
+			\WPML_TM_Post_Edit_TM_Editor_Mode::is_post_type_using_wp_editor( $type )
+				? ''
+				: ' OR postmeta.meta_value IS NULL';
+
 		$languagesPart      = Lst::join( ' UNION ALL ', Fns::map( Str::replace( '__', Fns::__, "SELECT '__' AS code" ), $languages ) );
 		$acceptableStatuses = ICL_TM_NOT_TRANSLATED . ', ' . ICL_TM_ATE_CANCELLED;
 
@@ -88,7 +96,7 @@ class UntranslatedPosts extends AbstractUntranslatedElements{
 			    AND original_element.language_code = %s
 			    AND ( translation_status.status IS NULL OR translation_status.status IN ({$acceptableStatuses}) OR translation_status.needs_update = 1) 
 			    AND posts.post_status IN ( 'publish', 'inherit' )
-					AND ( postmeta.meta_value IS NULL OR postmeta.meta_value = 'no' )
+					AND ( postmeta.meta_value = 'no' {$postMetaAdditionalCondition} )
 			    {$oldEditorCondition		}
 			ORDER BY original_element.element_id, languages.code
 			LIMIT %d

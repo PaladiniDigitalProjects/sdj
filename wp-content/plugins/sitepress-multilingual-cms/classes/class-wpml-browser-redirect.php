@@ -65,6 +65,12 @@ class WPML_Browser_Redirect {
 			'cookie'       => $cookie,
 		);
 
+		$current_page_id = get_queried_object_id();
+		$url             = $this->sitepress->get_setting( 'urls' );
+		if ( $url && isset( $url['root_page'] ) && $current_page_id === (int) $url['root_page'] ) {
+			$params['pageLanguage'] = ''; // Root page does not have a language.
+		}
+
 		/**
 		 * Filters the data sent to the browser redirection script.
 		 *

@@ -22,6 +22,12 @@ class PostTypeDto {
   /** @var bool */
   private $hierarchical;
 
+  /** @var bool */
+  private $isPublic;
+
+  /** @var bool */
+  private $hasUi;
+
 
   public function __construct(
     string $id,
@@ -29,6 +35,8 @@ class PostTypeDto {
     string $singular,
     string $plural,
     bool $hierarchical,
+    bool $isPublic,
+    bool $hasUi,
     bool $isDisplayAsTranslated = false
   ) {
     $this->id                    = $id;
@@ -36,6 +44,8 @@ class PostTypeDto {
     $this->singular              = $singular;
     $this->plural                = $plural;
     $this->hierarchical          = $hierarchical;
+    $this->isPublic              = $isPublic;
+    $this->hasUi                 = $hasUi;
     $this->isDisplayAsTranslated = $isDisplayAsTranslated;
   }
 
@@ -70,6 +80,16 @@ class PostTypeDto {
   }
 
 
+  public function isPublic(): bool {
+    return $this->isPublic;
+  }
+
+
+  public function hasUi(): bool {
+    return $this->hasUi;
+  }
+
+
   /**
    * @return array{
    *   id: string,
@@ -77,6 +97,8 @@ class PostTypeDto {
    *   singular: string,
    *   plural: string,
    *   hierarchical: bool,
+   *   isPublic: bool,
+   *   hasUi: bool,
    *   isDisplayAsTranslated: bool
    * }
    */
@@ -87,6 +109,8 @@ class PostTypeDto {
       'singular'              => $this->singular,
       'plural'                => $this->plural,
       'hierarchical'          => $this->hierarchical,
+      'isPublic'              => $this->isPublic,
+      'hasUi'                 => $this->hasUi,
       'isDisplayAsTranslated' => $this->isDisplayAsTranslated,
     ];
   }

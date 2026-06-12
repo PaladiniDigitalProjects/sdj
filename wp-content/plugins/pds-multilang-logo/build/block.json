@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "pds/multilang-logo",
+  "version": "1.0.0",
+  "title": "Logo multiidioma (WPML)",
+  "category": "theme",
+  "icon": "translation",
+  "description": "Muestra una imagen de logo distinta según el idioma activo de WPML, con imagen de respaldo para los idiomas sin variante propia.",
+  "keywords": [
+    "logo",
+    "wpml",
+    "idioma",
+    "multiidioma",
+    "site logo"
+  ],
+  "supports": {
+    "html": false,
+    "className": true,
+    "align": false
+  },
+  "attributes": {
+    "images": {
+      "type": "object",
+      "default": {}
+    },
+    "width": {
+      "type": "number",
+      "default": 240
+    },
+    "isLink": {
+      "type": "boolean",
+      "default": true
+    },
+    "linkTarget": {
+      "type": "string",
+      "default": "_self"
+    }
+  },
+  "textdomain": "pds-multilang-logo",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php"
+}

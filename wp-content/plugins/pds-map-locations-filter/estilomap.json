@@ -1,0 +1,113 @@
+{
+  "variant": "light",
+  "backgroundColor": "#e0f7ff",
+  "styles": [
+    {
+      "id": "natural.land",
+      "geometry": {
+        "fillColor": "#e0f7ff"
+      }
+    },
+    {
+      "id": "natural.water",
+      "geometry": {
+        "fillColor": "#007fad"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "road",
+      "geometry": {
+        "fillColor": "#ffffff",
+        "strokeColor": "#ffffff"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "road.highway",
+      "geometry": {
+        "fillColor": "#007fad",
+        "strokeColor": "#007fad"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "road.arterial",
+      "geometry": {
+        "fillColor": "#ffffff",
+        "strokeColor": "#ffffff"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "road.local",
+      "geometry": {
+        "fillColor": "#ffffff",
+        "strokeColor": "#ffffff"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "landscape",
+      "geometry": {
+        "fillColor": "#e0f7ff"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "pointOfInterest",
+      "geometry": {
+        "visible": false
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "pointOfInterest.recreation.park",
+      "geometry": {
+        "fillColor": "#fdf1e6",
+        "visible": true
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "transit",
+      "geometry": {
+        "visible": false
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "administrative",
+      "geometry": {
+        "strokeColor": "#007fad"
+      },
+      "label": {
+        "visible": false
+      }
+    },
+    {
+      "id": "administrative.country",
+      "geometry": {
+        "strokeColor": "#007fad"
+      }
+    }
+  ]
+}

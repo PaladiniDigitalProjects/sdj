@@ -11,7 +11,7 @@ use WPML\FP\Obj;
 use WPML\FP\Right;
 use WPML\Media\Option as MediaOption;
 use WPML\Setup\Option;
-use WPML\TM\API\ATE\CachedLanguageMappings;
+use WPML\TM\ATE\AutomaticTranslationCapabilities;
 use WPML\TM\ATE\TranslateEverything\CompletedTranslationsInterface;
 use WPML\TM\ATE\TranslateEverything\UntranslatedElementsInterface;
 use WPML\TM\ATE\TranslateEverything\UntranslatedPackages;
@@ -53,7 +53,7 @@ class TranslateEverything implements CompletedTranslationsInterface {
 			return Left::of( [ 'key' => 'media-setup-not-finished' ] );
 		}
 
-		if ( ! CachedLanguageMappings::doesDefaultLanguageSupportAutomaticTranslations() ) {
+		if ( ! AutomaticTranslationCapabilities::doesDefaultLanguageSupport() ) {
 			return Left::of( [ 'error' => 'default-language-does-not-support-automatic-translations' ] );
 		}
 

@@ -1,12 +1,12 @@
-@import './variables.scss';
-@import './generics.scss';
-@import './wpforms.scss';
-@import './localizaciones.scss';
-@import './nav.scss';
-@import './grid.scss';
+@use 'variables.scss';
+@use 'generics.scss';
+@use 'wpforms.scss';
+@use 'localizaciones.scss';
+@use 'nav.scss';
+@use 'grid.scss';
 
 .login {
-  background-color:$white;
+  background-color:variables.$white;
 
   form {
     margin-top: 0;
@@ -15,18 +15,18 @@
     font-weight: 400;
     overflow: hidden;
     background: transparent;
-    border: 0 solid $white;
+    border: 0 solid variables.$white;
     box-shadow: 0 0 0 0 rgba(0,0,0,.04);
   }
 
   label {
-    color:$primary;
+    color:variables.$primary;
   }
 
   .button-primary {
-    background: $primary;
-    border-color: $primary;
-    color: $white !important;
+    background: variables.$primary;
+    border-color: variables.$primary;
+    color: variables.$white !important;
     text-decoration: none;
     text-shadow: none;
     text-transform: uppercase;
@@ -35,13 +35,13 @@
     transition: 0.35ms;
     
     &:hover {
-      color:$white !important;
-      background: $secondary !important;
-      border-color: $secondary !important;
+      color:variables.$white !important;
+      background: variables.$secondary !important;
+      border-color: variables.$secondary !important;
     }
   }
   a {
-    color: $primary !important;
+    color: variables.$primary !important;
     transition-duration: .035s;
     transition-timing-function: ease-in-out;
     text-decoration: none;

@@ -2,10 +2,12 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/jobs/components/Actions/BatchSync.js:39
 msgid "Start batch sync"
-msgstr "Έναρξη συγχρονισμού παρτίδας"
+msgstr "Έναρξη συγχρονισμού δέσμης"
 
 #: src/js/jobs/components/Actions/Cancel.js:35
 msgid "Cancel job"
@@ -13,7 +15,7 @@ msgstr "Ακύρωση εργασίας"
 
 #: src/js/jobs/components/Actions/ContinieReview.js:44
 msgid "Continue reviewing"
-msgstr "Συνέχεια αναθεώρησης"
+msgstr "Συνέχιση ελέγχου"
 
 #: src/js/jobs/components/Actions/DownloadXLIFF.js:33
 msgid "Start downloading XLIFF file"
@@ -34,7 +36,7 @@ msgstr "Παραίτηση"
 #: src/js/jobs/components/Actions/Review.js:46
 #: src/js/jobs/components/Actions/ReviewInATE.js:35
 msgid "Review"
-msgstr "Επανεξέταση"
+msgstr "Έλεγχος"
 
 #: src/js/jobs/components/Actions/TakeAndTranslate.js:33
 msgid "Translate"
@@ -42,7 +44,7 @@ msgstr "Μετάφραση"
 
 #: src/js/jobs/components/Actions/TakeAndTranslate.js:33
 msgid "Take and Translate"
-msgstr "Λήψη και Μετάφραση"
+msgstr "Ανάληψη και μετάφραση"
 
 #: src/js/jobs/components/Actions/View.js:22
 msgid "View"
@@ -50,15 +52,15 @@ msgstr "Προβολή"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:48
 msgid "Delete Translations"
-msgstr "Διαγραφή Μεταφράσεων"
+msgstr "Διαγραφή μεταφράσεων"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:56
 msgid "Keep Translations as Draft"
-msgstr "Διατήρηση Μεταφράσεων ως Πρόχειρο"
+msgstr "Διατήρηση μεταφράσεων ως πρόχειρο"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:63
 msgid "Never mind. I want to review these translations."
-msgstr "Άκυρο. Θέλω να επανεξετάσω αυτές τις μεταφράσεις."
+msgstr "Δεν πειράζει. Θέλω να ελέγξω αυτές τις μεταφράσεις."
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:74
 #: src/js/jobs/components/Filters/ActionFilters.js:60
@@ -69,11 +71,11 @@ msgstr "Ακύρωση"
 msgid ""
 "This will remove the selected jobs from the Translations Queue without "
 "publishing them. What would you like to do with the translations?"
-msgstr "Αυτό θα αφαιρέσει τις επιλεγμένες εργασίες από την Ουρά Μεταφράσεων χωρίς να τις δημοσιεύσει. Τι θα θέλατε να κάνετε με τις μεταφράσεις;?"
+msgstr "Αυτό θα αφαιρέσει τις επιλεγμένες εργασίες από την ουρά μεταφράσεων χωρίς να τις δημοσιεύσει. Τι θα θέλατε να κάνετε με τις μεταφράσεις;"
 
 #: src/js/jobs/components/BulkActions/Actions/AbortReviewsDialog.js:84
 msgid "Cancel Translation Review"
-msgstr "Ακύρωση Επανεξέτασης Μετάφρασης"
+msgstr "Ακύρωση ελέγχου μετάφρασης"
 
 #: src/js/jobs/components/BulkActions/BulkActions.js:39
 msgid "Bulk actions"
@@ -88,13 +90,13 @@ msgstr "Εφαρμογή"
 msgid ""
 "Actions applied to multiple translation jobs can take a few seconds. Please "
 "do not leave the page."
-msgstr "Οι ενέργειες που εφαρμόζονται σε πολλαπλές εργασίες μετάφρασης μπορεί να διαρκέσουν μερικά δευτερόλεπτα. Παρακαλώ μην εγκαταλείψετε τη σελίδα."
+msgstr "Οι ενέργειες που εφαρμόζονται σε πολλές εργασίες μετάφρασης μπορεί να χρειαστούν λίγα δευτερόλεπτα. Παρακαλούμε μην φύγετε από τη σελίδα."
 
 #: src/js/jobs/components/BulkActions/Info.js:9
 msgid ""
 "Actions applied to multiple translation jobs can take a few minutes. Please "
 "do not leave the page."
-msgstr "Οι ενέργειες που εφαρμόζονται σε πολλαπλές εργασίες μετάφρασης μπορεί να διαρκέσουν μερικά λεπτά. Παρακαλώ μην εγκαταλείψετε τη σελίδα."
+msgstr "Οι ενέργειες που εφαρμόζονται σε πολλές εργασίες μετάφρασης μπορεί να χρειαστούν λίγα λεπτά. Παρακαλούμε μην φύγετε από τη σελίδα."
 
 #: src/js/jobs/components/Cells/AssignTranslator.js:35
 msgid "Select translator"
@@ -121,7 +123,7 @@ msgstr "Σε εξέλιξη"
 #: src/js/jobs/components/Cells/StatusCell.js:14
 #: src/js/jobs/model/store/columnsManagement.js:23
 msgid "Translation ready to download"
-msgstr "Η μετάφραση είναι έτοιμη για λήψη"
+msgstr "Μετάφραση έτοιμη για λήψη"
 
 #: src/js/jobs/components/Cells/StatusCell.js:15
 #: src/js/jobs/model/store/columnsManagement.js:38
@@ -131,27 +133,27 @@ msgstr "Ολοκληρώθηκε"
 #: src/js/jobs/components/Cells/StatusCell.js:25
 #. placeholder is the string package type. Could be WP Forms, ACF Field Groups.
 msgid "%s are immediately published because they don't support draft mode."
-msgstr "%s δημοσιεύονται αμέσως επειδή δεν υποστηρίζουν τη λειτουργία πρόχειρου."
+msgstr "Το %s δημοσιεύεται αμέσως επειδή δεν υποστηρίζει τη λειτουργία πρόχειρου."
 
 #: src/js/jobs/components/Cells/StatusCell.js:37
 msgid "Published — Pending review"
-msgstr "Δημοσιευμένο — Εκκρεμεί επανεξέταση"
+msgstr "Δημοσιεύτηκε — Σε αναμονή ελέγχου"
 
 #: src/js/jobs/components/Cells/StatusCell.js:38
 msgid "Draft — Pending review"
-msgstr "Πρόχειρο — Εκκρεμεί επανεξέταση"
+msgstr "Πρόχειρο — Σε αναμονή ελέγχου"
 
 #: src/js/jobs/components/Cells/StatusCell.js:43
 msgid "Review in progress"
-msgstr "Επανεξέταση σε εξέλιξη"
+msgstr "Ο έλεγχος σε εξέλιξη"
 
 #: src/js/jobs/components/Cells/StatusCell.js:46
 msgid "Published — Review in progress"
-msgstr "Δημοσιευμένο — Επανεξέταση σε εξέλιξη"
+msgstr "Δημοσιεύτηκε — Ο έλεγχος σε εξέλιξη"
 
 #: src/js/jobs/components/Cells/StatusCell.js:47
 msgid "Draft — Review in progress"
-msgstr "Πρόχειρο — Επανεξέταση σε εξέλιξη"
+msgstr "Πρόχειρο — Ο έλεγχος σε εξέλιξη"
 
 #: src/js/jobs/components/Cells/StatusCell.js:51
 msgid "Insufficient funds"
@@ -178,7 +180,7 @@ msgstr "Αυτόματη μετάφραση"
 
 #: src/js/jobs/components/Cells/TranslatorCell.js:42
 msgid "TP ID: %d"
-msgstr "TP ID: %d"
+msgstr "Αναγνωριστικό TP: %d"
 
 #: src/js/jobs/components/Filters/Buttons.js:8
 msgid "Reset"
@@ -190,7 +192,7 @@ msgstr "Φίλτρο"
 
 #: src/js/jobs/components/Filters/FiltersList.js:103
 msgid "ID (%s)"
-msgstr "ID (%s)"
+msgstr "Αναγνωριστικό (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:105
 msgid "Title (%s)"
@@ -206,7 +208,7 @@ msgstr "Γλώσσα (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:111
 msgid "Batch name (%s)"
-msgstr "Όνομα παρτίδας (%s)"
+msgstr "Όνομα δέσμης (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:113
 msgid "Status (%s)"
@@ -226,17 +228,17 @@ msgstr "Προθεσμία (%s)"
 
 #: src/js/jobs/components/Filters/FiltersList.js:159
 msgid "Clear all filters"
-msgstr "Καθαρισμός όλων των φίλτρων"
+msgstr "Εκκαθάριση όλων των φίλτρων"
 
 #: src/js/jobs/components/Filters/FiltersList.js:55
 #: src/js/jobs/components/Filters/TranslatedBy.js:37
 msgid "Any Translation Service"
-msgstr "Οποιαδήποτε Υπηρεσία Μετάφρασης"
+msgstr "Οποιαδήποτε υπηρεσία μετάφρασης"
 
 #: src/js/jobs/components/Filters/FiltersList.js:59
 #: src/js/jobs/components/Filters/TranslatedBy.js:42
 msgid "Any WordPress Translator"
-msgstr "Οποιοσδήποτε Μεταφραστής WordPress"
+msgstr "Οποιοσδήποτε μεταφραστής WordPress"
 
 #: src/js/jobs/components/Filters/Languages.js:72
 msgid "From"
@@ -264,11 +266,11 @@ msgstr "Επιλογή ορατών στηλών"
 
 #: src/js/jobs/components/Table.js:128
 msgid "Sort descending"
-msgstr "Ταξινόμηση κατά φθίνουσα σειρά"
+msgstr "Ταξινόμηση φθίνουσα"
 
 #: src/js/jobs/components/Table.js:129
 msgid "Sort ascending"
-msgstr "Ταξινόμηση κατά αύξουσα σειρά"
+msgstr "Ταξινόμηση αύξουσα"
 
 #: src/js/jobs/components/Table.js:130
 msgid "Cancel sorting"
@@ -308,7 +310,7 @@ msgstr "Εξαγωγή"
 
 #: src/js/jobs/components/XliffBox/Import.js:38
 msgid "Select File"
-msgstr "Επιλογή Αρχείου"
+msgstr "Επιλογή αρχείου"
 
 #: src/js/jobs/components/XliffBox/Import.js:39
 msgid ".xliff .zip"
@@ -324,7 +326,7 @@ msgstr "Εισαγωγή"
 
 #: src/js/jobs/components/XliffBox/XliffBox.js:19
 msgid "Import / Export XLIFF"
-msgstr "Εισαγωγή / Εξαγωγή XLIFF"
+msgstr "Εισαγωγή / εξαγωγή XLIFF"
 
 #: src/js/jobs/components/actionColumn.js:13
 msgid "Actions"
@@ -333,7 +335,7 @@ msgstr "Ενέργειες"
 #: src/js/jobs/components/columns.js:113
 #: src/js/jobs/model/store/columnsManagement.js:90
 msgid "Batch name"
-msgstr "Όνομα παρτίδας"
+msgstr "Όνομα δέσμης"
 
 #: src/js/jobs/components/columns.js:184
 msgid "Filter by %s"
@@ -346,7 +348,7 @@ msgstr "Τίτλος"
 
 #: src/js/jobs/hooks/BulkActions/useCreateApproveTranslationReviewsAction.js:13
 msgid "Approve translation reviews"
-msgstr "Έγκριση επανεξετάσεων μετάφρασης"
+msgstr "Έγκριση ελέγχων μετάφρασης"
 
 #: src/js/jobs/hooks/BulkActions/useCreateCancelAction.js:20
 msgid "Cancel jobs"
@@ -354,7 +356,7 @@ msgstr "Ακύρωση εργασιών"
 
 #: src/js/jobs/hooks/BulkActions/useCreateCancelTranslationReviewsAction.js:16
 msgid "Cancel translation reviews"
-msgstr "Ακύρωση επανεξετάσεων μετάφρασης"
+msgstr "Ακύρωση ελέγχων μετάφρασης"
 
 #: src/js/jobs/hooks/BulkActions/useCreateExportXLIFFAction.js:12
 msgid "Export to XLIFF %s"
@@ -378,36 +380,36 @@ msgstr "Η μετάφραση έχει ληφθεί"
 
 #: src/js/jobs/model/store/applyTranslations.js:36
 msgid "Translations could not be downloaded"
-msgstr "Δεν ήταν δυνατή η λήψη των μεταφράσεων"
+msgstr "Οι μεταφράσεις δεν μπόρεσαν να ληφθούν"
 
 #: src/js/jobs/model/store/applyTranslations.js:37
 msgid "Translation could not be downloaded"
-msgstr "Δεν ήταν δυνατή η λήψη της μετάφρασης"
+msgstr "Η μετάφραση δεν μπόρεσε να ληφθεί"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:10
 msgid "Approving translations reviews failed!"
-msgstr "Η έγκριση των επανεξετάσεων μεταφράσεων απέτυχε!"
+msgstr "Η έγκριση των ελέγχων μεταφράσεων απέτυχε!"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:38
 msgid "Failed approving translations for the following posts: "
-msgstr "Αποτυχία έγκρισης μεταφράσεων για τις ακόλουθες αναρτήσεις: "
+msgstr "Απέτυχε η έγκριση μεταφράσεων για τις ακόλουθες δημοσιεύσεις: "
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:51
 msgid "Translations reviews approved successfully!"
-msgstr "Οι επανεξετάσεις μεταφράσεων εγκρίθηκαν με επιτυχία!"
+msgstr "Οι έλεγχοι μεταφράσεων εγκρίθηκαν επιτυχώς!"
 
 #: src/js/jobs/model/store/approveTranslationsReviews.js:57
 msgid "No valid jobs selected to approve translations reviews!"
-msgstr "Δεν επιλέχθηκαν έγκυρες εργασίες για έγκριση επανεξετάσεων μεταφράσεων!"
+msgstr "Δεν επιλέχθηκαν έγκυρες εργασίες για έγκριση ελέγχων μεταφράσεων!"
 
 #: src/js/jobs/model/store/assignTranslator.js:17
 msgid "The translator has been assigned to the job"
 msgstr "Ο μεταφραστής έχει ανατεθεί στην εργασία"
 
 #: src/js/jobs/model/store/assignTranslator.js:22
-#: src/js/jobs/model/store/openEditor.js:29
+#: src/js/jobs/model/store/openEditor.js:37
 msgid "The translator could not be assigned to the job"
-msgstr "Δεν ήταν δυνατή η ανάθεση του μεταφραστή στην εργασία"
+msgstr "Ο μεταφραστής δεν μπόρεσε να ανατεθεί στην εργασία"
 
 #: src/js/jobs/model/store/cancelJobs.js:22
 msgid "The jobs have been cancelled"
@@ -419,31 +421,31 @@ msgstr "Η εργασία έχει ακυρωθεί"
 
 #: src/js/jobs/model/store/cancelJobs.js:30
 msgid "The jobs could not be cancelled"
-msgstr "Δεν ήταν δυνατή η ακύρωση των εργασιών"
+msgstr "Οι εργασίες δεν μπόρεσαν να ακυρωθούν"
 
 #: src/js/jobs/model/store/cancelJobs.js:31
 msgid "The job could not be cancelled"
-msgstr "Δεν ήταν δυνατή η ακύρωση της εργασίας"
+msgstr "Η εργασία δεν μπόρεσε να ακυρωθεί"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:26
 msgid "Translation reviews have been canceled"
-msgstr "Οι επανεξετάσεις μεταφράσεων έχουν ακυρωθεί"
+msgstr "Οι έλεγχοι μεταφράσεων έχουν ακυρωθεί"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:27
 msgid "Translation review has been canceled"
-msgstr "Η επανεξέταση μετάφρασης έχει ακυρωθεί"
+msgstr "Ο έλεγχος μετάφρασης έχει ακυρωθεί"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:33
 msgid "Translation reviews could not be canceled"
-msgstr "Δεν ήταν δυνατή η ακύρωση των επανεξετάσεων μεταφράσεων"
+msgstr "Οι έλεγχοι μεταφράσεων δεν μπόρεσαν να ακυρωθούν"
 
 #: src/js/jobs/model/store/cancelTranslationReviews.js:34
 msgid "Translation review could not be canceled"
-msgstr "Δεν ήταν δυνατή η ακύρωση της επανεξέτασης μετάφρασης"
+msgstr "Ο έλεγχος μετάφρασης δεν μπόρεσε να ακυρωθεί"
 
 #: src/js/jobs/model/store/columnsManagement.js:106
 msgid "Sent on"
-msgstr "Στάλθηκε στις"
+msgstr "Αποστολή στις"
 
 #: src/js/jobs/model/store/columnsManagement.js:114
 msgid "Deadline"
@@ -455,11 +457,11 @@ msgstr "Κατάσταση"
 
 #: src/js/jobs/model/store/columnsManagement.js:54
 msgid "Pending review"
-msgstr "Εκκρεμεί επανεξέταση"
+msgstr "Σε αναμονή ελέγχου"
 
 #: src/js/jobs/model/store/columnsManagement.js:65
 msgid "ID"
-msgstr "ID"
+msgstr "Αναγνωριστικό"
 
 #: src/js/jobs/model/store/columnsManagement.js:77
 msgid "Type"
@@ -475,7 +477,7 @@ msgstr "Μεταφράστηκε από"
 
 #: src/js/jobs/model/store/downloadXliff.js:11
 msgid "Download XLIFF file couldn't be finished"
-msgstr "Δεν ήταν δυνατή η ολοκλήρωση της λήψης του αρχείου XLIFF"
+msgstr "Η λήψη του αρχείου XLIFF δεν μπόρεσε να ολοκληρωθεί"
 
 #: src/js/jobs/model/store/exportToXLIFF.js:20
 msgid "Could not load jobs for export"
@@ -511,7 +513,7 @@ msgstr "Φόρτωση εργασιών μετάφρασης"
 
 #: src/js/jobs/model/store/jobs.js:82
 msgid "Jobs could not be loaded"
-msgstr "Δεν ήταν δυνατή η φόρτωση των εργασιών"
+msgstr "Οι εργασίες δεν μπόρεσαν να φορτωθούν"
 
 #: src/js/jobs/model/store/resign.js:12
 msgid "Specify some jobs to resign"
@@ -519,23 +521,23 @@ msgstr "Καθορίστε κάποιες εργασίες για παραίτη
 
 #: src/js/jobs/model/store/resign.js:22
 msgid "We could not resign jobs: %s"
-msgstr "Δεν ήταν δυνατή η παραίτηση από τις εργασίες: %s"
+msgstr "Δεν μπορέσαμε να παραιτηθούμε από τις εργασίες: %s"
 
 #: src/js/jobs/model/store/resign.js:34
 msgid "Resigned from jobs"
-msgstr "Παραιτήθηκε από τις εργασίες"
+msgstr "Παραιτήθηκε από εργασίες"
 
 #: src/js/jobs/model/store/resign.js:35
 msgid "Resigned from job"
-msgstr "Παραιτήθηκε από την εργασία"
+msgstr "Παραιτήθηκε από εργασία"
 
 #: src/js/jobs/model/store/resign.js:39
 msgid "Failed to resign from jobs"
-msgstr "Αποτυχία παραίτησης από τις εργασίες"
+msgstr "Απέτυχε η παραίτηση από εργασίες"
 
 #: src/js/jobs/model/store/synchronizeATEJobs.js:27
 msgid "The Advanced Editor jobs synchronization has failed"
-msgstr "Ο συγχρονισμός εργασιών του Προηγμένου Επεξεργαστή απέτυχε"
+msgstr "Ο συγχρονισμός εργασιών του Advanced Editor απέτυχε"
 
 #: src/js/jobs/model/store/synchronizeTranslationProxyJobs.js:12
 msgid "Synchronization with the Professional Translation service has failed"
@@ -549,8 +551,8 @@ msgstr[1] "Έχουν ληφθεί %d μεταφράσεις"
 
 #: src/js/jobs/model/store/translationBatchSync.js:83
 msgid "Batch sync finished successfully!"
-msgstr "Ο συγχρονισμός παρτίδας ολοκληρώθηκε με επιτυχία!"
+msgstr "Ο συγχρονισμός δέσμης ολοκληρώθηκε επιτυχώς!"
 
 #: src/js/jobs/model/store/translationBatchSync.js:88
 msgid "Batch sync couldn't be finished"
-msgstr "Δεν ήταν δυνατή η ολοκλήρωση του συγχρονισμού παρτίδας"
+msgstr "Ο συγχρονισμός δέσμης δεν μπόρεσε να ολοκληρωθεί"

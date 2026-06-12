@@ -129,6 +129,8 @@ class WPML_Languages_AJAX {
 				if ( 1 === $status ) {
 					$response['message'] = __( 'WordPress language file (.mo) is missing. Keeping existing display language.', 'sitepress' );
 				}
+
+				( new WPML_WP_Cache( WPML_URL_Cached_Converter::CACHE_GROUP ) )->flush_group_cache();
 			}
 		}
 

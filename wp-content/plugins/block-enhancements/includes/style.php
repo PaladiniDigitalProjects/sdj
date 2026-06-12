@@ -135,6 +135,9 @@ if ( ! class_exists( Style::class ) ) :
 
 			// Get block style.
 			add_filter( 'render_block', [ $this, 'render_list_item_block' ], 10, 2 );
+
+			// Adjust block data for list item blocks.
+			add_filter( 'render_block_data', [ $this, 'render_list_item_block_data' ], 10, 3 );
 		}
 
 		/**
@@ -575,13 +578,13 @@ if ( ! class_exists( Style::class ) ) :
 			$nested_style = [];
 			$item_style   = [];
 
-			$icon_uri          = $setting_value['iconURI'] ?? false;
-			$icon_width        = $setting_value['iconWidth']['value'] ?? '1em';
-			$icon_text_spacing = $setting_value['iconTextSpacing']['value'] ?? '.5em';
-			$icon_position     = $setting_value['iconPosition'] ?? 'left';
-			$text_alignment    = $setting_value['textAlignment'] ?? false;
-			$icon_margin_top   = $setting_value['iconMarginTop'] ?? false;
-			$icon_color        = $setting_value['iconColor'] ?? false;
+			$icon_uri          = $this->sanitize_value( $setting_value['iconURI'] ?? '' );
+			$icon_width        = $this->sanitize_value( $setting_value['iconWidth']['value'] ?? '1em' );
+			$icon_text_spacing = $this->sanitize_value( $setting_value['iconTextSpacing']['value'] ?? '.5em' );
+			$icon_position     = $this->sanitize_value( $setting_value['iconPosition'] ?? 'left' );
+			$text_alignment    = $this->sanitize_value( $setting_value['textAlignment'] ?? '' );
+			$icon_margin_top   = $this->sanitize_value( $setting_value['iconMarginTop'] ?? '' );
+			$icon_color        = $setting_value['iconColor'] ?? '';
 			$wrap_text         = $setting_value['wrapText'] ?? false;
 
 			// Block name.
@@ -1180,7 +1183,7 @@ if ( ! class_exists( Style::class ) ) :
 					$shadow_value = 'var(--wp--preset--shadow--' . $slug . ', ' . $shadow_value . ')';
 				}
 
-				$shadow_css = '--be--box-shadow:' . $shadow_value . ';';
+				$shadow_css = '--be--box-shadow:' . $this->sanitize_value( $shadow_value ) . ';';
 			}
 
 			return $shadow_css;
@@ -1289,7 +1292,7 @@ if ( ! class_exists( Style::class ) ) :
 
 			// Build the css variable.
 			if ( count( $shadow_styles ) > 0 ) {
-				$shadow_css = '--be--text-shadow:' . implode( ',', $shadow_styles ) . ';';
+				$shadow_css = '--be--text-shadow:' . $this->sanitize_value( implode( ',', $shadow_styles ) ) . ';';
 			}
 
 			return $shadow_css;
@@ -1585,6 +1588,10 @@ if ( ! class_exists( Style::class ) ) :
 		private function build_transition_css_variable( $transition ) {
 			// Build the css variable.
 			$transition_css = '';
+
+			// Validate value.
+			$transition = $this->sanitize_value( $transition );
+
 			if ( $transition ) {
 				$transition_css = '--be--transition:' . $transition . ';';
 			}
@@ -1715,7 +1722,7 @@ if ( ! class_exists( Style::class ) ) :
 		 * @return void
 		 */
 		private function build_typography_css_value( $args ) {
-			return $args['value'] ?? '';
+			return $this->sanitize_value( $args['value'] ?? '' );
 		}
 
 		/**
@@ -1838,9 +1845,7 @@ if ( ! class_exists( Style::class ) ) :
 		 * @return string
 		 */
 		private function build_position_css_value( $args = [] ) {
-			$value = $args['value'] ?? '';
-
-			return $value ? $value : '';
+			return $this->sanitize_value( $args['value'] ?? '' );
 		}
 
 		/**
@@ -1867,19 +1872,19 @@ if ( ! class_exists( Style::class ) ) :
 				return '';
 			}
 
-			$top    = $value['top'] ?? '';
-			$right  = $value['right'] ?? '';
-			$bottom = $value['bottom'] ?? '';
-			$left   = $value['left'] ?? '';
+			$top    = $this->sanitize_value( $value['top'] ?? '' );
+			$right  = $this->sanitize_value( $value['right'] ?? '' );
+			$bottom = $this->sanitize_value( $value['bottom'] ?? '' );
+			$left   = $this->sanitize_value( $value['left'] ?? '' );
 
 			// Default to 'auto' if one of the pair is set but the other is not.
 			if ( $top || $bottom ) {
-				$top    = $top ?? 'auto';
-				$bottom = $bottom ?? 'auto';
+				$top    = '' !== $top ? $top : 'auto';
+				$bottom = '' !== $bottom ? $bottom : 'auto';
 			}
 			if ( $left || $right ) {
-				$left  = $left ?? 'auto';
-				$right = $right ?? 'auto';
+				$left  = '' !== $left ? $left : 'auto';
+				$right = '' !== $right ? $right : 'auto';
 			}
 
 			// Build style string only for defined values.
@@ -1924,7 +1929,7 @@ if ( ! class_exists( Style::class ) ) :
 				return '';
 			}
 
-			return $value;
+			return $this->sanitize_value( $value );
 		}
 
 		/**
@@ -2121,7 +2126,7 @@ if ( ! class_exists( Style::class ) ) :
 				}
 			}
 
-			return $value;
+			return $this->sanitize_value( $value );
 		}
 
 		/**
@@ -2135,17 +2140,16 @@ if ( ! class_exists( Style::class ) ) :
 				return '';
 			}
 
+			$refined_value = $value;
 			if ( strpos( $value, 'var:preset|spacing|' ) !== false ) {
 				preg_match( '/var:preset\|spacing\|(.+)/', $value, $slug );
 
-				if ( ! $slug ) {
-					return $value;
+				if ( $slug ) {
+					$refined_value = "var(--wp--preset--spacing--{$slug[1]})";
 				}
-
-				return "var(--wp--preset--spacing--{$slug[1]})";
 			}
 
-			return $value;
+			return $this->sanitize_value( $refined_value );
 		}
 
 		/**
@@ -2251,6 +2255,35 @@ if ( ! class_exists( Style::class ) ) :
 		}
 
 		/**
+		 * Sanitize a simple value
+		 *
+		 * @param mixed $value
+		 * @param boolean $is_complex
+		 * @return mixed
+		 */
+		private function sanitize_value( $value, $is_complex = false ) {
+			if ( ! $this->is_valid_value( $value ) || ! is_string( $value ) ) {
+				return '';
+			}
+
+			// Remove NULL bytes.
+			$value = str_replace( "\0", '', $value );
+
+			// Prevent breaking out of <style>.
+			$value = preg_replace( '#</style#i', '', $value );
+
+			if ( $is_complex ) {
+				// Prevent breaking CSS rule.
+				$value = str_replace( [ '{', '}' ], '', $value );
+			} else {
+				// Prevent breaking CSS syntax.
+				$value = preg_replace( '/[;{}]/', '', $value );
+			}
+
+			return trim( $value );
+		}
+
+		/**
 		 * Render list item block
 		 *
 		 * @param string $block_content
@@ -2277,15 +2310,44 @@ if ( ! class_exists( Style::class ) ) :
 				$block_content = $tags->get_updated_html();
 
 				// Wrap the inner text with a span.
-				$pattern     = '/<li([^>]*)>([\s\S]*?)<ul/i';
-				$replacement = '<li$1><span class="list-item-text">$2</span><ul';
-				$new_content = preg_replace( $pattern, $replacement, $block_content, 1 );
-				if ( $new_content ) {
-					return $new_content;
-				}
+				$pattern       = '/<li([^>]*)>([\s\S]*?)<ul/i';
+				$replacement   = '<li$1><span class="list-item-text">$2</span><ul';
+				$block_content = preg_replace( $pattern, $replacement, $block_content, 1 );
+			} elseif ( ! empty( $block['attrs']['boldblocks']['withIcon']['wrapText'] ) ) {
+				// Wrap the inner text with a span.
+				$pattern       = '/<li([^>]*)>([\s\S]*?)<\/li>/i';
+				$replacement   = '<li$1><span class="with-icon__text">$2</span></li>';
+				$block_content = preg_replace( $pattern, $replacement, $block_content, 1 );
 			}
 
 			return $block_content;
+		}
+
+		/**
+		 * Adjust block data for list item blocks
+		 *
+		 * @param array         $parsed_block
+		 * @param array         $source_block
+		 * @param WP_Block|null $parent_block If this is a nested block, a reference to the parent block.
+		 */
+		public function render_list_item_block_data( $parsed_block, $source_block, $parent_block ) {
+			// Bail if if it is admin context.
+			if ( is_admin() ) {
+				return $parsed_block;
+			}
+
+			// Bail if it is not a list item block.
+			if ( 'core/list-item' !== ( $parsed_block['blockName'] ?? '' ) ) {
+				return $parsed_block;
+			}
+
+			// Has wrap text.
+			$has_wrap_text = $parsed_block['attrs']['boldblocks']['withIcon']['wrapText'] ?? false;
+			if ( ! $has_wrap_text && ! empty( $parent_block->attributes['boldblocks']['withIcon']['wrapText'] ) ) {
+				$parsed_block['attrs']['boldblocks']['withIcon']['wrapText'] = $parent_block->attributes['boldblocks']['withIcon']['wrapText'];
+			}
+
+			return $parsed_block;
 		}
 	}
 endif;

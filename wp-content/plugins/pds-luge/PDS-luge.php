@@ -91,18 +91,21 @@ function pds_luge_register_block() {
 	}
 	$plugin_dir_url = plugin_dir_url( __FILE__ );
 	
+	$block_js  = plugin_dir_path( __FILE__ ) . 'blocks/block.js';
+	$editor_css = plugin_dir_path( __FILE__ ) . 'blocks/editor.css';
+
 	wp_register_script(
 		'PDS-luge-block-editor',
 		$plugin_dir_url . 'blocks/block.js',
 		array( 'wp-blocks', 'wp-element', 'wp-i18n', 'wp-editor' ),
-		filemtime( plugin_dir_path( __FILE__ ) . 'blocks/block.js' )
+		file_exists( $block_js ) ? filemtime( $block_js ) : false
 	);
-	
+
 	wp_register_style(
 		'PDS-luge-block-editor-style',
 		$plugin_dir_url . 'blocks/editor.css',
 		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'blocks/editor.css' )
+		file_exists( $editor_css ) ? filemtime( $editor_css ) : false
 	);
 	// Register the block.
 	register_block_type( 'pds/luge-block', array(

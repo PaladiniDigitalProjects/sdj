@@ -8,9 +8,6 @@ var WPML_TM = WPML_TM || {};
 
     jQuery(function () {
 
-
-        jQuery(document).on('change', '.icl_tj_select_translator select', icl_tm_assign_translator);
-
         // Translator notes - translation dashboard - start
         jQuery('.icl_tn_link').click(function () {
             jQuery('.icl_post_note:visible').slideUp();
@@ -162,87 +159,6 @@ var WPML_TM = WPML_TM || {};
         return false;
     }
 
-    function icl_tm_assign_translator() {
-        var this_translator = jQuery(this);
-        var translator_id = this_translator.val();
-        var icl_tj_select_translator = this_translator.closest('.icl_tj_select_translator');
-        var translation_controls = icl_tj_select_translator.find('.icl_tj_select_translator_controls');
-        var job_id = translation_controls.attr('id').replace(/^icl_tj_tc_/, '');
-        translation_controls.show();
-        translation_controls.find('.icl_tj_cancel').click(function () {
-            this_translator.val(jQuery('#icl_tj_ov_' + job_id).val());
-            translation_controls.hide();
-        });
-        var jobType = jQuery('#icl_tj_ty_' + job_id).val();
-        translation_controls.find('.icl_tj_ok').off().click(function () {
-            icl_tm_assign_translator_request(job_id, translator_id, this_translator, jobType);
-        });
-
-    }
-
-    function icl_tm_assign_translator_request(job_id, translator_id, select, jobType) {
-        var translation_controls = select.closest('.icl_tj_select_translator').find('.icl_tj_select_translator_controls');
-        select.prop('disabled', true);
-        translation_controls.find('.icl_tj_cancel, .icl_tj_ok').prop('disabled', true);
-        var td_wrapper = select.parent().parent();
-
-        var ajaxLoader = jQuery( icl_ajxloaderimg ).insertBefore( translation_controls.find( '.icl_tj_ok' ) );
-
-        jQuery.ajax({
-            type: "POST",
-            url: icl_ajx_url,
-            dataType: 'json',
-            data: 'icl_ajx_action=assign_translator&job_id=' + job_id + '&translator_id=' + translator_id + '&job_type=' + jobType + '&_icl_nonce=' + jQuery('#_icl_nonce_at').val(),
-            success: function (msg) {
-                if (!msg.error) {
-                    translation_controls.hide();
-                    /** @namespace msg.service */
-                    if (msg.service !== 'local') {
-                        td_wrapper.html(msg.message);
-                    }
-                }
-                select.prop('disabled', false);
-                translation_controls.find('.icl_tj_cancel, .icl_tj_ok').prop('disabled', false);
-                ajaxLoader.remove();
-                translation_controls.hide();
-
-
-            }
-        });
-
-        return false;
-    }
-
-    function icl_tm_set_pickup_method(e) {
-        e.preventDefault();
-
-        var form = jQuery(this);
-        var submitButton = form.find(':submit');
-
-        submitButton.prop('disabled', true);
-        var ajaxLoader = jQuery(icl_ajxloaderimg).insertBefore(submitButton);
-
-        jQuery.ajax({
-            type: "POST",
-            url: icl_ajx_url,
-            dataType: 'json',
-            data: 'icl_ajx_action=set_pickup_mode&' + form.serialize(),
-            success: function (msg) {
-                if ( msg.success ) {
-                    icl_translations_pickup_box_populate();
-                } else {
-                    fadeInAjxResp( '#icl_ajx_response_tpm', msg.data.message, true );
-                }
-            },
-            complete: function () {
-                ajaxLoader.remove();
-                submitButton.prop('disabled', false);
-            }
-        });
-
-        return false;
-    }
-
     function iclTmSelectAllJobsBasket(caller) {
         jQuery('#icl-translation-jobs-basket').find(':checkbox').prop('checked', jQuery(caller).prop('checked'));
         jQuery('#icl-tm-jobs-cancel-but').prop('disabled', !jQuery(caller).prop('checked'));
@@ -290,11 +206,16 @@ var WPML_TM = WPML_TM || {};
     $(function () {
         $('#translation-notifications').on('change', 'input', function (e) {
             var input = $(e.target);
-            var child = $('[name="' + input.data('child') + '"]');
-
-            if (child.length) {
-                child.prop('disabled', !input.is(":checked"));
-            }
+						var children = [];
+						if ( input.data('child') ) {
+							children = input.data('child').split('||');
+						}
+						for (var i = 0; i < children.length; i++) {
+							var child = $('[name="' + children[i] + '"]');
+							if ( child.length ) {
+									child.prop('disabled', !input.is(":checked"));
+							}
+						}
 
         });
     });

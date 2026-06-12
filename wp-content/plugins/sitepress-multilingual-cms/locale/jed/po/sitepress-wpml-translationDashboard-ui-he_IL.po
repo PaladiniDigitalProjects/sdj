@@ -2,10 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot\n"
-
-#: src/js/ate/status-icons/StatusUpdater.js:80
-msgid "Refreshing translation status"
-msgstr "מרענן את סטטוס התרגום"
+"Language: he_IL\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: src/js/components/translation/TranslationMethod.js:115
 msgid "Your pending automatic translations will be canceled."
@@ -17,7 +15,7 @@ msgstr "שמור"
 
 #: src/js/components/translation/TranslationMethod.js:125
 msgid "Go to the <a>Translation Management Dashboard</a> to translate your content."
-msgstr "עבור אל <a>לוח הבקרה לניהול תרגומים</a> כדי לתרגם את התוכן שלך."
+msgstr "עבור אל <a>לוח המחוונים לניהול תרגומים</a> כדי לתרגם את התוכן שלך."
 
 #: src/js/components/translation/TranslationMethod.js:142
 msgid "Review the translations before publishing"
@@ -37,7 +35,7 @@ msgstr "תרגם הכל"
 
 #: src/js/components/translation/TranslationMethod.js:71
 msgid "WPML will automatically translate content that you publish or update"
-msgstr "WPML יתרגם אוטומטית תוכן שאתה מפרסם או מעדכן"
+msgstr "WPML יתרגם אוטומטית תוכן שתפרסם או תעדכן"
 
 #: src/js/components/translation/TranslationMethod.js:74
 msgid "How do you want to translate this site?"
@@ -69,43 +67,43 @@ msgstr "מה ברצונך לעשות עם התוכן שכבר מתורגם?"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:39
 msgid "Leave existing translations as is"
-msgstr "השאר את התרגומים הקיימים כפי שהם"
+msgstr "השאר תרגומים קיימים כפי שהם"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:64
 msgid "You chose to review translations before publishing."
-msgstr "בחרת לבדוק תרגומים לפני פרסום."
+msgstr "בחרת לבדוק תרגומים לפני הפרסום."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:65
 msgid ""
 "If you retranslate content that's already published, the changes will be "
 "applied directly to live pages or posts."
-msgstr "אם תתרגם מחדש תוכן שכבר פורסם, השינויים יוחלו ישירות על דפים או פוסטים פעילים."
+msgstr "אם תתרגם מחדש תוכן שכבר פורסם, השינויים יחולו ישירות על עמודים או פוסטים פעילים."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:82
 msgid ""
 "This also updates the translation memory for your site. Read more about <a "
 "href=\"%s\" target=\"_blank\" >translation memory</a>"
-msgstr "זה גם מעדכן את זיכרון התרגום של האתר שלך. קרא עוד על <a href=\"%s\" target=\"_blank\" >זיכרון תרגום</a>"
+msgstr "זה גם מעדכן את זיכרון התרגום עבור האתר שלך. קרא עוד על <a href=\"%s\" target=\"_blank\" >זיכרון תרגום</a>"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:89
 msgid ""
 "Allows you to re-translate your content and update the translation memory "
 "for your site. Read more about <a href=\"%s\" target=\"_blank\" "
 ">translation memory</a>"
-msgstr "מאפשר לך לתרגם מחדש את התוכן שלך ולעדכן את זיכרון התרגום של האתר שלך. קרא עוד על <a href=\"%s\" target=\"_blank\" >זיכרון תרגום</a>"
+msgstr "מאפשר לך לתרגם מחדש את התוכן שלך ולעדכן את זיכרון התרגום עבור האתר שלך. קרא עוד על <a href=\"%s\" target=\"_blank\" >זיכרון תרגום</a>"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:96
 msgid ""
 "Allows your translators to re-translate your content and update the "
 "translation memory for your site. Read more about <a href=\"%s\" "
 "target=\"_blank\" >translation memory</a>"
-msgstr "מאפשר למתרגמים שלך לתרגם מחדש את התוכן שלך ולעדכן את זיכרון התרגום של האתר שלך. קרא עוד על <a href=\"%s\" target=\"_blank\" >זיכרון תרגום</a>"
+msgstr "מאפשר למתרגמים שלך לתרגם מחדש את התוכן שלך ולעדכן את זיכרון התרגום עבור האתר שלך. קרא עוד על <a href=\"%s\" target=\"_blank\" >זיכרון תרגום</a>"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToHandleExistingTranslations.js:98
 msgid ""
 "HINT: You can add a Note for translators in the table above with special "
 "instructions."
-msgstr "רמז: תוכל להוסיף הערה למתרגמים בטבלה שלמעלה עם הוראות מיוחדות."
+msgstr "רמז: באפשרותך להוסיף הערה למתרגמים בטבלה לעיל עם הוראות מיוחדות."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToTranslate.js:31
 msgid "Translate automatically"
@@ -125,14 +123,14 @@ msgstr "תרגם בעצמי"
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToTranslate.js:60
 msgid "You do not need translation credits to translate content yourself."
-msgstr "אינך זקוק לנקודות זכות תרגום כדי לתרגם תוכן בעצמך."
+msgstr "אינך זקוק לזיכויי תרגום כדי לתרגם תוכן בעצמך."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToTranslate.js:87
 msgid ""
 "You can only automatically translate content from your site's default "
 "language (English), to your site's other languages. Deselect content in "
 "your site's secondary languages to proceed."
-msgstr "ניתן לתרגם אוטומטית תוכן רק משפת ברירת המחדל של האתר שלך (אנגלית) לשפות האחרות של האתר שלך. בטל את הבחירה בתוכן בשפות המשניות של האתר שלך כדי להמשיך."
+msgstr "באפשרותך לתרגם אוטומטית תוכן רק משפת ברירת המחדל של האתר שלך (אנגלית) לשפות האחרות של האתר שלך. בטל את הבחירה בתוכן בשפות המשניות של האתר שלך כדי להמשיך."
 
 #: src/js/translationDashboard/sending-to-translation/components/HowToTranslate.js:92
 #. %s is the name of the default language. </a>
@@ -140,7 +138,7 @@ msgid ""
 "You can only automatically translate content from your primary language "
 "(%s) to other languages. Use the language switcher at the top of this page "
 "to switch to %s."
-msgstr "ניתן לתרגם אוטומטית תוכן רק מהשפה הראשית שלך (%s) לשפות אחרות. השתמש במחליף השפות בראש העמוד הזה כדי לעבור ל-%s."
+msgstr "באפשרותך לתרגם אוטומטית תוכן רק משפתך הראשית (%s) לשפות אחרות. השתמש במחליף השפות בחלק העליון של דף זה כדי לעבור ל-%s."
 
 #: src/js/translationDashboard/sending-to-translation/components/LanguageRow.js:49
 msgid ""
@@ -158,7 +156,7 @@ msgstr "בחר פוסט או עמוד לתרגום"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:18
 msgid "Translate or duplicate content to at least one language"
-msgstr "תרגם או שכפל תוכן לפחות לשפה אחת"
+msgstr "תרגם או שכפל תוכן לשפה אחת לפחות"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:19
 msgid "Choose how you want to translate your content"
@@ -176,7 +174,7 @@ msgstr "התוכן שנבחר כולל פריטים בשפה שאינה שפת �
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:74
 msgid "Choose at least one translation action"
-msgstr "בחר לפחות פעולת תרגום אחת"
+msgstr "בחר פעולת תרגום אחת לפחות"
 
 #: src/js/translationDashboard/sending-to-translation/components/SendButton.js:78
 msgid "Duplicate"
@@ -210,7 +208,7 @@ msgstr "עוד דבר אחד..."
 msgid ""
 "What would you like to do when your content has finished translating "
 "automatically?"
-msgstr "מה ברצונך לעשות כאשר התוכן שלך יסיים להתרגם אוטומטית?"
+msgstr "מה תרצה לעשות כשהתוכן שלך יסיים לתרגם אוטומטית?"
 
 #: src/js/translationDashboard/sending-to-translation/components/TranslationReviewModal.js:51
 msgid "Save settings"
@@ -220,7 +218,7 @@ msgstr "שמור הגדרות"
 msgid ""
 "This setting will apply to all future automatic translations. You can "
 "change this anytime in WPML → Settings."
-msgstr "הגדרה זו תחול על כל התרגומים האוטומטיים העתידיים. תוכל לשנות זאת בכל עת ב-WPML ← הגדרות."
+msgstr "הגדרה זו תחול על כל התרגומים האוטומטיים העתידיים. באפשרותך לשנות זאת בכל עת ב-WPML ← הגדרות."
 
 #: src/js/translationDashboard/sending-to-translation/model/store.js:19
 msgid "Translate"
@@ -236,11 +234,11 @@ msgstr "אל תעשה כלום"
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:11
 msgid "You need credits to use automatic translation."
-msgstr "אתה זקוק לנקודות זכות כדי להשתמש בתרגום אוטומטי."
+msgstr "אתה זקוק לזיכויים כדי להשתמש בתרגום אוטומטי."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:113
 msgid "Finish setting up %s on your site"
-msgstr "סיים את הגדרת %s באתר שלך"
+msgstr "סיים להגדיר את %s באתר שלך"
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:117
 msgid ""
@@ -252,7 +250,7 @@ msgstr "עליך לאמת את %s כדי לשלוח להם תוכן לתרגום
 msgid ""
 "Connection Error. Please wait a minute and reload this page. If the problem "
 "continues, please <a>contact WPML support</a>."
-msgstr "שגיאת חיבור. אנא המתן דקה וטען מחדש עמוד זה. אם הבעיה נמשכת, אנא <a>צור קשר עם התמיכה של WPML</a>."
+msgstr "שגיאת חיבור. אנא המתן דקה וטען מחדש דף זה. אם הבעיה נמשכת, אנא <a>צור קשר עם תמיכת WPML</a>."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:143
 msgid "Add a translator to use %s."
@@ -262,31 +260,31 @@ msgstr "הוסף מתרגם כדי להשתמש ב-%s."
 msgid ""
 "To send content to %s for translation, go to the %s to add a translator on "
 "your site."
-msgstr "כדי לשלוח תוכן ל-%s לתרגום, עבור ל-%s כדי להוסיף מתרגם באתר שלך."
+msgstr "כדי לשלוח תוכן ל-%s לתרגום, עבור אל %s כדי להוסיף מתרגם לאתר שלך."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:179
 msgid ""
 "Your selected automatic translation engines do not support the following "
 "language(s): %s. Read more about <a>choosing a translation engine</a>."
-msgstr "מנועי התרגום האוטומטי שבחרת אינם תומכים בשפה/ות הבאה/ות: %s. קרא עוד על <a>בחירת מנוע תרגום</a>."
+msgstr "מנועי התרגום האוטומטיים שבחרת אינם תומכים בשפה/ות הבאות: %s. קרא עוד על <a>בחירת מנוע תרגום</a>."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:211
 msgid ""
 "Some of the selected content is already being translated. This will cancel "
 "any in-progress translations."
-msgstr "חלק מהתוכן שנבחר כבר נמצא בתהליך תרגום. פעולה זו תבטל כל תרגום שנמצא בתהליך."
+msgstr "חלק מהתוכן שנבחר כבר מתורגם. פעולה זו תבטל כל תרגום שמתבצע כעת."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:44
 msgid ""
 "Any existing content (translations) will be overwritten when creating "
 "duplicates."
-msgstr "כל תוכן קיים (תרגומים) יימחק בעת יצירת עותקים."
+msgstr "כל תוכן קיים (תרגומים) יידרס בעת יצירת כפילויות."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:45
 msgid ""
 "When duplicating content, please first duplicate parent pages to maintain "
 "the site's hierarchy."
-msgstr "בעת שכפול תוכן, אנא שכפל תחילה את דפי האב כדי לשמור על היררכיית האתר."
+msgstr "בעת שכפול תוכן, אנא שכפל תחילה עמודי אב כדי לשמור על היררכיית האתר."
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:68
 msgid ""
@@ -297,33 +295,4 @@ msgstr "כדי להקצות תוכן למתרגם, תחילה <a href=\"%s\" tar
 
 #: src/js/translationDashboard/sending-to-translation/model/warningMessages.js:94
 msgid "Translators Tab"
-msgstr "כרטיסיית מתרגמים"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:12
-msgid ""
-"Some of the content that you selected for translation includes fields that "
-"are encoded. Translators will not be able to work on this kind of content, "
-"so we removed it from the job."
-msgstr "חלק מהתוכן שבחרת לתרגום כולל שדות מקודדים. מתרגמים לא יוכלו לעבוד על סוג זה של תוכן, לכן הסרנו אותו מהמשימה."
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:24
-msgid ""
-"To fix this problem, you need to tell WPML how these fields are encoded, so "
-"that WPML can decode them before sending for translation."
-msgstr "כדי לפתור בעיה זו, עליך לומר ל-WPML כיצד שדות אלה מקודדים, כך ש-WPML יוכל לפענח אותם לפני שליחה לתרגום."
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:30
-msgid "WPML cannot send some of the content to translation"
-msgstr "WPML אינו יכול לשלוח חלק מהתוכן לתרגום"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:44
-msgid "<s>%s</s>: There are base64 encoded fields in this document"
-msgstr "<s>%s</s>: יש שדות מקודדים ב-base64 במסמך זה"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:62
-msgid "Hide details"
-msgstr "הסתר פרטים"
-
-#: src/js/translationDashboard/sent-content-messages/EncodedFieldsError.js:62
-msgid "Show details"
-msgstr "הצג פרטים"
+msgstr "לשונית מתרגמים"

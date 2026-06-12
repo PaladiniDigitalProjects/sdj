@@ -2,6 +2,34 @@
 
 // Mapping of interfaces to implementations.
 
+use WPML\Core\Component\ReportContentStats\Domain\Repository\ContentSnapshotRepositoryInterface;
+use WPML\Core\Component\ReportContentStats\Domain\Repository\DailyTranslationCountRepositoryInterface;
+use WPML\Core\Component\ReportContentStats\Domain\Repository\LastTranslationCompletedRepositoryInterface;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\MigrationStatus\MigrationStatusStorageInterface;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\MigrationStatus\PreliminaryConditionQueryInterface;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\PreviousState\Factory as PreviousStateFactory;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationElements\Compress\Factory as CompressFactory;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationElements\CompressFix\Factory as CompressFixFactory;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationElements\RemoveOld\Factory as RemoveOldFactory;
+use WPML\Core\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationPackageColumnInterface;
+use WPML\Core\Port\PluginInterface;
+use WPML\Core\SharedKernel\Component\Server\Domain\CacheInterface;
+use WPML\Core\SharedKernel\Component\Server\Domain\CheckRestIsEnabledInterface;
+use WPML\Core\SharedKernel\Component\Server\Domain\ServerInfoInterface;
+use WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\ContentSnapshotRepository;
+use WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\DailyTranslationCountRepository;
+use WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\LastTranslationCompletedRepository;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\MigrationStatus\MigrationStatusStorage;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\MigrationStatus\PreliminaryConditionQuery;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\PreviousState\Factory as PreviousStateFactoryImpl;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationElements\Compress\Factory as CompressFactoryImpl;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationElements\CompressFix\Factory as CompressFixFactoryImpl;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationElements\RemoveOld\Factory as RemoveOldFactoryImpl;
+use WPML\Infrastructure\WordPress\Component\Troubleshooting\TranslationTablesOptimization\Domain\TranslationPackageColumn;
+use WPML\Infrastructure\WordPress\SharedKernel\Server\Application\CheckRestIsEnabled;
+use WPML\Infrastructure\WordPress\SharedKernel\Server\Application\ServerInfo;
+use WPML\Infrastructure\WordPress\SharedKernel\Server\Application\WordPressTransientCache;
+use WPML\Legacy\Port\Plugin;
 use WPML\UserInterface\Web\Core\Component\Dashboard\Application\Endpoint\GetPopulatedItemSections\PopulatedItemSectionsFilterInterface;
 use WPML\UserInterface\Web\Core\Component\Notices\PromoteUsingDashboard\Application\Repository\DashboardTranslationsRepositoryInterface;
 use WPML\UserInterface\Web\Core\Component\Notices\PromoteUsingDashboard\Application\Repository\ManualTranslationsCountRepositoryInterface;
@@ -11,6 +39,24 @@ use WPML\UserInterface\Web\Infrastructure\WordPress\Component\NoticeStartUsingDa
 return [
 
   /** CORE **/
+  TranslationPackageColumnInterface::class  => TranslationPackageColumn::class,
+  PreliminaryConditionQueryInterface::class => PreliminaryConditionQuery::class,
+
+  // Factory interfaces for TranslationTablesOptimization
+  PreviousStateFactory::class => PreviousStateFactoryImpl::class,
+  CompressFactory::class      => CompressFactoryImpl::class,
+  CompressFixFactory::class   => CompressFixFactoryImpl::class,
+  RemoveOldFactory::class     => RemoveOldFactoryImpl::class,
+
+  \WPML\Core\Port\Persistence\DatabaseSchemaInfoInterface::class =>
+    \WPML\Infrastructure\WordPress\Port\Persistence\DatabaseSchemaInfo::class,
+
+  \WPML\Core\Component\Translation\Domain\PreviousState\PreviousStateQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Translation\Domain\PreviousState\PreviousStateQuery::class,
+
+  \WPML\Core\Component\Translation\Domain\PreviousState\PreviousStateRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Translation\Domain\PreviousState\PreviousStateRepository::class,
+
   \WPML\Core\SharedKernel\Component\User\Application\Query\UserQueryInterface::class =>
     \WPML\Infrastructure\WordPress\Component\User\Application\Query\UserQuery::class,
 
@@ -44,6 +90,9 @@ return [
   \WPML\Core\SharedKernel\Component\String\Application\Query\StringLanguageQueryInterface::class =>
     \WPML\Infrastructure\WordPress\Component\String\Application\Query\StringLanguageQuery::class,
 
+  \WPML\Core\SharedKernel\Component\String\Application\Repository\StringBatchRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\String\Repository\StringBatchRepository::class,
+
   \WPML\Core\Component\Translation\Application\String\Query\StringsFromBatchQueryInterface::class =>
     \WPML\Infrastructure\WordPress\Component\Translation\Application\String\Query\StringsFromBatchQuery::class,
 
@@ -62,17 +111,23 @@ return [
   \WPML\UserInterface\Web\Core\Port\Asset\AssetInterface::class =>
     \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Asset\Asset::class,
 
+  \WPML\Core\Port\Remote\RemoteInterface::class =>
+    \WPML\Infrastructure\WordPress\Port\Remote\Remote::class,
+
   \WPML\Core\Component\Translation\Application\Query\ItemLanguageQueryInterface::class =>
     \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\RegularItemsAndStringsLanguageQuery::class,
 
-  \WPML\Core\Component\Translation\Application\Query\TranslationQueryInterface::class =>
-    \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\RegularItemsAndStringsTranslationQuery::class, // phpcs:ignore
+  // phpcs:ignore
+  \WPML\Core\Component\Translation\Application\Query\TranslationQueryInterface::class => \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\RegularItemsAndStringsTranslationQuery::class,
 
   \WPML\Core\Component\Translation\Application\Query\JobQueryInterface::class =>
     \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\JobQuery::class,
 
   \WPML\Core\Component\ATE\Application\Query\AccountInterface::class =>
     \WPML\Legacy\Component\ATE\Application\Query\Account::class,
+
+  \WPML\Core\Component\ATE\Application\Query\WebsiteContextQueryInterface::class =>
+    \WPML\Legacy\Component\ATE\Application\Query\WebsiteContextQuery::class,
 
   \WPML\Core\Component\ATE\Application\Query\GlossaryInterface::class =>
     \WPML\Legacy\Component\ATE\Application\Query\Glossary::class,
@@ -101,6 +156,9 @@ return [
   \WPML\Core\Component\Translation\Application\Query\PostTranslationQueryInterface::class =>
     \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\PostTranslationQuery::class,
 
+  \WPML\Core\Component\Translation\Application\Query\UnsolvableJobsQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\UnsolvableJobsQuery::class,
+
   \WPML\Core\SharedKernel\Component\Language\Application\Query\LanguagesQueryInterface::class =>
     \WPML\Legacy\Component\Language\Application\Query\LanguagesQuery::class,
 
@@ -117,30 +175,30 @@ return [
     \WPML\Infrastructure\WordPress\Component\Translator\Domain\Query\TranslatorLanguagePairsQuery::class,
 
   \WPML\Core\SharedKernel\Component\TranslationProxy\Domain\Query\RemoteTranslationServiceQueryInterface::class =>
-  \WPML\Legacy\Component\TranslationProxy\Domain\Query\RemoteTranslationServiceQuery::class,
+    \WPML\Legacy\Component\TranslationProxy\Domain\Query\RemoteTranslationServiceQuery::class,
 
   \WPML\Core\Component\TranslationProxy\Application\Service\TranslationProxyServiceInterface::class =>
-  \WPML\Legacy\Component\TranslationProxy\Application\Service\TranslationProxyService::class,
+    \WPML\Legacy\Component\TranslationProxy\Application\Service\TranslationProxyService::class,
 
   \WPML\Core\Port\Event\DispatcherInterface::class =>
     \WPML\Infrastructure\WordPress\Port\Event\Dispatcher::class,
 
   \WPML\Core\Component\Translation\Domain\Links\CollectorInterface::class =>
-  \WPML\Legacy\Component\Translation\Domain\Links\Collector::class,
+    \WPML\Legacy\Component\Translation\Domain\Links\Collector::class,
 
   \WPML\Core\Component\Translation\Domain\Links\AdjustLinksInterface::class =>
-  \WPML\Legacy\Component\Translation\Domain\Links\AdjustLinks::class,
+    \WPML\Legacy\Component\Translation\Domain\Links\AdjustLinks::class,
 
   \WPML\Core\Component\Translation\Domain\Links\RepositoryInterface::class =>
-  \WPML\Infrastructure\WordPress\Component\Translation\Domain\Links\Repository::class,
+    \WPML\Infrastructure\WordPress\Component\Translation\Domain\Links\Repository::class,
 
-  \WPML\Core\SharedKernel\Component\Post\Domain\PublicationStatusDefinitionsInterface::class =>
-  \WPML\Infrastructure\WordPress\SharedKernel\Post\Domain\PublicationStatusDefinitions::class,
+  \WPML\Core\SharedKernel\Component\Post\Domain\PublicationStatusDefinitionsInterface::class        =>
+    \WPML\Infrastructure\WordPress\SharedKernel\Post\Domain\PublicationStatusDefinitions::class,
   \WPML\Core\Component\TranslationProxy\Application\Service\LastPickedUpDateServiceInterface::class =>
-  \WPML\Legacy\Component\TranslationProxy\Application\Service\LastPickedUpDateService::class,
+    \WPML\Legacy\Component\TranslationProxy\Application\Service\LastPickedUpDateService::class,
 
   \WPML\Core\Component\TranslationProxy\Application\Query\RemoteJobsQueryInterface::class =>
-  \WPML\Infrastructure\WordPress\Component\TranslationProxy\Application\Query\RemoteJobsQuery::class,
+    \WPML\Infrastructure\WordPress\Component\TranslationProxy\Application\Query\RemoteJobsQuery::class,
 
   \WPML\Core\Component\Post\Domain\WordCount\StripCodeInterface::class =>
     \WPML\Infrastructure\WordPress\Component\Item\Domain\WordCount\StripCode::class,
@@ -163,21 +221,166 @@ return [
   WPML\Core\Component\Post\Domain\WordCount\ItemContentCalculator\PostContentFilterInterface::class =>
     WPML\Infrastructure\WordPress\Component\Item\Domain\WordCount\ItemContentCalculator\PostContentFilter::class,
 
+  \WPML\Core\Component\ATE\Domain\Credits\Repository\CreditsInProgressRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ATE\Domain\Credits\Repository\CreditsInProgressRepository::class,
+
   \WPML\Core\Component\ATE\Application\Service\EnginesServiceInterface::class =>
     \WPML\Legacy\Component\ATE\Application\Service\EnginesService::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Query\OriginalContentStatsQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Query\OriginalContentStatsQuery::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Query\TranslationCoverageStatsQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Query\TranslationCoverageStatsQuery::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Repository\LastSentRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\LastSentRepository::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Repository\EventReasonRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\EventReasonRepository::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Repository\RetryRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\RetryRepository::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Repository\PostTypesStatsRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\PostTypesStatsRepository::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Repository\PostTypesToCalculateRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\PostTypesToCalculateRepository::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Repository\ProcessingLockRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Repository\ProcessingLockRepository::class,
+
+  LastTranslationCompletedRepositoryInterface::class =>
+    LastTranslationCompletedRepository::class,
+
+  DailyTranslationCountRepositoryInterface::class =>
+    DailyTranslationCountRepository::class,
+
+  ContentSnapshotRepositoryInterface::class =>
+    ContentSnapshotRepository::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\Query\PublishedPostCountQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\ReportContentStats\Domain\Query\PublishedPostCountQuery::class,
+
+  \WPML\Core\SharedKernel\Component\ATE\Application\Query\SiteIDQueryInterface::class =>
+    \WPML\Legacy\Component\ATE\Application\Query\SiteIDQuery::class,
+
+  \WPML\Core\SharedKernel\Component\ATE\Application\Query\SiteSharedKeyQueryInterface::class =>
+    \WPML\Legacy\Component\ATE\Application\Query\SiteSharedKeyQuery::class,
+
+  \WPML\Core\Component\ReportContentStats\Domain\ReportSenderInterface::class =>
+    \WPML\Legacy\Component\ReportContentStats\Domain\ReportSender::class,
+
+  \WPML\Core\Component\ReportContentStats\Application\Query\CanCollectStatsQueryInterface::class =>
+    \WPML\Core\Component\ReportContentStats\Application\Query\CanCollectStatsQuery::class,
+
+  \WPML\Core\Component\ReportContentStats\Application\Query\ContentStatsTranslatableTypesQueryInterface::class =>
+    \WPML\Legacy\Component\ReportContentStats\Application\Query\ContentStatsTranslatableTypesQuery::class,
+
+  \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteUrlQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Site\Application\Query\SiteUrlQuery::class,
+
+  \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlSiteKeyQueryInterface::class =>
+    \WPML\Legacy\SharedKernel\Installer\Application\Query\WpmlSiteKeyQuery::class,
+
+  \WPML\Core\SharedKernel\Component\Site\Application\Query\SiteMigrationLockQueryInterface::class =>
+    \WPML\Legacy\SharedKernel\Site\Application\Query\SiteMigrationLockQuery::class,
+
+  \WPML\Core\SharedKernel\Component\Installer\Application\Query\WpmlActivePluginsQueryInterface::class =>
+    \WPML\Legacy\SharedKernel\Installer\Application\Query\WpmlActivePluginsQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Post\Query\JobQueryInterface::class =>
+    \WPML\Legacy\Component\WordsToTranslate\Domain\Post\JobQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Post\Query\PostQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\Post\PostQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Post\Query\TranslationQueryInterface::class =>
+    \WPML\Legacy\Component\WordsToTranslate\Domain\Post\TranslationQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Post\StoreRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\Post\StoreRepository::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Strings\Query\StringQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\Strings\StringQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Strings\Query\TranslationQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\Strings\TranslationQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\StringBatch\Query\StringBatchQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\StringBatch\StringBatchQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\StringPackage\Query\JobQueryInterface::class =>
+    \WPML\Legacy\Component\WordsToTranslate\Domain\StringPackage\JobQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\StringPackage\Query\StringPackageQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\StringPackage\StringPackageQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\StringPackage\Query\TranslationQueryInterface::class =>
+    \WPML\Legacy\Component\WordsToTranslate\Domain\StringPackage\TranslationQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Job\Query\TranslationEngineQueryInterface::class =>
+    \WPML\Legacy\Component\WordsToTranslate\Domain\Job\TranslationEngineQuery::class,
+
+  \WPML\Core\Component\WordsToTranslate\Domain\Calculator\PrepareContent\Rules\ShortcodeInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\WordsToTranslate\Domain\Calculator\PrepareContent\Rules\Shortcode::class,
+
+  \WPML\Core\Component\PostHog\Application\Repository\RetryRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\PostHog\Application\Repository\RetryRepository::class,
+
+  \WPML\Core\Component\PostHog\Application\Repository\PostHogStateRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\PostHog\Application\Repository\PostHogStateRepository::class,
+  \WPML\Core\SharedKernel\Component\WpmlOrgClient\Domain\Api\Endpoints\PostHogRecordingInterface::class =>
+    \WPML\Infrastructure\WordPress\SharedKernel\WpmlOrgClient\Domain\Api\Endpoints\PostHogRecording\PostHogRecording::class, // phpcs:ignore
+  \WPML\Core\Component\WpmlProxy\Domain\Repository\WpmlProxyRepositoryInterface::class                  =>
+    \WPML\Infrastructure\WordPress\Component\WpmlProxy\Domain\Repository\WpmlProxyRepository::class,
+  \WPML\Core\Component\WpmlProxy\Application\Query\ProxyRoutingRulesInterface::class                    =>
+    \WPML\Legacy\Component\WpmlProxy\Application\Query\ProxyRoutingRules::class,
+  PluginInterface::class                  =>
+    Plugin::class,
+  \WPML\Core\Component\PostHog\Application\Cookies\CookiesInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\PostHog\Application\Cookies\Cookies::class,
+
+  \WPML\Core\Component\PostHog\Domain\Event\CaptureInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\Capture::class,
+
+  \WPML\Core\SharedKernel\Component\PostHog\Application\Hook\FilterAllowedPagesInterface::class =>
+    \WPML\UserInterface\Web\Infrastructure\WordPress\Component\PostHog\Application\Hook\FilterAllowedPages::class,
+
+  \WPML\Core\Component\PostHog\Application\Query\PageAllowedForRecordingQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\PostHog\Application\Query\PageAllowedForRecordingQuery::class,
+
+  \WPML\Core\Component\PostHog\Application\Repository\PostHogDefaultRequestSentRepositoryInterface::class => // phpcs:ignore
+    \WPML\Infrastructure\WordPress\Component\PostHog\Application\Repository\PostHogDefaultRequestSentRepository::class, // phpcs:ignore
+
+  \WPML\Core\Component\PostHog\Domain\Event\EventInterface::class =>
+    \WPML\Core\Component\PostHog\Domain\Event\Event::class,
+
+  \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardStartTimeRepositoryInterface::class => // phpcs:ignore
+    \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Repository\SetupWizardStartTimeRepository::class, // phpcs:ignore
+
+  \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardUUIDRepositoryInterface::class => // phpcs:ignore
+    \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Repository\SetupWizardUUIDRepository::class, // phpcs:ignore
+
+  \WPML\Core\Component\PostHog\Domain\Event\SetupWizard\SetupWizardUUIDInterface::class => // phpcs:ignore
+    \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Event\SetupWizard\SetupWizardUUID::class, // phpcs:ignore
+
+  \WPML\Core\Component\PostHog\Domain\Repository\SetupWizardLastStepSubmissionTimeRepositoryInterface::class => // phpcs:ignore
+    \WPML\Infrastructure\WordPress\Component\PostHog\Domain\Repository\SetupWizardLastStepSubmissionTimeRepository::class, // phpcs:ignore
 
   /** USER INTERFACE **/
   \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardPublicationStatusFilterInterface::class =>
     \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\DashboardPublicationStatusFilter::class,
 
   \WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardItemSectionsFilterInterface::class =>
-  \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\DashboardItemSectionsFilter::class,
+    \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\DashboardItemSectionsFilter::class,
 
   WPML\UserInterface\Web\Core\Component\Dashboard\Application\Query\DashboardTranslatableTypesQueryInterface::class =>
     WPML\UserInterface\Web\Infrastructure\WordPress\Component\Dashboard\Query\DashboardTranslatableTypesQuery::class,
 
   WPML\UserInterface\Web\Core\Component\Dashboard\Application\Hook\DashboardTranslatablePostTypesFilterInterface::class
-    => \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\DashboardTranslatablePostTypesFilter::class,
+  => \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\DashboardTranslatablePostTypesFilter::class,
 
   WPML\UserInterface\Web\Core\Component\Dashboard\Application\DashboardTabsInterface::class =>
     WPML\UserInterface\Web\Legacy\Component\Dashboard\DashboardTabs::class,
@@ -192,10 +395,30 @@ return [
     \WPML\Infrastructure\WordPress\Component\Item\Application\Query\SearchPopulatedTypesQuery::class,
 
   PopulatedItemSectionsFilterInterface::class =>
-      \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\PopulatedItemSectionsFilter::class,
+    \WPML\UserInterface\Web\Infrastructure\WordPress\Port\Hook\PopulatedItemSectionsFilter::class,
 
   DashboardTranslationsRepositoryInterface::class => DashboardTranslationsRepository::class,
 
   ManualTranslationsCountRepositoryInterface::class => ManualTranslationsCountRepository::class,
+
+  MigrationStatusStorageInterface::class => MigrationStatusStorage::class,
+
+  \WPML\Core\Component\Translation\Domain\PreviousState\DataCompressInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Translation\Domain\PreviousState\OnlyDataSerialization::class,
+
+  CheckRestIsEnabledInterface::class => CheckRestIsEnabled::class,
+
+  ServerInfoInterface::class => ServerInfo::class,
+
+  \WPML\Core\Component\Translation\Application\Query\HasPostsUsingNativeEditorQueryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Translation\Application\Query\HasPostsUsingNativeEditorQuery::class,
+
+  CacheInterface::class => WordPressTransientCache::class,
+
+  \WPML\Core\SharedKernel\Component\Setting\Application\Query\TranslationEditorQueryInterface::class =>
+    \WPML\Legacy\Component\Setting\Application\Query\TranslationEditorQuery::class,
+
+  \WPML\Core\Component\Translation\Domain\Repository\JobErrorRepositoryInterface::class =>
+    \WPML\Infrastructure\WordPress\Component\Translation\Domain\Repository\JobErrorRepository::class,
 
 ];

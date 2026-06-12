@@ -1,0 +1,180 @@
+.wp-mcp-settings-wrap {
+    max-width: 900px;
+}
+
+.wp-mcp-settings-wrap h1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wp-mcp-settings-wrap .title-count {
+    background: #2271b1;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+.wp-mcp-settings-wrap .description {
+    margin-bottom: 20px;
+    color: #646970;
+}
+
+.wp-mcp-groups-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.wp-mcp-groups-table th {
+    text-align: left;
+    padding: 15px;
+    background: #f6f7f7;
+    border-bottom: 1px solid #c3c4c7;
+    font-weight: 600;
+}
+
+.wp-mcp-groups-table td {
+    padding: 15px;
+    border-bottom: 1px solid #dcdcde;
+    vertical-align: middle;
+}
+
+.wp-mcp-groups-table tr:last-child td {
+    border-bottom: none;
+}
+
+.wp-mcp-groups-table tbody tr:hover {
+    background: #f6f7f7;
+}
+
+.wp-mcp-groups-table .check-column {
+    width: 40px;
+    text-align: center;
+}
+
+.wp-mcp-groups-table .check-column input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.wp-mcp-groups-table .group-label strong {
+    font-size: 15px;
+    display: block;
+    margin-bottom: 3px;
+}
+
+.wp-mcp-groups-table .group-description .description {
+    color: #646970;
+    font-size: 13px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.wp-mcp-groups-table .group-routes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.wp-mcp-groups-table .group-routes code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #1d2327;
+}
+
+.wp-mcp-groups-table .endpoints-column {
+    text-align: center;
+    width: 120px;
+}
+
+.wp-mcp-groups-table .endpoint-count {
+    background: #d63638;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.wp-mcp-groups-table input[type="checkbox"]:checked + .group-label strong {
+    color: #00a32a;
+}
+
+.wp-mcp-stats {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f6f7f7;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+}
+
+.wp-mcp-stats h2 {
+    margin-top: 0;
+    font-size: 16px;
+}
+
+.wp-mcp-stats-table {
+    width: auto;
+}
+
+.wp-mcp-stats-table td {
+    padding: 8px 20px 8px 0;
+    border: none;
+}
+
+.wp-mcp-stats-table td:first-child {
+    white-space: nowrap;
+}
+
+.wp-mcp-stats-table td:last-child {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2271b1;
+}
+
+.wp-mcp-info-box {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f6f7f7;
+    border-left: 4px solid #2271b1;
+}
+
+.wp-mcp-info-box h3 {
+    margin-top: 0;
+}
+
+.wp-mcp-info-box p {
+    margin: 10px 0;
+    color: #50575e;
+}
+
+.wp-mcp-info-box code {
+    background: #fff;
+    padding: 2px 6px;
+}
+
+.wp-mcp-info-box a {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.wp-mcp-settings-wrap .submit {
+    padding: 0;
+    margin: 20px 0;
+}
+
+.wp-mcp-settings-wrap .button-primary {
+    padding: 0 20px;
+    height: 40px;
+    font-size: 14px;
+}

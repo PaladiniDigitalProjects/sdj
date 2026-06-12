@@ -149,12 +149,20 @@ class WPML_TM_XLIFF {
 				$this->appendData( 'source', $trans_unit, $trans_unit_element );
 				$this->appendData( 'target', $trans_unit, $trans_unit_element );
 
-				if ( $trans_unit['note']['content'] ) {
+				if ( ! empty( $trans_unit['note']['content'] ) ) {
 					$note = $this->dom->createElement( 'note' );
 					// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 					$note->nodeValue = 'wrap_tag:' . $trans_unit['note']['content'];
 					// phpcs:enable
 					$trans_unit_element->appendChild( $note );
+				}
+
+				if ( ! empty( $trans_unit['extradata'] ) && is_array( $trans_unit['extradata'] ) ) {
+					$tool_extradata_element = $this->dom->createElement( 'tool:extradata' );
+					foreach ( $trans_unit['extradata'] as $attr_name => $attr_value ) {
+						$tool_extradata_element->setAttribute( $attr_name, $attr_value );
+					}
+					$trans_unit_element->appendChild( $tool_extradata_element );
 				}
 
 				$this->trans_units[] = $trans_unit_element;
@@ -256,7 +264,7 @@ class WPML_TM_XLIFF {
 		}
 		$this->root->setAttribute( 'version', $version );
 		$this->root->setAttribute( 'xmlns', 'urn:oasis:names:tc:xliff:document:' . $version );
-		$this->root->setAttribute('xmlns:tool',self::XLIFF_CUSTOM_ATTRIBUTES_NAMESPACE);
+		$this->root->setAttribute( 'xmlns:tool', self::XLIFF_CUSTOM_ATTRIBUTES_NAMESPACE );
 	}
 
 }

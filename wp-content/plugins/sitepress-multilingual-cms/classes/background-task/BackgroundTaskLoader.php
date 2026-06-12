@@ -50,8 +50,12 @@ class BackgroundTaskLoader implements \IWPML_Backend_Action, \IWPML_DIC_Action {
 	public function run(
 		Collection $data
 	) {
-		$taskId = $data['taskId'];
-		$cmd    = $data['cmd'];
+		$taskId = isset( $data['taskId'] ) ? $data['taskId'] : null;
+		$cmd    = isset( $data['cmd'] ) ? $data['cmd'] : null;
+
+		if ( ! $taskId ) {
+			return [];
+		}
 
 		$task = $this->backgroundTaskRepository->getByTaskId( $taskId );
 

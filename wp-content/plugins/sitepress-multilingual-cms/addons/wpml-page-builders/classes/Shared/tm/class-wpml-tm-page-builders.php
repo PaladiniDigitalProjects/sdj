@@ -28,7 +28,7 @@ class WPML_TM_Page_Builders {
 	 * @param SitePress                $sitepress
 	 * @param WPML_PB_Integration|null $wpmlPbIntegration
 	 */
-	public function __construct( SitePress $sitepress, \WPML_PB_Integration $wpmlPbIntegration = null ) {
+	public function __construct( SitePress $sitepress, $wpmlPbIntegration = null ) {
 		$this->sitepress         = $sitepress;
 		$this->wpmlPbIntegration = $wpmlPbIntegration;
 	}
@@ -84,30 +84,23 @@ class WPML_TM_Page_Builders {
 
 					foreach ( $strings as $string ) {
 
-						if ( self::FIELD_STYLE_LINK !== $string->type ) {
-							$string_value = $string->value;
+						$string_value = $string_translations[ $string->name ][ $job_lang_from ]['value'] ?? $string->value;
 
-							if ( isset( $string_translations[ $string->name ][ $job_lang_from ]['value'] ) ) {
-								$string_value = $string_translations[ $string->name ][ $job_lang_from ]['value'];
-							}
+						$field_name = WPML_TM_Page_Builders_Field_Wrapper::generate_field_slug(
+							$package_id,
+							$string->id
+						);
 
-							$field_name = WPML_TM_Page_Builders_Field_Wrapper::generate_field_slug(
-								$package_id,
-								$string->id
-							);
-
-							$translation_package['contents'][ $field_name ] = [
-								'translate' => 1,
-								// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-								'data'      => base64_encode( $string_value ),
-								// phpcs:enable
-								'wrap_tag'  => WPML_TM_Page_Builders_Field_Wrapper::get_wrap_tag( $string ),
-								'format'    => 'base64',
-							];
-						}
+						$translation_package['contents'][ $field_name ] = [
+							'translate' => 1,
+							// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+							'data'      => base64_encode( $string_value ),
+							// phpcs:enable
+							'wrap_tag'  => WPML_TM_Page_Builders_Field_Wrapper::get_wrap_tag( $string ),
+							'format'    => 'base64',
+						];
 
 						$translation_package['contents']['body']['translate'] = 0;
-
 					}
 				}
 			}
@@ -148,14 +141,11 @@ class WPML_TM_Page_Builders {
 	}
 
 	/**
-	 * Adjust translation fields.
-	 *
-	 * @param array    $fields Translation fields.
-	 * @param stdClass $job    Translation job.
+	 * @param array $fields
 	 *
 	 * @return array
 	 */
-	public function adjust_translation_fields_filter( array $fields, $job ) {
+	public function adjust_translation_fields_filter( array $fields ) {
 		foreach ( $fields as &$field ) {
 			$widget_block_label_data = $this->get_block_widget_title_and_group( $field['title_fallback'] ?? '' );
 
@@ -264,7 +254,7 @@ class WPML_TM_Page_Builders {
 
 		foreach ( $patterns as $pattern ) {
 			if ( preg_match( $pattern, $innerMostGroup, $matches ) ) {
-				$url = wp_get_attachment_url( $matches[1] );
+				$url = wp_get_attachment_url( (int) $matches[1] );
 				if ( $url ) {
 					$field['image'] = $url;
 
