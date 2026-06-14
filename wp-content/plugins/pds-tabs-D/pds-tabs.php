@@ -40,12 +40,14 @@ add_action( 'enqueue_block_editor_assets', function() {
         filemtime( PDS_TABS_DIR_PATH . 'build/editor.js' ),
         true
     );
-    wp_enqueue_style(
-        'pds-tabs-editor-style',
-        PDS_TABS_URL . 'build/editor.css',
-        [],
-        filemtime( PDS_TABS_DIR_PATH . 'build/editor.css' )
-    );
+    if ( file_exists( PDS_TABS_DIR_PATH . 'build/editor.css' ) ) {
+        wp_enqueue_style(
+            'pds-tabs-editor-style',
+            PDS_TABS_URL . 'build/editor.css',
+            [],
+            filemtime( PDS_TABS_DIR_PATH . 'build/editor.css' )
+        );
+    }
 } );
 
 // 3️⃣ Enqueue front‑end assets

@@ -1,7 +1,7 @@
 {
-	"name": "pds-multilang-logo",
+	"name": "pds-wpml-tools",
 	"version": "1.0.0",
-	"description": "Bloque gemelo de Site Logo con soporte multiidioma WPML.",
+	"description": "Bloque de logo multiidioma y panel de idioma WPML para el Editor del sitio.",
 	"author": "Paladini Digital Solutions",
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",

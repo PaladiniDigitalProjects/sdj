@@ -1,0 +1,90 @@
+.pds-wpml-current-lang-badge {
+	position: fixed;
+	top: 8px;
+	right: 300px;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 8px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+	font-size: 12px;
+}
+
+.pds-wpml-current-lang-badge select {
+	font-size: 12px;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+}
+
+.pds-wpml-flag {
+	width: 18px;
+	height: 12px;
+	object-fit: cover;
+	border-radius: 2px;
+	flex-shrink: 0;
+}
+
+.pds-wpml-template-lang-select {
+	margin-left: auto;
+	font-size: 12px;
+}
+
+.pds-wpml-template-lang-translations {
+	margin-top: 8px;
+	border-top: 1px solid #eee;
+	padding-top: 8px;
+}
+
+.pds-wpml-template-lang-title {
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.pds-wpml-template-lang-translations ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.pds-wpml-template-lang-translations li {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 0;
+}
+
+.pds-wpml-template-lang-translations li a {
+	text-decoration: none;
+}
+
+.pds-wpml-template-lang-translations li.is-current span {
+	font-weight: 600;
+}
+
+.pds-wpml-template-lang-translations li.is-missing > span {
+	opacity: 0.5;
+}
+
+.pds-wpml-template-lang-link {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex: 1;
+	min-width: 0;
+}
+
+.pds-wpml-template-lang-link .pds-wpml-template-lang-select {
+	flex: 1;
+	min-width: 0;
+	margin-left: 0;
+}
+
+.pds-wpml-template-lang-error {
+	color: #cc1818;
+	margin: 8px 0 0;
+}
