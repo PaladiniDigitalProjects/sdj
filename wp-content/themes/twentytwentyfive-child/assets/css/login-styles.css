@@ -79,8 +79,10 @@ figure.featured {
   margin-bottom: 3rem;
 }
 figure.featured .wp-caption-text {
-  font-size: 1rem;
+  font-size: 9px;
+  font-size: 0.9rem;
   margin: 0.5rem 0 0 0;
+  color: #9c9c9c;
 }
 
 figcaption.wp-element-caption {
@@ -1715,12 +1717,17 @@ figcaption.wp-element-caption strong {
   font-weight: 200;
 }
 
-.single h5.wp-block-heading,
-.page h5.wp-block-heading {
+.single h5.wp-block-heading.has-primario-color,
+.page h5.wp-block-heading.has-primario-color {
   font-size: 15px;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 200;
   margin-top: 1rem;
+  color: #007FAD;
+}
+.single p.has-primario-color,
+.page p.has-primario-color {
+  color: #007FAD;
 }
 .single time,
 .page time {
@@ -1898,6 +1905,10 @@ div[submit-success] > .wpforms-confirmation-container-full:not(.wpforms-redirect
 }
 
 /* LOCTIONS */
+.location-template .wp-block-cover.apertura figcaption {
+  display: none;
+}
+
 .pds-tiendas {
   max-height: inherit;
   overflow: hidden !important;

@@ -94,8 +94,10 @@
   margin-bottom: 3rem;
 }
 .editor-styles-wrapper figure.featured .wp-caption-text {
-  font-size: 1rem;
+  font-size: 9px;
+  font-size: 0.9rem;
   margin: 0.5rem 0 0 0;
+  color: #9c9c9c;
 }
 .editor-styles-wrapper figcaption.wp-element-caption {
   font-size: 1rem;
@@ -1513,12 +1515,17 @@
   color: #007FAD;
   font-weight: 200;
 }
-.editor-styles-wrapper .single h5.wp-block-heading,
-.editor-styles-wrapper .page h5.wp-block-heading {
+.editor-styles-wrapper .single h5.wp-block-heading.has-primario-color,
+.editor-styles-wrapper .page h5.wp-block-heading.has-primario-color {
   font-size: 15px;
   font-size: 1.5rem;
-  font-weight: 600;
+  font-weight: 200;
   margin-top: 1rem;
+  color: #007FAD;
+}
+.editor-styles-wrapper .single p.has-primario-color,
+.editor-styles-wrapper .page p.has-primario-color {
+  color: #007FAD;
 }
 .editor-styles-wrapper .single time,
 .editor-styles-wrapper .page time {
@@ -5561,6 +5568,9 @@
 .editor-styles-wrapper {
   /* REM FONT SIZE */
   /* LOCTIONS */
+}
+.editor-styles-wrapper .location-template .wp-block-cover.apertura figcaption {
+  display: none;
 }
 .editor-styles-wrapper .pds-tiendas {
   max-height: inherit;

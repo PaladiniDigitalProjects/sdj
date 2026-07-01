@@ -83,10 +83,13 @@ figure.featured {
   margin-bottom: 3rem;
 
   .wp-caption-text {
-    font-size: 1rem;
+    @include variables.font-size(9);
     margin: 0.5rem 0 0 0;
+    color: variables.$gray;
   }
 }
+
+
 
 figcaption {
   &.wp-element-caption {
@@ -1847,9 +1850,16 @@ figcaption {
 .page {
 
   h5.wp-block-heading {
-    @include variables.font-size(15);
-    font-weight: 600;
-    margin-top: 1rem;
+    &.has-primario-color {
+      @include variables.font-size(15);
+      font-weight: 200;
+      margin-top: 1rem;
+      color: variables.$primary;
+    }
+  }
+
+  p.has-primario-color {
+    color: variables.$primary;
   }
 
   time {
