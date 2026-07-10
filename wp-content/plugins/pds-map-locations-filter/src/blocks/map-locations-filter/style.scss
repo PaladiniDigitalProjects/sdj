@@ -16,54 +16,9 @@ $bp-lg: 1368px;
 // ------------------------------
 // Google Maps Info Window
 // ------------------------------
-.gm-style {
-  .gm-style-iw-c {
-    background-color: $pds-accent-light;
-    border-radius: 0;
-    padding: 0;
-  }
-
-  .gm-style-iw {
-    top: 0;
-    left: 0;
-    width: 25rem;
-    max-width: 90vw;
-    display: block;
-    border-radius: 0;
-    padding: 0;
-    overflow: hidden;
-    box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.3);
-  }
-
-  .gm-style-iw-t::after {
-    background: linear-gradient(
-      45deg,
-      rgb(238, 252, 255) 50%,
-      rgba(255, 255, 255, 0) 51%
-    );
-  }
-
-  button.gm-ui-hover-effect {
-    top: 0.3rem;
-    right: 0.3rem;
-    opacity: 0.7;
-    background: white;
-    border-radius: 0.2rem;
-    padding: 0.3rem;
-    width: auto;
-    height: auto;
-
-    span {
-      margin: 0;
-    }
-  }
-
-  .gm-style-iw-d {
-    overflow: auto;
-    padding: 0.6rem;
-    max-height: 18.75rem;
-  }
-}
+// Los estilos del InfoWindow nativo de Google Maps (.gm-style-iw*, botón de
+// cierre, etc.) están centralizados en src/scss/main.scss (build/style.css)
+// para evitar reglas !important duplicadas que competían entre ambos ficheros.
 
 // Info Window Content
 .pds-marker-info-window {
@@ -238,8 +193,8 @@ $bp-lg: 1368px;
 // Marker Styles
 // ------------------------------
 .mlf-marker {
-  width: 30px;
-  height: 30px;
+  width: 15px;
+  height: 15px;
   background-color: $pds-primary;
   border-radius: 50%;
   cursor: pointer;
@@ -824,51 +779,7 @@ $bp-lg: 1368px;
   }
 }
 
-// ========================================
-// InfoWindow Styles (Google Maps Native)
-// ========================================
-
-.gm-style-iw {
-  padding: 0 !important;
-  border-radius: 12px !important;
-  overflow: hidden !important;
-  max-width: 320px !important;
-}
-
-.gm-style-iw-c {
-  border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-  padding: 0 !important;
-}
-
-.gm-style-iw-d {
-  overflow: hidden !important;
-  padding: 0 !important;
-  max-height: none !important;
-}
-
-button.gm-ui-hover-effect {
-  top: 8px !important;
-  right: 8px !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  border-radius: 50% !important;
-  width: 28px !important;
-  height: 28px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  opacity: 1 !important;
-
-  span {
-    margin: 0 !important;
-    font-size: 18px !important;
-    color: #fff !important;
-  }
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.7) !important;
-  }
-}
+// (Estilos del InfoWindow nativo centralizados en src/scss/main.scss)
 
 // InfoWindow Card Content
 .mlf-card-overlay {

@@ -227,11 +227,19 @@ h4{
 
   .mlf-filters-select {
     padding: 8px;
+    padding-right: 2.25rem; // espai per a la fletxa
     border-radius: 45px;
     background-color: $pds-primary;
     color: #fff;
     border: none;
     cursor: pointer;
+    // Fletxa personalitzada a 1rem del final del select
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
   }
 
   .pds-view-switcher {
@@ -394,4 +402,9 @@ h4{
       font-size: 0.95em;
     }
   } /* end media */
+
+/* NOTA: las reglas críticas de conmutación de vista (list|grid|map) y la altura
+   del contenedor del mapa se definen en src/scss/main.scss (build/style.css),
+   que el plugin encola siempre — el style.css de este bloque se carga de forma
+   condicional y no es fiable para el layout base. */
 } /* end .pds-tiendas */

@@ -69,7 +69,7 @@ $web       = $web ?? '';
             </div>
         <?php endif; ?>
         
-        <a href="<?php echo esc_url($permalink); ?>" class="mlf-infowindow-btn">
+        <a href="<?php echo esc_url($permalink); ?>" class="mlf-infowindow-btn" target="_blank" rel="noopener">
             <?php esc_html_e('Ver detalles', 'pds-map-locations-filter'); ?>
         </a>
     </div>

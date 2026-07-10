@@ -8,9 +8,18 @@ $attributes    = $attributes ?? [];
 $taxonomies    = $taxonomies ?? [];  // now comes from render_tienda_lista_block
 $selectedTaxonomies = $attributes['selectedTaxonomies'] ?? [];
 $title         = $attributes['title'] ?? __('Our Stores', 'pds-map-locations-filter');
-$display_style = in_array( $attributes['displayStyle'] ?? '', [ 'grid', 'list' ] )
+$display_style = in_array( $attributes['displayStyle'] ?? '', [ 'grid', 'list', 'map' ] )
     ? $attributes['displayStyle']
-    : 'grid';
+    : 'list';
+$enable_map     = $attributes['enableMap'] ?? true;
+$initial_center = ( isset( $attributes['initialCenter'] ) && is_array( $attributes['initialCenter'] ) )
+    ? $attributes['initialCenter']
+    : [ 'lat' => 40.416775, 'lng' => -3.703790 ];
+$zoom_level     = isset( $attributes['zoomLevel'] ) ? (int) $attributes['zoomLevel'] : 6;
+// Si el mapa está deshabilitado y la vista guardada era "map", cae a "list".
+if ( ! $enable_map && $display_style === 'map' ) {
+    $display_style = 'list';
+}
 $num_stores    = $attributes['numStores'] ?? 25;
 $show_all_results = $attributes['showAllResults'] ?? false;
 if ($show_all_results) {
@@ -66,14 +75,21 @@ $block_data = [
     'initialStyle'     => $display_style,
     'showAllResults'   => $show_all_results,
     'align'            => $attributes['align'] ?? 'wide',
+    'enableMap'        => (bool) $enable_map,
+    'initialCenter'    => $initial_center,
+    'zoomLevel'        => $zoom_level,
     'i18n' => [
-        'loading'    => __('Loading stores...', 'pds-map-locations-filter'),
-        'noResults'  => __('No stores found matching your criteria.', 'pds-map-locations-filter'),
+        'loading'               => __('Loading stores...', 'pds-map-locations-filter'),
+        'noResults'             => __('No stores found matching your criteria.', 'pds-map-locations-filter'),
+        'loadingMap'            => __('Cargando mapa...', 'pds-map-locations-filter'),
+        'loadingLocations'      => __('Cargando centros...', 'pds-map-locations-filter'),
+        'errorLoadingMap'       => __('Error cargando mapa.', 'pds-map-locations-filter'),
+        'errorLoadingLocations' => __('Error cargando centros. Vuelva a intentarlo.', 'pds-map-locations-filter'),
     ]
 ];
 ?>
 <div id="<?= esc_attr($container_id); ?>"
-     class="pds-tiendas pds-tiendas-wrapper <?= esc_attr('align' . ($attributes['align'] ?? 'wide')); ?> "
+     class="pds-tiendas pds-tiendas-wrapper <?= esc_attr('align' . ($attributes['align'] ?? 'wide')); ?> <?= esc_attr($display_style); ?>"
      data-block-init='<?= esc_attr(json_encode($block_data)); ?>'>
 
  
@@ -96,12 +112,17 @@ $block_data = [
         );
         ?>
         <div class="pds-view-switcher">
-            <button type="button" class="mlf-view-btn<?= $display_style === 'grid' ? ' active' : ''; ?>" data-view="grid">
-                <?= esc_html__('Grilla', 'pds-map-locations-filter'); ?>
-            </button>
             <button type="button" class="mlf-view-btn<?= $display_style === 'list' ? ' active' : ''; ?>" data-view="list">
                 <?= esc_html__('Listado', 'pds-map-locations-filter'); ?>
             </button>
+            <button type="button" class="mlf-view-btn<?= $display_style === 'grid' ? ' active' : ''; ?>" data-view="grid">
+                <?= esc_html__('Tabla', 'pds-map-locations-filter'); ?>
+            </button>
+            <?php if ( $enable_map ) : ?>
+                <button type="button" class="mlf-view-btn<?= $display_style === 'map' ? ' active' : ''; ?>" data-view="map">
+                    <?= esc_html__('Mapa', 'pds-map-locations-filter'); ?>
+                </button>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -111,7 +132,7 @@ $block_data = [
             'tienda-list-items.php',
             [
                 'stores_query'   => $stores_query,
-                'display_style'  => $display_style,
+                'display_style'  => $display_style === 'map' ? 'list' : $display_style,
                 'numStores'    => $num_stores,
                 'taxonomies'   => $filtered_taxonomies,
             ],
@@ -119,4 +140,14 @@ $block_data = [
         );
         ?>
     </div>
+
+    <?php if ( $enable_map ) : ?>
+        <div class="mlf-content-area">
+            <div class="mlf-map-wrapper">
+                <div class="mlf-map-container" aria-hidden="true">
+                    <p class="mlf-loading"><?= esc_html__('Cargando mapa...', 'pds-map-locations-filter'); ?></p>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>

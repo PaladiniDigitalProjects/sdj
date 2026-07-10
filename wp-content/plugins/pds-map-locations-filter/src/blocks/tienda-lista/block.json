@@ -2,9 +2,9 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 2,
   "name": "pds-map-locations-filter/tienda-lista",
-  "title": "Tienda Lista",
+  "title": "Centros SJD",
   "category": "widgets",
-  "description": "Display a list of stores.",
+  "description": "Muestra los centros con vistas conmutables: Listado, Grilla y Mapa.",
   "textdomain": "pds-map-locations-filter",
   "icon": "store",
   "supports": {
@@ -13,11 +13,14 @@
   },
   "attributes": {
     "title":               { "type": "string", "default": "Our Stores" },
-    "displayStyle":        { "type": "string", "enum": ["grid", "list"], "default": "grid" },
+    "displayStyle":        { "type": "string", "enum": ["list", "grid", "map"], "default": "list" },
     "numStores":           { "type": "number", "default": 25 },
     "showAllResults":      { "type": "boolean", "default": false },
     "selectedTaxonomies":  { "type": "array",  "items": { "type": "string" }, "default": ["ambito"] },
-    "cptSlug":             { "type": "string",  "default": "location" } 
+    "cptSlug":             { "type": "string",  "default": "location" },
+    "enableMap":           { "type": "boolean", "default": true },
+    "initialCenter":       { "type": "object",  "default": { "lat": 40.416775, "lng": -3.703790 } },
+    "zoomLevel":           { "type": "number",  "default": 6 }
   },
   "editorScript":   "file:./index.js",
   "editorStyle":    "file:./editor.css",

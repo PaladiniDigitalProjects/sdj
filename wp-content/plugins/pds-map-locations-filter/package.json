@@ -1,6 +1,6 @@
 {
 	"name": "pds-map-locations-filter",
-	"version": "2.0.6",
+	"version": "2.1.0",
 	"description": "A PDS map dynamic block for displaying maps with filterable locations.",
 	"author": "PDS Ricard",
 	"license": "GPL-2.0-or-later",

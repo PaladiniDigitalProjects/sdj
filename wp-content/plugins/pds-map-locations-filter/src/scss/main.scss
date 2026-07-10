@@ -3,57 +3,8 @@
 /* style.css */
 /* TOLTIP */
 
-.gm-style {
-	.gm-style-iw-c {
-	  background-color: #007fad;
-	  border-radius: 0.4rem !important;
-	  padding: 1rem !important;
-	}
-  .transit-container{
-      div{background-color: #007fad;
-        color:#fff;
-      }
-  }
-  .poi-info-window{
-    *{
-      background-color: #007fad;
-      color:#fff;
-    }
-  }
-	.gm-style-iw {
-	  top: 0 !important;
-	  left: 0 !important;
-	  width: 22rem !important;
-      max-width: 90vw;
-	  display: block !important;
-	  border-radius: 0.4rem !important;
-	  padding: 1rem !important;
-	  overflow: hidden;
-      box-shadow: 0 2px 7px 1px rgba(0, 0, 0, 0.3);
-	}
-
-   .gm-style-iw-t::after {
-	  background: linear-gradient(45deg,rgb(238, 252, 255) 50%,rgba(255,255,255,0) 51%,rgba(255,255,255,0) 100%) !important;
-	}
-
-	button.gm-ui-hover-effect {
-	  top: 5px !important;
-	  right: 5px !important;
-      opacity: 0.7;
-      border-radius: 2px;
-      padding: 5px !important;
-      width: auto !important;
-      height: auto !important;
-	}
-    button.gm-ui-hover-effect span {
-        margin: 0 !important;
-    }
-    .gm-style-iw-d {
-        overflow: auto !important;
-        padding: 10px !important;
-        max-height: 300px;
-    }
-}
+// Los estilos del InfoWindow nativo (.gm-style-iw*, botón de cierre) se definen
+// una sola vez más abajo, en la sección "InfoWindow Styles (Google Maps Native)".
 
 /* Info Window Content */
 .pds-marker-info-window {
@@ -150,13 +101,29 @@
 /* ✅ MOBILE */
 @media (max-width: 767px) {
 
+    .pds-tiendas .pds-tiendas-toolbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: .5em !important;
+        margin-bottom: .8em !important;
+        padding: 0 0.75rem;
+    }
+
     .pds-tiendas .pds-tiendas-toolbar .pds-view-switcher {
         width: 80% !important;
     }
 
+    .pds-tiendas .mlf-taxonomy {
+        display: flex;
+        flex-direction: column;
+        min-width: 120px;
+        width: 100%;
+    }
+
     .pds-tiendas .pds-tiendas-list.list {
-        width: 86vw;
-        justify-content: flex-start;
+        max-height: 450px;
+        width: 100%;
+        padding: 0 0.75rem;
     }
   .pds-tiendas .pds-tiendas-list.grid{
         width: 81vw;
@@ -166,11 +133,30 @@
 
 }
 
-/* Marker Styles */
-.mlf-marker {
+/* Cluster de localitzacions: mateix aspecte que .mlf-marker però 30x30 amb el número */
+.mlf-cluster {
   width: 30px;
   height: 30px;
-  background-color: #007fad;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dd1115;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* Marker Styles */
+.mlf-marker {
+  width: 15px;
+  height: 15px;
+  background-color: #dd1115;
   border-radius: 50%;
   cursor: pointer;
   border: 2px solid white;
@@ -365,49 +351,33 @@
 /* InfoWindow Styles (Google Maps Native) */
 /* ========================= */
 
-.gm-style-iw {
+.gm-style .gm-style-iw {
+  top: 0 !important;
+  left: 0 !important;
+  width: 20rem !important;
+  max-width: 90vw;
+  display: block !important;
+  border-radius: 1rem !important;
   padding: 0 !important;
-  border-radius: 0.6rem !important;
-  overflow: hidden !important;
-  width: auto !important;
-  max-width: 380px !important;
 }
 
 .gm-style-iw-c {
-  border-radius: 0.6rem !important;
+  border-radius: 1rem !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
   padding: 0 !important;
   max-width: 100% !important;
   background: #fff !important;
 }
 
-.gm-style-iw-d {
-  overflow: hidden !important;
+.gm-style .gm-style-iw-d {
+  overflow: auto !important;
   padding: 0 !important;
-  max-height: none !important;
+  max-height: 300px;
 }
 
-button.gm-ui-hover-effect {
-  top: 8px !important;
-  right: 8px !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  border-radius: 50% !important;
-  width: 28px !important;
-  height: 28px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  opacity: 1 !important;
-
-  span {
-    margin: 0 !important;
-    font-size: 18px !important;
-    color: #fff !important;
-  }
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.7) !important;
-  }
+/* Ocultar la "x" de cerrar del InfoWindow */
+.gm-style-iw-chr {
+  display: none !important;
 }
 
 /* InfoWindow Card */
@@ -520,15 +490,18 @@ button.gm-ui-hover-effect {
   width: 100%;
   box-sizing: border-box;
   background: #007fad;
-  color: #fff;
+  color: #fff !important;
   padding: 12px 20px;
   border-radius: 50px;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
 
-  &:hover {
+  &:hover,
+  &:focus,
+  &:visited {
+    color: #fff !important;
     background: #005a7f;
     text-decoration: none;
   }
@@ -543,4 +516,54 @@ button.gm-ui-hover-effect {
   .mlf-infowindow-image {
     height: 140px;
   }
+}
+
+/* ============================================================= */
+/* Bloque "Centros SJD" (tienda-lista): conmutación de vista       */
+/* Listado / Tabla / Mapa. Se define aquí (build/style.css global, */
+/* siempre encolado) porque el style.css del bloque se carga de     */
+/* forma condicional y no es fiable para el layout base.            */
+/* ============================================================= */
+/* El div extern que embolcalla el bloc ha d'ocupar el 100% de l'amplada. */
+.pds-tienda-block-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+.pds-tiendas-wrapper {
+  /* El mapa está oculto salvo en la vista "map" */
+  .mlf-content-area { display: none !important; }
+
+  &.map {
+    .pds-tiendas-results-container { display: none !important; }
+    /* El mapa ocupa el 100% de l'amplada de la finestra (full-bleed),
+       trencant l'ample "wide" del contenidor. */
+    .mlf-content-area {
+      display: block !important;
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
+  }
+
+  .mlf-map-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .mlf-map-container {
+    width: 100%;
+    height: 70vh;
+    min-height: 400px;
+    background-color: #e0e0e0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+}
+
+/* Text de càrrega ("Cargando centros...", "Cargando mapa...") en blau primari */
+.mlf-loading,
+.pds-tiendas-loading {
+  color: #007fad;
 }

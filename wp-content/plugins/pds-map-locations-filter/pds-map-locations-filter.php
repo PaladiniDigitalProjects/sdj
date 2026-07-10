@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       PDS Map Locations Filter
  * Description:       A PDS map dynamic block with filterable locations.
- * Version:           2.0.7
+ * Version:           2.1.0
  * Author:            PDS Ricard
  * Text Domain:       pds-map-locations-filter
  * Requires at least: 5.8
@@ -25,7 +25,7 @@ if ( ! defined( 'PDS_MLF_PLUGIN_URL' ) ) {
     define( 'PDS_MLF_PLUGIN_URL', plugin_dir_url( PDS_MLF_PLUGIN_FILE ) );
 }
 if ( ! defined( 'PDS_MLF_VERSION' ) ) {
-    define( 'PDS_MLF_VERSION', '2.0.7' );
+    define( 'PDS_MLF_VERSION', '2.1.0' );
 }
 
 /**
@@ -231,6 +231,17 @@ class PDSMLFPlugin {
         // Enqueue main stylesheet.
         if ( file_exists( $build_path . 'style.css' ) ) {
             wp_enqueue_style( 'pds-mlf-style', $build_url . 'style.css', [], filemtime( $build_path . 'style.css' ) );
+        }
+
+        // El style.css del bloque unificado "Centros SJD" (tienda-lista) WordPress
+        // lo encola de forma condicional y poco fiable cuando el bloque va anidado
+        // en patrones/otros bloques, así que lo cargamos aquí incondicionalmente.
+        // (No hacemos lo mismo con el CSS del bloque map-locations-filter legacy:
+        // sus reglas genéricas .mlf-* pisarían las del bloque unificado; ese bloque
+        // ya carga su CSS vía WordPress cuando está presente en la página.)
+        $tienda_style = 'blocks/tienda-lista/style.css';
+        if ( file_exists( $build_path . $tienda_style ) ) {
+            wp_enqueue_style( 'pds-mlf-tienda-lista-style', $build_url . $tienda_style, [ 'pds-mlf-style' ], filemtime( $build_path . $tienda_style ) );
         }
 
         // Enqueue global frontend script and localize data.
@@ -447,9 +458,9 @@ class PDSMLFPlugin {
 
         $locations_query = new WP_Query( $args );
 
-        ob_start();
-        mlf_get_template_part( 'locations-list.php', [ 'locations_query' => $locations_query ], 'map-locations-filter' );
-        $html = ob_get_clean();
+        // mlf_get_template_part() devuelve el HTML (no lo imprime), así que hay
+        // que capturar su valor de retorno directamente.
+        $html = mlf_get_template_part( 'locations-list.php', [ 'locations_query' => $locations_query ], 'map-locations-filter' );
         wp_reset_postdata();
 
         wp_send_json_success( [ 'html' => $html ] );
@@ -507,16 +518,28 @@ class PDSMLFPlugin {
             $lng     = get_field( 'longitude', $post_id );
 
             if ( is_numeric( $lat ) && is_numeric( $lng ) ) {
-                ob_start();
-                mlf_get_template_part(
+                $provincia_terms = get_the_terms( $post_id, 'provincia' );
+                $ambito_terms    = get_the_terms( $post_id, 'ambito' );
+
+                // mlf_get_template_part() devuelve el HTML (no lo imprime); se
+                // captura su valor de retorno. Se pasan los datos que el
+                // template de la info window espera (dirección, contacto, etc.).
+                $info_window_content = mlf_get_template_part(
                     'template-mlf-marker-info-window.php',
                     [
-                        'title'   => get_the_title(),
-                        'content' => get_the_excerpt(),
+                        'id'        => $post_id,
+                        'title'     => get_the_title(),
+                        'thumbnail' => get_the_post_thumbnail_url( $post_id, 'medium' ),
+                        'permalink' => get_permalink( $post_id ),
+                        'provincia' => ( $provincia_terms && ! is_wp_error( $provincia_terms ) ) ? $provincia_terms[0]->name : '',
+                        'ambito'    => ( $ambito_terms && ! is_wp_error( $ambito_terms ) ) ? implode( ', ', wp_list_pluck( $ambito_terms, 'name' ) ) : '',
+                        'direccion' => get_post_meta( $post_id, 'ce_direccion', true ),
+                        'telefono'  => get_post_meta( $post_id, 'ce_telefono', true ),
+                        'email'     => get_post_meta( $post_id, 'ce_email', true ),
+                        'web'       => get_post_meta( $post_id, 'ce_web', true ),
                     ],
                     'map-locations-filter'
                 );
-                $info_window_content = ob_get_clean();
 
                 $markers[] = [
                     'id'              => $post_id,

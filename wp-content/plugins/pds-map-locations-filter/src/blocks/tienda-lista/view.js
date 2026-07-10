@@ -1,3 +1,5 @@
+import { MLFMapHandler } from '../../js/map-handler';
+
 document.addEventListener('DOMContentLoaded', () => {
   const listBlocks = document.querySelectorAll('.pds-tiendas-wrapper');
 
@@ -7,22 +9,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const blockId = blockWrapper.id;
     const { ajax_url: ajaxUrl, nonce, i18n: globalI18n } = window.mlf_ajax;
     const initialNumStores = attrs.showAllResults ? -1 : (parseInt(attrs.numStores, 10) || 12);
-    const initialStyle = attrs.displayStyle || 'list';
+    const initialStyle = attrs.displayStyle || attrs.initialStyle || 'list';
+    const enableMap = attrs.enableMap !== false;
     const i18n = {
       loading: globalI18n.loadingLocations || globalI18n.loading,
       noResults: attrs.i18n?.noResults || 'No stores found matching your criteria.',
     };
 
- 
     const resultsContainer = blockWrapper.querySelector('.pds-tiendas-results-container');
     const searchInput = blockWrapper.querySelector(`#${blockId}-mlf-search-input`);
     const taxonomySelects = blockWrapper.querySelectorAll('.mlf-filters-select');
     const viewButtons = blockWrapper.querySelectorAll('.mlf-view-btn');
+    const mapEl = blockWrapper.querySelector('.mlf-map-container');
 
     let currentSearch = '';
     let currentTaxonomies = {};
     let currentDisplayStyle = initialStyle;
     const numStores = initialNumStores;
+
+    // --- Vista Mapa (perezosa): comparte los filtros de este bloque ---
+    let mapHandler = null;
+    let mapInitialized = false;
+    const getFilters = () => ({ search: currentSearch, taxonomies: currentTaxonomies });
+
+    const ensureMap = () => {
+      if (!enableMap || !mapEl) return;
+      if (!mapHandler) {
+        mapHandler = new MLFMapHandler({
+          root: blockWrapper,
+          mapEl,
+          getFilters,
+          center: attrs.initialCenter,
+          zoom: attrs.zoomLevel,
+          i18n: attrs.i18n || {},
+        });
+      }
+      if (!mapInitialized) {
+        mapInitialized = true;
+        mapHandler.init(); // carga Google Maps + fetch inicial con los filtros actuales
+      } else {
+        mapHandler.refresh(); // re-aplica los filtros actuales
+      }
+    };
 
     // Browsers restore <input>/<select> values from the previous visit on
     // back/forward navigation, which would leave the filter UI showing a
@@ -37,16 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     resetFilters();
 
-   
     const applyDisplayStyle = () => {
-      blockWrapper.classList.remove('grid', 'list');
+      blockWrapper.classList.remove('grid', 'list', 'map');
       blockWrapper.classList.add(currentDisplayStyle);
       viewButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.view === currentDisplayStyle));
     };
 
     applyDisplayStyle();
 
-   
     const fetchStores = debounce(async () => {
       resultsContainer.innerHTML = `<p class="pds-tiendas-loading">${i18n.loading}</p>`;
       blockWrapper.classList.add('is-loading');
@@ -56,8 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('nonce', nonce);
       formData.append('search', currentSearch);
       formData.append('taxonomies', JSON.stringify(currentTaxonomies));
-      formData.append('numStores', numStores); 
-      formData.append('displayStyle', currentDisplayStyle);
+      formData.append('numStores', numStores);
+      // El mapa reutiliza la lista; en vista mapa pedimos estilo "list" por defecto.
+      formData.append('displayStyle', currentDisplayStyle === 'map' ? 'list' : currentDisplayStyle);
 
       try {
         const res = await fetch(ajaxUrl, { method: 'POST', body: formData });
@@ -77,21 +104,28 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, 300);
 
+    // Un cambio de filtro se aplica a la vista activa: mapa (marcadores) o lista/grilla.
+    const onFilterChange = () => {
+      if (currentDisplayStyle === 'map') {
+        if (mapHandler && mapInitialized) mapHandler.refresh();
+      } else {
+        fetchStores();
+      }
+    };
+
     // Event listeners
 
     if (searchInput) {
       searchInput.addEventListener('input', e => {
         currentSearch = e.target.value;
-        // numStores NO cambia, siempre es initialNumStores
-        fetchStores();
+        onFilterChange();
       });
     }
 
     taxonomySelects.forEach(select => {
       select.addEventListener('change', e => {
         currentTaxonomies[e.target.name] = e.target.value;
-        // numStores NO cambia, siempre es initialNumStores
-        fetchStores();
+        onFilterChange();
       });
     });
 
@@ -99,12 +133,20 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('click', () => {
         currentDisplayStyle = btn.dataset.view;
         applyDisplayStyle();
-        fetchStores();
+        if (currentDisplayStyle === 'map') {
+          ensureMap();
+        } else {
+          fetchStores();
+        }
       });
     });
 
-
-    fetchStores();
+    // Carga inicial según la vista por defecto.
+    if (currentDisplayStyle === 'map') {
+      ensureMap();
+    } else {
+      fetchStores();
+    }
 
     // On back/forward navigation (e.g. after visiting a location's "ficha"
     // and going back), browsers restore <input>/<select> values from the
@@ -116,7 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
       currentDisplayStyle = initialStyle;
       applyDisplayStyle();
       resetFilters();
-      fetchStores();
+      if (currentDisplayStyle === 'map') {
+        ensureMap();
+      } else {
+        fetchStores();
+      }
     });
   });
 
