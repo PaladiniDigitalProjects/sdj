@@ -8383,6 +8383,115 @@ header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li {
   text-decoration: underline;
 }
 
+.wp-block-donaciones {
+  margin: 0 auto;
+  text-align: center;
+  color: #007FAD;
+  background-color: #ffffff;
+}
+.wp-block-donaciones button {
+  background: transparent !important;
+  color: #007FAD;
+}
+.wp-block-donaciones .donacion {
+  background-color: var(--wp--preset--color--accent-3) !important;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #007FAD;
+  width: 100%;
+  max-width: 24rem;
+}
+.wp-block-donaciones .donacion .postal-code input {
+  border: 1px solid #007FAD;
+  line-height: 120%;
+  padding: 0.5rem;
+  margin: 0 1rem 1rem;
+  width: calc(100% - 3rem);
+}
+.wp-block-donaciones .donacion .postal-code input::-moz-placeholder {
+  color: #007FAD;
+}
+.wp-block-donaciones .donacion .postal-code input::placeholder {
+  color: #007FAD;
+}
+.wp-block-donaciones .donacion .postal-code button {
+  background: #007FAD !important;
+  color: #ffffff;
+  border-radius: 3rem;
+  font-size: 12px;
+  font-size: 1.2rem;
+  line-height: 100%;
+  padding: 0.5rem 1rem;
+}
+.wp-block-donaciones .donacion.ON .donacion {
+  background: #007FAD;
+  max-width: 66rem !important;
+}
+.wp-block-donaciones .donacion.ON .donacion #resultado button a {
+  color: #007FAD;
+  margin: 2rem;
+}
+.wp-block-donaciones .donacion.ON .postalcode,
+.wp-block-donaciones .donacion.ON .postal-code {
+  margin-top: 1rem;
+  display: none;
+}
+.wp-block-donaciones #resultado {
+  text-align: center;
+  font-size: 18px;
+  font-size: 1.8rem;
+  line-height: 120%;
+  color: #007FAD;
+  margin: 0 auto;
+  border-radius: 0.4rem;
+}
+.wp-block-donaciones #resultado button {
+  font-size: 18px;
+  font-size: 1.8rem;
+  line-height: 120%;
+}
+.wp-block-donaciones #resultado button a.quiero-donar {
+  color: #007FAD;
+  padding: 2rem;
+  width: 100%;
+  display: block;
+}
+.wp-block-donaciones #resultado button:disabled {
+  opacity: 1;
+}
+.wp-block-donaciones .postalcode {
+  width: 100%;
+  max-width: 24rem;
+}
+.wp-block-donaciones .postalcode button {
+  margin: 0 0 1rem 0;
+  font-size: 12px;
+  font-size: 1.2rem;
+  background: transparent;
+  border: none;
+  color: #007FAD;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.wp-block-donaciones .postalcode button:hover {
+  text-decoration: none;
+}
+.wp-block-donaciones .postalcode button:after {
+  content: " ";
+  display: inline-block;
+  width: 2rem;
+  height: 1rem;
+  background: url("../img/ico-more-down.svg") center no-repeat;
+  background-size: 100% 100%;
+  margin-left: 1rem;
+}
+.wp-block-donaciones .postalcode button.on {
+  content: " ";
+}
+.wp-block-donaciones .postalcode button.on:after {
+  background: url("../img/ico-more-up.svg") center no-repeat;
+}
+
 /* LANDING PAGE DESNUDOS */
 .page-template-page-desnudos {
   background: #000000 url("../images/FONS-POSTER-SENSE-VIDRIERA.jpg") no-repeat center center fixed;
