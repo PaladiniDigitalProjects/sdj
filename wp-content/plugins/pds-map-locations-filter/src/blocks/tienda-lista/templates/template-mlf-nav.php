@@ -36,7 +36,18 @@ $is_preview   = $is_preview ?? false; // Default to false if not passed
                     <div class="mlf-taxonomy">
                         
                         <select class="mlf-filters-select" name="<?= esc_attr($slug); ?>" id="<?= $select_id ?>">
-                            <option value="all"><?= sprintf('%s %s', esc_html__('Ver', 'pds-map-locations-filter'), esc_html($taxonomy_object->labels->name)); ?></option>    
+                            <option value="all"><?php
+                                // Etiqueta "todos" com a cadena completa i traduïble per taxonomia
+                                // (permet a WPML String Translation traduir-la amb la capitalització
+                                // exacta: «Veure àmbits», etc.). Fallback genèric per a altres taxonomies.
+                                $mlf_all_labels = [
+                                    'ambito'             => esc_html__('Ver Ámbitos', 'pds-map-locations-filter'),
+                                    'comunidad_autonoma' => esc_html__('Ver Comunidades Autónomas', 'pds-map-locations-filter'),
+                                    'localidad'          => esc_html__('Ver Localidades', 'pds-map-locations-filter'),
+                                    'provincia'          => esc_html__('Ver Provincias', 'pds-map-locations-filter'),
+                                ];
+                                echo $mlf_all_labels[$slug] ?? sprintf('%s %s', esc_html__('Ver', 'pds-map-locations-filter'), esc_html($taxonomy_object->labels->name));
+                            ?></option>    
                             <?php
                             $terms = get_terms([
                                 'taxonomy'   => $slug,

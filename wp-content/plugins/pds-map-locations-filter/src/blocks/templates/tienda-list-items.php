@@ -111,6 +111,6 @@ if ($stores_query->have_posts()): ?>
     </div>
 <?php else: ?>
     <p class="pds-tiendas-no-results">
-        <?php esc_html_e('No stores found.', 'pds-map-locations-filter'); ?>
+        <?php esc_html_e('No se ha encontrado la localización', 'pds-map-locations-filter'); ?>
     </p>
 <?php endif; ?>

@@ -264,3 +264,31 @@ function my_acf_block_render_callback( $block ) {
         include $template;
     }
 }
+
+/**
+ * Abreviatures dels dies de la setmana en català amb el format del client
+ * (minúscula + punt): dl., dt., dc., dj., dv., ds., dg.
+ *
+ * El core català retorna «Dl», «Dt»… (majúscula, sense punt). A la capçalera del
+ * calendari mensual de The Events Calendar el text VISIBLE és
+ * $wp_locale->get_weekday_initial() i l'atribut abbr= és get_weekday_abbrev().
+ *
+ * No es pot fer via filtre `gettext_with_context`: WP_Locale es construeix a
+ * wp-settings.php (poblant els arrays) ABANS de carregar el functions.php del
+ * tema, així que el filtre arribaria tard. Sobreescrivim directament els arrays
+ * de $wp_locale al hook `wp` (locale ja resolt a `ca` per WPML, abans de pintar
+ * el calendari). Índex de get_weekday(): 0=diumenge … 6=dissabte.
+ */
+function sjd_ca_weekday_short() {
+    if ( get_locale() !== 'ca' ) {
+        return;
+    }
+    global $wp_locale;
+    $map = [ 0 => 'dg.', 1 => 'dl.', 2 => 'dt.', 3 => 'dc.', 4 => 'dj.', 5 => 'dv.', 6 => 'ds.' ];
+    foreach ( $map as $i => $short ) {
+        $name = $wp_locale->get_weekday( $i );
+        $wp_locale->weekday_initial[ $name ] = $short;
+        $wp_locale->weekday_abbrev[ $name ]  = $short;
+    }
+}
+add_action( 'wp', 'sjd_ca_weekday_short' );

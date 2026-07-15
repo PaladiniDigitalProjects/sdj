@@ -48,7 +48,7 @@ $block_data = [
     'initialStyle'     => $display_style,
     'i18n' => [
         'loading' => __('Loading stores...', 'pds-map-locations-filter'),
-        'noResults' => __('No stores found matching your criteria.', 'pds-map-locations-filter'),
+        'noResults' => __('No se ha encontrado la localización', 'pds-map-locations-filter'),
     ]
 ];
 ?>

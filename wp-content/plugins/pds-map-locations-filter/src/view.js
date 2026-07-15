@@ -208,7 +208,7 @@ class MLFMapHandler {
     if (response && response.success && response.data && response.data.html) {
       this.listEl.innerHTML = response.data.html;
     } else {
-      this._showError(this.listEl, this.i18n.noResults || 'No locations found.');
+      this._showError(this.listEl, this.i18n.noResults || 'No se ha encontrado la localización');
     }
   }
 

@@ -256,7 +256,7 @@ class PDSMLFPlugin {
                     'loadingLocations'    => __( 'Loading locations...', 'pds-map-locations-filter' ),
                     'errorLoadingMap'     => __( 'Error loading map.', 'pds-map-locations-filter' ),
                     'errorLoadingLocations' => __( 'Error loading locations.', 'pds-map-locations-filter' ),
-                    'noResults'           => __( 'No locations match.', 'pds-map-locations-filter' ),
+                    'noResults'           => __( 'No se ha encontrado la localización', 'pds-map-locations-filter' ),
                 ],
             ] );
         }

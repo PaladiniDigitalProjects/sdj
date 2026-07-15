@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const enableMap = attrs.enableMap !== false;
     const i18n = {
       loading: globalI18n.loadingLocations || globalI18n.loading,
-      noResults: attrs.i18n?.noResults || 'No stores found matching your criteria.',
+      noResults: attrs.i18n?.noResults || 'No se ha encontrado la localización',
     };
 
     const resultsContainer = blockWrapper.querySelector('.pds-tiendas-results-container');
