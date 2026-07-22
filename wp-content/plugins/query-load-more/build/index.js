@@ -207,13 +207,13 @@ const withBlockWrapper = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__.crea
         ...props
       });
     }
-    props.wrapperProps = {
+    const _pdsWrapperProps = {
       ...props.wrapperProps,
       "data-ghubqueryid": props.attributes.ghubQueryId
     };
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(BlockListBlock, {
       ...props,
-      ...props.wrapperProps
+      wrapperProps: _pdsWrapperProps
     });
   };
 }, "withBlockWrapper");

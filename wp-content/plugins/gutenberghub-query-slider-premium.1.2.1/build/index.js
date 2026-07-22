@@ -956,11 +956,13 @@ const withBlockWrapper = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__.crea
     if (props.name !== "core/query") {
       return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, props);
     }
-    props.wrapperProps = {
+    const _pdsWrapperProps = {
       ...props.wrapperProps,
       "data-ghubqueryid": props.attributes.ghubQueryId
     };
-    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, props.wrapperProps));
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+      wrapperProps: _pdsWrapperProps
+    }));
   };
 }, "withBlockWrapper");
 (0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__.addFilter)("editor.BlockListBlock", "ghub-gallery-lightbox/with-block-wrapper", withBlockWrapper);
@@ -1342,14 +1344,16 @@ const withBlockWrapper = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_6__.crea
     const navigationJustification = typeof gutenberghubNavigationJustification !== "undefined" ? `ghub-navigation-justify-${gutenberghubNavigationJustification}` : "ghub-navigation-justify-center";
     const paginationVerticalAlign = typeof gutenberghubIndicatorVerticalAlign !== "undefined" ? `ghub-pagination-vertical-${gutenberghubIndicatorVerticalAlign}` : "ghub-pagination-vertical-bottom";
     const paginationJustification = typeof gutenberghubIndicatorJustification !== "undefined" ? `ghub-pagination-justify-${gutenberghubIndicatorJustification}` : "ghub-pagination-justify-center";
-    props.wrapperProps = {
+    const _pdsWrapperProps2 = {
       ...props.wrapperProps,
       style: ghubVariables,
       className: "ghub-slider-wrapper-editor"
     };
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
       className: `ghub-slider-container-editor ghub-${gutenberghubHeight} ${!(0,lodash__WEBPACK_IMPORTED_MODULE_3__.isEmpty)(props.attributes.align) ? "align" + props.attributes.align : ""}`
-    }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, props.wrapperProps)), gutenberghubNavigationOn && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
+    }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+      wrapperProps: _pdsWrapperProps2
+    })), gutenberghubNavigationOn && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
       className: `ghub-navigation-wrapper ${navigationJustification} ${navigationVerticalAlign}`,
       style: navigationVariable
     }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {

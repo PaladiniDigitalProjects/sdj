@@ -40,29 +40,20 @@ if (!empty($selectedTaxonomies)) {
     $filtered_taxonomies = $taxonomies;
 }
 
+// Render inicial: mostrar TODAS las localizaciones publicadas, sin tax_query.
+// Antes se construía aquí un tax_query con TODOS los términos de cada taxonomía
+// seleccionada en relación AND -> 4 self-joins de term_relationships +
+// SQL_CALC_FOUND_ROWS, que bajo tráfico concurrente saturaba MySQL (dogpile) y
+// colgaba la home. El filtrado real por término lo hacen los handlers AJAX.
+// Incidencia 2026-07-22 (lanzamiento sjd.es).
 $initial_tax_query = [];
-if (!empty($selectedTaxonomies) && is_array($selectedTaxonomies)) {
-    foreach ($selectedTaxonomies as $tax_slug) {
-        if (taxonomy_exists($tax_slug)) {
-            $initial_tax_query[] = [
-                'taxonomy' => sanitize_key($tax_slug),
-                'field'    => 'slug',
-                'terms'    => get_terms([
-                    'taxonomy'   => sanitize_key($tax_slug),
-                    'fields'     => 'slugs',
-                    'hide_empty' => true,
-                ]),
-                'operator' => 'IN'
-            ];
-        }
-    }
-}
 
 $args = [
     'post_type'      => $post_type,
     'posts_per_page' => $num_stores > 0 ? $num_stores : -1,
     'post_status'    => 'publish',
-    'tax_query'      => count($initial_tax_query) > 1 ? array_merge(['relation' => 'AND'], $initial_tax_query) : $initial_tax_query,
+    'no_found_rows'  => true, // no necesitamos found_posts (el listado usa have_posts)
+    'tax_query'      => $initial_tax_query,
 ];
 
 $stores_query = new WP_Query($args);

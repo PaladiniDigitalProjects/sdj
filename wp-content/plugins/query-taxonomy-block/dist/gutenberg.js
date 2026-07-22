@@ -1558,11 +1558,13 @@ const withBlockWrapper = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_6__.crea
     if (props.name !== 'core/query') {
       return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, props);
     }
-    props.wrapperProps = {
+    const _pdsWrapperProps = {
       ...props.wrapperProps,
       'data-ghubqueryid': props.attributes.ghubQueryId
     };
-    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, props.wrapperProps));
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+      wrapperProps: _pdsWrapperProps
+    }));
   };
 }, 'withBlockWrapper');
 (0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_4__.addFilter)('editor.BlockListBlock', 'ghub-gallery-lightbox/with-block-wrapper', withBlockWrapper);
