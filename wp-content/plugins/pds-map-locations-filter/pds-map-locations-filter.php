@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       PDS Map Locations Filter
  * Description:       A PDS map dynamic block with filterable locations.
- * Version:           2.1.0
+ * Version:           2.1.1
  * Author:            PDS Ricard
  * Text Domain:       pds-map-locations-filter
  * Requires at least: 5.8

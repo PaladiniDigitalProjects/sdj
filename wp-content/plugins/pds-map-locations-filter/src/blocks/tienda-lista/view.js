@@ -8,7 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const attrs = JSON.parse(blockWrapper.dataset.blockInit || '{}');
     const blockId = blockWrapper.id;
     const { ajax_url: ajaxUrl, nonce, i18n: globalI18n } = window.mlf_ajax;
-    const initialNumStores = attrs.showAllResults ? -1 : (parseInt(attrs.numStores, 10) || 12);
+    // El límite viene del PHP en `initialNumStores` (ver $block_data en
+    // templates/tienda-lista.php); `numStores` nunca ha existido en ese JSON, así
+    // que se leía undefined y caía al fallback -> el filtrado AJAX devolvía como
+    // mucho 12 centros (p.ej. "Social" tiene 39). Se mantiene `numStores` como
+    // alternativa por si algún render antiguo lo publicara, y el fallback es -1
+    // (sin límite) para no volver a truncar en silencio.
+    const rawNumStores = attrs.initialNumStores !== undefined ? attrs.initialNumStores : attrs.numStores;
+    const parsedNumStores = parseInt(rawNumStores, 10);
+    const initialNumStores = attrs.showAllResults || !parsedNumStores ? -1 : parsedNumStores;
     const initialStyle = attrs.displayStyle || attrs.initialStyle || 'list';
     const enableMap = attrs.enableMap !== false;
     const i18n = {
