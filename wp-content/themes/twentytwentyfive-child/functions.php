@@ -142,6 +142,84 @@ add_filter( 'rest_authentication_errors', function( $result ) {
 
 
 // ─────────────────────────────────────────────────────────────
+// REST API — limitar el cost de les peticions públiques
+//
+// Aquest endpoint NO es cacheja mai (`cache-control: no-store`), així
+// que cada petició és PHP+MySQL en viu. Cost mesurat a producció
+// (04-08-2026), sobre 783 posts:
+//
+//   per_page   sense _embed      amb _embed
+//      20      0,74 s ·  447 KB   2,82 s · 1,0 MB
+//      50      2,20 s ·  1,1 MB   6,96 s · 2,5 MB
+//     100      4,18 s ·  2,2 MB  13,46 s · 5,0 MB
+//
+// El multiplicador real és `_embed` (incrusta autor, termes i mèdia de
+// CADA element): triplica el cost a tots els trams. Per això es
+// desactiva sempre a les peticions anònimes.
+//
+// `per_page` es deixa a 100 per petició del client (integració amb
+// l'app d'INDRA): com que el core ja topa a 100, el límit de sota és
+// de facto inoperant i es manté només com a punt únic de configuració
+// si algun dia cal abaixar-lo.
+//
+// Només afecta peticions NO autenticades: l'editor de blocs i les
+// crides internes de WPML/Yoast conserven el comportament complet.
+// ─────────────────────────────────────────────────────────────
+
+/** Màxim d'elements per pàgina a l'API pública (el core ja en permet 100). */
+define( 'SJD_REST_MAX_PER_PAGE', 100 );
+
+/**
+ * Rebaixa el màxim de `per_page` dels tipus de contingut públics.
+ */
+function sjd_rest_limit_per_page() {
+    if ( is_user_logged_in() ) {
+        return;
+    }
+    foreach ( [ 'post', 'page', 'attachment' ] as $post_type ) {
+        add_filter( "rest_{$post_type}_collection_params", 'sjd_rest_cap_per_page_param' );
+    }
+}
+add_action( 'rest_api_init', 'sjd_rest_limit_per_page' );
+
+function sjd_rest_cap_per_page_param( $params ) {
+    if ( isset( $params['per_page'] ) ) {
+        $params['per_page']['maximum'] = SJD_REST_MAX_PER_PAGE;
+    }
+    return $params;
+}
+
+/**
+ * Retalla les peticions anònimes abans que el core les validi:
+ *
+ *  - `_embed` → fora. És el que multiplicava el cost per deu (incrusta
+ *    autor, termes i mèdia de cada element).
+ *  - `per_page` per damunt del màxim → es RETALLA en silenci, no es
+ *    rebutja. Un 400 trencaria els clients que ja demanen 100 elements;
+ *    així segueixen funcionant, només reben menys per pàgina (el
+ *    `X-WP-TotalPages` s'hi ajusta sol i la paginació continua sent
+ *    coherent).
+ */
+function sjd_rest_throttle_anonymous_request( $result, $server, $request ) {
+    if ( is_user_logged_in() ) {
+        return $result;
+    }
+
+    // El core llegeix `_embed` del request i, segons la versió, de $_GET.
+    unset( $_GET['_embed'] );
+    $request->set_param( '_embed', null );
+
+    $per_page = (int) $request->get_param( 'per_page' );
+    if ( $per_page > SJD_REST_MAX_PER_PAGE ) {
+        $request->set_param( 'per_page', SJD_REST_MAX_PER_PAGE );
+    }
+
+    return $result;
+}
+add_filter( 'rest_pre_dispatch', 'sjd_rest_throttle_anonymous_request', 10, 3 );
+
+
+// ─────────────────────────────────────────────────────────────
 // BLOCK STYLES
 // ─────────────────────────────────────────────────────────────
 
@@ -292,3 +370,46 @@ function sjd_ca_weekday_short() {
     }
 }
 add_action( 'wp', 'sjd_ca_weekday_short' );
+
+/**
+ * Fix navegació / WPML: elimina l'atribut `onclick` legacy que el switcher
+ * d'idiomes de WPML (LanguageSwitcher/Render.php, mode "open on click") injecta
+ * al <li> del submenú. Aquest `onclick` com a STRING trenca la hidratació de la
+ * Interactivity API de WordPress 7.0 ("Component's onclick property should be a
+ * function, but got [string]"), i això deixava sense funcionar TOTA la navegació
+ * del header —inclòs el botó burger en mòbil, que no obria—. Fix a prova
+ * d'actualitzacions (no toca els fitxers de WPML). Incidència 2026-07-23.
+ */
+function sjd_strip_wpml_switcher_onclick( $block_content ) {
+    if ( is_string( $block_content )
+        && strpos( $block_content, 'const ariaExpanded = this.children[0]' ) !== false ) {
+        $block_content = preg_replace(
+            '/\s*onclick="\(\(\)=>\{const ariaExpanded[^"]*"/',
+            '',
+            $block_content
+        );
+    }
+    return $block_content;
+}
+add_filter( 'render_block', 'sjd_strip_wpml_switcher_onclick', 20 );
+
+/**
+ * Redirecció 301 de la pàgina d'entrades (Noticias / Notícies) cap a la pàgina
+ * Actualidad / Actualitat de l'idioma actual. Petició PDS 2026-07-23.
+ *   ES: /noticias/    (ID 170)   -> /actualidad/    (ID 19414)
+ *   CA: /ca/noticies/ (ID 19801) -> /ca/actualitat/ (ID 47577)
+ * Fem servir is_home() perquè /noticias/ és la page_for_posts (arxiu d'entrades).
+ */
+function sjd_redirect_noticias_to_actualidad() {
+    if ( is_admin() || ! is_home() || is_front_page() ) {
+        return;
+    }
+    $lang      = apply_filters( 'wpml_current_language', null );
+    $target_id = ( 'ca' === $lang ) ? 47577 : 19414; // actualitat : actualidad
+    $url       = get_permalink( $target_id );
+    if ( $url ) {
+        wp_safe_redirect( $url, 301 );
+        exit;
+    }
+}
+add_action( 'template_redirect', 'sjd_redirect_noticias_to_actualidad' );

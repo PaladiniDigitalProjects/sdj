@@ -88,3 +88,8 @@ Dockerfile
 wp-content/themes/**/*.zip
 wp-content/themes/**/*.bak
 wp-content/themes/**/*.zip
+
+# Volcados SQL locales (no versionar: pesan cientos de MB)
+sql/
+*.sql
+*.sql.gz

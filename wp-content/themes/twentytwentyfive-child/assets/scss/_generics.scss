@@ -1870,3 +1870,18 @@ figcaption {
   }
 
 }
+
+/* COOKIE BOOT */
+
+#CookiebotWidget {
+  left: 1.3rem !important;
+  bottom: 1.3rem !important;
+
+  .CookiebotWidget-logo {
+    svg {
+      circle {
+        fill: variables.$primary !important;
+      }
+    }
+  }
+}

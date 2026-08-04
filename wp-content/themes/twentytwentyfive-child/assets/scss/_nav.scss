@@ -42,53 +42,6 @@ body {
 }
 
 
-
-/* LENGUAGE NAV */
-/*
-header.wp-block-template-part {
-
-  > div > div{
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column !important;
-    height: 5.5rem;
-
-    .wp-block-site-logo {
-      max-width: 15rem;
-      left: 0;
-      top: 0.5rem;
-      position: absolute;
-    }
-
-    .wp-block-navigation-link {
-      display: none;
-    }
-
-    nav {
-      background-color: gold;
-      width: 100%;
-    }
-
-    &.is-menu-open {
-      height: 100% !important;
-      width: 100% !important;
-      position: absolute;
-      top:0;
-      bottom:0;
-      left: 0;
-      right: 0;
-      background-color: red;
-    }
-      .wp-block-navigation__responsive-container-open {
-    right: 0;
-    top: 0.5rem;
-    position: absolute;
-  }
-
-  }
-*/
-
-
 .menu-butons {
 
   #btn-open,
@@ -161,10 +114,10 @@ header.wp-block-template-part {
   .contactNav {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: left;
     order: 2;
     width: 100%;
-    max-width: 34rem;
+    // max-width: 34rem;
     gap: 1.5rem;
     margin-top: -1rem;
     z-index: 999;
@@ -274,7 +227,7 @@ header.wp-block-template-part {
 
     .menuNav {
       flex-direction: column;
-      width: 80%;
+      width: 100%;
       gap: 1rem;
 
       .contactNav {
@@ -302,17 +255,6 @@ header.wp-block-template-part {
               text-decoration: none;
             }
           }
-
-          // .wp-block-navigation-submenu__toggle {
-          //   padding: 0 !important;
-          //   width: 5rem !important;
-
-          //   .wp-block-navigation-item {
-          //     background-color: red !important;
-          //     width: 5rem !important;
-          //   }
-
-          // }
 
           .wp-block-navigation__submenu-icon {
             height: 1em;

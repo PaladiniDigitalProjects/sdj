@@ -1738,6 +1738,15 @@ figcaption.wp-element-caption strong {
   display: block;
 }
 
+/* COOKIE BOOT */
+#CookiebotWidget {
+  left: 1.3rem !important;
+  bottom: 1.3rem !important;
+}
+#CookiebotWidget .CookiebotWidget-logo svg circle {
+  fill: #007FAD !important;
+}
+
 .wpforms-container {
   background-color: #ffffff;
   width: 100%;
@@ -2108,50 +2117,6 @@ body.active .menu-content {
   }
 }
 
-/* LENGUAGE NAV */
-/*
-header.wp-block-template-part {
-
-  > div > div{
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column !important;
-    height: 5.5rem;
-
-    .wp-block-site-logo {
-      max-width: 15rem;
-      left: 0;
-      top: 0.5rem;
-      position: absolute;
-    }
-
-    .wp-block-navigation-link {
-      display: none;
-    }
-
-    nav {
-      background-color: gold;
-      width: 100%;
-    }
-
-    &.is-menu-open {
-      height: 100% !important;
-      width: 100% !important;
-      position: absolute;
-      top:0;
-      bottom:0;
-      left: 0;
-      right: 0;
-      background-color: red;
-    }
-      .wp-block-navigation__responsive-container-open {
-    right: 0;
-    top: 0.5rem;
-    position: absolute;
-  }
-
-  }
-*/
 .menu-butons #btn-open,
 .menu-butons #btn-close {
   width: 2.75rem;
@@ -2208,10 +2173,9 @@ header.wp-block-template-part {
 .head .contactNav {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: left;
   order: 2;
   width: 100%;
-  max-width: 34rem;
   gap: 1.5rem;
   margin-top: -1rem;
   z-index: 999;
@@ -2296,7 +2260,7 @@ header.wp-block-template-part {
   }
   .head .menuNav {
     flex-direction: column;
-    width: 80%;
+    width: 100%;
     gap: 1rem;
   }
   .head .menuNav .contactNav {

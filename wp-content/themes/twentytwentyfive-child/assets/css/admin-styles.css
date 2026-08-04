@@ -1535,6 +1535,16 @@
   padding-bottom: 2rem;
   display: block;
 }
+.editor-styles-wrapper {
+  /* COOKIE BOOT */
+}
+.editor-styles-wrapper #CookiebotWidget {
+  left: 1.3rem !important;
+  bottom: 1.3rem !important;
+}
+.editor-styles-wrapper #CookiebotWidget .CookiebotWidget-logo svg circle {
+  fill: #007FAD !important;
+}
 @media all and (device-width: 768px) and (device-height: 1024px) and (orientation: portrait) {
   .editor-styles-wrapper .ipad-portrait {
     color: red;
@@ -3568,52 +3578,6 @@
     width: 3rem !important;
   }
 }
-.editor-styles-wrapper {
-  /* LENGUAGE NAV */
-  /*
-  header.wp-block-template-part {
-
-    > div > div{
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column !important;
-      height: 5.5rem;
-
-      .wp-block-site-logo {
-        max-width: 15rem;
-        left: 0;
-        top: 0.5rem;
-        position: absolute;
-      }
-
-      .wp-block-navigation-link {
-        display: none;
-      }
-
-      nav {
-        background-color: gold;
-        width: 100%;
-      }
-
-      &.is-menu-open {
-        height: 100% !important;
-        width: 100% !important;
-        position: absolute;
-        top:0;
-        bottom:0;
-        left: 0;
-        right: 0;
-        background-color: red;
-      }
-        .wp-block-navigation__responsive-container-open {
-      right: 0;
-      top: 0.5rem;
-      position: absolute;
-    }
-
-    }
-  */
-}
 .editor-styles-wrapper .menu-butons #btn-open,
 .editor-styles-wrapper .menu-butons #btn-close {
   width: 2.75rem;
@@ -3669,10 +3633,9 @@
 .editor-styles-wrapper .head .contactNav {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: left;
   order: 2;
   width: 100%;
-  max-width: 34rem;
   gap: 1.5rem;
   margin-top: -1rem;
   z-index: 999;
@@ -3757,7 +3720,7 @@
   }
   .editor-styles-wrapper .head .menuNav {
     flex-direction: column;
-    width: 80%;
+    width: 100%;
     gap: 1rem;
   }
   .editor-styles-wrapper .head .menuNav .contactNav {
@@ -5286,6 +5249,9 @@
 .editor-styles-wrapper {
   /* REM FONT SIZE */
 }
+.editor-styles-wrapper .tribe-common--breakpoint-medium.tribe-events .tribe-events-l-container {
+  padding-top: 10rem !important;
+}
 .editor-styles-wrapper .tribe-events-widget-events-list__events {
   display: flex !important;
   flex-direction: column !important;
@@ -5464,13 +5430,28 @@
   border: none !important;
 }
 .editor-styles-wrapper .tribe-events-schedule__date {
-  font-size: 2.5rem !important;
+  font-size: 2rem !important;
   font-weight: 100 !important;
   font-family: "Suisse Intl", sans-serif !important;
 }
 .editor-styles-wrapper .tribe-events-single-section-title {
   color: #007FAD;
   font-weight: bold;
+}
+.editor-styles-wrapper .tribe_events-template-default .wp-block-post-title :where(a) {
+  font-size: 1.5rem !important;
+  padding-left: 1rem !important;
+}
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__day-cell--selected,
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__day-cell--selected:focus,
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__day-cell--selected:hover,
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__mobile-events-icon--event {
+  background-color: #007FAD !important;
+}
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__day-cell--selected .tribe-events-calendar-month__day-date-daynum,
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__day-cell--selected:focus .tribe-events-calendar-month__day-date-daynum,
+.editor-styles-wrapper .tribe-events .tribe-events-calendar-month__day-cell--selected:hover .tribe-events-calendar-month__day-date-daynum {
+  color: #ffffff !important;
 }
 .editor-styles-wrapper .tribe-block {
   padding: 0;
@@ -6604,7 +6585,9 @@
   margin: 0 auto;
   text-align: center;
   color: #007FAD;
-  background-color: #ffffff;
+  background-color: transparent;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 .editor-styles-wrapper .wp-block-donaciones button {
   background: transparent !important;
@@ -6617,6 +6600,7 @@
   color: #007FAD;
   width: 100%;
   max-width: 24rem;
+  margin: 0 auto;
 }
 .editor-styles-wrapper .wp-block-donaciones .donacion .postal-code input {
   border: 1px solid #007FAD;
