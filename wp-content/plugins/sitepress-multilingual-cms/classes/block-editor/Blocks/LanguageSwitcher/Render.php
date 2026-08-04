@@ -124,11 +124,14 @@ class Render {
 				$dpFirstItem = $dropdownFirstItemQuery->item( $dropdownFirstItemQuery->length - 1 );
 
 				if ( $dpFirstItem ) {
-					$dpFirstItem->setAttribute(
-						'onclick',
-						"(()=>{const ariaExpanded = this.children[0].getAttribute('aria-expanded');
-					this.children[0].setAttribute('aria-expanded', ariaExpanded === 'true' ? 'false' : 'true');})(this);"
-					);
+					// PDS 2026-07-23: eliminat l'atribut `onclick` legacy que WPML injectava
+					// aquí. Com a STRING trencava la hidratació de la Interactivity API de
+					// WordPress 7.0 ("Component's onclick property should be a function, but got
+					// [string]") i deixava sense funcionar TOTA la navegació del header, inclòs
+					// el botó burger en mòbil. El toggle del submenú ja el gestiona el bloc
+					// Navigation (Interactivity API). RE-APLICAR si s'actualitza WPML.
+					// $dpFirstItem->setAttribute( 'onclick', "..." );
+					$dpFirstItem->setAttribute( 'data-pds-ls-toggle', '1' );
 				}
 			}
 		}

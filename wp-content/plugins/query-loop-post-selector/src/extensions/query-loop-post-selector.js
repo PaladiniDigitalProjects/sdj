@@ -29,18 +29,28 @@ const withSelectivePostControl = createHigherOrderComponent((BlockEdit) => {
 		const inherit = get(currentQuery, 'inherit', false);
 
 		useEffect(() => {
-			if (isInitialRender.current) {
-				isInitialRender.current = false;
-				return;
-			}
+			/**
+			 * PDS 2026-07-23: només reseteja la selecció si postType/inherit
+			 * canvien de valor DE DEBÒ. El codi original reseteja en qualsevol
+			 * re-invocació de l'efecte (p.ex. el doble muntatge de React 18 /
+			 * StrictMode), i això esborrava els "Selective Posts" cada cop que
+			 * s'editava la pàgina. Guardem el valor confirmat al ref.
+			 */
+			const prev = isInitialRender.current;
+			isInitialRender.current = { postType, inherit };
 
-			/** Resetting the selective posts, due to post type change. */
-			props.setAttributes({
-				query: {
-					...currentQuery,
-					qlpspSelectivePosts: [],
-				},
-			});
+			if (
+				prev !== true &&
+				( prev.postType !== postType || prev.inherit !== inherit )
+			) {
+				/** Resetting the selective posts, due to real post type change. */
+				props.setAttributes({
+					query: {
+						...currentQuery,
+						qlpspSelectivePosts: [],
+					},
+				});
+			}
 		}, [postType, inherit]);
 
 		if ('core/query' !== props.name) {
