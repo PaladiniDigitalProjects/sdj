@@ -1,0 +1,2 @@
+<?php
+return ['items'=>['Post Types'=>['urls'=>[],'names'=>[],'cmp'=>['post-type-transfer',1]],'Post Visibility'=>['urls'=>[],'names'=>[],'cmp'=>['post-type-transfer',1]],'Post Type:'=>['urls'=>[],'names'=>[],'cmp'=>['post-type-transfer',1]],'Ensure the target post type supports the same ACF meta fields to avoid data loss. %s'=>['urls'=>[],'names'=>[],'cmp'=>['post-type-transfer',1]],'Manage Field Groups'=>['urls'=>[],'names'=>[],'cmp'=>['post-type-transfer',1]],'All Check/Uncheck'=>['urls'=>[],'names'=>[],'cmp'=>['post-type-transfer',1]]]];

@@ -29,8 +29,8 @@ class TranslateEverythingHooks implements \IWPML_Backend_Action, \IWPML_Frontend
 			'slug'   => Package::OPTION_PAGE_PACKAGE_KIND_SLUG,
 		],
 		Package::OPTION_PACKAGE_KIND_SLUG      => [
-			'title'  => Package::OPTION_PACKAGE_TITLE,
-			'plural' => Package::OPTION_PACKAGE_TITLE,
+			'title'  => Package::OPTION_PACKAGE_TITLE_DEFAULT,
+			'plural' => Package::OPTION_PACKAGE_TITLE_DEFAULT,
 			'slug'   => Package::OPTION_PACKAGE_KIND_SLUG,
 		],
 	];
@@ -40,11 +40,6 @@ class TranslateEverythingHooks implements \IWPML_Backend_Action, \IWPML_Frontend
 			->then( spreadArgs( [ $this, 'registerActiveStringPackageKinds' ] ) );
 	}
 
-	/**
-	 * @param array $kinds
-	 *
-	 * @return array
-	 */
 	public function registerActiveStringPackageKinds( $kinds ) {
 		return array_merge( $kinds, self::KINDS );
 	}

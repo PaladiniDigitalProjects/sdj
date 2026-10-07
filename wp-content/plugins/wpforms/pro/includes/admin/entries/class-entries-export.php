@@ -95,13 +95,14 @@ class WPForms_Entries_Export {
 			'file-upload',
 			'rating',
 			'likert_scale',
+			'net_promoter_score',
+			'ranking',
 			'payment-single',
 			'payment-multiple',
 			'payment-checkbox',
 			'payment-select',
 			'payment-total',
 			'signature',
-			'net_promoter_score',
 		];
 	}
 

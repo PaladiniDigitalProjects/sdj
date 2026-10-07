@@ -1,0 +1,2 @@
+<?php
+return ['items'=>['Privacy Compliance'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'Spam Protection'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'Backups'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'AI MCP'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'Translations'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'Code Snippets'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'Error'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]],'WP Mail SMTP'=>['urls'=>[],'names'=>[],'cmp'=>['wp-mail-smtp',1]]]];

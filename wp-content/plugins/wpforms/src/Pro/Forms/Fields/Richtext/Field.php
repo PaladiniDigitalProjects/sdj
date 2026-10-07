@@ -77,6 +77,28 @@ class Field extends FieldLite {
 	private const MEDIA_CLEANUP_ACTION = 'wpforms_richtext_media_cleanup';
 
 	/**
+	 * Meta key holding the ID of the form that uploaded an attachment.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @var string
+	 */
+	private const ATTACHMENT_FORM_ID_META_KEY = 'wpforms_richtext_attachment_uploaded_to_form_id';
+
+	/**
+	 * Option holding the attachments that are collected but not swept yet.
+	 *
+	 * The entry rows are deleted before the sweep runs, so the collected map is the only remaining
+	 * record of what has to be examined. Persisting it means a timeout mid-sweep costs one more
+	 * daily run instead of orphaning every attachment the sweep did not reach.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @var string
+	 */
+	private const PENDING_CLEANUP_OPTION = 'wpforms_richtext_pending_attachment_cleanup';
+
+	/**
 	 * Primary class constructor.
 	 *
 	 * @since 1.7.0
@@ -1294,9 +1316,11 @@ class Field extends FieldLite {
 	private function generate_attachment_meta( $attachment_id, $form_data, $field_id ): void {
 
 		$meta_input = [
-			'wpforms_richtext_attachment_uploaded_to_form_id'  => $form_data['id'],
+			self::ATTACHMENT_FORM_ID_META_KEY => $form_data['id'],
+			// Recorded for support diagnostics only. It must not gate deletion: an image can be
+			// moved between two Rich Text fields of the same form before the entry is submitted.
 			'wpforms_richtext_attachment_uploaded_to_field_id' => $field_id,
-			'wpforms_richtext_attachment_uploaded_by_user_ip'  => wpforms_get_ip(),
+			'wpforms_richtext_attachment_uploaded_by_user_ip' => wpforms_get_ip(),
 		];
 
 		if ( get_current_user_id() ) {
@@ -1404,10 +1428,12 @@ class Field extends FieldLite {
 
 		return sprintf(
 			'<iframe data-src="%s" class="wpforms-entry-field-value-iframe wpforms-entry-field-value-richtext"></iframe>',
-			add_query_arg(
-				[
-					'richtext_field_id' => wpforms_validate_field_id( $field['id'] ),
-				]
+			esc_url(
+				add_query_arg(
+					[
+						'richtext_field_id' => wpforms_validate_field_id( $field['id'] ),
+					]
+				)
 			)
 		);
 	}
@@ -1625,76 +1651,308 @@ class Field extends FieldLite {
 	}
 
 	/**
-	 * Check if a field is a Rich Text field with media enabled and has a value.
-	 *
-	 * @since 1.10.0
-	 *
-	 * @param array $field        Form field settings.
-	 * @param array $entry_fields Entry fields data.
-	 *
-	 * @return bool
-	 */
-	private static function is_media_richtext_field( array $field, array $entry_fields ): bool {
-
-		return ! empty( $field['type'] ) &&
-			$field['type'] === 'richtext' &&
-			! empty( $field['media_enabled'] ) &&
-			! empty( $entry_fields[ $field['id'] ]['value'] );
-	}
-
-	/**
 	 * Delete media attachments uploaded via Rich Text fields from an entry.
 	 *
 	 * @since 1.10.0
+	 * @since 2.0.1 Attachments are only deleted when no other entry still references them.
 	 *
 	 * @param int $entry_id Entry ID.
 	 */
 	public static function delete_uploaded_files_from_entry( $entry_id ): void {
 
-		$entry_obj = wpforms()->obj( 'entry' );
-		$entry     = $entry_obj ? $entry_obj->get( $entry_id ) : null;
+		$entry_id = (int) $entry_id;
 
-		if ( empty( $entry ) ) {
-			return;
-		}
-
-		$form_obj  = wpforms()->obj( 'form' );
-		$form_data = $form_obj ? $form_obj->get( (int) $entry->form_id, [ 'content_only' => true ] ) : null;
-
-		if ( empty( $form_data['fields'] ) ) {
-			return;
-		}
-
-		$entry_fields = wpforms_decode( $entry->fields );
-
-		if ( empty( $entry_fields ) ) {
-			return;
-		}
-
-		// Only delete attachments from Rich Text fields with media enabled.
-		foreach ( $form_data['fields'] as $field ) {
-			if ( ! self::is_media_richtext_field( $field, $entry_fields ) ) {
-				continue;
-			}
-
-			self::delete_field_attachments( $entry_fields[ $field['id'] ]['value'] );
+		// The entry row still exists on this path, so it must not keep its own attachments alive.
+		foreach ( self::get_purgeable_attachment_ids( [ $entry_id ] ) as $attachment_id => $form_id ) {
+			self::delete_attachment_if_unreferenced( (int) $attachment_id, (int) $form_id, [ $entry_id ] );
 		}
 	}
 
 	/**
-	 * Delete media attachments found in a Rich Text field HTML value.
+	 * Collect the attachments that the given entries uploaded through their own Rich Text fields.
 	 *
-	 * @since 1.10.0
+	 * Must run while the entries are still readable. Deleting the files is a separate step, so
+	 * that the caller can remove the entry rows first and let the database answer which
+	 * attachments are still referenced by living entries.
 	 *
-	 * @param string $field_value Field HTML value.
+	 * @since 2.0.1
+	 *
+	 * @param array $entry_ids Entry IDs.
+	 *
+	 * @return array Map of attachment ID => ID of the form that uploaded it.
 	 */
-	private static function delete_field_attachments( string $field_value ): void {
+	public static function get_purgeable_attachment_ids( array $entry_ids ): array {
 
-		$attachment_ids = self::get_attachment_ids_from_html( $field_value );
+		$entry_obj = wpforms()->obj( 'entry' );
 
-		foreach ( $attachment_ids as $attachment_id ) {
-			wp_delete_attachment( $attachment_id, true );
+		if ( ! $entry_obj ) {
+			return [];
 		}
+
+		$attachment_form_ids = [];
+
+		foreach ( $entry_ids as $entry_id ) {
+			$entry = $entry_obj->get( (int) $entry_id );
+
+			if ( empty( $entry->fields ) ) {
+				continue;
+			}
+
+			$form_id      = (int) $entry->form_id;
+			$entry_fields = wpforms_decode( $entry->fields );
+
+			if ( $form_id < 1 || ! is_array( $entry_fields ) ) {
+				continue;
+			}
+
+			foreach ( self::get_entry_owned_attachment_ids( $entry_fields, $form_id ) as $attachment_id ) {
+				// Keyed by attachment ID, so an image shared across the batch is probed once.
+				$attachment_form_ids[ $attachment_id ] = $form_id;
+			}
+		}
+
+		return $attachment_form_ids;
+	}
+
+	/**
+	 * Collect the attachments in an entry's Rich Text values that the given form uploaded itself.
+	 *
+	 * Ownership is bound to the form only. The field that performed the upload is recorded too,
+	 * but must not gate deletion: an image can be moved between two Rich Text fields of the same
+	 * form before submitting, and binding the field ID would orphan it forever.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $entry_fields Decoded entry field data.
+	 * @param int   $form_id      Form ID of the entry.
+	 *
+	 * @return int[] Attachment IDs.
+	 */
+	private static function get_entry_owned_attachment_ids( array $entry_fields, int $form_id ): array {
+
+		$owned_ids = [];
+
+		foreach ( $entry_fields as $entry_field ) {
+			// The stored type describes the field as it was at submission time. The current form
+			// configuration is deliberately not consulted: turning Media Uploads off later must
+			// not orphan earlier uploads.
+			if (
+				! is_array( $entry_field ) ||
+				( $entry_field['type'] ?? '' ) !== 'richtext' ||
+				! is_string( $entry_field['value'] ?? null ) ||
+				$entry_field['value'] === ''
+			) {
+				continue;
+			}
+
+			foreach ( self::get_attachment_ids_from_html( $entry_field['value'] ) as $attachment_id ) {
+				if ( self::is_form_owned_attachment( (int) $attachment_id, $form_id ) ) {
+					$owned_ids[] = (int) $attachment_id;
+				}
+			}
+		}
+
+		return $owned_ids;
+	}
+
+	/**
+	 * Remember attachments that still have to be examined once the entry rows are gone.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $attachment_form_ids Map of attachment ID => owning form ID.
+	 */
+	public static function queue_attachment_cleanup( array $attachment_form_ids ): void {
+
+		if ( ! $attachment_form_ids ) {
+			return;
+		}
+
+		update_option(
+			self::PENDING_CLEANUP_OPTION,
+			(array) get_option( self::PENDING_CLEANUP_OPTION, [] ) + $attachment_form_ids,
+			false
+		);
+	}
+
+	/**
+	 * Delete the queued attachments that no remaining entry references.
+	 *
+	 * Each attachment leaves the queue as soon as it is resolved, so an interrupted run resumes
+	 * where it stopped on the next scheduled purge instead of losing track of the remainder.
+	 *
+	 * @since 2.0.1
+	 */
+	public static function process_queued_attachment_cleanup(): void {
+
+		$queued = (array) get_option( self::PENDING_CLEANUP_OPTION, [] );
+
+		foreach ( $queued as $attachment_id => $form_id ) {
+			self::delete_attachment_if_unreferenced( (int) $attachment_id, (int) $form_id, [] );
+
+			// Persist the progress before moving on, so a fatal error cannot orphan the rest.
+			unset( $queued[ $attachment_id ] );
+
+			update_option( self::PENDING_CLEANUP_OPTION, $queued, false );
+		}
+
+		delete_option( self::PENDING_CLEANUP_OPTION );
+	}
+
+	/**
+	 * Delete one attachment if the form owns it and no remaining entry references it.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int   $attachment_id     Attachment ID.
+	 * @param int   $form_id           Form ID the attachment must belong to.
+	 * @param array $exclude_entry_ids Entry IDs to ignore when looking for references.
+	 */
+	private static function delete_attachment_if_unreferenced( int $attachment_id, int $form_id, array $exclude_entry_ids ): void {
+
+		// Provenance is re-verified here so that the public methods can never be used to
+		// force-delete an arbitrary list of attachments, whatever the caller passes.
+		if ( ! self::is_form_owned_attachment( $attachment_id, $form_id ) ) {
+			return;
+		}
+
+		if ( self::is_attachment_referenced_by_entry( $attachment_id, $exclude_entry_ids ) ) {
+			return;
+		}
+
+		wp_delete_attachment( $attachment_id, true );
+	}
+
+	/**
+	 * Check whether the given form uploaded the attachment itself.
+	 *
+	 * This is the only authority for deleting a file (issue #18220): an entry value naming an
+	 * arbitrary Media Library URL must never be able to destroy it. The provenance meta is
+	 * stamped at upload time by self::generate_attachment_meta().
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 * @param int $form_id       Form ID the attachment must belong to.
+	 *
+	 * @return bool
+	 */
+	private static function is_form_owned_attachment( int $attachment_id, int $form_id ): bool {
+
+		// A zero form ID would match every attachment that has no provenance meta at all.
+		if ( $attachment_id < 1 || $form_id < 1 ) {
+			return false;
+		}
+
+		return (int) get_post_meta( $attachment_id, self::ATTACHMENT_FORM_ID_META_KEY, true ) === $form_id;
+	}
+
+	/**
+	 * Check whether any entry still references the attachment.
+	 *
+	 * Returns true on every uncertainty. A false negative would destroy a file that a living
+	 * entry still displays, while a false positive only retains a file that could have been
+	 * removed, so the absence of information must never authorise a deletion.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int   $attachment_id     Attachment ID.
+	 * @param array $exclude_entry_ids Entry IDs to ignore.
+	 *
+	 * @return bool
+	 */
+	private static function is_attachment_referenced_by_entry( int $attachment_id, array $exclude_entry_ids ): bool {
+
+		global $wpdb;
+
+		$patterns  = self::get_attachment_like_patterns( $attachment_id );
+		$entry_obj = wpforms()->obj( 'entry' );
+
+		if ( empty( $patterns ) || ! $entry_obj ) {
+			return true;
+		}
+
+		$table_name  = $entry_obj->table_name;
+		$where       = implode( ' OR ', array_fill( 0, count( $patterns ), 'fields LIKE %s' ) );
+		$exclude_ids = array_filter( array_map( 'absint', $exclude_entry_ids ) );
+		$exclude_sql = '';
+
+		if ( $exclude_ids ) {
+			$exclude_sql = ' AND entry_id NOT IN ( ' . wpforms_wpdb_prepare_in( $exclude_ids, '%d' ) . ' )';
+		}
+
+		// Every form and every status is searched: an attachment uploaded by one form can be
+		// displayed by an entry of another one, and trashed entries can still be restored.
+		// The placeholders live inside the generated $where clause, one per pattern.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$referenced = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT entry_id FROM {$table_name} WHERE ( {$where} ){$exclude_sql} LIMIT 1",
+				$patterns
+			)
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		// A failed query proves nothing, so keep the file.
+		if ( ! empty( $wpdb->last_error ) ) {
+			return true;
+		}
+
+		return ! empty( $referenced );
+	}
+
+	/**
+	 * Build the LIKE patterns that find an attachment inside a stored entry value.
+	 *
+	 * Deliberately broader than the set of URLs that resolve back to the attachment: a
+	 * referencing entry may spell the file differently from the one that uploaded it.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 *
+	 * @return string[] LIKE patterns, or an empty array when the file name is unknown.
+	 */
+	private static function get_attachment_like_patterns( int $attachment_id ): array {
+
+		global $wpdb;
+
+		$attached_file = get_post_meta( $attachment_id, '_wp_attached_file', true );
+		$file_name     = is_string( $attached_file ) ? wp_basename( $attached_file ) : '';
+
+		if ( $file_name === '' ) {
+			return [];
+		}
+
+		// The name is split by hand because pathinfo() is locale-aware and mangles non-ASCII file
+		// names on servers running the C locale, which would leave the file without any needle.
+		$dot    = strrpos( $file_name, '.' );
+		$suffix = $dot === false ? '' : substr( $file_name, $dot );
+
+		// Large uploads are stored as `photo-scaled.jpg` while entries embed `photo.jpg` or a
+		// generated size, so the suffix has to go before the name is used as a needle.
+		$stem = (string) preg_replace( '/-(?:scaled|rotated)$/', '', $dot === false ? $file_name : substr( $file_name, 0, $dot ) );
+
+		if ( $stem === '' ) {
+			return [];
+		}
+
+		// The marker core adds to images inserted from the Media Library. Exact, and independent
+		// of both the image size and the way the URL is spelled.
+		$patterns = [ '%' . $wpdb->esc_like( 'wp-image-' . $attachment_id ) . '%' ];
+
+		// Entry values are stored as JSON, which escapes non-ASCII names as \uXXXX sequences.
+		$needles = array_unique( [ $stem, trim( (string) wp_json_encode( $stem ), '"' ) ] );
+
+		foreach ( $needles as $needle ) {
+			// The file itself, e.g. photo.png.
+			$patterns[] = '%' . $wpdb->esc_like( $needle . $suffix ) . '%';
+
+			// Generated copies, e.g. photo-1024x768.png or photo-scaled.png.
+			$patterns[] = '%' . $wpdb->esc_like( $needle . '-' ) . '%' . $wpdb->esc_like( $suffix ) . '%';
+		}
+
+		return $patterns;
 	}
 
 	/**

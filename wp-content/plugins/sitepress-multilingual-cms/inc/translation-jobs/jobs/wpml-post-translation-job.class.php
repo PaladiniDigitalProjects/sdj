@@ -3,7 +3,6 @@
 use WPML\FP\Obj;
 use WPML\TM\Jobs\FieldId;
 use WPML\TM\Jobs\TermMeta;
-use WPML\FP\Lst;
 use WPML\Translation\TranslationElements\FieldCompression;
 
 require_once WPML_TM_PATH . '/inc/translation-jobs/jobs/wpml-translation-job.class.php';
@@ -15,11 +14,6 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		return get_post( $this->get_original_element_id() );
 	}
 
-	/**
-	 * @param bool|false $original
-	 *
-	 * @return string
-	 */
 	public function get_url( $original = false ) {
 		$url        = null;
 		$element_id = null;
@@ -35,16 +29,10 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		return apply_filters( 'wpml_element_translation_job_url', $url, $original, $element_id, $this->get_original_document() );
 	}
 
-	/**
-	 * It checks that the post type is translatable.
-	 *
-	 * @return bool
-	 */
 	function is_translatable_post_type() {
 		$post_type = $this->get_post_type();
 
 		if ( $post_type ) {
-			/** @var SitePress $sitepress */
 			global $sitepress;
 			if ( $sitepress ) {
 				$post_types = array_keys( $sitepress->get_translatable_documents() );
@@ -101,8 +89,23 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		}
 	}
 
+	public function set_translated_field_by_type( $field_type, $encoded_value ) {
+		global $wpdb;
+
+		$wpdb->update(
+			$wpdb->prefix . 'icl_translate',
+			[
+				'field_data_translated' => $encoded_value,
+				'field_finished'        => 1,
+			],
+			[
+				'field_type' => (string) $field_type,
+				'job_id'     => $this->get_id(),
+			]
+		);
+	}
+
 	function save_terms_to_post() {
-		/** @var SitePress $sitepress */
 		global $sitepress, $wpdb;
 
 		$lang_code = $this->get_language_code();
@@ -137,9 +140,6 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		$this->set_translated_term_values( $delete );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_title() {
 		$title = $this->get_title_from_db();
 
@@ -153,9 +153,6 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 			? $original_post->post_title : $this->original_del_text;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_type_title() {
 		$post_type = $this->get_post_type();
 		if ( ! $post_type ) {
@@ -166,9 +163,6 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		return $post_type->labels->singular_name;
 	}
 
-	/**
-	 * @return string|false
-	 */
 	public function get_post_type() {
 		$original_post = $this->get_original_document();
 
@@ -189,7 +183,7 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 	protected function get_terms_in_job_rows(){
 		global $wpdb;
 
-		$query_for_terms_in_job = $wpdb->prepare("	SELECT
+		$results = $wpdb->get_results( $wpdb->prepare("	SELECT
 													  tt.taxonomy,
 													  tt.term_taxonomy_id,
 													  iclt.trid,
@@ -200,11 +194,8 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 															AND CONCAT('tax_', tt.taxonomy) = iclt.element_type
 													JOIN {$wpdb->prefix}icl_translate j
 														ON j.field_type = CONCAT('t_', tt.term_taxonomy_id)
-													WHERE j.job_id = %d ", $this->get_id());
+													WHERE j.job_id = %d ", $this->get_id()) );
 
-		$results = $wpdb->get_results( $query_for_terms_in_job );
-
-		// Decompress field_data_translated in each row
 		foreach ( $results as $result ) {
 			$result->field_data_translated = FieldCompression::decompress( $result->field_data_translated, true );
 		}
@@ -212,22 +203,16 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		return $results;
 	}
 
-	/**
-	 * Retrieves an array of all terms associated with a post. This array is indexed by indexes of the for {t_}{term_taxonomy_id}.
-	 *
-	 * @return array
-	 */
 	protected function get_term_field_array_for_post() {
 		global $wpdb;
 
 		$post_id = $this->get_resultant_element_id();
-		$query = $wpdb->prepare( "SELECT o.term_taxonomy_id, t.name
+		$res   = $wpdb->get_results( $wpdb->prepare( "SELECT o.term_taxonomy_id, t.name
 								  FROM {$wpdb->term_relationships} o
 								  JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = o.term_taxonomy_id
 								  JOIN {$wpdb->terms} t ON t.term_id = tt.term_id
 								  WHERE o.object_id = %d",
-			$post_id );
-		$res   = $wpdb->get_results( $query );
+			$post_id ) );
 
 		$result = array();
 
@@ -240,36 +225,37 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 
 	protected function set_translated_term_values( $delete ) {
 		global $wpdb;
-		$translations_table = $wpdb->prefix . 'icl_translations';
 		$translate_table    = $wpdb->prefix . 'icl_translate';
+		$term_field_pattern = $wpdb->esc_like( 't_' ) . '%';
 
 		$job_id                         = $this->get_id();
-		$get_target_terms_for_job_query = $wpdb->prepare("
+
+		$term_values = $wpdb->get_results( $wpdb->prepare("
 		SELECT
 		    {$wpdb->terms}.name,
 		    {$wpdb->term_taxonomy}.description,
 		    SUBSTR(translate.field_type, 3) original_term_id,
 		    {$wpdb->terms}.term_id translated_term_id
-		FROM {$translate_table} translate
-			INNER JOIN {$translations_table} original_translation ON original_translation.element_id = SUBSTR(translate.field_type, 3)
-			INNER JOIN {$translations_table} translation ON translation.trid = original_translation.trid AND translation.language_code = %s
+		FROM {$wpdb->prefix}icl_translate translate
+			INNER JOIN {$wpdb->prefix}icl_translations original_translation ON original_translation.element_id = SUBSTR(translate.field_type, 3)
+			INNER JOIN {$wpdb->prefix}icl_translations translation ON translation.trid = original_translation.trid AND translation.language_code = %s
 			INNER JOIN {$wpdb->term_taxonomy} ON {$wpdb->term_taxonomy}.term_taxonomy_id = translation.element_id AND CONCAT('tax_', {$wpdb->term_taxonomy}.taxonomy) = translation.element_type
 			INNER JOIN {$wpdb->terms} ON {$wpdb->terms}.term_id = {$wpdb->term_taxonomy}.term_id
-		WHERE translate.job_id = %d AND translate.field_type LIKE 't\_%'
-		", $this->get_language_code(), $job_id );
-
-		$term_values = $wpdb->get_results( $get_target_terms_for_job_query );
+		WHERE translate.job_id = %d AND translate.field_type LIKE %s
+		", $this->get_language_code(), $job_id, $term_field_pattern ) );
 		foreach ( $term_values as $term ) {
 			if ( $delete ) {
-				$conditions = [
-					"field_type LIKE 'tfield-%-{$term->original_term_id}'",  // Term fields
-					"field_type LIKE 'tfield-%-{$term->original_term_id}\_%'", // Term fields as array
-					"field_type = 't_{$term->original_term_id}'",
-					"field_type = 'tdesc_{$term->original_term_id}'",
-				];
 				$wpdb->query(
-					"DELETE FROM {$translate_table} WHERE job_id = $job_id AND "
-					. "(" . Lst::join( ' OR ', $conditions ) . ")"
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->prefix}icl_translate
+						WHERE job_id = %d
+							AND (field_type LIKE %s OR field_type LIKE %s OR field_type = %s OR field_type = %s)",
+						$job_id,
+						'tfield-%-' . $term->original_term_id,
+						'tfield-%-' . $term->original_term_id . '\_%',
+						't_' . $term->original_term_id,
+						'tdesc_' . $term->original_term_id
+					)
 				);
 			} else {
 				$wpdb->update(
@@ -283,7 +269,12 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 					[ 'field_type' => 'tdesc_' . $term->original_term_id, 'job_id' => $job_id ]
 				);
 
-				$meta_values = $wpdb->get_results( "SELECT meta_key, meta_value FROM {$wpdb->termmeta} WHERE term_id = {$term->translated_term_id}" );
+				$meta_values = $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT meta_key, meta_value FROM {$wpdb->termmeta} WHERE term_id = %d",
+						$term->translated_term_id
+					)
+				);
 				foreach ( $meta_values as $meta ) {
 					$wpdb->update(
 						$translate_table,
@@ -295,11 +286,6 @@ class WPML_Post_Translation_Job extends WPML_Element_Translation_Job {
 		}
 	}
 
-	/**
-	 * @param array $args
-	 *
-	 * @return array
-	 */
 	protected function filter_is_translator_args( array $args ) {
 		return Obj::assoc( 'post_id', $this->get_original_element_id(), $args );
 	}

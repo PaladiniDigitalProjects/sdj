@@ -1,0 +1,44 @@
+<?php
+return ['messages'=>['
+<div class="wp-block-buttons alignwide has-custom-font-size no-padding has-large-font-size">
+
+</div>
+'=>'
+<div class="wp-block-buttons alignwide has-custom-font-size no-padding has-large-font-size">
+
+</div>
+','
+<div class="wp-block-group alignwide">
+
+
+
+</div>
+'=>'
+<div class="wp-block-group alignwide">
+
+
+
+</div>
+','
+<div class="wp-block-group alignwide">
+
+</div>
+'=>'
+<div class="wp-block-group alignwide">
+
+</div>
+','01ed48de5d2cc2a480ca3ec53a48364c'=>'El desenvolupament de videojocs funciona com un potent catalitzador per a moltes persones joves, perquè connecta directament amb els seus interessos i el seu dia a dia digital. En aprendre a dissenyar un videojoc amb contingut social, passen d’usuaris a creadors. I en aquest camí descobreixen un propòsit, es veuen capaços i converteixen allò que els apassiona en una eina que convida a reflexionar sobre la soledat no desitjada.   ','23899d5cc7a3591b95fc83138c554a3c'=>'InbootCamp','4255cb08972671ff8e589354e1e0f0e6'=>'Sant Joan de Déu impulsa la creació d’un videojoc a partir d’un projecte formatiu en què 60 joves de tot Espanya aprendran a crear, des de zero, un videojoc amb impacte social.<strong><strong> </strong></strong>','48518f1c81d40358e322cc5408118eba'=>'<strong>FASE 2 – De l’aprenentatge a l’estudi de videojocs</strong>','4c97525776e521ad3ec223ea599f211a'=>'<strong>Adreçat a joves de 18 a 35 anys </strong>','574229ddcc1cac4b5086cd327257a592'=>'MÉS INFORMACIÓ','5fe6e4cbc8375e56f49a1069bfa19bb6'=>'<strong>Places limitades</strong>','6108a45686c93d078cbba75b9197b98e'=>'Un projecte finançat per:','643449e64687a1c901dc7bbed80bad50'=>'<strong>Calendari de formació</strong>','69f1b585a84c57896cf90c0ca1a2d79e'=>'Inici: 1 de juny. ','6beb22ce483616df0d3ad59ade0edd58'=>'InBootCamp és un programa intensiu i gratuït de formació en desenvolupament de videojocs, creat i liderat per <a href="https://delaguila.games/" target="_blank" rel="noreferrer noopener">Delaguila Games</a>, i adreçat a joves d’entre 18 i 35 anys, que al final de la seva formació seran els creadors del videojoc. ','6e8ed06f22cc7c8ca17d881d2d60c448'=>'https://bootcamp.invideogames.org/','739d6d8f1dd7e9ce9ddab3f0c53ee78d'=>'
+<div class="wp-block-group alignwide">
+
+
+
+</div>
+','8566eaca93aeb517e8d7d2df5fe93506'=>'Volem sensibilitzar sobre la soledat no desitjada en joves amb les pròpies persones joves, especialment les més vulnerables. ','8fbf43a77ffcb044ff9ba59da7f9c0ba'=>'
+<div class="wp-block-buttons alignwide has-custom-font-size no-padding has-large-font-size">
+
+</div>
+','962e9a6275d07c810d697129330c2e17'=>'Una part de les persones que completin la Fase 1 formaran part d’un equip que simula un estudi real de videojocs fins a aconseguir una versió beta del joc de sensibilització. ','9ab7eb7c502d11d3de33c36d92996af2'=>'<strong>Programa de formació online gratuït</strong>','9b0ee38448b814ddc333bfabb81d6a3e'=>'Itinerarios a triar: Arte 3D/Animació o Unreal Engine, treballant amb eines professionals des de zero. ','9e24942a1f4a56299e4e4383f1ef7d6e'=>'https://tally.so/r/aQYV0B','9e758fe23cd81c044b1a6f8e4465e319'=>'Creació d’un videojoc per parlar de la soledat no desitjada que acompanya 1 de cada 4 joves','9eddd47958afddfdad64e99651a18c8a'=>'<strong>No es requereix experiència prèvia</strong>','<strong>Calendario de formación</strong>'=>'<strong>Calendari de formació</strong>','<strong>Dirigido a jóvenes de 18 a 35 años </strong>'=>'<strong>Adreçat a joves de 18 a 35 anys </strong>','<strong>FASE 1 - Primeros pasos en el desarrollo de videojuegos</strong>'=>'<strong>FASE 1 – Primers passos en el desenvolupament de videojocs</strong>','<strong>FASE 2 - Del aprendizaje al estudio de videojuegos</strong>'=>'<strong>FASE 2 – De l’aprenentatge a l’estudi de videojocs</strong>','<strong>No se requiere experiencia previa</strong>'=>'<strong>No es requereix experiència prèvia</strong>','<strong>Plazas limitadas</strong>'=>'<strong>Places limitades</strong>','<strong>Programa de formación online gratuito</strong>'=>'<strong>Programa de formació online gratuït</strong>','Creación de un videojuego para hablar de la soledad no deseada que acompaña a 1 de cada 4 jóvenes'=>'Creació d’un videojoc per parlar de la soledat no desitjada que acompanya 1 de cada 4 joves','De usuarios a creadores - El objetivo es que los participantes conviertan su pasión por los videojuegos en una herramienta creativa para hablar de soledad no deseada y bienestar emocional.  '=>'D’usuaris a creadors: L’objectiu és que les persones participants converteixin la seva passió pels videojocs en una eina creativa per parlar de la soledat no desitjada i del benestar emocional. ','Duración: 10 semanas (abril y mayo).'=>'Durada: 10 setmanes (abril i maig).','Duración: 25 semanas (de junio a octubre). '=>'Duració: 25 setmanes (del juny a l’octubre). ','El desarrollo de videojuegos funciona como un potente catalizador para muchas personas jóvenes, porque conecta directamente con sus intereses y su día a día digital. Al aprender a diseñar un videojuego con contenido social, pasan de usuarios a creadores. Y en ese camino descubren un propósito, se ven capaces y convierten algo que les apasiona en una herramienta que invita a reflexionar sobre la soledad no deseada. '=>'El desenvolupament de videojocs funciona com un potent catalitzador per a moltes persones joves, perquè connecta directament amb els seus interessos i el seu dia a dia digital. En aprendre a dissenyar un videojoc amb contingut social, passen d’usuaris a creadors. I en aquest camí descobreixen un propòsit, es veuen capaços i converteixen allò que els apassiona en una eina que convida a reflexionar sobre la soledat no desitjada.   ','INSCRIPCIONES'=>'INSCRIPCIONS','InBootCamp es un programa intensivo y gratuito de formación en desarrollo de videojuegos, creado y liderado por <a href="https://delaguila.games/" target="_blank" rel="noreferrer noopener">Delaguila Games</a>, y dirigido a jóvenes de entre 18 y 35 años, que al final de su formación, serán los creadores del videojuego.  '=>'InBootCamp és un programa intensiu i gratuït de formació en desenvolupament de videojocs, creat i liderat per <a href="https://delaguila.games/" target="_blank" rel="noreferrer noopener">Delaguila Games</a>, i adreçat a joves d’entre 18 i 35 anys, que al final de la seva formació seran els creadors del videojoc. ','InbootCamp'=>'InbootCamp','Inicio: 1 de junio. '=>'Inici: 1 de juny. ','Inicio: 30 de marzo. '=>'Inici: 30 de març. ','Itinerarios a elegir: Arte 3D/Animación o Unreal Engine, trabajando con herramientas profesionales desde cero. '=>'Itinerarios a triar: Arte 3D/Animació o Unreal Engine, treballant amb eines professionals des de zero. ','MÁS INFORMACIÓN'=>'MÉS INFORMACIÓ','Queremos sensibilizar sobre la soledad no deseada en jóvenes con las propias personas jóvenes, especialmente las más vulnerables. '=>'Volem sensibilitzar sobre la soledat no desitjada en joves amb les pròpies persones joves, especialment les més vulnerables. ','San Juan de Dios impulsa la creación de un videojuego, a partir de un proyecto formativo en el que 60 jóvenes de toda España aprenderán a crear, desde cero, un videojuego con impacto social.<strong><strong> </strong></strong>'=>'Sant Joan de Déu impulsa la creació d’un videojoc a partir d’un projecte formatiu en què 60 joves de tot Espanya aprendran a crear, des de zero, un videojoc amb impacte social.<strong><strong> </strong></strong>','Un proyecto financiado por:'=>'Un projecte finançat per:','Una parte de las personas que completen la Fase 1 formarán parte de un equipo que simula un estudio real de videojuegos hasta lograr una versión beta del juego de sensibilización. '=>'Una part de les persones que completin la Fase 1 formaran part d’un equip que simula un estudi real de videojocs fins a aconseguir una versió beta del joc de sensibilització. ','aa44a3f80e41cdb46811c9f91c4a32da'=>'<strong>FASE 1 – Primers passos en el desenvolupament de videojocs</strong>','ae2c959ff0d043d69644c0dcce95b45d'=>'Durada: 10 setmanes (abril i maig).','bad075e2585b23b9c3900492d85564fe'=>'https://sjd.es/wp-content/uploads/2026/03/Ministerio.webp','bf83926847e4e90aa90775bb371337fe'=>'
+<div class="wp-block-group alignwide">
+
+</div>
+','c72ccae6ff638b85cc16441a8271f266'=>'Inici: 30 de març. ','cacdf2884d2428bc54f4f199d1d7661b'=>'INSCRIPCIONS','f2d35efa11cbeb251b47e1255cb9de4c'=>'Duració: 25 setmanes (del juny a l’octubre). ','fc5c5af6c13d28fe7ce39d891063c720'=>'D’usuaris a creadors: L’objectiu és que les persones participants converteixin la seva passió pels videojocs en una eina creativa per parlar de la soledat no desitjada i del benestar emocional. ','https://bootcamp.invideogames.org/'=>'https://bootcamp.invideogames.org/','https://sjd.es/wp-content/uploads/2026/03/Ministerio.webp'=>'https://sjd.es/wp-content/uploads/2026/03/Ministerio.webp','https://tally.so/r/aQYV0B'=>'https://tally.so/r/aQYV0B']];

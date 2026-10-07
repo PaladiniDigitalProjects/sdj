@@ -483,7 +483,9 @@ class Addons {
 			],
 			'payments'      => [
 				'wpforms-authorize-net',
+				'wpforms-mercado-pago',
 				'wpforms-paypal-commerce',
+				'wpforms-paystack',
 				'wpforms-square',
 				'wpforms-stripe',
 			],
@@ -598,6 +600,10 @@ class Addons {
 
 		if ( $clean_slug === 'authorize-net' ) {
 			$clean_slug = 'authorize_net';
+		}
+
+		if ( $clean_slug === 'mercado-pago' ) {
+			$clean_slug = 'mercado_pago';
 		}
 
 		return $clean_slug;

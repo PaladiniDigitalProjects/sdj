@@ -8,6 +8,7 @@
 namespace WPForms\Integrations\AI;
 
 use WPForms\Integrations\IntegrationInterface;
+use WPForms\Integrations\AI\Admin\Ajax\Chat\Chat as ChatAjax;
 use WPForms\Integrations\AI\Admin\Ajax\Choices as ChoicesAjax;
 use WPForms\Integrations\AI\Admin\Ajax\Forms as FormsAjax;
 use WPForms\Integrations\AI\Admin\Builder\Enqueues;
@@ -15,7 +16,9 @@ use WPForms\Integrations\AI\Admin\Builder\FieldOption;
 use WPForms\Integrations\AI\Admin\Builder\FormEditor as FormEditorBuilder;
 use WPForms\Integrations\AI\Admin\Builder\Forms as FormsEnqueues;
 use WPForms\Integrations\AI\Admin\Ajax\FormEditor as FormEditorAjax;
+use WPForms\Integrations\AI\Admin\Chat\Chat as ChatPage;
 use WPForms\Integrations\AI\Admin\Pages\Templates as TemplatesPage;
+use WPForms\Integrations\AI\Admin\PrivacyPolicy;
 
 /**
  * Integration of the AI features.
@@ -50,6 +53,12 @@ class AI implements IntegrationInterface {
 	 */
 	public function load() {
 
+		// The suggested text is registered only while the AI features are enabled, matching
+		// plugin-deactivation semantics: text already copied into a policy is unaffected.
+		if ( is_admin() ) {
+			( new PrivacyPolicy() )->init();
+		}
+
 		if ( wpforms_is_admin_page( 'builder' ) ) {
 			( new Enqueues() )->init();
 			( new FieldOption() )->init();
@@ -59,6 +68,13 @@ class AI implements IntegrationInterface {
 
 		if ( wpforms_is_admin_page( 'templates' ) ) {
 			( new TemplatesPage() )->init();
+		}
+
+		// Chat::init() registers default-scope/surface filter callbacks. The singleton registries
+		// auto-init on first access from the AJAX handler, so Chat must also run on AJAX requests
+		// to attach those callbacks before the handler triggers the boot.
+		if ( wpforms_is_admin_page() || wpforms_is_admin_ajax() ) {
+			( new ChatPage() )->init();
 		}
 
 		if ( wpforms_is_admin_ajax() ) {
@@ -77,5 +93,6 @@ class AI implements IntegrationInterface {
 		( new ChoicesAjax() )->init();
 		( new FormsAjax() )->init();
 		( new FormEditorAjax() )->init();
+		( new ChatAjax() )->init();
 	}
 }

@@ -33,7 +33,7 @@ msgid " and "
 msgstr " y "
 
 #. translators:
-#: RateLimitNotice.php:69
+#: RateLimitNotice.php:71
 #, php-format
 msgid ""
 "Your WordPress unexpectedly requests the license server and cloud services "
@@ -53,11 +53,7 @@ msgstr ""
 "<a href=\"%2$s\" target=\"_blank\">abrir un ticket de soporte</a> en el "
 "soporte del fabricante del plugin."
 
-#: RateLimitNotice.php:74
-msgid "https://devowl.io/support/"
-msgstr "https://devowl.io/support/"
-
-#: RateLimitNotice.php:83
+#: RateLimitNotice.php:86
 msgid ""
 "I have solved the problem (hide the message until the next occurrence of the "
 "error)"
@@ -66,7 +62,7 @@ msgstr ""
 "error)"
 
 #. translators:
-#: Service.php:118
+#: Service.php:121
 #, php-format
 msgid ""
 "<strong>An unexpected network error has occurred!</strong> One or more "
@@ -87,21 +83,24 @@ msgstr ""
 "utilizar su plugin sin problemas:"
 
 #. translators:
-#: Service.php:126
+#: Service.php:131
 #, php-format
 msgid ""
 "What is the WordPress REST API and how to enable it? %1$sLearn more%2$s."
 msgstr ""
 "¿Qué es la API REST de WordPress y cómo activarla? %1$sMás información%2$s."
 
-#: Service.php:129
+#: Service.php:137
 msgid "https://devowl.io/knowledge-base/wordpress-rest-api-does-not-respond/"
 msgstr "https://devowl.io/knowledge-base/wordpress-rest-api-does-not-respond/"
 
-#: Service.php:137
+#: Service.php:146
 msgid ""
 "In the text box below you will find a technical listing of the last 10 "
 "failed network requests:"
 msgstr ""
 "En el cuadro de texto inferior encontrará un listado técnico de las 10 "
 "últimas solicitudes de red fallidas:"
+
+#~ msgid "https://devowl.io/support/"
+#~ msgstr "https://devowl.io/support/"

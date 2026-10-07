@@ -6,33 +6,22 @@ use WPML\TM\ATE\ClonedSites\SetupMigration\SiteKeyRemoveServiceFactory;
 
 class SiteKeyCleaner {
 
-	/** @var SiteKeyRemoveServiceFactory */
-	private $siteKeyRemoveServiceFactory;
+	private $factory;
 
-	/**
-	 * @param SiteKeyRemoveServiceFactory $siteKeyRemoveServiceFactory
-	 */
-	public function __construct( SiteKeyRemoveServiceFactory $siteKeyRemoveServiceFactory ) {
-		$this->siteKeyRemoveServiceFactory = $siteKeyRemoveServiceFactory;
+	public function __construct( SiteKeyRemoveServiceFactory $factory ) {
+		$this->factory = $factory;
 	}
 
-	/**
-	 * Unregisters the WPML site key from the installer.
-	 *
-	 * @return void
-	 */
 	public function unregister() {
-		$removeService = $this->siteKeyRemoveServiceFactory->create();
-
-		if ( ! $removeService ) {
+		if ( $this->isWPMLSiteKeyDefinedInWPConfig() ) {
 			return;
 		}
 
-		// Remove the site key without notifying external API (site is cloned/moved)
-		$removeService->remove( 'wpml', false );
-
-		// Also clear the site key from WPML's own settings (icl_sitepress_settings)
-		// The OTGS installer only removes it from wp_installer_settings_common
+		$this->factory->createRemoveService()->remove( 'wpml', false );
 		icl_set_setting( 'site_key', null, true );
+	}
+
+	private function isWPMLSiteKeyDefinedInWPConfig(): bool {
+		return class_exists( 'WP_Installer' ) && \WP_Installer::get_repository_hardcoded_site_key( 'wpml' );
 	}
 }

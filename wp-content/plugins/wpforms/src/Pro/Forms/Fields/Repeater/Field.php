@@ -78,6 +78,7 @@ class Field extends WPForms_Field {
 		'camera',
 		'likert_scale',
 		'net_promoter_score',
+		'ranking',
 		'credit-card',
 		'payment-checkbox',
 		'payment-multiple',
@@ -89,6 +90,7 @@ class Field extends WPForms_Field {
 		'stripe-credit-card',
 		'square',
 		'authorize_net',
+		'mercado_pago',
 		'internal-information',
         'gdpr-checkbox',
 	];

@@ -6,6 +6,7 @@ use SitePress;
 use WPML\WPSEO\YoastSEO\Utils;
 use WPSEO_Taxonomy_Meta;
 use WPML\LIB\WP\Hooks as WPHooks;
+use WPML\FP\Fns;
 
 use function WPML\FP\spreadArgs;
 
@@ -25,28 +26,35 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		'wpseo_focuskw'       => 'Focus Keyword',
 	];
 
-	/**
-	 * @var string|null
-	 */
 	private $wpSeoOptionName;
 
-	/**
-	 * @var SitePress
-	 */
 	private $sitepress;
 
-	/**
-	 * @var bool
-	 */
 	private $hasCachedTermMetaValue = false;
 
-	/**
-	 * @var mixed
-	 */
 	private $cachedTermMetaValue;
+
+	private $pinTermIdsCallback;
+
+	private static $forceTranslateStrings = false;
+
+	private static $translateOnAdminScreen = false;
 
 	public function __construct( SitePress $sitepress ) {
 		$this->sitepress = $sitepress;
+	}
+
+	public static function withForcedTranslation( callable $callback ) {
+		self::$forceTranslateStrings = true;
+		try {
+			return $callback();
+		} finally {
+			self::$forceTranslateStrings = false;
+		}
+	}
+
+	public static function enableAdminScreenTranslation() {
+		self::$translateOnAdminScreen = true;
 	}
 
 	public function add_hooks() {
@@ -64,22 +72,45 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		}
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			\WP_CLI::add_hook(
-				'before_invoke:yoast',
-				function () {
-					add_filter( 'wpml_disable_term_adjust_id', '__return_true' );
-				}
-			);
+			\WP_CLI::add_hook( 'before_invoke:yoast', [ $this, 'pinTermIds' ] );
+		}
+
+		add_action( 'wpseo_indexable_index_batch', [ $this, 'pinTermIds' ], 0 );
+		add_action( 'wpseo_indexable_index_batch', [ $this, 'unpinTermIds' ], PHP_INT_MAX );
+	}
+
+	public function pinTermIds() {
+		add_filter( 'wpml_disable_term_adjust_id', $this->getPinTermIdsCallback() );
+	}
+
+	public function unpinTermIds() {
+		remove_filter( 'wpml_disable_term_adjust_id', $this->getPinTermIdsCallback() );
+	}
+
+	private function getPinTermIdsCallback() {
+		if ( null === $this->pinTermIdsCallback ) {
+			$this->pinTermIdsCallback = Fns::always( true );
+		}
+
+		return $this->pinTermIdsCallback;
+	}
+
+	public static function withoutTermAdjustId( callable $callback ) {
+		$disable = Fns::always( true );
+		add_filter( 'wpml_disable_term_adjust_id', $disable );
+		try {
+			return $callback();
+		} finally {
+			remove_filter( 'wpml_disable_term_adjust_id', $disable );
 		}
 	}
 
-	/**
-	 * @param mixed $value
-	 *
-	 * @return mixed
-	 */
 	public function maybeTranslateStrings( $value ) {
-		$shouldTranslateInContext = ! is_admin() || $this->isYoastBuildingTermIndexable();
+		if ( self::$forceTranslateStrings ) {
+			return $this->translateStrings( $value );
+		}
+
+		$shouldTranslateInContext = ! is_admin() || self::$translateOnAdminScreen || $this->isYoastBuildingTermIndexable();
 		$isSitemapRequest         = Utils::isSitemapRequest();
 
 		if ( $shouldTranslateInContext && ! $isSitemapRequest ) {
@@ -94,18 +125,20 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		return $value;
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function isYoastBuildingTermIndexable() {
-		return doing_action( 'created_term' ) || doing_action( 'edited_term' );
+		return $this->isYoastTermBuilderOnTheStack();
 	}
 
-	/**
-	 * @param array $kinds
-	 *
-	 * @return array
-	 */
+	private function isYoastTermBuilderOnTheStack() {
+		foreach ( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ) as $frame ) {
+			if ( 'build' === $frame['function'] && \Yoast\WP\SEO\Builders\Indexable_Term_Builder::class === ( $frame['class'] ?? '' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function addPackageKind( $kinds ) {
 		$kinds[ self::PACKAGE['kind_slug'] ] = [
 			'title'  => self::PACKAGE['kind'],
@@ -116,9 +149,6 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		return $kinds;
 	}
 
-	/**
-	 * @return array
-	 */
 	private function getPackage() {
 		return [
 			'kind'      => self::PACKAGE['kind'],
@@ -128,10 +158,6 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		];
 	}
 
-	/**
-	 * @param string $option
-	 * @param mixed  $value
-	 */
 	public function registerStrings( $option, $value ) {
 		if ( $option !== $this->getWpSeoOptionName() || ! is_array( $value ) ) {
 			return;
@@ -155,18 +181,18 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 					continue;
 				}
 
-				$term = get_term( $termId, $taxonomy );
-				if ( is_wp_error( $term ) ) {
+				$term = $this->getUnadjustedTerm( $termId, $taxonomy );
+				if ( ! $term ) {
 					continue;
 				}
 
-				if ( ! $this->sitepress->is_original_content_filter( false, $termId, 'tax_' . $taxonomy ) ) {
+				if ( ! $this->sitepress->is_original_content_filter( false, (int) $term->term_taxonomy_id, 'tax_' . $taxonomy ) ) {
 					continue;
 				}
 
 				foreach ( self::FIELDS as $field => $fieldTitle ) {
 					if ( ! empty( $termMeta[ $field ] ) ) {
-						$stringName  = $this->buildStringName( $taxonomy, $termId, $field );
+						$stringName  = self::buildStringName( $taxonomy, $termId, $field );
 						$stringTitle = $fieldTitle . ': ' . $term->name;
 
 						do_action(
@@ -185,20 +211,12 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		do_action( 'wpml_delete_unused_package_strings', $package );
 	}
 
-	/**
-	 * @param string $option
-	 * @param mixed  $oldValue
-	 * @param mixed  $value
-	 */
 	public function registerUpdatedStrings( $option, $oldValue, $value ) {
 		if ( $oldValue !== $value ) {
 			$this->registerStrings( $option, $value );
 		}
 	}
 
-	/**
-	 * @return string
-	 */
 	private function getWpSeoOptionName() {
 		if ( null === $this->wpSeoOptionName ) {
 			$this->wpSeoOptionName = WPSEO_Taxonomy_Meta::get_instance()->option_name;
@@ -207,11 +225,6 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		return $this->wpSeoOptionName;
 	}
 
-	/**
-	 * @param mixed $value
-	 *
-	 * @return mixed
-	 */
 	public function translateStrings( $value ) {
 		if ( ! is_array( $value ) ) {
 			return $value;
@@ -233,30 +246,57 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 					continue;
 				}
 
-				if ( ! $this->sitepress->is_original_content_filter( false, $termId, 'tax_' . $taxonomy ) ) {
+				$term = $this->getUnadjustedTerm( $termId, $taxonomy );
+				if ( ! $term ) {
 					continue;
 				}
 
-				$trid         = $this->sitepress->get_element_trid( $termId, 'tax_' . $taxonomy );
+				$ttId = (int) $term->term_taxonomy_id;
+
+				if ( ! $this->sitepress->is_original_content_filter( false, $ttId, 'tax_' . $taxonomy ) ) {
+					continue;
+				}
+
+				$trid         = $this->sitepress->get_element_trid( $ttId, 'tax_' . $taxonomy );
 				$translations = $this->sitepress->get_element_translations( $trid, 'tax_' . $taxonomy );
 				foreach ( $translations as $translation ) {
-					if ( $termId !== (int) $translation->element_id ) {
-						$this->sitepress->switch_lang( $translation->language_code );
-						foreach ( self::FIELDS as $field => $fieldTitle ) {
-							if ( ! empty( $termMeta[ $field ] ) ) {
-								$translatedValue = apply_filters(
-									'wpml_translate_string',
-									$termMeta[ $field ],
-									$this->buildStringName( $taxonomy, $termId, $field ),
-									$package
-								);
+					if ( $ttId !== (int) $translation->element_id ) {
+						$targetTermId = $this->getTermIdOfTranslation( $translation, $taxonomy );
+						if ( ! $targetTermId ) {
+							continue;
+						}
 
-								if ( $translatedValue ) {
-									$value[ $taxonomy ][ (int) $translation->element_id ][ $field ] = $translatedValue;
+						$this->sitepress->switch_lang( $translation->language_code );
+						try {
+							foreach ( self::FIELDS as $field => $fieldTitle ) {
+								if ( ! empty( $value[ $taxonomy ][ $targetTermId ][ $field ] ) ) {
+									continue;
+								}
+
+								if ( ! empty( $termMeta[ $field ] ) ) {
+									$stringName = self::buildStringName( $taxonomy, $termId, $field );
+
+									$translatedValue = self::$forceTranslateStrings
+										? $this->getStoredStringTranslation( $stringName, $translation->language_code )
+										: null;
+
+									if ( null === $translatedValue ) {
+										$translatedValue = apply_filters(
+											'wpml_translate_string',
+											$termMeta[ $field ],
+											$stringName,
+											$package
+										);
+									}
+
+									if ( $translatedValue ) {
+										$value[ $taxonomy ][ $targetTermId ][ $field ] = $translatedValue;
+									}
 								}
 							}
+						} finally {
+							$this->sitepress->switch_lang();
 						}
-						$this->sitepress->switch_lang();
 					}
 				}
 			}
@@ -265,14 +305,89 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action, \IWPML_DIC
 		return $value;
 	}
 
-	/**
-	 * @param string $taxonomy
-	 * @param int    $termId
-	 * @param string $field
-	 *
-	 * @return string
-	 */
-	private function buildStringName( $taxonomy, $termId, $field ) {
+	private function getUnadjustedTerm( $termId, $taxonomy ) {
+		$term = self::withoutTermAdjustId(
+			function () use ( $termId, $taxonomy ) {
+				return get_term( (int) $termId, $taxonomy );
+			}
+		);
+
+		return ( $term instanceof \WP_Term ) ? $term : null;
+	}
+
+	private function getTermIdOfTranslation( $translation, $taxonomy ) {
+		if ( isset( $translation->term_id ) ) {
+			return (int) $translation->term_id;
+		}
+
+		$term = self::withoutTermAdjustId(
+			function () use ( $translation, $taxonomy ) {
+				return get_term_by( 'term_taxonomy_id', (int) $translation->element_id, $taxonomy );
+			}
+		);
+
+		return ( $term instanceof \WP_Term ) ? (int) $term->term_id : 0;
+	}
+
+	private function getStoredStringTranslation( $stringName, $languageCode ) {
+		global $wpdb;
+
+		if ( ! is_object( $wpdb ) || ! defined( 'ICL_TM_COMPLETE' ) ) {
+			return null;
+		}
+
+		$value = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT st.value
+					FROM {$wpdb->prefix}icl_strings s
+					INNER JOIN {$wpdb->prefix}icl_string_translations st ON st.string_id = s.id
+					WHERE s.name = %s
+						AND s.context = %s
+						AND st.language = %s
+						AND st.status = %d
+						AND st.value <> ''",
+				$stringName,
+				self::stringContext(),
+				$languageCode,
+				ICL_TM_COMPLETE
+			)
+		);
+
+		return is_string( $value ) && '' !== $value ? $value : null;
+	}
+
+	public static function buildStringName( $taxonomy, $termId, $field ) {
 		return $taxonomy . '-' . $termId . '-' . $field;
+	}
+
+	public static function stringContext() {
+		return self::PACKAGE['kind_slug'] . '-' . self::PACKAGE['name'];
+	}
+
+	public function getServedValues( $taxonomy, $sourceTermId, $field, $languageCode ) {
+		$option      = get_option( $this->getWpSeoOptionName() );
+		$sourceValue = $option[ $taxonomy ][ $sourceTermId ][ $field ] ?? '';
+
+		if ( '' === $sourceValue || ! is_string( $sourceValue ) ) {
+			return [];
+		}
+
+		$stringName = self::buildStringName( $taxonomy, $sourceTermId, $field );
+
+		$this->sitepress->switch_lang( $languageCode );
+		try {
+			$dictionaryValue = apply_filters( 'wpml_translate_string', $sourceValue, $stringName, $this->getPackage() );
+		} finally {
+			$this->sitepress->switch_lang();
+		}
+
+		$values      = [];
+		$storedValue = $this->getStoredStringTranslation( $stringName, $languageCode );
+		if ( null !== $storedValue ) {
+			$values[] = $storedValue;
+		}
+		$values[] = is_string( $dictionaryValue ) && '' !== $dictionaryValue ? $dictionaryValue : $sourceValue;
+
+		return array_values( array_unique( $values ) );
 	}
 }

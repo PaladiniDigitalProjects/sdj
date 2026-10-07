@@ -3,6 +3,7 @@
 namespace WPML\PB\Elementor\Config\DynamicElements;
 
 use WPML\FP\Obj;
+use WPML\PB\Elementor\Helper\Path;
 
 class WooProduct {
 
@@ -18,11 +19,6 @@ class WooProduct {
 		'url',
 	];
 
-	/**
-	 * @param string $tagName
-	 *
-	 * @return array[]
-	 */
 	private static function get( $tagName ) {
 		$converters = [];
 
@@ -33,17 +29,11 @@ class WooProduct {
 		return $converters;
 	}
 
-	/**
-	 * @param string $tagName
-	 * @param string $dynamicKey
-	 *
-	 * @return array
-	 */
 	private static function getConverter( $tagName, $dynamicKey ) {
 		$dynamicPath = [ 'settings', '__dynamic__', $dynamicKey ];
 
 		$hasDynamicTag = function ( $item ) use ( $dynamicPath, $tagName ) {
-			$value = Obj::path( $dynamicPath, $item );
+			$value = Path::get( $dynamicPath, $item );
 
 			return is_string( $value )
 				&& strpos( $value, '[elementor-tag' ) !== false
@@ -55,9 +45,6 @@ class WooProduct {
 		return [ $hasDynamicTag, $dynamicLens, $tagName, 'product_id' ];
 	}
 
-	/**
-	 * @return array[]
-	 */
 	public static function getAll() {
 		return array_merge(
 			self::get( 'woocommerce-product-title-tag' ),

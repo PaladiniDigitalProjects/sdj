@@ -8,9 +8,6 @@ class WPFormsUserRegistration {
 		add_filter( 'wpforms_user_registration_process_base_get_data', [ $this, 'apply_user_registration_locate' ] );
 	}
 
-	/**
-	 * @param array $user_data User data.
-	 */
 	public function apply_user_registration_locate( $user_data ) {
 		$languages = apply_filters( 'wpml_active_languages', null, [
 			'skip_missing' => 0,

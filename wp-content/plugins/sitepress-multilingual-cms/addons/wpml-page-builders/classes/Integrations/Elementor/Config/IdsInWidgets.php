@@ -3,8 +3,10 @@
 namespace WPML\PB\Elementor\Config;
 
 use WPML\FP\Fns;
+use WPML\FP\Obj;
 use WPML\LIB\WP\Hooks;
 use WPML\PB\ConvertIds\Helper;
+use WPML\PB\Config\Parser;
 
 use function WPML\FP\spreadArgs;
 
@@ -19,19 +21,18 @@ class IdsInWidgets implements \IWPML_Backend_Action, \IWPML_Frontend_Action {
 			->then( spreadArgs( [ $this, 'addFieldsWithIds' ] ) );
 	}
 
-	/**
-	 * @param array $config
-	 */
 	public function updateFromConfig( $config ) {
-		$ids = [];
+		$ids     = [];
+		$widgets = Parser::normalize( Obj::pathOr( [], [ 'wpml-config', 'elementor-widgets', 'widget' ], $config ) );
 
-		if ( isset( $config['wpml-config']['elementor-widgets']['widget'] ) ) {
-			foreach ( $config['wpml-config']['elementor-widgets']['widget'] as $widget ) {
-				if ( isset( $widget['fields'] ) ) {
-					$ids = $this->extractIdsFromFields( $ids, $widget['attr']['name'], $widget['fields'] );
-				}
-				if ( isset( $widget['fields-in-item'], $widget['fields-in-item']['attr']['items_of'] ) ) {
-					$ids = $this->extractIdsFromFields( $ids, $widget['attr']['name'], $widget['fields-in-item'], $widget['fields-in-item']['attr']['items_of'] );
+		foreach ( $widgets as $widget ) {
+			if ( isset( $widget['fields'] ) ) {
+				$ids = $this->extractIdsFromFields( $ids, $widget['attr']['name'], $widget['fields'] );
+			}
+
+			foreach ( Parser::normalize( Obj::propOr( [], 'fields-in-item', $widget ) ) as $fieldsInItem ) {
+				if ( isset( $fieldsInItem['attr']['items_of'] ) ) {
+					$ids = $this->extractIdsFromFields( $ids, $widget['attr']['name'], $fieldsInItem, $fieldsInItem['attr']['items_of'] );
 				}
 			}
 		}
@@ -39,17 +40,8 @@ class IdsInWidgets implements \IWPML_Backend_Action, \IWPML_Frontend_Action {
 		update_option( self::OPTION_IDS_IN_WIDGETS, $ids );
 	}
 
-	/**
-	 * @param array       $ids
-	 * @param string      $widgetName
-	 * @param array       $fields
-	 * @param string|null $itemKey
-	 *
-	 * @return array
-	 */
 	private function extractIdsFromFields( $ids, $widgetName, $fields, $itemKey = null ) {
 		if ( isset( $fields['field'] ) ) {
-			// Wrap single field in an array (caused by how XML is parsed).
 			if ( isset( $fields['field']['value'] ) ) {
 				$fields['field'] = [ $fields['field'] ];
 			}
@@ -81,11 +73,6 @@ class IdsInWidgets implements \IWPML_Backend_Action, \IWPML_Frontend_Action {
 		return $ids;
 	}
 
-	/**
-	 * @param array $fields
-	 *
-	 * @return array
-	 */
 	public function addFieldsWithIds( $fields ) {
 		$ids = get_option( self::OPTION_IDS_IN_WIDGETS );
 		if ( $ids ) {

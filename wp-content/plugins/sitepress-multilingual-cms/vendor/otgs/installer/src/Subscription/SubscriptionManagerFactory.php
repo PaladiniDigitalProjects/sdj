@@ -9,14 +9,8 @@ use OTGS_Products_Config_Db_Storage;
 
 class SubscriptionManagerFactory {
 
-	/**
-	 * @var OTGS_Installer_Logger_Storage
-	 */
 	private $loggerStorage;
 
-	/**
-	 * @param $installerSettings
-	 */
 	public function __construct() {
 		$this->loggerStorage = new OTGS_Installer_Logger_Storage( new OTGS_Installer_Log_Factory() );
 	}

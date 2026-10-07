@@ -4,40 +4,33 @@ namespace WPML\TM\ATE\Download\OrphanPostCleaner;
 
 class OrphanPostRepository {
 
-	/** @var \wpdb */
 	private $wpdb;
 
 	public function __construct( \wpdb $wpdb ) {
 		$this->wpdb = $wpdb;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getMaxPostId() {
-		return (int) $this->wpdb->get_var(
-			"SELECT MAX(ID) FROM {$this->wpdb->posts}"
+		$wpdb = $this->wpdb;
+
+		return (int) $wpdb->get_var(
+			"SELECT MAX(ID) FROM {$wpdb->posts}"
 		);
 	}
 
-	/**
-	 * @param int $afterId
-	 *
-	 * @return array
-	 */
 	public function getOrphanPostIds( $afterId ) {
-		return $this->wpdb->get_col( $this->wpdb->prepare(
-			"SELECT p.ID FROM {$this->wpdb->posts} p
-			 LEFT JOIN {$this->wpdb->prefix}icl_translations t
-			    ON t.element_id = p.ID AND t.element_type LIKE 'post_%%'
+		$wpdb = $this->wpdb;
+
+		return $wpdb->get_col( $wpdb->prepare(
+			"SELECT p.ID FROM {$wpdb->posts} p
+			 LEFT JOIN {$wpdb->prefix}icl_translations t
+			    ON t.element_id = p.ID AND t.element_type LIKE %s
 			 WHERE p.ID > %d AND t.translation_id IS NULL",
+			'post_%',
 			$afterId
 		) );
 	}
 
-	/**
-	 * @param int $postId
-	 */
 	public function deletePost( $postId ) {
 		wp_delete_post( $postId, true );
 	}

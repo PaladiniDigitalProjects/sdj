@@ -14,10 +14,6 @@ class Hooks implements \IWPML_Frontend_Action {
 			->then( spreadArgs( [ $this, 'setPublicationLanguage' ] ) );
 	}
 
-	/**
-	 * @param string    $language
-	 * @param Indexable $indexable
-	 */
 	public function setPublicationLanguage( $language, $indexable ) {
 		return apply_filters(
 			'wpml_element_language_code',

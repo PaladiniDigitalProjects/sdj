@@ -3,6 +3,7 @@
 namespace ACFML\FieldGroup;
 
 use ACFML\Helper\Fields;
+use ACFML\Notice\FieldNameCollisions;
 use WPML\FP\Fns;
 use WPML\FP\Obj;
 use WPML\LIB\WP\Hooks;
@@ -12,52 +13,55 @@ use function WPML\FP\spreadArgs;
 
 class SaveHooks implements \IWPML_Action {
 
-	// On 10, group settings might get stored in local JSON files:
-	// we need to update field translation settings before that.
 	const UPDATE_FIELD_GROUP_PRIORITY = 9;
 
-	/**
-	 * @var FieldNamePatterns $fieldNamePatterns
-	 */
+	const PREFERENCE_CHANGES_FILTER = 'acfml_field_group_preference_changes';
+
+	const POSTED_CHANGES_INPUT = 'acfml_preference_changes';
+
+	const APPLY_TO_EXISTING_INPUT = 'acfml_apply_preference_changes_to_existing';
+
 	private $fieldNamePatterns;
 
-	/**
-	 * @var DetectNonTranslatableLocations $detectNonTranslatableLoc
-	 */
 	private $detectNonTranslatableLoc;
+
+	private $preferenceChanges = [];
+
+	private $fieldNameCollisions;
 
 	public function __construct(
 		FieldNamePatterns $fieldNamePatterns,
-		DetectNonTranslatableLocations $detectNonTranslatableLoc
+		DetectNonTranslatableLocations $detectNonTranslatableLoc,
+		FieldNameCollisions $fieldNameCollisions
 	) {
 		$this->fieldNamePatterns        = $fieldNamePatterns;
 		$this->detectNonTranslatableLoc = $detectNonTranslatableLoc;
+		$this->fieldNameCollisions      = $fieldNameCollisions;
 	}
 
 	public function add_hooks() {
 		Hooks::onAction( 'acf/update_field_group', self::UPDATE_FIELD_GROUP_PRIORITY )
 			->then( spreadArgs( [ $this, 'onUpdateFieldGroup' ] ) );
+
+		add_filter( self::PREFERENCE_CHANGES_FILTER, [ $this, 'getPreferenceChanges' ] );
 	}
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return void
-	 */
+	public function getPreferenceChanges() {
+		return $this->preferenceChanges;
+	}
+
 	public function onUpdateFieldGroup( $fieldGroup ) {
 		$this->overwriteAllFieldPreferencesWithGroupMode( $fieldGroup );
 		$this->fieldNamePatterns->updateFieldNamePatterns( $fieldGroup );
 		$this->detectNonTranslatableLoc->process( $fieldGroup );
+		$this->fieldNameCollisions->process( $fieldGroup );
 		$this->maybeForceTranslationStatusProcessOnAttachedPosts( $fieldGroup );
 		$this->flushAcfCache( $fieldGroup );
 	}
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return void
-	 */
 	private function overwriteAllFieldPreferencesWithGroupMode( $fieldGroup ) {
+		$this->preferenceChanges = [];
+
 		if ( Mode::isAdvanced( $fieldGroup ) ) {
 			return;
 		}
@@ -65,34 +69,119 @@ class SaveHooks implements \IWPML_Action {
 		$getFieldPreference = ModeDefaults::get( Mode::getMode( $fieldGroup ) );
 
 		$updateFieldTranslationPreference = Fns::tap(
-			function( $field ) use ( $getFieldPreference ) {
-				acf_update_field( Obj::assoc( 'wpml_cf_preferences', $getFieldPreference( $field ), wp_slash( $field ) ) );
+			function ( $field ) use ( $getFieldPreference ) {
+				if ( ModeValidity::storesNoValue( $field ) ) {
+					return;
+				}
+
+				$preference = $getFieldPreference( $field );
+
+				$this->collectPreferenceChange( $field, $preference );
+
+				acf_update_field( Obj::assoc( 'wpml_cf_preferences', $preference, wp_slash( $field ) ) );
 			}
 		);
 
-		Fields::iterate( acf_get_fields( $fieldGroup ), $updateFieldTranslationPreference, Fns::identity() );
+		Fields::iterate( Fields::getFresh( $fieldGroup ), $updateFieldTranslationPreference, Fns::identity() );
 	}
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return void
-	 */
+	private function collectPreferenceChange( $field, $preference ) {
+		$stored = Obj::prop( 'wpml_cf_preferences', $field );
+
+		if ( null !== $stored && (int) $stored === (int) $preference ) {
+			return;
+		}
+
+		$this->preferenceChanges[] = [
+			'name' => (string) Obj::propOr( '', 'name', $field ),
+			'key'  => (string) Obj::propOr( '', 'key', $field ),
+			'type' => (string) Obj::propOr( '', 'type', $field ),
+			'from' => null === $stored ? null : (int) $stored,
+			'to'   => (int) $preference,
+		];
+	}
+
 	private function maybeForceTranslationStatusProcessOnAttachedPosts( $fieldGroup ) {
-		if ( isset( $_POST['acfml_force_translation_status_process'] ) ) { // phpcs:ignore
+		$isConfirmed = isset( $_POST['acfml_force_translation_status_process'] );
+
+		$postedApplyToExisting = isset( $_POST[ self::APPLY_TO_EXISTING_INPUT ] )
+			? intval( wp_unslash( $_POST[ self::APPLY_TO_EXISTING_INPUT ] ) )
+			: 0;
+
+		$applyToExisting = 1 === $postedApplyToExisting;
+
+		if ( ! $isConfirmed && ! $applyToExisting ) {
+			return;
+		}
+
+		$changes = $this->getConfirmedChanges();
+		$service = $changes ? PreferenceReapplyService::get() : null;
+
+		if ( $service && method_exists( $service, 'schedule' ) ) {
+			$service->schedule( $changes, $applyToExisting );
+
+			return;
+		}
+
+		if ( $isConfirmed ) {
 			$fieldNames = wpml_collect( acf_get_fields( $fieldGroup ) )
 				->map( Obj::prop( 'name' ) )
 				->toArray();
 
-			CustomFieldChangeDetector::notify( $fieldNames ); // @phpstan-ignore-line
+			CustomFieldChangeDetector::notify( $fieldNames );
 		}
 	}
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return void
-	 */
+	private function getConfirmedChanges() {
+		$changes = [];
+
+		foreach ( $this->readPostedChanges() as $change ) {
+			$changes[ $change['field'] ] = $change;
+		}
+
+		foreach ( $this->getPreferenceChanges() as $change ) {
+			if ( '' === $change['name'] ) {
+				continue;
+			}
+
+			$changes[ $change['name'] ] = [
+				'field'   => $change['name'],
+				'oldPref' => $change['from'],
+				'newPref' => $change['to'],
+			];
+		}
+
+		return array_values( $changes );
+	}
+
+	private function readPostedChanges() {
+		if ( ! isset( $_POST[ self::POSTED_CHANGES_INPUT ] ) ) {
+			return [];
+		}
+
+		$posted = json_decode( wp_unslash( (string) $_POST[ self::POSTED_CHANGES_INPUT ] ), true );
+
+		if ( ! is_array( $posted ) ) {
+			return [];
+		}
+
+		$changes = [];
+
+		foreach ( $posted as $change ) {
+			if ( ! is_array( $change ) || empty( $change['name'] ) || ! isset( $change['to'] ) ) {
+				continue;
+			}
+
+			$changes[] = [
+				'field'   => sanitize_text_field( (string) $change['name'] ),
+				'oldPref' => isset( $change['from'] ) && '' !== $change['from'] ? (int) $change['from'] : null,
+				'newPref' => (int) $change['to'],
+			];
+		}
+
+		return $changes;
+	}
+
 	private function flushAcfCache( $fieldGroup ) {
 		$active_languages = Languages::getActive();
 

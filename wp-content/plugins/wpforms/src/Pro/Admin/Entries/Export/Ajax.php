@@ -5,10 +5,12 @@ namespace WPForms\Pro\Admin\Entries\Export;
 use Exception;
 use Generator;
 use WPForms\Db\Payments\ValueValidator;
+use WPForms\Forms\Fields\Addons\Ranking\Field as RankingField;
 use WPForms\Pro\Helpers\CSV;
 use WPForms\Helpers\Transient;
 use WPForms\Pro\Admin\Entries;
 use WPForms\Pro\Admin\Entries\Export\Traits\Export as ExportTrait;
+use WPForms\Pro\Forms\Fields\Repeater\Helpers as RepeaterHelpers;
 
 /**
  * Ajax endpoints and data processing.
@@ -55,6 +57,15 @@ class Ajax {
 	 * @var array
 	 */
 	private $values = [];
+
+	/**
+	 * Resolved dynamic choices for Ranking fields, keyed by field ID.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @var array
+	 */
+	private $ranking_dynamic_choices = [];
 
 	/**
 	 * Constructor.
@@ -161,6 +172,17 @@ class Ajax {
 				throw new Exception( $this->export->errors['unknown_form_id'] );
 			}
 
+			$form_id = (int) ( $args['form_id'] ?? 0 );
+
+			// The continuation path carries a request id instead of a form id, so resolve it from the stored request data.
+			if ( ! $form_id && ! empty( $args['request_id'] ) ) {
+				$request_data = Export::decode_request_data( Transient::get( 'wpforms-tools-entries-export-request-' . $args['request_id'] ) );
+				$form_id      = (int) ( $request_data['db_args']['form_id'] ?? 0 );
+			}
+
+			// Object-level ownership check: the current user must be allowed to view entries of this exact form.
+			$this->guard_form_entries_access( $form_id );
+
 			// Unlimited execution time.
 			wpforms_set_time_limit();
 
@@ -184,8 +206,8 @@ class Ajax {
 			// Prepare response.
 			$response = $this->get_response_data();
 
-			// Store request data.
-			Transient::set( 'wpforms-tools-entries-export-request-' . $this->request_data['request_id'], $this->request_data, $this->export->configuration['request_data_ttl'] );
+			// Persist request data for the later download step, bailing on failure.
+			$this->save_request_data( $this->request_data );
 
 			wp_send_json_success( $response );
 
@@ -198,6 +220,31 @@ class Ajax {
 			}
 			wp_send_json_error( [ 'error' => $error ] );
 
+		}
+	}
+
+	/**
+	 * Persist request data for the later download step.
+	 *
+	 * Encodes the payload to ASCII-safe base64 so non-ASCII bytes (e.g. emoji in
+	 * field labels) are not rejected by the utf8 wp_options table, then stores it
+	 * in a transient. Bails with a visible error when the write fails, otherwise
+	 * the later download step would fail with "Unknown request".
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $request_data Request data to persist.
+	 */
+	private function save_request_data( array $request_data ) {
+
+		$saved = Transient::set(
+			'wpforms-tools-entries-export-request-' . $request_data['request_id'],
+			Export::encode_request_data( $request_data ),
+			$this->export->configuration['request_data_ttl']
+		);
+
+		if ( ! $saved ) {
+			wp_send_json_error( [ 'error' => $this->export->errors['request_data_save_failed'] ] );
 		}
 	}
 
@@ -284,7 +331,8 @@ class Ajax {
 
 		// Prepare `request data` for saving.
 		$request_data = [
-			'request_id'      => md5( wp_json_encode( $db_args ) . microtime() ),
+			// The request id ends up in the export file name, so it must be unpredictable: use a CSPRNG, not a hash of the (guessable) query arguments.
+			'request_id'      => bin2hex( random_bytes( 16 ) ),
 			'form_data'       => $form_data,
 			'db_args'         => $db_args,
 			'fields'          => empty( $args['entry_id'] ) ? $fields_indexes : wp_list_pluck( $fields, 'id' ),
@@ -404,7 +452,8 @@ class Ajax {
 			foreach ( $request_data['additional_info'] as $field_id ) {
 				if ( $field_id === 'del_fields' ) {
 					$columns_row += $this->get_deleted_fields_columns( $fields, $request_data );
-				} else {
+				} elseif ( isset( $this->export->additional_info_fields[ $field_id ] ) ) {
+					// Skip keys not registered in the current context, e.g. when an addon's export hooks are absent during a background run.
 					$columns_row[ $field_id ] = $this->export->additional_info_fields[ $field_id ];
 				}
 			}
@@ -583,6 +632,15 @@ class Ajax {
 				}
 			}
 
+			// For Ranking field, match by choice key; fall back to label for stale columns which have no key.
+			if ( $type === 'ranking' ) {
+				$value_index = array_search( (string) $index, array_column( $choices, 'key' ), true );
+
+				if ( $value_index === false ) {
+					$value_index = array_search( (string) $index, array_column( $choices, 'label' ), true );
+				}
+			}
+
 			// If value not found in choices array, skip it.
 			if ( $value_index === false ) {
 				continue;
@@ -595,6 +653,13 @@ class Ajax {
 
 			// For Likert Scale field we can set value without choices array.
 			if ( $field['type'] === 'likert_scale' ) {
+				$row_value = $value;
+
+				continue;
+			}
+
+			// For Ranking, the value is the bare numeric rank.
+			if ( $field['type'] === 'ranking' ) {
 				$row_value = $value;
 
 				continue;
@@ -737,6 +802,23 @@ class Ajax {
 		// Prepare values for the Likert Scale field.
 		if ( $type === 'likert_scale' ) {
 			return $this->get_likert_scale_field_value( $values );
+		}
+
+		// Prepare values for the Ranking field.
+		if ( $type === 'ranking' ) {
+			// `order` is the ordered choice-key array stored directly in entries.fields.
+			// A field hidden by conditional logic is stored with every value blanked
+			// to an empty string, so `order` may arrive as `''` instead of an array.
+			$stored_order = $field['order'] ?? [];
+			$order        = is_array( $stored_order ) ? array_map( 'intval', $stored_order ) : [];
+			$settings     = $this->request_data['form_data']['fields'][ $field['id'] ] ?? [];
+			$is_dynamic   = ! empty( $settings['dynamic_choices'] );
+			$choices      = $is_dynamic
+				? $this->get_ranking_dynamic_choices( $settings )
+				: ( $settings['choices'] ?? [] );
+			$value_string = $field['value'] ?? '';
+
+			return $this->get_ranking_field_value( $order, $choices, $is_dynamic, $value_string );
 		}
 
 		return $values;
@@ -1154,6 +1236,7 @@ class Ajax {
 	 * Get entry fields data.
 	 *
 	 * @since 1.5.5
+	 * @since 2.0.2 Repeater clone numbers are normalized to ordinal row positions.
 	 *
 	 * @param object $entry Entry data.
 	 *
@@ -1189,7 +1272,11 @@ class Ajax {
 			$fields_by_id[ $field['id'] ] = apply_filters( 'wpforms_pro_admin_entries_export_ajax_get_entry_fields_data_field', $field );
 		}
 
-		return $fields_by_id;
+		// Match the clone columns built by Repeater\Process::add_all_repeater_child_fields_to_form_data().
+		return RepeaterHelpers::normalize_entry_fields_clone_numbers(
+			$fields_by_id,
+			(array) ( $this->request_data['form_data']['fields'] ?? [] )
+		);
 	}
 
 	/**
@@ -1218,7 +1305,7 @@ class Ajax {
 
 		array_walk(
 			$payment_table_data,
-			static function( $item, $key ) use ( $ptinfo_labels, &$value ) {
+			static function ( $item, $key ) use ( $ptinfo_labels, &$value ) {
 				if ( ! isset( $ptinfo_labels[ $key ] ) || wpforms_is_empty_string( $item ) ) {
 					return;
 				}
@@ -1261,7 +1348,7 @@ class Ajax {
 
 		array_walk(
 			$meta,
-			static function( $item, $key ) use ( $meta_labels, &$value ) {
+			static function ( $item, $key ) use ( $meta_labels, &$value ) {
 				if ( ! isset( $meta_labels[ $key ], $item->value ) || wpforms_is_empty_string( $item->value ) ) {
 					return;
 				}
@@ -1378,6 +1465,10 @@ class Ajax {
 			return $this->get_likert_scale_columns( $field, $form_data );
 		}
 
+		if ( $type === 'ranking' ) {
+			return $this->get_ranking_columns( $field, $form_data, $is_dynamic_columns );
+		}
+
 		if ( $type === 'name' ) {
 			return $field['format'] === 'first-last' ?
 			    [
@@ -1487,6 +1578,238 @@ class Ajax {
 		$this->values[ $field['id'] ] = $columns;
 
 		return $columns;
+	}
+
+	/**
+	 * Get Ranking field columns — one column per configured choice.
+	 *
+	 * Choices present in stored entries but removed from the field configuration
+	 * are appended with the `modified` flag, mirroring the Checkbox behavior:
+	 * get_csv_cols() adds the (modified) suffix to the column header and skips
+	 * such columns when exporting a single entry.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @param array $field              Field data.
+	 * @param array $form_data          Form data.
+	 * @param mixed $is_dynamic_columns Whether dynamic choices are separated into individual columns.
+	 *
+	 * @return array
+	 */
+	private function get_ranking_columns( array $field, array $form_data, $is_dynamic_columns = false ): array {
+
+		if ( isset( $this->values[ $field['id'] ] ) ) {
+			return $this->values[ $field['id'] ];
+		}
+
+		$choices = ! empty( $field['choices'] ) ? $field['choices'] : [];
+
+		if ( $this->is_dynamic_choices( $field ) && $is_dynamic_columns ) {
+			$choices = (array) wpforms_get_field_dynamic_choices( $field, $form_data['id'], $form_data );
+		}
+
+		$configured_choices = [];
+		$is_dynamic         = $this->is_dynamic_choices( $field );
+
+		// Trim like Checkbox does: hierarchical dynamic labels carry depth indentation,
+		// while stored labels are trimmed by sanitize_text_field() on submit.
+		foreach ( $choices as $key => $choice ) {
+			$choice_key           = $is_dynamic ? (string) ( $choice['value'] ?? '' ) : (string) $key;
+			$configured_choices[] = [
+				'key'   => $choice_key,
+				'label' => ! empty( $choice['label'] ) ? trim( $choice['label'] ) : $choice_key,
+			];
+		}
+
+		$configured_labels = array_column( $configured_choices, 'label' );
+		$observed_labels   = $this->get_ranking_observed_labels( $field, $form_data );
+		$modified_labels   = array_diff( $observed_labels, $configured_labels );
+		$columns           = [];
+
+		foreach ( $configured_choices as $choice_data ) {
+			$columns[] = [
+				'key'   => $choice_data['key'],
+				'label' => $choice_data['label'],
+			];
+		}
+
+		foreach ( $modified_labels as $label ) {
+			$columns[] = [
+				'label'    => $label,
+				'modified' => true,
+			];
+		}
+
+		$this->values[ $field['id'] ] = $columns;
+
+		return $columns;
+	}
+
+	/**
+	 * Collect all choice labels ever stored in submitted entries for a Ranking field.
+	 *
+	 * Labels are recovered from the human-readable value text ("1. Label A\n2. Label B\n…")
+	 * paired with `order` position indices — matching the approach used by checkbox/select
+	 * so that stale detection works by label rather than by integer key. This correctly handles
+	 * the common case where choices are deleted and re-added with recycled keys.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @param array $field     Field data.
+	 * @param array $form_data Form data.
+	 *
+	 * @return array Unique choice labels observed in stored entries.
+	 */
+	private function get_ranking_observed_labels( array $field, array $form_data ): array {
+
+		$values          = $this->get_entry_fields_values( $form_data['id'], $field['id'] );
+		$observed_labels = [];
+
+		foreach ( $values as $value_item ) {
+			$decoded = json_decode( $value_item['value'], true );
+
+			if ( empty( $decoded['order'] ) || ! is_array( $decoded['order'] ) ) {
+				continue;
+			}
+
+			$observed_labels = array_merge(
+				$observed_labels,
+				array_values( $this->parse_ranking_stored_labels( $decoded['order'], (string) ( $decoded['value'] ?? '' ) ) )
+			);
+		}
+
+		return array_unique( $observed_labels );
+	}
+
+	/**
+	 * Get Ranking field values as bare numeric ranks keyed by choice label.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @param array  $order        Ordered array of choice keys (top-ranked first), from `entries.fields['order']`.
+	 * @param array  $choices      Configured choices, keyed by choice ID for static or indexed for dynamic.
+	 * @param bool   $is_dynamic   Whether the field uses Dynamic Choices (post/term IDs as keys).
+	 * @param string $value_string Human-readable ranked value string (e.g. "1. Label A\n2. Label B").
+	 *
+	 * @return array Choice label => rank string (e.g. [ 'Option A' => '2', 'Option B' => '1' ]).
+	 */
+	private function get_ranking_field_value( array $order, array $choices, bool $is_dynamic = false, string $value_string = '' ): array {
+
+		$configured_labels     = $this->build_ranking_configured_labels( $choices, $is_dynamic );
+		$all_configured_labels = array_values( $configured_labels );
+		$stored_key_labels     = $this->parse_ranking_stored_labels( $order, $value_string );
+
+		$result = [];
+
+		foreach ( $order as $position => $choice_key ) {
+			$str_key      = (string) $choice_key;
+			$rank         = (string) ( $position + 1 );
+			$stored_label = $stored_key_labels[ $str_key ] ?? null;
+
+			if ( $stored_label !== null && ! in_array( $stored_label, $all_configured_labels, true ) ) {
+				// Stored label is not in the current config: the choice was replaced.
+				// The bare label matches the `modified` column built by get_ranking_columns().
+				$result[ $stored_label ] = $rank;
+			} elseif ( isset( $configured_labels[ $str_key ] ) ) {
+				// Key still exists in the current config; use the choice key as identity so
+				// duplicate labels don't overwrite each other.
+				$result[ $str_key ] = $rank;
+			} else {
+				// No stored label and key not in config, fall back to the numeric key.
+				$result[ $str_key ] = $rank;
+			}
+		}
+
+		// Add empty entries for configured choices absent from this submission.
+		foreach ( array_keys( $configured_labels ) as $key ) {
+			if ( ! isset( $result[ $key ] ) ) {
+				$result[ $key ] = '';
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Build a choice-key → label map for a Ranking field's configured choices.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @param array $choices    Configured choices array.
+	 * @param bool  $is_dynamic Whether the field uses Dynamic Choices (post/term IDs as keys).
+	 *
+	 * @return array String choice key => label string.
+	 */
+	private function build_ranking_configured_labels( array $choices, bool $is_dynamic ): array {
+
+		$labels = [];
+
+		// Trim like Checkbox does: hierarchical dynamic labels carry depth indentation,
+		// while stored labels are trimmed by sanitize_text_field() on submit.
+		foreach ( $choices as $key => $choice ) {
+			$choice_key            = $is_dynamic ? (string) ( $choice['value'] ?? '' ) : (string) $key;
+			$labels[ $choice_key ] = ! empty( $choice['label'] ) ? trim( $choice['label'] ) : $choice_key;
+		}
+
+		return $labels;
+	}
+
+	/**
+	 * Get resolved dynamic choices for a Ranking field, memoized per field.
+	 *
+	 * Resolving dynamic choices queries posts/terms without caching, and
+	 * get_field_values() runs once per exported row per choice column.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @param array $settings Field settings from form data.
+	 *
+	 * @return array
+	 */
+	private function get_ranking_dynamic_choices( array $settings ): array {
+
+		$field_id = $settings['id'] ?? 0;
+
+		if ( ! isset( $this->ranking_dynamic_choices[ $field_id ] ) ) {
+			$this->ranking_dynamic_choices[ $field_id ] = (array) wpforms_get_field_dynamic_choices(
+				$settings,
+				$this->request_data['form_data']['id'],
+				$this->request_data['form_data']
+			);
+		}
+
+		return $this->ranking_dynamic_choices[ $field_id ];
+	}
+
+	/**
+	 * Parse the human-readable ranked value string into a choice-key → stored-label map.
+	 *
+	 * Using stored labels (not integer keys) as the column identity ensures correct
+	 * stale detection even when choices are deleted and re-added with recycled keys.
+	 *
+	 * @since 2.0.0.5
+	 *
+	 * @param array  $order        Ordered array of choice keys (top-ranked first).
+	 * @param string $value_string Human-readable ranked value string (e.g. "1. Label A\n2. Label B").
+	 *
+	 * @return array String choice key => stored label string.
+	 */
+	private function parse_ranking_stored_labels( array $order, string $value_string ): array {
+
+		if ( $value_string === '' ) {
+			return [];
+		}
+
+		$labels       = [];
+		$ranked_lines = array_map( 'trim', explode( "\n", $value_string ) );
+
+		foreach ( $order as $rank_idx => $choice_key ) {
+			if ( ! empty( $ranked_lines[ $rank_idx ] ) ) {
+				$labels[ (string) $choice_key ] = RankingField::strip_rank_prefix( $ranked_lines[ $rank_idx ] );
+			}
+		}
+
+		return $labels;
 	}
 
 	/**

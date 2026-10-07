@@ -9,13 +9,7 @@ use ACFML\StringTaxonomyHooks;
 
 class HooksFactory implements \IWPML_Backend_Action_Loader {
 
-	/**
-	 * @return \IWPML_Action[]
-	 */
 	public function create() {
-		/**
-		 * @var \SitePress $sitepress
-		 */
 		global $sitepress;
 
 		$taxonomyHelper = new Taxonomy();

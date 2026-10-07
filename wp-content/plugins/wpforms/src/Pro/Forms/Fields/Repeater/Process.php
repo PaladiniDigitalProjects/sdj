@@ -296,6 +296,27 @@ class Process {
 	}
 
 	/**
+	 * Get the entry fields as an array, decoding a JSON-encoded value.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array|object|null $entry Entry data.
+	 *
+	 * @return array
+	 * @noinspection PhpMissingParamTypeInspection
+	 */
+	private function get_entry_fields_array( $entry ): array {
+
+		if ( is_array( $entry ) ) {
+			$fields = $entry['fields'] ?? $entry;
+		} else {
+			$fields = $entry->fields ?? [];
+		}
+
+		return (array) ( is_string( $fields ) ? wpforms_decode( $fields ) : $fields );
+	}
+
+	/**
 	 * Add child fields to form data.
 	 *
 	 * @since        1.8.9
@@ -310,12 +331,7 @@ class Process {
 
 		$form_data   = (array) $form_data;
 		$form_fields = $form_data['fields'] ?? [];
-
-		if ( is_array( $entry ) ) {
-			$fields = $entry['fields'] ?? $entry;
-		} else {
-			$fields = wpforms_decode( $entry->fields );
-		}
+		$fields      = $this->get_entry_fields_array( $entry );
 
 		$repeater_fields = RepeaterHelpers::get_repeater_fields( $form_fields );
 
@@ -536,6 +552,7 @@ class Process {
 	 * Add all repeater child fields to form data.
 	 *
 	 * @since 1.8.9
+	 * @since 2.0.2 Clone numbers are normalized to ordinal row positions.
 	 *
 	 * @param array|mixed $form_data Form data.
 	 * @param int         $entry_id  Entry ID.
@@ -556,9 +573,31 @@ class Process {
 		$entry = is_array( $entry ) ? $entry : [ $entry ];
 
 		foreach ( $entry as $item ) {
-			$form_data = $this->add_repeater_child_fields_to_form_data( $form_data, $item );
+			$form_data = $this->add_repeater_child_fields_to_form_data( $form_data, $this->normalize_entry_repeater_clones( $item, $form_data ) );
 		}
 
 		return $form_data;
+	}
+
+	/**
+	 * Normalize entry repeater clone numbers to ordinal row positions.
+	 *
+	 * In a bulk export the clone columns are shared by all entries, so every
+	 * entry must map its Nth row to the same clone key regardless of the
+	 * clone numbers assigned in the browser.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array|object|null $entry     Entry data.
+	 * @param array             $form_data Form data.
+	 *
+	 * @return array
+	 */
+	private function normalize_entry_repeater_clones( $entry, array $form_data ): array {
+
+		$fields = $this->get_entry_fields_array( $entry );
+		$fields = RepeaterHelpers::normalize_entry_fields_clone_numbers( $fields, (array) ( $form_data['fields'] ?? [] ) );
+
+		return [ 'fields' => $fields ];
 	}
 }

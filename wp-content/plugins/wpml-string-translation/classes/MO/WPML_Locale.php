@@ -8,25 +8,21 @@ class WPML_Locale extends WP_Locale {
 	private $initialized = false;
 
 	public function __construct() {
-		// we do not run init() in the constructor
+
+		$this->number_format = [
+			'thousands_sep' => ',',
+			'decimal_point' => '.',
+		];
 
 		add_action( 'in_admin_header', [ $this, 'make_sure_it_is_initialized_before_render' ] );
 	}
 
-	/**
-	 * in case the code retrieves data from a property
-	 * instead of a method, and has not yet been initialized
-	 */
 	public function make_sure_it_is_initialized_before_render() {
 		$this->lazy_init();
 	}
 
 	private function lazy_init() {
 		if ( ! $this->initialized ) {
-			/**
-			 * $this->initialized must be set to true before execution
-			 * - preventing infinite recursion in get_word_count_type()
-			 */
 			$this->initialized = true;
 
 			unset( $GLOBALS['text_direction'] );
@@ -68,7 +64,6 @@ class WPML_Locale extends WP_Locale {
 	public function get_month_genitive( $month_number ) {
 		$this->lazy_init();
 
-		/** @phpstan-ignore-next-line */
 		return parent::get_month_genitive( $month_number );
 	}
 

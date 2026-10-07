@@ -61,10 +61,11 @@ abstract class Notifications {
 	 * Email notification object.
 	 *
 	 * @since 1.9.3
+	 * @since 2.0.2 The visibility was changed from `private` to `protected`.
 	 *
 	 * @var EmailNotifications
 	 */
-	private $notifications;
+	protected $notifications;
 
 	/**
 	 * Whether to display empty fields in the email.

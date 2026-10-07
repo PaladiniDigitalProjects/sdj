@@ -39,8 +39,7 @@ if ( $is_hidden_by_cl ) {
 			<?php
 			echo $is_empty_field && ! $is_choices_field
 				? esc_html__( 'Empty', 'wpforms' )
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				: $field['formatted_value'];
+				: wpforms_esc_entry_field_value( $field['formatted_value'], wpforms_is_entry_field_value_iframe_allowed( $field ) );
 			?>
 		</div>
 	<?php } ?>

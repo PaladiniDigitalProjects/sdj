@@ -6,17 +6,56 @@ use WPML\TM\Jobs\JobLog;
 
 class MigrationLogger {
 
-	public static function begin( $strategy ) {
+	public static function begin() {
 		JobLog::maybeInitRequest();
 		JobLog::createNewGroup(
 			JobLog::GROUP_ID_SITE_MIGRATION,
-			'Site migration',
-			[ 'strategy' => $strategy ]
+			'Site migration'
+		);
+	}
+
+	public static function beginClonedSiteAction( $action ) {
+		JobLog::maybeInitRequest();
+		JobLog::createNewGroup(
+			JobLog::GROUP_ID_CLONED_SITE_ACTIONS,
+			'Cloned site action: ' . $action
 		);
 	}
 
 	public static function end() {
 		JobLog::finishCurrentGroup();
+	}
+
+	public static function connectRequestSent() {
+		JobLog::add( 'connect_request_sent', [] );
+	}
+
+	public static function connectResponse( $response ) {
+		self::logHttpResponse( 'connect_request', $response );
+	}
+
+	public static function connectAlreadyConnected() {
+		JobLog::add( 'connect_already_connected', [] );
+	}
+
+	public static function disconnectRequestSent() {
+		JobLog::add( 'disconnect_request_sent', [] );
+	}
+
+	public static function disconnectResponse( $response ) {
+		self::logHttpResponse( 'disconnect_request', $response );
+	}
+
+	public static function disconnectAlreadyIndependent() {
+		JobLog::add( 'disconnect_already_independent', [] );
+	}
+
+	public static function clonedSiteActionFinalized( bool $hasSitekey, bool $organizationConnected ) {
+		JobLog::add( 'finalize', [
+			'has_sitekey'             => $hasSitekey,
+			'cleared_migration_data'  => $hasSitekey,
+			'organization_connected'  => $organizationConnected,
+		] );
 	}
 
 	public static function copyRequestSent( $url ) {
@@ -55,12 +94,16 @@ class MigrationLogger {
 		JobLog::add( 'jobs_cancelled', [ 'count' => $count ] );
 	}
 
+	public static function jobsCancelFailed( \Throwable $e ) {
+		JobLog::addError( 'jobs_cancel_failed', [ 'class' => get_class( $e ), 'message' => $e->getMessage() ] );
+	}
+
 	public static function siteUnlocked() {
 		JobLog::add( 'site_unlocked', [] );
 	}
 
-	public static function migrationFailed( $strategy ) {
-		JobLog::addError( 'migration_failed', [ 'strategy' => $strategy ] );
+	public static function migrationFailed() {
+		JobLog::addError( 'migration_failed', [] );
 	}
 
 	private static function logHttpResponse( $prefix, $response ) {

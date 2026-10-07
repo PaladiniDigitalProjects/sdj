@@ -47,7 +47,7 @@ class OTGS_Installer_Repositories {
 					'id'            => $id,
 					'subscription'  => $subscription,
 					'packages'      => $packages,
-					'product_name'  => $repository['data']['product-name'],
+					'product_name'  => isset( $repository['data']['product-name'] ) ? $repository['data']['product-name'] : null,
 					'api_url'       => $api_url
 				)
 			);
@@ -58,6 +58,10 @@ class OTGS_Installer_Repositories {
 
 	private function get_packages( $repository ) {
 		$packages = array();
+
+		if ( ! isset( $repository['data']['packages'] ) ) {
+			return $packages;
+		}
 
 		foreach ( $repository['data']['packages'] as $package_key => $package ) {
 			$products = $this->get_products( $package );
@@ -101,11 +105,6 @@ class OTGS_Installer_Repositories {
 		return $products;
 	}
 
-	/**
-	 * @param $id
-	 *
-	 * @return null|OTGS_Installer_Repository
-	 */
 	public function get( $id ) {
 		foreach ( $this->repositories() as $repository ) {
 			if ( $id === $repository->get_id() ) {

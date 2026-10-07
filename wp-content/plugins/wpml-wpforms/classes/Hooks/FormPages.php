@@ -12,7 +12,6 @@ class FormPages {
 
 	const PRIORITY_BEFORE_FORM_PAGES = 9;
 
-	/** @var Strings */
 	private $strings;
 
 	public function __construct( Strings $strings ) {
@@ -33,11 +32,6 @@ class FormPages {
 		}
 	}
 
-	/**
-	 * @param WP $wp
-	 *
-	 * @return void
-	 */
 	public function parseRequest( WP $wp ) {
 		if (
 			Obj::path( [ 'query_vars', 'error' ], $wp )
@@ -47,18 +41,10 @@ class FormPages {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function isSecondaryLanguage() : bool {
 		return Languages::getDefaultCode() !== Languages::getCurrentCode();
 	}
 
-	/**
-	 * @param string $wpRequest
-	 *
-	 * @return bool
-	 */
 	private function isRequestPrefixedByLanguageCode( string $wpRequest ) : bool {
 		$request = ! empty( $_SERVER['REQUEST_URI'] ) ? esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 

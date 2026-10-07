@@ -45,6 +45,24 @@ class Field extends FieldLite {
 	private const HANDLE = 'wpforms-camera-field';
 
 	/**
+	 * Handle name for the Cropper.js library.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @var string
+	 */
+	private const CROPPER_HANDLE = 'wpforms-cropper';
+
+	/**
+	 * Cropper.js library version.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @var string
+	 */
+	private const CROPPER_VERSION = '2.0.0';
+
+	/**
 	 * Wait time.
 	 *
 	 * @since 1.9.8
@@ -102,9 +120,6 @@ class Field extends FieldLite {
 
 		// Create file protection for camera fields.
 		add_action( 'wpforms_process_entry_saved', [ $this, 'create_protection' ], 10, 5 );
-
-		// Disable entry preview for camera fields.
-		add_filter( 'wpforms_pro_fields_entry_preview_is_field_support_preview_camera_field', '__return_false' );
 
 		// Delete file protection after a file is deleted.
 		add_action( 'wpforms_pro_forms_fields_file_upload_field_delete_uploaded_file', [ $this, 'delete_file_protection' ], 10, 2 );
@@ -258,6 +273,18 @@ class Field extends FieldLite {
 
 		$camera_requirements = [ 'wpforms' ];
 
+		if ( $photo_format_enabled ) {
+			wp_enqueue_script(
+				self::CROPPER_HANDLE,
+				WPFORMS_PLUGIN_URL . 'assets/pro/lib/cropper.min.js',
+				[],
+				self::CROPPER_VERSION,
+				true
+			);
+
+			$camera_requirements[] = self::CROPPER_HANDLE;
+		}
+
 		wp_enqueue_script(
 			self::HANDLE,
 			WPFORMS_PLUGIN_URL . "assets/pro/js/frontend/fields/camera{$min}.js",
@@ -350,6 +377,131 @@ class Field extends FieldLite {
 	protected function get_file_url_filter_name(): string {
 
 		return 'wpforms_pro_forms_fields_camera_field_get_file_url';
+	}
+
+	/**
+	 * Get the entry-preview image source for a camera photo.
+	 *
+	 * The captured photo is uploaded with the entry-preview AJAX request, so the
+	 * temp file is available server-side. We mirror the File Upload field: a
+	 * validated copy is written to the public WPForms tmp directory and its URL
+	 * is returned, so it renders inline like a File Upload image preview.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string     $input_name Field input name.
+	 * @param int|string $index      File index within the upload.
+	 * @param string     $ext        Lowercased file extension.
+	 *
+	 * @return string
+	 */
+	protected function get_entry_preview_classic_file_src( string $input_name, $index, string $ext ): string {
+
+		if ( ! in_array( $ext, wp_get_ext_types()['image'], true ) ) {
+			return '';
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$tmp_name = $_FILES[ $input_name ]['tmp_name'] ?? '';
+		$tmp_name = is_array( $tmp_name ) ? ( $tmp_name[ $index ] ?? '' ) : $tmp_name;
+
+		if ( ! is_string( $tmp_name ) || $tmp_name === '' || ! is_uploaded_file( $tmp_name ) ) {
+			return '';
+		}
+
+		return $this->persist_preview_tmp_file( $tmp_name, $ext );
+	}
+
+	/**
+	 * Persist a preview-only copy of an uploaded camera photo to the WPForms
+	 * temporary uploads directory and return its public URL.
+	 *
+	 * Mirrors the modern File Upload field, whose entry-preview thumbnails are
+	 * served from this same tmp directory. The copy is short-lived and removed
+	 * by the opportunistic cleanup below (and by File Upload's own cleanup,
+	 * which sweeps the same directory).
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $tmp_name Uploaded file temporary path.
+	 * @param string $ext      Lowercased file extension.
+	 *
+	 * @return string Public URL of the preview copy, or an empty string on failure.
+	 */
+	private function persist_preview_tmp_file( string $tmp_name, string $ext ): string {
+
+		// The source may already have been moved out of the temp dir by this point ( see Upload::process_wpforms_storage() ),
+		// and is_uploaded_file() in the caller only proves provenance, not that the file is still on disk.
+		if ( ! is_file( $tmp_name ) || ! is_readable( $tmp_name ) ) {
+			return '';
+		}
+
+		// Confirm the upload really is an image ( by content, not just extension ) before exposing it.
+		$filetype = wp_check_filetype_and_ext( $tmp_name, 'preview.' . $ext );
+
+		if ( empty( $filetype['type'] ) || strpos( (string) $filetype['type'], 'image/' ) !== 0 ) {
+			return '';
+		}
+
+		$upload_dir = wpforms_upload_dir();
+
+		if ( ! empty( $upload_dir['error'] ) || empty( $upload_dir['path'] ) ) {
+			return '';
+		}
+
+		$tmp_root = trailingslashit( $upload_dir['path'] ) . 'tmp';
+
+		if ( ! wp_mkdir_p( $tmp_root ) ) {
+			return '';
+		}
+
+		// Match the File Upload tmp directory hardening ( no directory listing, no script execution ).
+		wpforms_create_index_html_file( $tmp_root );
+		wpforms_create_tmp_dir_htaccess_file( $tmp_root );
+
+		$this->clean_preview_tmp_files( $tmp_root );
+
+		// Content-hashed name so repeated preview loads of the same photo reuse one file.
+		$file_name = sprintf( 'camera-preview-%s.%s', md5_file( $tmp_name ), $ext );
+		$dest      = trailingslashit( $tmp_root ) . $file_name;
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_copy -- copying a validated upload to the public tmp dir, mirroring File Upload.
+		if ( ! is_file( $dest ) && ! copy( $tmp_name, $dest ) ) {
+			return '';
+		}
+
+		return trailingslashit( $upload_dir['url'] ) . 'tmp/' . $file_name;
+	}
+
+	/**
+	 * Remove stale camera entry-preview copies from the temporary directory.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $tmp_root Temporary directory path.
+	 */
+	private function clean_preview_tmp_files( string $tmp_root ): void {
+
+		$files = glob( trailingslashit( $tmp_root ) . 'camera-preview-*' );
+
+		if ( empty( $files ) ) {
+			return;
+		}
+
+		/** This filter is documented in wpforms/src/Pro/Forms/Fields/FileUpload/Field.php. */
+		$lifespan = (int) apply_filters( 'wpforms_field_' . $this->type . '_clean_tmp_files_lifespan', DAY_IN_SECONDS ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+
+		foreach ( $files as $file ) {
+			if ( ! is_file( $file ) ) {
+				continue;
+			}
+
+			$modified = (int) filemtime( $file );
+
+			if ( $modified && ( time() - $modified ) >= $lifespan ) {
+				wp_delete_file( $file );
+			}
+		}
 	}
 
 	/**
@@ -1084,7 +1236,7 @@ class Field extends FieldLite {
 	public function export_entry_field_data( $field ): array {
 
 		$field = (array) $field;
-		$value = (string) ( $field['value'] ?? '' );
+		$value = $field['value'] ?? '';
 
 		$field['value'] = $this->get_formatted_value( $value, $field );
 
@@ -1104,6 +1256,7 @@ class Field extends FieldLite {
 
 		$strings['camera_access_error']       = esc_html__( 'Camera access denied or not available. Please check your browser permissions', 'wpforms' );
 		$strings['camera_video_access_error'] = esc_html__( 'Camera or microphone access denied or not available. Please check your browser permissions', 'wpforms' );
+		$strings['camera_interrupted_error']  = esc_html__( 'Camera access was interrupted. Close and reopen the camera window to try again.', 'wpforms' );
 		$strings['video_recording_error']     = esc_html__( 'Video recording is not supported in your browser.', 'wpforms' );
 
 		return $strings;

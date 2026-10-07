@@ -9,17 +9,34 @@ class AddMediaDataToTranslationPackage implements \IWPML_Backend_Action, \IWPML_
 	const ALT_PLACEHOLDER = '{%ALT_TEXT%}';
 	const CAPTION_PLACEHOLDER = '{%CAPTION%}';
 
-	/** @var PostWithMediaFilesFactory $post_media_factory */
 	private $post_media_factory;
 
-	public function __construct( PostWithMediaFilesFactory $post_media_factory ) {
+	private $sitepress;
+
+	private $post_translations;
+
+	private $for_setup_estimate = false;
+
+	public function __construct(
+		PostWithMediaFilesFactory $post_media_factory,
+		?\SitePress $sitepress = null,
+		?\WPML_Element_Translation $post_translations = null
+	) {
 		$this->post_media_factory = $post_media_factory;
+		$this->sitepress          = $sitepress;
+		$this->post_translations  = $post_translations;
 	}
 
 	public function add_hooks() {
 		if ( Option::getTranslateMediaLibraryTexts() || Option::shouldHandleMediaAuto() ) {
-			add_filter( 'wpml_tm_translation_job_data', [ $this, 'add_media_strings' ], PHP_INT_MAX, 2 );
+			$this->addPackageFilter();
 		}
+	}
+
+	public function addPackageFilter( $forSetupEstimate = false ) {
+		$this->for_setup_estimate = (bool) $forSetupEstimate;
+
+		add_filter( 'wpml_tm_translation_job_data', [ $this, 'add_media_strings' ], PHP_INT_MAX, 2 );
 	}
 
 	public function add_media_strings( $package, $post ) {
@@ -54,11 +71,15 @@ class AddMediaDataToTranslationPackage implements \IWPML_Backend_Action, \IWPML_
 		$post_media         = $this->post_media_factory->create( $post->ID );
 		$bundled_media_data = array();
 
-		if ( Option::shouldHandleMediaAuto() ) {
-			$media_ids = $post_media->get_referenced_media_ids();
+		if ( $this->for_setup_estimate ) {
+			$media_ids = $post_media->get_referenced_media_ids_uncached();
+		} elseif ( Option::shouldHandleMediaAuto() ) {
+			$media_ids = $post_media->get_referenced_media_ids_for_translation();
 		} elseif ( Option::getTranslateMediaLibraryTexts() ) {
 			$media_ids = $post_media->get_media_ids();
 		}
+
+		$key_language = $this->get_field_key_language( $post );
 
 		foreach ( $media_ids as $attachment_id ) {
 			$attachment = get_post( $attachment_id );
@@ -66,27 +87,47 @@ class AddMediaDataToTranslationPackage implements \IWPML_Backend_Action, \IWPML_
 				continue;
 			}
 
+			$key_id = $this->get_field_key_id( $attachment_id, $key_language );
+
 			if ( $attachment->post_title ) {
-				$bundled_media_data[ $attachment_id ]['title'] = $attachment->post_title;
+				$bundled_media_data[ $key_id ]['title'] = $attachment->post_title;
 			}
 			if ( $attachment->post_excerpt ) {
-				$bundled_media_data[ $attachment_id ]['caption'] = $attachment->post_excerpt;
+				$bundled_media_data[ $key_id ]['caption'] = $attachment->post_excerpt;
 			}
 			if ( $attachment->post_content ) {
-				$bundled_media_data[ $attachment_id ]['description'] = $attachment->post_content;
+				$bundled_media_data[ $key_id ]['description'] = $attachment->post_content;
 			}
 			if ( $alt = get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) ) {
-				$bundled_media_data[ $attachment_id ]['alt_text'] = $alt;
+				$bundled_media_data[ $key_id ]['alt_text'] = $alt;
 			}
 
-			$bundled_media_data[ $attachment_id ] = array_merge(
-				$bundled_media_data[ $attachment_id ] ?? [],
+			$bundled_media_data[ $key_id ] = array_merge(
+				$bundled_media_data[ $key_id ] ?? [],
 				self::get_media_custom_fields_to_translate( $attachment_id )
 			);
 		}
 
 		return $bundled_media_data;
 
+	}
+
+	private function get_field_key_language( $post ) {
+		$post_translations = $this->post_translations ?: ( $GLOBALS['wpml_post_translations'] ?? null );
+		if ( ! $post_translations || empty( $post->ID ) ) {
+			return null;
+		}
+
+		return $post_translations->get_source_lang_code( $post->ID ) ?: null;
+	}
+
+	private function get_field_key_id( $attachment_id, $key_language ) {
+		$sitepress = $this->sitepress ?: ( $GLOBALS['sitepress'] ?? null );
+		if ( ! $key_language || ! $sitepress ) {
+			return $attachment_id;
+		}
+
+		return $sitepress->get_object_id( $attachment_id, 'attachment', true, $key_language ) ?: $attachment_id;
 	}
 
 	private function set_field_in_package( $package, $field_name, $data, $translate = 1, $use_base64 = true ) {
@@ -163,7 +204,6 @@ class AddMediaDataToTranslationPackage implements \IWPML_Backend_Action, \IWPML_
 		$custom_fields_to_translate = \WPML\TM\Settings\Repository::getCustomFieldsToTranslate();
 
 		foreach ( $media_custom_fields as $field_key => $field_value ) {
-			// Remove the media custom field if it is not set to Translate.
 			if (
 				! in_array( $field_key, $custom_fields_to_translate, true ) ||
 				'_wp_attachment_image_alt' === $field_key

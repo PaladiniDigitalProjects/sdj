@@ -308,21 +308,71 @@ class Fields extends Education\Builder\Fields {
 	 * Print addon fields notice.
 	 *
 	 * @since 1.9.9
+	 * @since 2.0.1 Fields whose addons only need configuration get their own notice and dismiss state.
 	 *
 	 * @param array $form_data Form data.
-	 *
-	 * @noinspection HtmlUnknownTarget
 	 */
 	private function print_addon_fields_notice( array $form_data ): void {
 
-		$dismissed  = get_user_meta( get_current_user_id(), 'wpforms_dismissed', true );
 		$edu_addons = Form::get_form_addons_edu_data( $form_data );
 
-		if ( ! empty( $dismissed['edu-addon-fields-form-preview-notice'] ) || empty( $edu_addons ) ) {
+		if ( empty( $edu_addons ) ) {
 			return;
 		}
 
 		$actions = wp_list_pluck( $edu_addons, 'action' );
+
+		$args = ! array_diff( $actions, [ 'configure' ] )
+			? $this->get_configure_notice_args( $edu_addons )
+			: $this->get_inactive_addons_notice_args( $edu_addons, $actions );
+
+		$dismissed = get_user_meta( get_current_user_id(), 'wpforms_dismissed', true );
+
+		if ( ! empty( $dismissed[ 'edu-' . $args['dismiss_section'] ] ) ) {
+			return;
+		}
+
+		$this->print_form_preview_notice( $args );
+	}
+
+	/**
+	 * Get the notice arguments for fields whose addons only need to be configured.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $edu_addons Addons educational data.
+	 *
+	 * @return array
+	 */
+	private function get_configure_notice_args( array $edu_addons ): array {
+
+		$content  = esc_html__( 'They will not be present in the published form until their addon settings are configured.', 'wpforms' );
+		$messages = $this->get_configure_messages( $edu_addons );
+
+		if ( $messages ) {
+			$content .= ' ' . implode( ' ', $messages );
+		}
+
+		return [
+			'class'           => 'wpforms-alert-warning',
+			'title'           => esc_html__( 'Your Form Contains Fields That Need Configuration', 'wpforms' ),
+			'content'         => $content,
+			'dismiss_section' => 'configure-fields-form-preview-notice',
+		];
+	}
+
+	/**
+	 * Get the notice arguments for fields from inactive or incompatible addons.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $edu_addons Addons educational data.
+	 * @param array $actions    Addon education actions.
+	 *
+	 * @return array
+	 * @noinspection HtmlUnknownTarget
+	 */
+	private function get_inactive_addons_notice_args( array $edu_addons, array $actions ): array {
 
 		[ $license_key, $license_type, $license_is_valid ] = $this->get_license_data();
 
@@ -347,6 +397,14 @@ class Fields extends Education\Builder\Fields {
 			$content = esc_html__( 'They will still be visible in the form preview, but will not be present in the published form.', 'wpforms' );
 		}
 
+		// Fields that only need configuration are also absent from the published form,
+		// so their setup guidance is appended rather than lost behind the addon warnings.
+		$messages = $this->get_configure_messages( $edu_addons );
+
+		if ( $messages ) {
+			$content .= ' ' . implode( ' ', $messages );
+		}
+
 		$args = [
 			'class'           => 'wpforms-alert-warning',
 			'title'           => esc_html__( 'Your Form Contains Fields From Inactive Addons', 'wpforms' ),
@@ -359,7 +417,41 @@ class Fields extends Education\Builder\Fields {
 			$args['title'] = esc_html__( 'Your Form Contains Fields From Incompatible Addons', 'wpforms' );
 		}
 
-		$this->print_form_preview_notice( $args );
+		return $args;
+	}
+
+	/**
+	 * Get sanitized setup messages from addons that require configuration.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $edu_addons Addons educational data.
+	 *
+	 * @return array
+	 */
+	private function get_configure_messages( array $edu_addons ): array {
+
+		$messages = [];
+
+		foreach ( $edu_addons as $edu_addon ) {
+			if ( ( $edu_addon['action'] ?? '' ) !== 'configure' || empty( $edu_addon['message'] ) ) {
+				continue;
+			}
+
+			// The notice sink prints content as-is, so addon-supplied markup is sanitized here.
+			$messages[] = wp_kses(
+				$edu_addon['message'],
+				[
+					'a' => [
+						'href'   => [],
+						'target' => [],
+						'rel'    => [],
+					],
+				]
+			);
+		}
+
+		return $messages;
 	}
 
 	/**

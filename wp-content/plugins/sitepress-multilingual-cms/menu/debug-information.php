@@ -4,14 +4,9 @@ require_once WPML_PLUGIN_PATH . '/inc/functions-debug-information.php';
 $debug_info = get_debug_info();
 $debug_data = $debug_info->run();
 
-/* DEBUG ACTION */
-/**
- * @param $term_object
- *
- * @return callable
- */
 ?>
 <div class="wrap">
+	<?php /* translators: Title of the screen that lists facts about the site for finding problems, and the item in the WPML menu that opens it. */ ?>
 	<h1><?php echo __( 'Debug information', 'sitepress' ); ?></h1>
 	<?php
 

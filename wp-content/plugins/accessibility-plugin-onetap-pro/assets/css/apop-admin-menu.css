@@ -401,6 +401,27 @@ body.wp-admin .wrap .options-wrapper .control-heading {
   background: #f2f2f7;
 }
 
+/**
+ * Beta Badge Placeholder
+ * Provides consistent styling for the "Beta" pill shown next to feature/section titles.
+ * Usage: @extend %onetap-admin-beta-badge;
+ */
+.setting-control.switch .boxes .box .left .text span.feature-name .onetap-admin-beta-badge, .setting-control.module-labels .boxes .box .left .text span.feature-name .onetap-admin-beta-badge, .onetap-admin-beta-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: none;
+  background: #e5e7eb;
+  color: #111827;
+  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 18px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
 .padding-top-0 {
   padding-top: 0 !important;
 }
@@ -1021,6 +1042,94 @@ header .mycontainer .myrow.two .box-save-changes {
   header .mycontainer .myrow.two .box-navigation ul {
     flex-wrap: nowrap;
   }
+}
+
+.onetap-toast-container {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.onetap-toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 420px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background-color: #16a34a;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.18);
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.onetap-toast--visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.onetap-toast--error {
+  background-color: #dc2626;
+}
+
+.onetap-toast--info {
+  background-color: #2563eb;
+}
+
+.onetap-toast__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+.onetap-toast__icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.onetap-toast__message {
+  flex: 1 1 auto;
+}
+
+.onetap-toast__close {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.onetap-toast__close:hover {
+  opacity: 1;
+}
+
+.onetap-toast__close svg {
+  width: 14px;
+  height: 14px;
 }
 
 .setting-control.color .boxes {
@@ -2085,6 +2194,11 @@ header .mycontainer .myrow.two .box-save-changes {
   bottom: 0;
 }
 
+.setting-control.module-labels .boxes .box .left .text span.feature-name .onetap-admin-beta-badge {
+  position: absolute;
+  bottom: 0;
+}
+
 .setting-control.module-labels .boxes .box .left .text span.feature-desc {
   overflow: hidden;
   color: #414651;
@@ -2581,6 +2695,11 @@ header .mycontainer .myrow.two .box-save-changes {
   bottom: 0;
 }
 
+.setting-control.switch .boxes .box .left .text span.feature-name .onetap-admin-beta-badge {
+  position: absolute;
+  bottom: 0;
+}
+
 .setting-control.switch .boxes .box .left .text span.feature-desc {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2846,6 +2965,79 @@ header .mycontainer .myrow.two .box-save-changes {
   font-weight: 500;
 }
 
+#apop_alt_text .setting-title .onetap-admin-beta-badge,
+#onetap_alt_text .setting-title .onetap-admin-beta-badge {
+  position: relative;
+  bottom: 1px;
+}
+
+#apop_alt_text .setting-header-row--image-alt-list,
+#onetap_alt_text .setting-header-row--image-alt-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  width: 100%;
+  border-bottom: 1px solid #E9EAEB;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+#apop_alt_text .setting-header-row--image-alt-list .setting-title,
+#onetap_alt_text .setting-header-row--image-alt-list .setting-title {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#apop_alt_text .apop-alt-text-filter,
+#onetap_alt_text .apop-alt-text-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
+  line-height: 20px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #717680;
+  font-weight: 400;
+  border: 1px solid transparent;
+}
+
+#apop_alt_text .apop-alt-text-filter__sep,
+#onetap_alt_text .apop-alt-text-filter__sep {
+  color: #d5d7da;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+#apop_alt_text .apop-alt-text-filter__link,
+#onetap_alt_text .apop-alt-text-filter__link {
+  color: #414651;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#apop_alt_text .apop-alt-text-filter__link:hover, #apop_alt_text .apop-alt-text-filter__link:focus,
+#onetap_alt_text .apop-alt-text-filter__link:hover,
+#onetap_alt_text .apop-alt-text-filter__link:focus {
+  text-decoration: underline;
+  border: none;
+}
+
+#apop_alt_text .apop-alt-text-filter__link.is-active,
+#onetap_alt_text .apop-alt-text-filter__link.is-active {
+  text-decoration: none;
+  pointer-events: none;
+  color: #181D27;
+  font-weight: 600;
+}
+
 /* stylelint-enable selector-id-pattern */
 .wrap .box-alt-pilot {
   display: flex;
@@ -2907,6 +3099,7 @@ header .mycontainer .myrow.two .box-save-changes {
   font-weight: 600;
   line-height: 24px;
   text-decoration: none;
+  border: none;
 }
 
 .wrap .box-image-alt .table-header .row .col.thumbnail,
@@ -3007,22 +3200,30 @@ header .mycontainer .myrow.two .box-save-changes {
   align-items: center;
   border: none;
   padding: 8px 9px;
+  background: none;
+  cursor: pointer;
+}
+
+.wrap .box-image-alt .table-body .row .col.actions .action-buttons a.button.outline,
+.wrap .box-image-alt .table-body .row .col.actions .action-buttons button.button.outline {
+  background: none !important;
+  border: none !important;
 }
 
 .wrap .box-image-alt .table-body .row .col.actions .action-buttons a:hover,
 .wrap .box-image-alt .table-body .row .col.actions .action-buttons button:hover {
-  background: none;
+  background: none !important;
 }
 
 .wrap .box-image-alt .table-body .row .col.actions .action-buttons a:focus,
 .wrap .box-image-alt .table-body .row .col.actions .action-buttons button:focus {
-  background: none;
+  background: none !important;
   outline: none;
   box-shadow: none;
 }
 
-.wrap .box-image-alt .table-body .row .col.actions .action-buttons a {
-  border-right: 1px solid #d5d7da;
+.wrap .box-image-alt .table-body .row .col.actions .action-buttons a.button.outline {
+  border-right: 1px solid #d5d7da !important;
   border-radius: 0;
 }
 
@@ -3061,6 +3262,11 @@ header .mycontainer .myrow.two .box-save-changes {
   line-height: 22.295px;
 }
 
+.wrap .box-navigation .col.prev .button svg,
+.wrap .box-navigation .col.next .button svg {
+  fill: #fff;
+}
+
 .wrap .box-navigation .col.prev .button:hover,
 .wrap .box-navigation .col.next .button:hover {
   background: #fff;
@@ -3070,6 +3276,8 @@ header .mycontainer .myrow.two .box-save-changes {
 .wrap .box-navigation .col.prev .button.disable,
 .wrap .box-navigation .col.next .button.disable {
   color: #A4A7AE;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .wrap .box-navigation .col.links ul {
@@ -3097,6 +3305,7 @@ header .mycontainer .myrow.two .box-save-changes {
 }
 
 .wrap .box-navigation .col.links ul li a:focus {
+  border: none;
   box-shadow: none;
   outline: none;
 }
@@ -3495,12 +3704,12 @@ header .mycontainer .myrow.two .box-save-changes {
 }
 
 .wrap form .mycontainer .left-column .language-select-dropdown .language-select-options .language-select-option .language-select-option-label {
-  color: #374151;
   font-size: 14px;
   font-style: normal;
-  font-weight: 500;
   line-height: 20px;
   flex: 1;
+  color: #374151;
+  font-weight: 400;
 }
 
 .wrap form .mycontainer .left-column .language-select-dropdown .language-select-options .language-select-option .language-select-checkmark {

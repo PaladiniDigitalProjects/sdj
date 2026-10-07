@@ -19,13 +19,6 @@ class Import {
 		}
 	}
 
-	/**
-	 * @param int     $formId
-	 * @param WP_Post $form
-	 * @param bool    $update
-	 *
-	 * @return void
-	 */
 	public function registerForm( $formId, $form, $update ) {
 		if ( $update ) {
 			do_action( 'wpforms_save_form', (int) $formId );
@@ -36,7 +29,7 @@ class Import {
 		global $pagenow;
 
 		return 'admin.php' === $pagenow
-			&& self::PAGE_SLUG === Sanitize::stringProp( 'page', $_GET ) // phpcs:ignore
-			&& self::VIEW_SLUG === Sanitize::stringProp( 'view', $_GET ); // phpcs:ignore
+			&& self::PAGE_SLUG === Sanitize::stringProp( 'page', $_GET )
+			&& self::VIEW_SLUG === Sanitize::stringProp( 'view', $_GET );
 	}
 }

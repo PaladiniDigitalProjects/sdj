@@ -11,16 +11,12 @@ use WPML\FP\Relation;
 
 class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
-	/** @var \WPML_URL_Converter $urlConverter */
 	private $urlConverter;
 
-	/** @var \SitePress $sitepress */
 	private $sitepress;
 
-	/** @var \wpdb $wpdb */
 	private $wpdb;
 
-	/** @var null|array $secondaryHomeUrls */
 	private $secondaryHomesById;
 
 	public function __construct( \WPML_URL_Converter $urlConverter, \SitePress $sitepress, \wpdb $wpdb ) {
@@ -35,13 +31,6 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 		add_filter( 'rank_math/html_sitemap/get_posts/where', [ $this, 'byLanguageWhere' ], 10, 2 );
 	}
 
-	/**
-	 * @param array  $url
-	 * @param string $type
-	 * @param object $obj
-	 *
-	 * @return array|null
-	 */
 	public function filterEntry( $url, $type, $obj ) {
 		if ( $url && 'post' === $type ) {
 			return $this->replaceHomePageInSecondaryLanguages( $url, $obj );
@@ -50,18 +39,10 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 		return $url;
 	}
 
-	/**
-	 * @param array  $url
-	 * @param object $obj
-	 *
-	 * @return array
-	 */
 	private function replaceHomePageInSecondaryLanguages( $url, $obj ) {
 		if ( null === $this->secondaryHomesById ) {
-			/** @var Callable(object):bool $isInDefaultLang */
 			$isInDefaultLang = Relation::propEq( 'language_code', $this->sitepress->get_default_language() );
 
-			// $getIdAndUrl :: \stdClass -> []
 			$getIdAndUrl = function ( $translation ) {
 				return [
 					(int) $translation->element_id,
@@ -88,12 +69,6 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 		);
 	}
 
-	/**
-	 * @param string $sql
-	 * @param string $postType
-	 *
-	 * @return string
-	 */
 	public function byLanguageJoin( $sql, $postType ) {
 		if ( $this->sitepress->is_translated_post_type( $postType ) ) {
 			$sql .= "
@@ -106,12 +81,6 @@ class Hooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 		return $sql;
 	}
 
-	/**
-	 * @param string $sql
-	 * @param string $postType
-	 *
-	 * @return string
-	 */
 	public function byLanguageWhere( $sql, $postType ) {
 		$default_language = $this->sitepress->get_default_language();
 		$current_language = $this->sitepress->get_current_language();

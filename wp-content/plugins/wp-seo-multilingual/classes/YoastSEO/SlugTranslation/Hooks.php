@@ -10,10 +10,6 @@ class Hooks implements \IWPML_Backend_Action, \IWPML_DIC_Action {
 		add_action( 'update_option_wpseo_titles', [ $this, 'flushRulesOnBreadcrumbChange' ], 10, 2 );
 	}
 
-	/**
-	 * @param array $oldValue
-	 * @param array $newValue
-	 */
 	public function flushRulesOnBreadcrumbChange( $oldValue, $newValue ) {
 		$getBreadcrumbsSetting = Obj::prop( 'breadcrumbs-enable' );
 

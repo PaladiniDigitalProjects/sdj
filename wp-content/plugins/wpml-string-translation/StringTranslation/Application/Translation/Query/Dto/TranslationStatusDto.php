@@ -5,58 +5,34 @@ namespace WPML\StringTranslation\Application\Translation\Query\Dto;
 use WPML\PHP\ConstructableFromArrayInterface;
 use WPML\PHP\ConstructableFromArrayTrait;
 
-/**
- * @phpstan-type ReviewStatusString = 'NEEDS_REVIEW'|'EDITING'|'ACCEPTED'|null
- * @phpstan-type MethodString = 'duplicate'|'translation-service'|'automatic'|'manual'|null
- * @phpstan-type EditorString = 'classic'|'wordpress'|'ate'|'none'|null
- *
- * @phpstan-type TranslationStatusDtoArray = array{
- *   status: int,
- *   reviewStatus: ReviewStatusString,
- *   jobId: int|null,
- *   method: MethodString,
- *   editor: EditorString,
- *   isTranslated: bool,
- *   translatorId: int|null,
- *   ateJobId: int|null
- * }
- */
 final class TranslationStatusDto {
 
-	/** @var int */
 	private $status;
 
-	/** @var ReviewStatusString */
 	private $reviewStatus;
 
-	/** @var int|null */
 	private $jobId;
 
-	/** @var MethodString */
 	private $method;
 
-	/** @var EditorString */
 	private $editor;
 
-	/** @var bool */
 	private $isTranslated;
 
-	/** @var int|null	*/
-  private $translatorId;
+	private $translatorId;
 
-	/** @var int|null */
 	private $ateJobId;
 
 
 	public function __construct(
-	int $status,
-	string $reviewStatus = null,
-	int $jobId = null,
-	string $method = null,
-	string $editor = null,
-	bool $isTranslated = false,
-	int $translatorId = null,
-	int $ateJobId = null
+	$status,
+	$reviewStatus = null,
+	$jobId = null,
+	$method = null,
+	$editor = null,
+	$isTranslated = false,
+	$translatorId = null,
+	$ateJobId = null
 	) {
 		$allowedReviewStatus = [ 'NEEDS_REVIEW', 'EDITING', 'ACCEPTED' ];
 		$allowedMethod       = [ 'duplicate', 'translation-service', 'automatic', 'manual', 'local-translator' ];
@@ -78,61 +54,37 @@ final class TranslationStatusDto {
 	}
 
 
-	/**
-	 * @return ReviewStatusString
-	 */
 	public function getReviewStatus() {
 		return $this->reviewStatus;
 	}
 
 
-	/**
-	 * @return int|null
-	 */
 	public function getJobId() {
 		return $this->jobId;
 	}
 
 
-	/**
-	 * @return MethodString
-	 */
 	public function getMethod() {
 		return $this->method;
 	}
 
 
-	/**
-	 * @return EditorString
-	 */
 	public function getEditor() {
 		return $this->editor;
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function getIsTranslated() {
 		return $this->isTranslated;
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function getTranslatorId() {
 		return $this->translatorId;
 	}
 
-	/**
-	 * @return int|null
-	 */
 	public function getAteJobId() {
 		return $this->ateJobId;
 	}
 
-	/**
-	 * @return TranslationStatusDtoArray
-	 */
 	public function toArray(): array {
 		return [
 			'status'       => $this->status,

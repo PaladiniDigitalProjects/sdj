@@ -3,43 +3,21 @@
 use WPML\WPSEO\YoastSEO\Utils;
 use WPML\Collect\Support\Collection;
 
-/**
- * Class WPML_WPSEO_Should_Create_Redirect
- *
- * Extra checks to decide when a redirect should be created.
- */
 class WPML_WPSEO_Should_Create_Redirect implements IWPML_Action {
 
-	/** @var Collection */
 	private $filter_hooks;
 
-	/** @var string|null */
 	private $unfiltered_url;
 
-	/**
-	 * Class constructor.
-	 */
 	public function __construct() {
 		$this->filter_hooks = wpml_collect( [ 'post_link', 'page_link', 'post_type_link' ] );
 	}
 
-	/**
-	 * Add hooks.
-	 */
 	public function add_hooks() {
 		Utils::add_filter( 'wpseo_premium_post_redirect_slug_change', [ $this, 'dont_convert_url' ], 10, 4 );
 	}
 
-	/**
-	 * @param bool    $result
-	 * @param integer $post_id
-	 * @param WP_Post $post
-	 * @param WP_Post $post_before
-	 *
-	 * @return bool
-	 */
 	public function dont_convert_url( $result, $post_id, $post, $post_before ) {
-		// This applies to drafts only.
 		$status = get_post_status( $post_before );
 		if ( in_array( $status, [ 'draft', 'auto-draft' ], true ) ) {
 
@@ -55,24 +33,12 @@ class WPML_WPSEO_Should_Create_Redirect implements IWPML_Action {
 		return $result;
 	}
 
-	/**
-	 * Keep the unfiltered URL to use later.
-	 *
-	 * @param string $url
-	 * @return string
-	 */
 	public function save_unfiltered_url( $url ) {
 		$this->unfiltered_url = $url;
 
 		return $url;
 	}
 
-	/**
-	 * Restore the unfiltered URL.
-	 *
-	 * @param string $url
-	 * @return string
-	 */
 	public function restore_unfiltered_url( $url ) {
 		$url                  = $this->unfiltered_url;
 		$this->unfiltered_url = null;

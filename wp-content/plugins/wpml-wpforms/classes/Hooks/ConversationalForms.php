@@ -6,12 +6,8 @@ use WPML\Forms\WPForms\SharedAPI\Strings;
 
 class ConversationalForms {
 
-	/** @var Strings */
 	private $strings;
 
-	/**
-	 * @param Strings $strings
-	 */
 	public function __construct( Strings $strings ) {
 		$this->strings = $strings;
 	}

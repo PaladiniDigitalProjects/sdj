@@ -1,9 +1,4 @@
 <?php
-/**
- * Class WPML_ST_Upgrade_DB_Wp_Settings_Strings
- *
- * @package WPML\ST
- */
 
 namespace WPML\ST\Upgrade\Command;
 
@@ -14,11 +9,6 @@ use function WPML\Container\make;
 
 
 class UpgradeWpSettingsStrings implements \IWPML_St_Upgrade_Command {
-	/**
-	 * Create date and time related ST strings
-	 *
-	 * @return bool
-	 */
 	public function run() {
 		global $sitepress_settings;
 		if ( ! isset( $sitepress_settings['st']['db_ok_for_gettext_context'] ) ) {
@@ -52,11 +42,6 @@ class UpgradeWpSettingsStrings implements \IWPML_St_Upgrade_Command {
 	public function run_frontend() {
 	}
 
-	/**
-	 * Migration version
-	 *
-	 * @return string
-	 */
 	public static function get_command_id() {
 		return __CLASS__;
 	}

@@ -3,6 +3,7 @@
 namespace WPForms\Pro\Forms\Fields\Pagebreak;
 
 use WPForms\Forms\Fields\Pagebreak\Field as FieldLite;
+use WPForms\Pro\Forms\Fields\PageBreak\Frontend;
 
 /**
  * Pagebreak field.
@@ -342,17 +343,26 @@ class Field extends FieldLite {
 	 */
 	public function display_fields_before( $form_data ): void {
 
-		// Check if we have an opening pagebreak, if not then bail.
-		$field = ! empty( wpforms()->obj( 'frontend' )->pages['top'] ) ? wpforms()->obj( 'frontend' )->pages['top'] : false;
-
-		if ( ! $field ) {
+		// Forms without pagebreaks have no pages to wrap.
+		if ( empty( wpforms()->obj( 'frontend' )->pages ) ) {
 			return;
 		}
 
-		$css = ! empty( $field['css'] ) ? $field['css'] : '';
+		$field = wpforms()->obj( 'frontend' )->pages['top'] ?? [];
+		$css   = ! empty( $field['css'] ) ? $field['css'] : '';
 
+		/*
+		 * Page 1 is opened for every paginated form, including pre-v1.2.1 ones that
+		 * have no opening pagebreak: display_fields_after() always closes this
+		 * wrapper, and the Previous button on the last page navigates into it.
+		 */
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div class="wpforms-page wpforms-page-1 ' . wpforms_sanitize_classes( $css ) . '" data-page="1">';
+
+		// Pre-v1.2.1 forms have no opening pagebreak to hand to the hook.
+		if ( ! $field ) {
+			return;
+		}
 
 		/**
 		 * Fires before all fields on the page.
@@ -379,23 +389,11 @@ class Field extends FieldLite {
 		}
 
 		// If we don't have a bottom pagebreak, the form is pre-v1.2.1, and this is for backwards compatibility.
-		$bottom = ! empty( wpforms()->obj( 'frontend' )->pages['bottom'] ) ? wpforms()->obj( 'frontend' )->pages['top'] : false;
+		$bottom = ! empty( wpforms()->obj( 'frontend' )->pages['bottom'] ) ? wpforms()->obj( 'frontend' )->pages['bottom'] : false;
 
 		if ( ! $bottom ) {
-
-			$prev = ! empty( $form_data['settings']['pagebreak_prev'] ) ? $form_data['settings']['pagebreak_prev'] : esc_html__( 'Previous', 'wpforms' );
-
-			echo '<div class="wpforms-field wpforms-field-pagebreak">';
-			printf(
-				'<button class="wpforms-page-button wpforms-page-prev" data-action="prev" data-page="%d" data-formid="%d">%s</button>',
-				absint( wpforms()->obj( 'frontend' )->pages['current'] + 1 ),
-				absint( $form_data['id'] ),
-				esc_html( $prev )
-			);
-			echo '</div>';
+			$this->display_back_compat_prev_button( $form_data );
 		}
-
-		$field = ! empty( wpforms()->obj( 'frontend' )->pages['bottom'] ) ? wpforms()->obj( 'frontend' )->pages['bottom'] : $bottom;
 
 		/**
 		 * Fires after all fields on the page.
@@ -405,9 +403,106 @@ class Field extends FieldLite {
 		 * @param array $field     Field data and settings.
 		 * @param array $form_data Form data and settings.
 		 */
-		do_action( 'wpforms_field_page_break_page_fields_after', $field, $form_data ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+		do_action( 'wpforms_field_page_break_page_fields_after', $bottom, $form_data ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
 
 		echo '</div>';
+	}
+
+	/**
+	 * Display the Previous button on the last page of a form without a bottom pagebreak.
+	 *
+	 * Pre-v1.2.1 forms - and forms that lost their closing pagebreak - have no bottom
+	 * pagebreak field, so field_display() never renders the last page's Previous
+	 * button. Render it here under the same conditions that method applies.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $form_data Form data and settings.
+	 */
+	private function display_back_compat_prev_button( array $form_data ): void {
+
+		$current = absint( wpforms()->obj( 'frontend' )->pages['current'] ?? 1 );
+
+		// Page 1 has no earlier page to return to. Without this guard the button
+		// would target page 0, which the frontend cannot resolve.
+		if ( $current < 2 ) {
+			return;
+		}
+
+		$prev = $this->get_back_compat_prev_label( $form_data );
+
+		// An empty label is how "Display Previous" off is stored, the same condition
+		// field_display() checks before rendering its own Previous button.
+		if ( $prev === '' ) {
+			return;
+		}
+
+		echo '<div class="wpforms-field wpforms-field-pagebreak">';
+		echo '<div class="wpforms-clear ' . sanitize_html_class( $this->get_nav_align() ) . '">';
+
+		$this->display_prev_button( $current, $form_data, $prev );
+
+		echo '</div></div>';
+	}
+
+	/**
+	 * Get the Previous button label for a form without a bottom pagebreak.
+	 *
+	 * Pre-v1.2.1 forms stored the label in the form settings. Newer forms that lost
+	 * their closing pagebreak keep it on the page dividers instead, so the last
+	 * divider is the closest surviving record of what the form author configured.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $form_data Form data and settings.
+	 *
+	 * @return string Empty when the form author turned the button off.
+	 */
+	private function get_back_compat_prev_label( array $form_data ): string {
+
+		if ( ! empty( $form_data['settings']['pagebreak_prev'] ) ) {
+			return (string) $form_data['settings']['pagebreak_prev'];
+		}
+
+		$dividers = wpforms()->obj( 'frontend' )->pages['pages'] ?? [];
+		$last     = $dividers ? (array) end( $dividers ) : [];
+
+		return ! empty( $last['prev'] ) ? (string) $last['prev'] : '';
+	}
+
+	/**
+	 * Display a Previous page navigation button.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int    $current   Page the button lives on. The frontend navigates to $current - 1.
+	 * @param array  $form_data Form data and settings.
+	 * @param string $label     Button label.
+	 */
+	private function display_prev_button( int $current, array $form_data, string $label ): void {
+
+		echo '<span class="wpforms-page-button-group">';
+		printf(
+			'<button class="wpforms-page-button wpforms-page-prev" data-action="prev" data-page="%d" data-formid="%d" disabled>%s</button>',
+			absint( $current ),
+			absint( $form_data['id'] ),
+			esc_html( $label )
+		);
+		echo '</span>';
+	}
+
+	/**
+	 * Get the CSS class that aligns the page navigation buttons.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @return string
+	 */
+	private function get_nav_align(): string {
+
+		$top = wpforms()->obj( 'frontend' )->pages['top'] ?? [];
+
+		return empty( $top['nav_align'] ) ? 'wpforms-pagebreak-center' : 'wpforms-pagebreak-' . $top['nav_align'];
 	}
 
 	/**
@@ -527,33 +622,28 @@ class Field extends FieldLite {
 
 		$total   = wpforms()->obj( 'frontend' )->pages['total'];
 		$current = wpforms()->obj( 'frontend' )->pages['current'];
-		$top     = wpforms()->obj( 'frontend' )->pages['top'];
 		$next    = ! empty( $field['next'] ) ? $field['next'] : '';
 		$prev    = ! empty( $field['prev'] ) ? $field['prev'] : '';
-		$align   = 'wpforms-pagebreak-center';
 
-		if ( ! empty( $top['nav_align'] ) ) {
-			$align = 'wpforms-pagebreak-' . $top['nav_align'];
-		}
-
-		echo '<div class="wpforms-clear ' . sanitize_html_class( $align ) . '">';
+		echo '<div class="wpforms-clear ' . sanitize_html_class( $this->get_nav_align() ) . '">';
 
 		if ( $current > 1 && ! empty( $prev ) ) {
-			printf(
-				'<button class="wpforms-page-button wpforms-page-prev" data-action="prev" data-page="%d" data-formid="%d" disabled>%s</button>',
-				(int) $current,
-				(int) $form_data['id'],
-				esc_html( $prev )
-			);
+			$this->display_prev_button( (int) $current, $form_data, (string) $prev );
 		}
 
 		if ( $current < $total && ! empty( $next ) ) {
+			echo '<span class="wpforms-page-button-group">';
+
 			printf(
 				'<button class="wpforms-page-button wpforms-page-next" data-action="next" data-page="%d" data-formid="%d" disabled>%s</button>',
 				(int) $current,
 				(int) $form_data['id'],
 				esc_html( $next )
 			);
+
+			Frontend::display_page_button_spinner( $form_data );
+
+			echo '</span>';
 
 			/** This action is documented in includes/class-frontend.php. */
 			do_action( 'wpforms_display_submit_after', $form_data, 'next' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName

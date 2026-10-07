@@ -6,21 +6,12 @@ use WPML\Forms\Hooks\Base;
 
 class SurveyAndPolls extends Base {
 
-	/** Adds hooks. */
 	public function addHooks() {
 		
 		add_filter( 'wpforms_surveys_reporting_fields_get_survey_field_data', [ $this, 'apply_form_result_translation' ], 10, 2 );
 		add_filter( 'wpforms_surveys_polls_display_results_choices', [ $this, 'apply_form_result_choices_translation' ], 10, 3 );
 	}
 
-	/**
-	 * Applies translations to form for displaying poll results.
-	 * 
-	 * @param array $data    Form data and settings.
-	 * @param int   $form_id ID of the Form .
-	 *
-	 * @return array
-	 */
 	public function apply_form_result_translation( $data, $form_id ) {
 
 		$package = $this->newPackage( $form_id );
@@ -33,8 +24,6 @@ class SurveyAndPolls extends Base {
 		if ( $this->notEmpty( 'answers', $data ) ) {
 			$i = 0;
 			foreach ( $data['answers'] as &$answer ) {
-				// See \WPFormsSurveys\Reporting\Fields::get_survey_field_data(),
-				// Some answers do not have a choice_id, if they belong to existing entries for options no longer available.
 				if ( ! isset( $answer['choice_id'] ) ) {
 					continue;
 				}
@@ -53,15 +42,6 @@ class SurveyAndPolls extends Base {
 		return $data;
 	}
 
-	/**
-	 * Applies translations to form for displaying poll results.
-	 * 
-	 * @param array $choices  The current field choices.
-	 * @param int   $field_id ID of the current field.
-	 * @param int   $form_id  ID of the Form.
-	 *
-	 * @return array
-	 */
 	public function apply_form_result_choices_translation( $choices, $field_id, $form_id ) {
 
 		$package = $this->newPackage( $form_id );
@@ -75,11 +55,6 @@ class SurveyAndPolls extends Base {
 		return $choices;
 	}
 
-	/**
-	 * @param string|int $fieldId
-	 *
-	 * @return string
-	 */
 	private function getLabelOptionName( $fieldId ) {
 		return 'label-' . $fieldId . '-option';
 	}

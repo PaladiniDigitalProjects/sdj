@@ -8,30 +8,18 @@ use WPML\WPSEO\Shared\TranslationJob\BaseHooks;
 use WPML\WPSEO\YoastSEO\Terms\Meta\Hooks as TermsMetaHooks;
 use WPML\WPSEO\YoastSEO\Utils;
 
-/**
- * @phpstan-import-type FieldArray from BaseHooks
- */
 class Hooks extends BaseHooks {
 
 	const OPTION_PREFIX = 'wpseo_';
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function getFieldPrefix() {
 		return 'field-_yoast_wpseo_';
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function getTopLevelGroup() {
 		return [ self::OPTION_PREFIX => 'Yoast SEO' ];
 	}
 
-	/**
-	 * @inheritDoc
-	 */
 	protected function getKeyPurposeMap() {
 		return [
 			'_yoast_wpseo_title'    => self::PURPOSE_SEO_TITLE,
@@ -39,24 +27,10 @@ class Hooks extends BaseHooks {
 		];
 	}
 
-	/**
-	 * @param FieldArray   $field
-	 * @param string|null  $fieldType
-	 * @param object|mixed $job
-	 *
-	 * @return FieldArray
-	 */
 	protected function extraAdjustField( $field, $fieldType, $job ) {
 		return $this->addPurposeToTermMeta( $field, $fieldType, $job );
 	}
 
-	/**
-	 * @param FieldArray   $field
-	 * @param string|null  $fieldType
-	 * @param object|mixed $job
-	 *
-	 * @return FieldArray
-	 */
 	private function addPurposeToTermMeta( $field, $fieldType, $job ) {
 		$jobType = Obj::prop( 'original_post_type', $job );
 

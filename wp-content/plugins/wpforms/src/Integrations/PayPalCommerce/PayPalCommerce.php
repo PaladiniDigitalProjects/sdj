@@ -33,6 +33,13 @@ final class PayPalCommerce implements IntegrationInterface {
 	public const SLUG = 'paypal_commerce';
 
 	/**
+	 * Payment meta key that stores the PayPal Order ID for a one-time payment.
+	 *
+	 * @since 1.10.2
+	 */
+	public const PAYPAL_ORDER_ID_META_KEY = 'paypal_order_id';
+
+	/**
 	 * Determine if the integration is allowed to load.
 	 *
 	 * @since 1.10.0
@@ -86,6 +93,7 @@ final class PayPalCommerce implements IntegrationInterface {
 		$this->load_admin_entries();
 		$this->load_connect();
 		$this->load_field();
+		$this->load_analytics();
 		$this->load_builder();
 		$this->load_settings();
 		$this->load_payment_methods();
@@ -201,6 +209,16 @@ final class PayPalCommerce implements IntegrationInterface {
 	private function load_field(): void {
 
 		( new Fields\PayPalCommerce() );
+	}
+
+	/**
+	 * Load Form Analytics integration ( composite subfield tracking ).
+	 *
+	 * @since 2.0.0
+	 */
+	private function load_analytics(): void {
+
+		( new Analytics() )->hooks();
 	}
 
 	/**

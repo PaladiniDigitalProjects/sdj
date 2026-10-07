@@ -6,33 +6,14 @@ use WPML\FP\Type;
 
 class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
-	/**
-	 * @var WPML_ACF_Field_Settings
-	 */
 	private $acf_field_settings;
 
-	/**
-	 * @var \ACFML\Field\Resolver
-	 */
-	private $fieldResolver;
-
-	/**
-	 * WPML_ACF_Field_Annotations constructor.
-	 *
-	 * @param WPML_ACF_Field_Settings $field_settings
-	 * @param \ACFML\Field\Resolver   $fieldResolver
-	 */
 	public function __construct(
-		WPML_ACF_Field_Settings $field_settings,
-		\ACFML\Field\Resolver $fieldResolver
+		WPML_ACF_Field_Settings $field_settings
 	) {
 		$this->acf_field_settings = $field_settings;
-		$this->fieldResolver      = $fieldResolver;
 	}
 
-	/**
-	 * Registers WP hooks related to field annotations.
-	 */
 	public function add_hooks() {
 		if ( ! defined( 'ACFML_HIDE_FIELD_ANNOTATIONS' ) || true !== ACFML_HIDE_FIELD_ANNOTATIONS ) {
 			add_action( 'acf/create_field', [ $this, 'acf_create_field' ], 10, 2 );
@@ -41,10 +22,6 @@ class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Fronte
 		}
 	}
 
-	/**
-	 * @param array $field   The ACF field.
-	 * @param mixed $post_id Current post ID.
-	 */
 	public function acf_create_field( $field, $post_id = null ) {
 		if ( $this->is_acf_options_page() ) {
 			return;
@@ -59,28 +36,25 @@ class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Fronte
 		}
 	}
 
-	/**
-	 * Displays HTML code with information about original value of the field.
-	 *
-	 * @param array $field   The ACF field.
-	 * @param mixed $post_id Current post ID.
-	 */
 	private function field_original_value( $field, $post_id ) {
 		static $originalByKey = [];
+		$type                 = Obj::prop( 'type', $field );
+		$key                  = Obj::prop( 'key', $field );
+		$name                 = Obj::prop( '_name', $field );
 
 		if ( ! $this->is_secondary_language() ) {
 			return;
 		}
 
-		if ( 'repeater' === $field['type'] ) {
+		if ( ! $type || ! $key || ! $name || 'repeater' === $type ) {
 			return;
 		}
 
-		if ( Obj::prop( $field['key'], $originalByKey ) ) {
+		if ( Obj::prop( $key, $originalByKey ) ) {
 			return;
 		}
 
-		$custom_field_original_data = (array) apply_filters( 'wpml_custom_field_original_data', null, $post_id, $field['_name'] );
+		$custom_field_original_data = (array) apply_filters( 'wpml_custom_field_original_data', null, $post_id, $name );
 
 		if ( Type::isString( Obj::prop( 'value', $custom_field_original_data ) ) ) {
 			echo '<div class="wpml_acf_original_value">';
@@ -98,12 +72,9 @@ class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Fronte
 			echo '</div>';
 		}
 
-		$originalByKey[ $field['key'] ] = true;
+		$originalByKey[ $key ] = true;
 	}
 
-	/**
-	 * @return bool
-	 */
 	private function is_secondary_language() {
 		$current_language = apply_filters( 'wpml_current_language', null );
 		$default_language = apply_filters( 'wpml_default_language', null );
@@ -111,25 +82,6 @@ class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Fronte
 		return $current_language !== $default_language;
 	}
 
-	/**
-	 * @param  array $field
-	 *
-	 * @return \WPML_ACF_Field
-	 */
-	private function resolve_field( $field ) {
-		$processedData = new WPML_ACF_Processed_Data( null, '', [ 'type' => Obj::prop( 'type', $field ) ] );
-		return $this->fieldResolver->run( $processedData );
-	}
-
-	/**
-	 * Displays description under custom field name in translation preferences metabox on post edit screen.
-	 *
-	 * @param string $description The current description where additional info would be added.
-	 * @param string $name        Custom field name.
-	 * @param int    $post_id     Edited post ID.
-	 *
-	 * @return string
-	 */
 	public function metabox_field_description( $description, $name, $post_id ) {
 
 		$field_object = get_field_object( $name, $post_id );
@@ -144,12 +96,15 @@ class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Fronte
 
 		if ( $this->acf_field_settings->field_should_be_set_to_copy_once( $field_object ) ) {
 			$field_data = [
+				/* translators: Note under a field in the translation editor. The quoted text is the name of a translation preference and is translated the same way in the preference list. */
 				__( 'This type of ACF field will always be set to "Copy once".', 'acfml' ),
 			];
 		} else {
 			$field_data = [
+				/* translators: Label of the field's name in the note shown under a field in the translation editor; the name follows the colon. */
 				__( 'ACF field name:', 'acfml' ),
 				$field_object['label'],
+				/* translators: Label of the field's kind in the note shown under a field in the translation editor; the kind follows the colon. */
 				__( 'ACF field type:', 'acfml' ),
 				$field_object['type'],
 			];
@@ -159,13 +114,9 @@ class WPML_ACF_Field_Annotations implements \IWPML_Backend_Action, \IWPML_Fronte
 		return $description;
 	}
 
-	/**
-	 * @return bool Tells if currently displayed page is ACF options page within wp-admin.
-	 */
 	private function is_acf_options_page() {
 		return is_admin()
 			&& function_exists( 'acf_get_options_page' )
-			/* phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.VIP.SuperGlobalInputUsage.AccessDetected */
 			&& acf_get_options_page( sanitize_text_field( wp_unslash( Obj::prop( 'page', $_REQUEST ) ) ) );
 	}
 }

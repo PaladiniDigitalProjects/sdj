@@ -11,11 +11,6 @@ class CustomNamespacesHooks implements \IWPML_Action {
 		add_filter( 'acf/validate_post_id', [ $this, 'appendLanguageToCustomNamespace' ] );
 	}
 
-	/**
-	 * @param string|int $postId
-	 *
-	 * @return string|int
-	 */
 	public function appendLanguageToCustomNamespace( $postId ) {
 		if ( is_string( $postId )
 			&& ! is_numeric( $postId )
@@ -34,24 +29,13 @@ class CustomNamespacesHooks implements \IWPML_Action {
 		return $postId;
 	}
 
-	/**
-	 * @param string|int $postId
-	 *
-	 * @return bool
-	 */
 	private static function isRestrictedNamespace( $postId ) {
-		// This list describes why a string may be a restricted namespace.
 		$restricted = [
 			'new_post' => 'The post id is new_post so it is fake id used in acf_form function when creating new post with ACF fields.',
 		];
 		return array_key_exists( $postId, $restricted );
 	}
 
-	/**
-	 * @param string|int $postId
-	 *
-	 * @return bool
-	 */
 	private static function isCommonNamespace( $postId ) {
 		if ( Str::startsWith( 'options', $postId ) ) {
 			return true;
@@ -75,11 +59,6 @@ class CustomNamespacesHooks implements \IWPML_Action {
 		return false;
 	}
 
-	/**
-	 * @param string|int $postId
-	 *
-	 * @return bool
-	 */
 	private static function isValidOptionPagePostId( $postId ) {
 		if ( function_exists( 'acf_get_options_pages' ) ) {
 			$optionPages = acf_get_options_pages();
@@ -92,15 +71,9 @@ class CustomNamespacesHooks implements \IWPML_Action {
 		return false;
 	}
 
-	/**
-	 * @param string|int $postId
-	 * @param string     $language
-	 *
-	 * @return bool
-	 */
 	private function hasLanguageAppended( $postId, $language ) {
 		$suffix = '_' . $language;
-		return Str::endsWith( $suffix, $postId ); /* @phpstan-ignore-line */
+		return Str::endsWith( $suffix, $postId );  
 	}
 
 }

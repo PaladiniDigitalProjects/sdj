@@ -584,4 +584,166 @@ class Accessibility_Plugin_Onetap_Pro_Admin {
 		// Sanitize the remaining value.
 		return sanitize_text_field( $value );
 	}
+
+	/**
+	 * Register the "Missing Alt-Text" widget on the Dashboard home screen.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function register_missing_alt_text_dashboard_widget() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		wp_add_dashboard_widget(
+			'apop_missing_alt_text',
+			__( 'Missing Alt-Text', 'accessibility-plugin-onetap-pro' ),
+			array( $this, 'render_missing_alt_text_dashboard_widget' ),
+			null,
+			null,
+			'side',
+			'high'
+		);
+	}
+
+	/**
+	 * Output the Dashboard widget body (missing vs total images + CTA).
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function render_missing_alt_text_dashboard_widget() {
+		$missing = $this->count_attachment_images_missing_alt_text();
+		$total   = $this->count_attachment_images_total();
+
+		$alt_url = admin_url( 'admin.php?page=apop-alt-text' );
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		if ( is_plugin_active( 'altpilot/altpilot.php' ) ) {
+			$alt_url = admin_url( 'admin.php?page=altpilot' );
+		}
+		?>
+		<div class="apop-dashboard-missing-alt">
+			<p class="apop-dashboard-missing-alt__stats">
+				<?php
+				printf(
+					/* translators: 1: number of images without alt text, 2: total number of images in the media library */
+					esc_html__( '%1$s / %2$s Images', 'accessibility-plugin-onetap-pro' ),
+					esc_html( number_format_i18n( $missing ) ),
+					esc_html( number_format_i18n( $total ) )
+				);
+				?>
+			</p>
+			<p class="apop-dashboard-missing-alt__desc">
+				<?php esc_html_e( 'Alt text improves SEO and makes your content accessible to screen readers.', 'accessibility-plugin-onetap-pro' ); ?>
+			</p>
+			<p class="apop-dashboard-missing-alt__actions">
+				<a href="<?php echo esc_url( $alt_url ); ?>" class="button button-primary apop-dashboard-missing-alt__cta">
+					<?php esc_html_e( 'Add Alt-Texts', 'accessibility-plugin-onetap-pro' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Inline styles for the Missing Alt-Text dashboard widget.
+	 *
+	 * @since 1.0.0
+	 * @param string $hook Current admin screen hook.
+	 * @return void
+	 */
+	public function enqueue_dashboard_missing_alt_widget_styles( $hook ) {
+		if ( 'index.php' !== $hook || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$handle = 'apop-dashboard-missing-alt-text';
+		wp_register_style( $handle, false, array(), $this->version );
+		wp_enqueue_style( $handle );
+
+		$css = '
+			#apop_missing_alt_text .apop-dashboard-missing-alt__stats {
+				margin: 0 0 8px;
+				font-size: 20px;
+				font-weight: 600;
+				line-height: 1.3;
+				color: #1d2327;
+			}
+			#apop_missing_alt_text .apop-dashboard-missing-alt__desc {
+				margin: 0 0 16px;
+				font-size: 13px;
+				line-height: 1.5;
+				color: #646970;
+			}
+			#apop_missing_alt_text .apop-dashboard-missing-alt__actions {
+				margin: 0;
+			}
+			#apop_missing_alt_text .apop-dashboard-missing-alt__cta {
+				text-align: center;
+			}
+		';
+
+		wp_add_inline_style( $handle, $css );
+	}
+
+	/**
+	 * Count image attachments in the media library.
+	 *
+	 * @since 1.0.0
+	 * @return int
+	 */
+	private function count_attachment_images_total() {
+		$query = new WP_Query(
+			array(
+				'post_type'              => 'attachment',
+				'post_mime_type'         => 'image',
+				'post_status'            => 'inherit',
+				'posts_per_page'         => 1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => false,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		return (int) $query->found_posts;
+	}
+
+	/**
+	 * Count image attachments with empty or missing alt text meta.
+	 *
+	 * @since 1.0.0
+	 * @return int
+	 */
+	private function count_attachment_images_missing_alt_text() {
+		$query = new WP_Query(
+			array(
+				'post_type'              => 'attachment',
+				'post_mime_type'         => 'image',
+				'post_status'            => 'inherit',
+				'posts_per_page'         => 1,
+				'fields'                 => 'ids',
+				'no_found_rows'          => false,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				'meta_query'             => array(
+					'relation' => 'OR',
+					array(
+						'key'     => '_wp_attachment_image_alt',
+						'compare' => 'NOT EXISTS',
+					),
+					array(
+						'key'     => '_wp_attachment_image_alt',
+						'value'   => '',
+						'compare' => '=',
+					),
+				),
+			)
+		);
+
+		return (int) $query->found_posts;
+	}
 }

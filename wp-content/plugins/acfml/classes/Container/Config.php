@@ -4,14 +4,13 @@ namespace ACFML\Container;
 
 class Config {
 
-	/**
-	 * @return string[]
-	 */
 	public static function getSharedClasses() {
 		return [
 			\ACFML\FieldPreferences\TranslationJobs::class,
 			\ACFML\FieldGroup\FieldNamePatterns::class,
 			\ACFML\Field\Resolver::class,
+			\ACFML\Repeater\Sync\JobHooks::class,
+			\ACFML\Repeater\Sync\SignatureHooks::class,
 			\ACFML\FieldReferenceAdjuster::class,
 			\ACFML\MigrateBlockPreferences::class,
 			\ACFML\Tools\Export::class,

@@ -11,25 +11,44 @@ class WPML_TP_Sync_Update_Job {
 		WPML_TM_Job_Entity::STRING_BATCH => 'update_post_job',
 	);
 
-	/** @var wpdb */
 	private $wpdb;
 
-	/** @var SitePress */
 	private $sitepress;
 
-	/**
-	 * @param wpdb $wpdb
-	 */
 	public function __construct( wpdb $wpdb, SitePress $sitepress ) {
 		$this->wpdb      = $wpdb;
 		$this->sitepress = $sitepress;
 	}
 
-	/**
-	 * @param WPML_TM_Job_Entity $job
-	 *
-	 * @return WPML_TM_Job_Entity
-	 */
+	public function cancel( WPML_TM_Job_Entity $job, $cancelStatus = ICL_TM_NOT_TRANSLATED ) {
+		if ( $this->is_already_complete( $job ) ) {
+			$job->set_status( ICL_TM_COMPLETE );
+
+			return $job;
+		}
+
+		$job->set_status( $cancelStatus );
+
+		return $this->update_state( $job );
+	}
+
+	private function is_already_complete( WPML_TM_Job_Entity $job ) {
+		if ( ! array_key_exists( $job->get_type(), $this->strategies ) ) {
+			return false;
+		}
+
+		$wpdb = $this->wpdb;
+
+		$freshStatus = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT status FROM {$wpdb->prefix}icl_translation_status WHERE rid = %d",
+				$job->get_id()
+			)
+		);
+
+		return ICL_TM_COMPLETE === (int) $freshStatus;
+	}
+
 	public function update_state( WPML_TM_Job_Entity $job ) {
 		if ( ! array_key_exists( $job->get_type(), $this->strategies ) ) {
 			return $job;
@@ -41,11 +60,6 @@ class WPML_TP_Sync_Update_Job {
 	}
 
 
-	/**
-	 * @param WPML_TM_Job_Entity $job
-	 *
-	 * @return WPML_TM_Job_Entity
-	 */
 	private function update_post_job( WPML_TM_Job_Entity $job ) {
 		$rid = $job->get_id();
 
@@ -84,13 +98,6 @@ class WPML_TP_Sync_Update_Job {
 	}
 
 
-	/**
-	 * In the db, we store the exact json format that we get from TS. It includes an extra ts_status key
-	 *
-	 * @param WPML_TM_Job_Entity $job
-	 *
-	 * @return string
-	 */
 	private function get_ts_status_in_ts_format( WPML_TM_Job_Entity $job ) {
 		$ts_status = $job->get_ts_status();
 

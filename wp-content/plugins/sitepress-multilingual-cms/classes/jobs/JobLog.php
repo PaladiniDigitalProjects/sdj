@@ -1,187 +1,149 @@
 <?php
 
+
 namespace WPML\TM\Jobs;
 
 class JobLog {
 
-	/**
-	 * Stored request log structure.
-	 *
-	 * Case A: REST / ATE sync/download request
-	 * [
-	 *   requestUrl      => string,            // REST or admin URL
-	 *   requestParams   => array,             // Parsed input params
-	 *   requestDateTime => string (ISO-8601),
-	 *   hasErrorLogs    => bool,
-	 *   logsByGroup     => [
-	 *     [
-	 *       groupId => int,
-	 *       label   => string,
-	 *       logs    => [
-	 *         [
-	 *           id      => string,             // Log message
-	 *           data    => array,              // Arbitrary payload
-	 *           trace   => string[],           // Call stack (file:line class/method)
-	 *           logType => int,                // LOG_TYPE_*
-	 *           ...extra fields (apiCall, type, element_id, etc.)
-	 *         ],
-	 *         ...
-	 *       ],
-	 *       data => array                      // Group-level metadata
-	 *     ],
-	 *     ...
-	 *   ],
-	 *   logUid => string
-	 * ]
-	 *
-	 * Case B: Admin "Send to translation" request
-	 * - Same structure as Case A
-	 * - requestParams may include posts, strings, batch info
-	 * - logs may include st-batch element_id expansion (string_ids_in_batch)
-	 */
 
-	/**
-	 * Option name that enables/disables logging.
-	 * @var string
-	 */
-	const IS_ENABLED_OPTION_NAME = 'wpml_tm_job_log_is_enabled';
+	const IS_DISABLED_OPTION_NAME = 'wpml_tm_job_log_is_disabled';
 
-	/**
-	 * Log type: informational.
-	 * @var int
-	 */
 	const LOG_TYPE_INFO  = 0;
-
-	/**
-	 * Log type: error.
-	 * @var int
-	 */
 	const LOG_TYPE_ERROR = 1;
 
-	/**
-	 * Group ID for sending jobs. Used when we send content for translation in the /inc/translation-management/translation-management.class.php.
-	 * @var int
-	 */
 	const GROUP_ID_SEND_JOBS = 0;
 
-	/**
-	 * Group ID for syncing jobs. Used when we sync jobs in the /classes/ATE/Sync/Process.php.
-	 * @var int
-	 */
 	const GROUP_ID_SYNC_JOBS = 1;
 
-	/**
-	 * Group ID for downloading jobs. Used when we download jobs in the /classes/ATE/Download/Process.php.
-	 * @var int
-	 */
 	const GROUP_ID_DOWNLOAD_JOBS = 2;
 
-	/**
-	 * Group ID for site migration (copy/confirm). Used in /classes/ATE/API/ClonedSites/Report.php.
-	 * @var int
-	 */
 	const GROUP_ID_SITE_MIGRATION = 3;
 
-	/**
-	 * Prevents calling from unit tests methods from $sitepress and $wpdb.
-	 * @var bool
-	 */
+	const GROUP_ID_CLONED_SITE_ACTIONS = 4;
+
+	const GROUP_ID_TRANSLATE_EVERYTHING = 5;
+
+	const GROUP_ID_JOB_LIFECYCLE = 6;
+
+	const GROUP_ID_RETRANSLATION = 7;
+
+	const MAX_DEPTH         = 10;
+	const MAX_STRING_LENGTH = 1000;
+	const MAX_ARRAY_ITEMS   = 1000;
+
+	const MAX_LINE_BYTES = 65536;
+
+	const MAX_EVENTS_PER_REQUEST = 10000;
+
+	const MAX_EXTRA_LOG_DATA_BYTES = 1024;
+
+	const MAX_INPUT_BYTES = 1048576;
+
+	const SECRET_KEY_NEEDLES = [
+		'authorization',
+		'cookie',
+		'password',
+		'passwd',
+		'secret',
+		'token',
+		'bearer',
+		'signature',
+		'api_key',
+		'apikey',
+		'shared_key',
+		'access_key',
+		'accesskey',
+		'private_key',
+		'signing_key',
+		'site_key',
+		'license_key',
+		'x_api',
+		'x_auth',
+	];
+
 	private static $isInitialised = false;
 
-	/**
-	 * Whether current request has any error logs. When it is setup request will render having error state in the logs UI.
-	 * @var bool
-	 */
+	private static $isBackgroundRequest = false;
+
 	private static $hasRequestAnyErrorLog = false;
 
-	/**
-	 * Cached flag whether logging is enabled. It is enabled by the button in the logging screen.
-	 * That screen is accessible from the WPML support page.
-	 *
-	 * @var bool|null
-	 */
 	private static $isEnabled;
 
-	/**
-	 * Stores current request URL. If this value is null that means request was never initialized.
-	 * We want to log only explicit places in the code and avoid cases when we created some logs from some child class
-	 * that called addLog out of the scope when we explicitly initialised the request. Such calls can create many
-	 * useless entries in the database which give no value for the inspection of those logs and could make option entry grow fast.
-	 * @var string|null
-	 */
 	private static $requestUrl;
 
-	/**
-	 * Stores parsed request parameters from the current request.
-	 * @var array
-	 */
 	private static $requestParams = [];
 
-	/**
-	 * Request datetime in ISO-8601 UTC format.
-	 * @var string|null
-	 */
 	private static $requestDateTime;
 
-	/**
-	 * Logs grouped by logical groups. In Case A: REST / ATE sync/download request there can be 1 logical group.
-	 *
-	 * In Case B: Admin "Send to translation" request there can be multiple logical groups, 1 group per each send_jobs function call.
-	 *
-	 * This will allow to group logs into collapsible containers in the UI.
-	 *
-	 * @var array<int, array>
-	 */
-	private static $logsByGroup = [];
+	private static $logUid;
 
-	/**
-	 * Current opened group ID.
-	 * @var int|null
-	 */
+	private static $requestStartTime;
+
 	private static $groupId;
 
-	/**
-	 * Current opened group label.
-	 * @var string|null
-	 */
-	private static $groupLabel;
-
-	/**
-	 * Logs of the current opened group.
-	 * @var array<int, array>
-	 */
-	private static $groupLogs = [];
-
-	/**
-	 * Arbitrary data attached to current opened group.
-	 * @var array
-	 */
-	private static $groupData = [];
-
-	/**
-	 * Object IDs already logged to prevent recursion in dataToArray function call.
-	 * @var array<int>
-	 */
-	private static $alreadyAddedToLog = [];
-
-	/**
-	 * Extra data merged into each log entry. The caller should manually call removeExtraLog data to remove it.
-	 * Otherwise it will be added to all next logs. It is needed to track some optional properties inside each log
-	 * inside current group, for example current processed language during the step when we send content for translation.
-	 * @var array<string, mixed>
-	 */
 	private static $extraLogData = [];
 
-	/**
-	 * Collected string batch IDs. We need to store them to select strings later and show string names and ids from each batch in UI.
-	 * @var array<int>
-	 */
 	private static $stringBatchIds = [];
 
-	/**
-	 * @param int $groupId
-	 * @return bool
-	 */
+	private static $alreadyAddedToLog = [];
+
+	private static $seenTraceHashes = [];
+
+	private static $fp;
+
+	private static $inProgressPath;
+
+	private static $streamOpenAttempted = false;
+
+	private static $streamOpenFailed = false;
+
+	private static $requestStartedWritten = false;
+
+	private static $requestFinishedWritten = false;
+
+	private static $writeFailureReported = false;
+
+	private static $orphanAddReported = false;
+
+	private static $logEventCount = 0;
+
+	private static $eventsTruncatedReported = false;
+
+	private static $phpPid;
+
+	private static $ID_KEY_MAP = [
+		'rid'                  => 'rids',
+		'wpmlJobId'            => 'rids',
+
+		'job_id'               => 'job_ids',
+		'jobId'                => 'job_ids',
+
+		'ateJobId'             => 'ate_job_ids',
+		'ate_job_id'           => 'ate_job_ids',
+		'editor_job_id'        => 'ate_job_ids',
+
+		'post_id'              => 'post_ids',
+		'new_post_id'          => 'post_ids',
+		'source_post_id'       => 'post_ids',
+		'original_doc_id'      => 'post_ids',
+		'original_element_id'  => 'post_ids',
+		'originalElementId'    => 'post_ids',
+
+		'element_id'           => 'element_ids',
+		'elementId'            => 'element_ids',
+
+		'trid'                 => 'trids',
+
+		'target_lang'          => 'target_langs',
+		'language_code'        => 'target_langs',
+		'source_lang'          => 'source_langs',
+		'source_language_code' => 'source_langs',
+
+		'element_type'         => 'element_types',
+	];
+
+	private static $idsTouched = [];
+
 	public static function isSendJobsLogsGroup( $groupId ) {
 		return self::GROUP_ID_SEND_JOBS === (int) $groupId;
 	}
@@ -189,13 +151,260 @@ class JobLog {
 	public static function init() {
 		self::$isInitialised = true;
 		add_action( 'shutdown', [ __CLASS__, 'shutdown' ], PHP_INT_MAX );
+		add_action( 'wpml_after_save_post', [ __CLASS__, 'onSourcePostSaved' ], 10, 4 );
+
+		register_shutdown_function( [ __CLASS__, 'onPhpShutdown' ] );
 	}
 
-	/**
-	 * Checking in wp_options if logging was enabled from the UI by user.
-	 * 
-	 * @return bool
-	 */
+	public static function onPhpShutdown() {
+		static $alreadyRan = false;
+		if ( $alreadyRan ) {
+			return;
+		}
+		$alreadyRan = true;
+
+		if ( ! self::wasRequestInitialised() ) {
+			return;
+		}
+
+		if ( ! is_resource( self::$fp ) ) {
+			return;
+		}
+
+		$error   = error_get_last();
+		$isFatal = is_array( $error )
+			&& in_array(
+				(int) ( $error['type'] ?? 0 ),
+				[ E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ],
+				true
+			);
+
+		if ( $isFatal ) {
+			self::writeLine(
+                [
+					'type'    => 'log',
+					'ts'      => microtime( true ),
+					'groupId' => self::$groupId,
+					'id'      => 'php_fatal',
+					'data'    => [
+						'error_type'      => (int) $error['type'],
+						'error_type_name' => self::phpErrorTypeName( (int) $error['type'] ),
+						'message'         => substr( (string) ( $error['message'] ?? '' ), 0, 1000 ),
+						'file'            => (string) ( $error['file'] ?? '' ),
+						'line'            => isset( $error['line'] ) ? (int) $error['line'] : null,
+					],
+					'logType' => self::LOG_TYPE_ERROR,
+				]
+            );
+			self::$hasRequestAnyErrorLog = true;
+		}
+
+		if ( ! self::$requestFinishedWritten ) {
+			self::writeLine(
+                [
+					'type'          => 'request_finished',
+					'ts'            => microtime( true ),
+					'hasErrorLogs'  => self::$hasRequestAnyErrorLog,
+					'requestParams' => self::dataToArray( self::$requestParams ),
+					'ids'           => self::buildEntityIdsSummary(),
+					'aborted'       => true,
+				]
+            );
+			self::$requestFinishedWritten = true;
+		}
+
+		FsJobLogStorage::finaliseStream( self::$fp, self::$inProgressPath );
+		self::$fp             = null;
+		self::$inProgressPath = null;
+	}
+
+	public static function safeCall( $obj, $method, $default = null ) {
+		if ( ! is_object( $obj ) || ! method_exists( $obj, $method ) ) {
+			return $default;
+		}
+		try {
+			return $obj->$method();
+		} catch ( \Throwable $e ) {
+			return $default;
+		}
+	}
+
+	public static function safeProp( $obj, $property, $default = null ) {
+		if ( ! is_object( $obj ) ) {
+			return $default;
+		}
+		try {
+			if ( ! isset( $obj->$property ) ) {
+				return $default;
+			}
+			return $obj->$property;
+		} catch ( \Throwable $e ) {
+			return $default;
+		}
+	}
+
+	private static function phpErrorTypeName( $type ) {
+		$map = [
+			E_ERROR             => 'E_ERROR',
+			E_PARSE             => 'E_PARSE',
+			E_CORE_ERROR        => 'E_CORE_ERROR',
+			E_COMPILE_ERROR     => 'E_COMPILE_ERROR',
+			E_USER_ERROR        => 'E_USER_ERROR',
+			E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
+			E_WARNING           => 'E_WARNING',
+			E_NOTICE            => 'E_NOTICE',
+			E_USER_WARNING      => 'E_USER_WARNING',
+			E_USER_NOTICE       => 'E_USER_NOTICE',
+			E_DEPRECATED        => 'E_DEPRECATED',
+			E_USER_DEPRECATED   => 'E_USER_DEPRECATED',
+		];
+		return isset( $map[ $type ] ) ? $map[ $type ] : 'UNKNOWN(' . $type . ')';
+	}
+
+	public static function onSourcePostSaved( $post_id, $trid = null, $language_code = null, $source_language = null ) {
+		if ( ! self::canLog() ) {
+			return;
+		}
+		if ( ! empty( $source_language ) ) {
+			return;
+		}
+		if ( ! $trid ) {
+			return;
+		}
+
+		if ( function_exists( 'wp_is_post_autosave' ) && wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+		if ( function_exists( 'wp_is_post_revision' ) && wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		global $wpdb;
+
+		$hasInFlight = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT 1
+				 FROM {$wpdb->prefix}icl_translations t
+				 INNER JOIN {$wpdb->prefix}icl_translation_status s ON s.translation_id = t.translation_id
+				 WHERE t.trid = %d
+				   AND s.status IN (1, 2, 3)
+				 LIMIT 1",
+				(int) $trid
+			)
+		);
+
+		if ( ! $hasInFlight ) {
+			return;
+		}
+
+		$verbose = defined( 'WPML_JOB_LOG_VERBOSE_SOURCE_EDIT' ) && WPML_JOB_LOG_VERBOSE_SOURCE_EDIT;
+
+		$pending          = [];
+		$pendingJobCount  = 0;
+
+		if ( $verbose ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT j.job_id,
+					        j.rid,
+					        s.status,
+					        t.language_code,
+					        UNIX_TIMESTAMP() - UNIX_TIMESTAMP(s.timestamp) AS age_seconds
+					 FROM {$wpdb->prefix}icl_translate_job j
+					 INNER JOIN {$wpdb->prefix}icl_translation_status s ON s.rid = j.rid
+					 INNER JOIN {$wpdb->prefix}icl_translations t       ON t.translation_id = s.translation_id
+					 WHERE t.trid = %d
+					   AND j.translated = 0
+					 LIMIT 50",
+					(int) $trid
+				),
+				ARRAY_A
+			);
+
+			if ( is_array( $rows ) ) {
+				foreach ( $rows as $row ) {
+					$pending[] = [
+						'job_id'      => (int) $row['job_id'],
+						'rid'         => (int) $row['rid'],
+						'target_lang' => isset( $row['language_code'] ) ? (string) $row['language_code'] : '',
+						'status'      => isset( $row['status'] ) ? (int) $row['status'] : null,
+						'age_seconds' => isset( $row['age_seconds'] ) ? (int) $row['age_seconds'] : 0,
+					];
+				}
+				$pendingJobCount = count( $pending );
+			}
+		} else {
+			$pendingJobCount = (int) $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT COUNT(*)
+					 FROM {$wpdb->prefix}icl_translate_job j
+					 INNER JOIN {$wpdb->prefix}icl_translation_status s ON s.rid = j.rid
+					 INNER JOIN {$wpdb->prefix}icl_translations t       ON t.translation_id = s.translation_id
+					 WHERE t.trid = %d
+					   AND j.translated = 0",
+					(int) $trid
+				)
+			);
+		}
+
+		if ( $pendingJobCount === 0 ) {
+			return;
+		}
+
+		$ownsGroup = ! self::isGroupOpen();
+		if ( $ownsGroup ) {
+			self::createNewGroup( self::GROUP_ID_JOB_LIFECYCLE, 'Source post saved with pending translations', [] );
+		}
+		try {
+			$payload = [
+				'post_id'           => (int) $post_id,
+				'trid'              => (int) $trid,
+				'source_lang'       => $language_code,
+				'pending_job_count' => $pendingJobCount,
+			];
+			if ( $verbose ) {
+				$payload['pending_jobs'] = $pending;
+			}
+			self::addError( 'source_edited_with_pending_translation', $payload );
+		} finally {
+			if ( $ownsGroup ) {
+				self::finishCurrentGroup();
+			}
+		}
+	}
+
+	public static function resetForTests() {
+		if ( is_resource( self::$fp ) ) {
+			@fclose( self::$fp );
+		}
+		self::$isInitialised          = false;
+		self::$isBackgroundRequest    = false;
+		self::$hasRequestAnyErrorLog  = false;
+		self::$isEnabled              = null;
+		self::$requestUrl             = null;
+		self::$requestParams          = [];
+		self::$requestDateTime        = null;
+		self::$logUid                 = null;
+		self::$requestStartTime       = null;
+		self::$groupId                = null;
+		self::$extraLogData           = [];
+		self::$stringBatchIds         = [];
+		self::$alreadyAddedToLog      = [];
+		self::$seenTraceHashes        = [];
+		self::$fp                     = null;
+		self::$inProgressPath         = null;
+		self::$streamOpenAttempted    = false;
+		self::$streamOpenFailed       = false;
+		self::$requestStartedWritten  = false;
+		self::$requestFinishedWritten = false;
+		self::$writeFailureReported   = false;
+		self::$orphanAddReported      = false;
+		self::$phpPid                 = null;
+		self::$idsTouched             = [];
+		self::$logEventCount          = 0;
+		self::$eventsTruncatedReported = false;
+	}
+
 	public static function isEnabled() {
 		if ( ! self::$isInitialised ) {
 			return false;
@@ -205,72 +414,144 @@ class JobLog {
 			return self::$isEnabled;
 		}
 
+		if ( self::isCliOrCronContext() && ! self::$isBackgroundRequest ) {
+			return self::$isEnabled = false;
+		}
+
 		global $sitepress;
 		if ( ! $sitepress ) {
 			return false;
 		}
 
-		return self::$isEnabled = (bool) $sitepress->get_setting( self::IS_ENABLED_OPTION_NAME, false );
+		$isDisabled             = (bool) $sitepress->get_setting( self::IS_DISABLED_OPTION_NAME, false );
+		return self::$isEnabled = ! $isDisabled;
 	}
 
-	/**
-	 * Checks whether logging is allowed for current request.
-	 *
-	 * @return bool
-	 */
-	private static function canLog() {
+	private static function isCliOrCronContext() {
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			return true;
+		}
+		if ( PHP_SAPI === 'cli' ) {
+			return true;
+		}
+		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
+			return true;
+		}
+		if ( function_exists( 'wp_doing_cron' ) && wp_doing_cron() ) {
+			return true;
+		}
+		return false;
+	}
+
+	public static function canLog() {
 		return self::wasRequestInitialised() && self::isEnabled();
 	}
 
-	/**
-	 * @param bool $isEnabled
-	 */
 	public static function setIsEnabled( $isEnabled ) {
 		global $sitepress;
-		$sitepress->set_setting( self::IS_ENABLED_OPTION_NAME, (bool) $isEnabled );
+		$sitepress->set_setting( self::IS_DISABLED_OPTION_NAME, ! (bool) $isEnabled );
 		$sitepress->save_settings();
 	}
 
-	/**
-	 * This call should start the logging process and be called before starting any logging.
-	 *
-	 * @return void
-	 */
 	public static function maybeInitRequest() {
 		if ( ! is_null( self::$requestDateTime ) ) {
 			return;
 		}
 
-		self::$requestUrl      = $_SERVER['REQUEST_URI'] ?? null;
-		self::$requestParams   = self::getUrlParams();
-		self::$requestDateTime = gmdate('Y-m-d\TH:i:s\Z');
+		self::$requestUrl       = $_SERVER['REQUEST_URI'] ?? null;
+		self::$requestParams    = self::getUrlParams();
+		self::$requestDateTime  = gmdate( 'Y-m-d\TH:i:s\Z' );
+		self::$logUid           = uniqid();
+		self::$requestStartTime = isset( $_SERVER['REQUEST_TIME_FLOAT'] )
+			? (float) $_SERVER['REQUEST_TIME_FLOAT']
+			: microtime( true );
 	}
 
-	/**
-	 * Check if request data was initialized.
-	 *
-	 * @return bool
-	 */
 	public static function wasRequestInitialised() {
 		return is_string( self::$requestUrl );
 	}
 
-	/**
-	 * Start a new logging group.
-	 *
-	 * @param int    $groupId
-	 * @param string $groupLabel
-	 * @param array  $groupData
-	 */
+	public static function maybeInitBackgroundRequest( $label ) {
+		if ( self::wasRequestInitialised() ) {
+			return false;
+		}
+
+		if ( ! self::isCliOrCronContext() ) {
+			self::maybeInitRequest();
+
+			return false;
+		}
+
+		self::$isBackgroundRequest = true;
+		self::$isEnabled           = null;
+
+		self::$requestUrl       = 'background:' . (string) $label;
+		self::$requestParams    = [ 'background' => (string) $label ];
+		self::$requestDateTime  = gmdate( 'Y-m-d\TH:i:s\Z' );
+		self::$logUid           = uniqid();
+		self::$requestStartTime = microtime( true );
+
+		return true;
+	}
+
+	public static function flushBackgroundRequest() {
+		if ( ! self::$isBackgroundRequest ) {
+			return;
+		}
+
+		self::shutdown();
+
+		self::$isBackgroundRequest    = false;
+		self::$isEnabled              = null;
+		self::$requestUrl             = null;
+		self::$requestParams          = [];
+		self::$requestDateTime        = null;
+		self::$logUid                 = null;
+		self::$requestStartTime       = null;
+		self::$groupId                = null;
+		self::$extraLogData           = [];
+		self::$stringBatchIds         = [];
+		self::$seenTraceHashes        = [];
+		self::$idsTouched             = [];
+		self::$hasRequestAnyErrorLog  = false;
+		self::$streamOpenAttempted    = false;
+		self::$streamOpenFailed       = false;
+		self::$requestStartedWritten  = false;
+		self::$requestFinishedWritten = false;
+		self::$logEventCount          = 0;
+		self::$eventsTruncatedReported = false;
+	}
+
+	public static function isGroupOpen() {
+		return self::$groupId !== null;
+	}
+
 	public static function createNewGroup( $groupId, $groupLabel = '', $groupData = [] ) {
 		if ( ! self::canLog() ) {
 			return;
 		}
 
-		self::$groupId    = $groupId;
-		self::$groupLabel = $groupLabel;
-		self::$groupLogs  = [];
-		self::$groupData  = $groupData;
+		if ( ! self::ensureStreamOpen() ) {
+			return;
+		}
+
+		self::$groupId = $groupId;
+
+		self::$alreadyAddedToLog = [];
+
+		if ( is_array( $groupData ) ) {
+			self::recordEntityIds( $groupData );
+		}
+
+		self::writeLine(
+            [
+				'type'    => 'group_started',
+				'ts'      => microtime( true ),
+				'groupId' => $groupId,
+				'label'   => $groupLabel,
+				'data'    => self::dataToArray( $groupData ),
+			]
+        );
 	}
 
 	public static function finishCurrentGroup() {
@@ -278,26 +559,29 @@ class JobLog {
 			return;
 		}
 
-		self::$logsByGroup[] = [
-			'groupId'       => self::$groupId,
-			'label'         => self::$groupLabel,
-			'logs'          => self::$groupLogs,
-			'data'          => self::$groupData,
-		];
+		if ( self::$groupId === null ) {
+			return;
+		}
 
-		self::$groupLogs  = [];
-		self::$groupId    = null;
-		self::$groupLabel = null;
-		self::$groupData  = [];
+		if ( ! self::ensureStreamOpen() ) {
+			self::$groupId      = null;
+			self::$extraLogData = [];
+			return;
+		}
+
+		self::writeLine(
+            [
+				'type'    => 'group_finished',
+				'ts'      => microtime( true ),
+				'groupId' => self::$groupId,
+			]
+        );
+
+		self::$groupId = null;
+
+		self::$extraLogData = [];
 	}
 
-	/**
-	 * Add extra metadata which will be auto appended to all next logs.
-	 *
-	 * @param string $key
-	 * @param mixed  $value
-	 * @return void
-	 */
 	public static function addExtraLogData( $key, $value ) {
 		if ( ! self::canLog() ) {
 			return;
@@ -313,14 +597,23 @@ class JobLog {
 			}
 		}
 
-		self::$extraLogData[ $key ] = $value;
+		self::$alreadyAddedToLog = [];
+		$bounded                 = self::dataToArray( $value );
+
+		$encoded       = json_encode( $bounded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		$originalBytes = is_string( $encoded ) ? strlen( $encoded ) : 0;
+		if ( $originalBytes > self::MAX_EXTRA_LOG_DATA_BYTES ) {
+			$bounded = [
+				'_truncated'                  => true,
+				'_too_big_for_extra_log_data' => $originalBytes,
+				'_cap_bytes'                  => self::MAX_EXTRA_LOG_DATA_BYTES,
+			];
+		}
+		self::$extraLogData[ $key ] = $bounded;
+
+		self::recordEntityIds( [ $key => $value ] );
 	}
 
-	/**
-	 * Remove extra metadata key.
-	 *
-	 * @param string $key
-	 */
 	public static function removeExtraLogData( $key ) {
 		if ( ! self::canLog() ) {
 			return;
@@ -329,47 +622,157 @@ class JobLog {
 		unset( self::$extraLogData[ $key ] );
 	}
 
-	/**
-	 * Add a log entry to the current log group.
-	 *
-	 * @param string|int $id
-	 * @param mixed      $data
-	 * @param int        $logType
-	 */
+	public static function addRetranslationEvent( $id, array $data = [] ) {
+		self::maybeInitRequest();
+
+		if ( ! self::canLog() ) {
+			return;
+		}
+
+		$ownsGroup = ! self::isGroupOpen();
+		if ( $ownsGroup ) {
+			self::createNewGroup( self::GROUP_ID_RETRANSLATION, 'ATE retranslation lifecycle' );
+		}
+
+		try {
+			self::add( $id, $data );
+		} finally {
+			if ( $ownsGroup ) {
+				self::finishCurrentGroup();
+			}
+		}
+	}
+
 	public static function add( $id, $data = [], $logType = self::LOG_TYPE_INFO ) {
 		if ( ! self::canLog() ) {
 			return;
 		}
 
+		if ( self::$groupId === null ) {
+			if (
+				defined( 'WPML_JOB_LOG_SAVE_ORPHAN_GROUPS_CALLS' )
+				&& ! self::$orphanAddReported
+			) {
+				self::$orphanAddReported = true;
+				@error_log(
+					'WPML JobLog: add() called without an open group (id=' . (string) $id . '). '
+					. 'Call JobLog::createNewGroup() before logging.'
+				);
+			}
+			if ( ! is_resource( self::$fp ) ) {
+				return;
+			}
+		}
+
+		if ( ! self::ensureStreamOpen() ) {
+			return;
+		}
+
+		if ( self::$logEventCount >= self::MAX_EVENTS_PER_REQUEST ) {
+			if ( ! self::$eventsTruncatedReported ) {
+				self::$eventsTruncatedReported = true;
+				self::writeLine( [
+					'type'    => 'log',
+					'ts'      => microtime( true ),
+					'groupId' => self::$groupId,
+					'id'      => 'events_truncated',
+					'data'    => [
+						'cap'                  => self::MAX_EVENTS_PER_REQUEST,
+						'last_id'              => $id,
+						'remaining_calls_dropped_until_shutdown' => true,
+					],
+					'logType' => self::LOG_TYPE_ERROR,
+				] );
+				self::$hasRequestAnyErrorLog = true;
+			}
+			return;
+		}
+		self::$logEventCount++;
+
 		self::$alreadyAddedToLog = [];
 
-		$logs = [
-			'id'      => $id,
-			'data'    => self::dataToArray( $data ),
-			'trace'   => self::getTrace(),
-			'logType' => $logType,
-		];
+		if ( is_array( $data ) ) {
+			self::recordEntityIds( $data );
+		}
 
-		$logs = array_merge( $logs, self::$extraLogData );
+		$traceFrames = self::getTrace();
+		$traceHash   = self::hashTrace( $traceFrames );
 
-		self::$groupLogs[] = $logs;
+		$traceFields = isset( self::$seenTraceHashes[ $traceHash ] )
+			? [ 'traceHash' => $traceHash ]
+			: [
+				'trace'     => $traceFrames,
+				'traceHash' => $traceHash,
+			];
+
+		self::$seenTraceHashes[ $traceHash ] = true;
+
+		$line = array_merge(
+			[
+				'type'    => 'log',
+				'ts'      => microtime( true ),
+				'groupId' => self::$groupId,
+				'id'      => $id,
+				'data'    => self::dataToArray( $data ),
+			],
+			$traceFields,
+			[ 'logType' => $logType ]
+		);
+
+		$line += self::$extraLogData;
+
+		self::writeLine( $line );
 	}
 
-	/**
-	 * Check whether given log entry is an error.
-	 *
-	 * @return bool
-	 */
+	private static function hashTrace( array $frames ) {
+		return substr( md5( implode( "\n", $frames ) ), 0, 10 );
+	}
+
+	private static function recordEntityIds( $payload, $depth = 0 ) {
+		if ( $depth > self::MAX_DEPTH ) {
+			return;
+		}
+		if ( is_object( $payload ) ) {
+			$payload = get_object_vars( $payload );
+		}
+		if ( ! is_array( $payload ) ) {
+			return;
+		}
+		foreach ( $payload as $key => $value ) {
+			if ( is_array( $value ) || is_object( $value ) ) {
+				self::recordEntityIds( $value, $depth + 1 );
+				continue;
+			}
+			if ( ! isset( self::$ID_KEY_MAP[ $key ] ) ) {
+				continue;
+			}
+			if ( ! is_scalar( $value ) ) {
+				continue;
+			}
+			$str = (string) $value;
+			if ( $str === '' ) {
+				continue;
+			}
+			$bucket                              = self::$ID_KEY_MAP[ $key ];
+			self::$idsTouched[ $bucket ][ $str ] = true;
+		}
+	}
+
+	private static function buildEntityIdsSummary() {
+		$out = [];
+		foreach ( self::$idsTouched as $bucket => $valueMap ) {
+			if ( empty( $valueMap ) ) {
+				continue;
+			}
+			$out[ $bucket ] = array_keys( $valueMap );
+		}
+		return $out;
+	}
+
 	public static function isErrorLog( $log ) {
 		return (int) $log['logType'] === self::LOG_TYPE_ERROR;
 	}
 
-	/**
-	 * Add an error log entry. Error log entries will be displayed in special way in the UX.
-	 *
-	 * @param string|int $id
-	 * @param mixed      $data
-	 */
 	public static function addError( $id, $data = [] ) {
 		self::$hasRequestAnyErrorLog = true;
 		self::add( $id, $data, self::LOG_TYPE_ERROR );
@@ -379,44 +782,207 @@ class JobLog {
 		return FsJobLogStorage::getLogsCount();
 	}
 
-	/**
-	 * Get all stored logs.
-	 *
-	 * @return array
-	 */
-	public static function getLogs() {
-		return FsJobLogStorage::getRequestLogs();
+	public static function getSummaries() {
+		return FsJobLogStorage::getRequestSummaries();
 	}
 
-	/**
-	 * Clear all stored logs.
-	 * 
-	 * @return bool
-	 */
+	public static function getEvents( $logUid ) {
+		return FsJobLogStorage::readEvents( $logUid );
+	}
+
 	public static function clearLogs() {
 		return FsJobLogStorage::clearAllLogs();
 	}
 
-	/**
-	 * Shutdown handler – persists logs to DB.
-	 */
 	public static function shutdown() {
 		if ( ! self::canLog() ) {
 			return;
 		}
 
-		if ( count( self::$logsByGroup ) === 0 && count( self::$groupLogs ) === 0 ) {
+		if ( ! self::$requestStartedWritten || self::$requestFinishedWritten ) {
 			return;
 		}
 
-		// Group did not closed properly because of the error or exception.
-		if ( count( self::$groupLogs ) > 0 ) {
+		if ( self::$groupId !== null ) {
 			self::finishCurrentGroup();
 		}
 
+		$enrichedRequestParams = self::enrichRequestParams( self::$requestParams );
+		$stringIdsByBatchId    = self::resolveStringIdsByBatchId( self::$stringBatchIds );
+
+		self::$alreadyAddedToLog = [];
+
+		self::writeLine(
+            [
+				'type'               => 'request_finished',
+				'ts'                 => microtime( true ),
+				'hasErrorLogs'       => self::$hasRequestAnyErrorLog,
+				'requestParams'      => self::dataToArray( $enrichedRequestParams ),
+				'stringIdsByBatchId' => $stringIdsByBatchId,
+				'ids'                => self::buildEntityIdsSummary(),
+			]
+        );
+		self::$requestFinishedWritten = true;
+
+		if ( ! FsJobLogStorage::finaliseStream( self::$fp, self::$inProgressPath ) ) {
+			self::reportIoFailure( 'finalise' );
+		}
+
+		self::$fp             = null;
+		self::$inProgressPath = null;
+	}
+
+	private static function ensureStreamOpen() {
+		if ( self::$streamOpenFailed ) {
+			return false;
+		}
+
+		if ( is_resource( self::$fp ) ) {
+			return true;
+		}
+
+		if ( self::$streamOpenAttempted ) {
+			return false;
+		}
+
+		self::$streamOpenAttempted = true;
+
+
+		[ $fp, $path ] = FsJobLogStorage::openRequestStream( self::$logUid, self::$requestStartTime );
+		if ( ! is_resource( $fp ) ) {
+			self::$streamOpenFailed = true;
+			return false;
+		}
+
+		self::$fp             = $fp;
+		self::$inProgressPath = $path;
+
+		self::$alreadyAddedToLog = [];
+
+		$ok = self::writeLine(
+            [
+				'type'            => 'request_started',
+				'ts'              => self::$requestStartTime,
+				'logUid'          => self::$logUid,
+				'requestUrl'      => self::$requestUrl,
+				'requestParams'   => self::dataToArray( self::$requestParams ),
+				'requestDateTime' => self::$requestDateTime,
+				'blogId'          => is_multisite() ? get_current_blog_id() : 0,
+			]
+        );
+
+		if ( ! $ok ) {
+			self::$streamOpenFailed = true;
+			return false;
+		}
+
+		self::$requestStartedWritten = true;
+
+		return true;
+	}
+
+	private static function writeLine( array $line ) {
+		if ( ! is_resource( self::$fp ) ) {
+			return false;
+		}
+
+		$line    = self::enrichLineWithTimings( $line );
+		$encoded = self::encodeAndCap( $line );
+		if ( ! is_string( $encoded ) ) {
+			self::reportIoFailure( 'write', 'the line could not be JSON-encoded: ' . json_last_error_msg() );
+			return false;
+		}
+
+		$ok = FsJobLogStorage::writeEncodedLine( self::$fp, $encoded );
+		if ( ! $ok ) {
+			self::reportIoFailure( 'write' );
+		}
+		return $ok;
+	}
+
+	private static function encodeAndCap( array $line ) {
+		$encoded = json_encode( $line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		if ( ! is_string( $encoded ) ) {
+			return null;
+		}
+
+		$originalBytes = strlen( $encoded );
+		if ( $originalBytes <= self::MAX_LINE_BYTES ) {
+			return $encoded;
+		}
+
+		if ( isset( $line['data'] ) ) {
+			$line['data'] = [ '_truncated' => true ];
+		}
+		if ( isset( $line['requestParams'] ) ) {
+			$line['requestParams'] = [ '_truncated' => true ];
+		}
+		$line['_line_oversized'] = [
+			'original_bytes' => $originalBytes,
+			'cap_bytes'      => self::MAX_LINE_BYTES,
+		];
+
+		$reencoded = json_encode( $line, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		return is_string( $reencoded ) ? $reencoded : null;
+	}
+
+	private static function enrichLineWithTimings( array $line ) {
+		$ts = isset( $line['ts'] ) ? (float) $line['ts'] : microtime( true );
+
+		return $line + [
+			'timestamp_utc' => self::formatUtcMs( $ts ),
+			'elapsed_ms'    => self::elapsedMs( $ts ),
+			'php_pid'       => self::pid(),
+		];
+	}
+
+	private static function formatUtcMs( $microtimeFloat ) {
+		$seconds = (int) $microtimeFloat;
+		$ms      = (int) floor( ( $microtimeFloat - $seconds ) * 1000 );
+		if ( $ms < 0 ) {
+			$ms = 0;
+		} elseif ( $ms > 999 ) {
+			$ms = 999;
+		}
+		return gmdate( 'Y-m-d\TH:i:s', $seconds ) . sprintf( '.%03dZ', $ms );
+	}
+
+	private static function elapsedMs( $microtimeFloat ) {
+		if ( self::$requestStartTime === null ) {
+			return 0;
+		}
+		return (int) round( ( $microtimeFloat - self::$requestStartTime ) * 1000 );
+	}
+
+	private static function pid() {
+		if ( self::$phpPid === null ) {
+			self::$phpPid = function_exists( 'getmypid' ) ? (int) getmypid() : 0;
+		}
+		return self::$phpPid;
+	}
+
+	private static function reportIoFailure( $stage, $reason = null ) {
+		if ( self::$writeFailureReported ) {
+			return;
+		}
+		self::$writeFailureReported = true;
+		if ( null === $reason ) {
+			$last   = error_get_last();
+			$reason = is_array( $last ) && ! empty( $last['message'] )
+				? 'PHP reported: ' . $last['message']
+				: 'the stream returned no error message';
+		}
+		@error_log( self::ioFailureMessage( $stage, (string) self::$inProgressPath, $reason ) );
+	}
+
+	public static function ioFailureMessage( $stage, $path, $reason ) {
+		return 'WPML JobLog: failed during ' . $stage . ' to ' . $path . ' - ' . $reason
+			. ' (check free space, permissions and open_basedir for that path).';
+	}
+
+	private static function enrichRequestParams( array $requestParams ) {
 		global $wpdb;
 
-		$requestParams = self::$requestParams;
 		if ( isset( $requestParams['posts'] ) && is_array( $requestParams['posts'] ) ) {
 			for ( $i = 0; $i < count( $requestParams['posts'] ); $i++ ) {
 				$postId = $requestParams['posts'][ $i ];
@@ -452,90 +1018,48 @@ class JobLog {
 			}
 		}
 
-		if ( count( self::$stringBatchIds ) > 0 ) {
-			$stringBatchIds = array_map( 'intval', self::$stringBatchIds );
-			if ( $stringBatchIds ) {
-				$placeholders = implode( ',', array_fill( 0, count( $stringBatchIds ), '%d' ) );
-				$sql          = "
-					SELECT *
-					FROM {$wpdb->prefix}icl_string_batches
-					WHERE batch_id IN ($placeholders)
-				";
-
-				$results            = $wpdb->get_results( $wpdb->prepare( $sql, $stringBatchIds ), ARRAY_A );
-				$stringIdsByBatchId = [];
-
-				foreach ( $results as $result ) {
-					$batchId  = (int) $result['batch_id'];
-					$stringId = (int) $result['string_id'];
-
-					if ( ! isset( $stringIdsByBatchId[ $batchId ] ) ) {
-						$stringIdsByBatchId[ $batchId ] = [];
-					}
-
-					$stringIdsByBatchId[ $batchId ][] = $stringId;
-				}
-
-				// We need this info only for first log within same element_id group sequence.
-				$alreadyAddedBatches = [];
-
-				foreach ( self::$logsByGroup as &$groupLogs ) {
-					foreach ( $groupLogs['logs'] as &$log ) {
-						if ( ! isset( $log['type'] ) || $log['type'] !== 'st-batch' || ! isset( $log['element_id'] ) ) {
-							unset( $log );
-							continue;
-						}
-
-						$batchId   = (int) $log['element_id'];
-						$stringIds = $stringIdsByBatchId[ $batchId ] ?? null;
-
-						if ( in_array( $batchId, $alreadyAddedBatches ) || ! is_array( $stringIds ) ) {
-							unset( $log );
-							continue;
-						}
-
-						$log['string_ids_in_batch'] = $stringIds;
-						unset( $log );
-						$alreadyAddedBatches[] = $batchId;
-					}
-					unset( $groupLogs );
-				}
-			}
-		}
-
-		$log = [
-			'requestUrl'      => self::$requestUrl,
-			'requestParams'   => $requestParams,
-			'requestDateTime' => self::$requestDateTime,
-			'hasErrorLogs'    => self::$hasRequestAnyErrorLog,
-			'logsByGroup'     => self::$logsByGroup,
-			'logUid'          => uniqid(),
-		];
-
-		FsJobLogStorage::writeRequestLog( $log );
+		return $requestParams;
 	}
 
-	/**
-	 * @param object $object
-	 *
-	 * @return string
-	 */
+	private static function resolveStringIdsByBatchId( array $stringBatchIds ) {
+		if ( count( $stringBatchIds ) === 0 ) {
+			return [];
+		}
+
+		global $wpdb;
+		$stringBatchIds = array_map( 'intval', $stringBatchIds );
+		$placeholders   = implode( ',', array_fill( 0, count( $stringBatchIds ), '%d' ) );
+		$sql            = "
+			SELECT *
+			FROM {$wpdb->prefix}icl_string_batches
+			WHERE batch_id IN ($placeholders)
+		";
+
+		$results            = $wpdb->get_results( $wpdb->prepare( $sql, $stringBatchIds ), ARRAY_A );
+		$stringIdsByBatchId = [];
+
+		if ( ! is_array( $results ) ) {
+			return $stringIdsByBatchId;
+		}
+
+		foreach ( $results as $result ) {
+			$batchId  = (int) $result['batch_id'];
+			$stringId = (int) $result['string_id'];
+
+			if ( ! isset( $stringIdsByBatchId[ $batchId ] ) ) {
+				$stringIdsByBatchId[ $batchId ] = [];
+			}
+
+			$stringIdsByBatchId[ $batchId ][] = $stringId;
+		}
+
+		return $stringIdsByBatchId;
+	}
+
 	private static function getObjectId( $object ) {
 		return (string) spl_object_hash( $object );
 	}
 
-	const MAX_DEPTH = 10;
-	const MAX_STRING_LENGTH = 1000;
-	const MAX_ARRAY_ITEMS = 1000;
-
-	/**
-	 * Normalize log data to array-safe format.
-	 *
-	 * @param mixed $data
-	 * @param int   $depth
-	 *
-	 * @return array
-	 */
 	private static function dataToArray( $data, $depth = 0 ) {
 		if ( $depth > self::MAX_DEPTH ) {
 			return '[DEPTH_LIMIT]';
@@ -547,8 +1071,12 @@ class JobLog {
 		if ( is_resource( $data ) ) {
 			return 'resource';
 		}
-		if ( is_string( $data ) && strlen( $data ) > self::MAX_STRING_LENGTH ) {
-			return substr( $data, 0, self::MAX_STRING_LENGTH ) . '…[TRUNCATED]';
+		if ( is_string( $data ) ) {
+			$data = self::stripUrlSecrets( $data );
+			if ( strlen( $data ) > self::MAX_STRING_LENGTH ) {
+				return substr( $data, 0, self::MAX_STRING_LENGTH ) . '…[TRUNCATED]';
+			}
+			return $data;
 		}
 
 		if ( is_object( $data ) ) {
@@ -571,12 +1099,8 @@ class JobLog {
 					break;
 				}
 
-				if ( $key === 'signedUrl' && is_string( $value ) && strpos( $value, 'signature=' ) !== false ) {
-					$result[ $key ] = preg_replace(
-						'/(?:^|[?&])(signature|token|shared_key)=([^&]+)/i',
-						'$1=[REMOVED]',
-						$value
-					);
+				if ( self::isSensitiveKey( $key ) ) {
+					$result[ $key ] = '[REDACTED]';
 					continue;
 				}
 
@@ -589,51 +1113,97 @@ class JobLog {
 		return $data;
 	}
 
-	/**
-	 * @param  string $url
-	 * @return string
-	 */
-	private static function sanitizeSignedUrlWithRegex( $url ) {
-		$res = preg_replace(
-			'/(?:^|[?&])(signature|token|shared_key)=([^&]+)/',
-			'$1=[REMOVED]',
-			$url
-		);
-		return is_string( $res ) ? $res : '[EMPTY]';
+	private static function isSensitiveKey( $key ) {
+		if ( ! is_string( $key ) && ! is_numeric( $key ) ) {
+			return false;
+		}
+		$normalised = str_replace( '-', '_', strtolower( (string) $key ) );
+		foreach ( self::SECRET_KEY_NEEDLES as $needle ) {
+			if ( strpos( $normalised, $needle ) !== false ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	/**
-	 * Parse JSON request body into array.
-	 * 
-	 * @return array
-	 */
-	private static function getUrlParams() {
-		$body = file_get_contents('php://input');
+	private static function stripUrlSecrets( $value ) {
+		if ( strpos( $value, '=' ) === false ) {
+			return $value;
+		}
 
-		if ($body === false || $body === '') {
+		static $pattern = null;
+		if ( null === $pattern ) {
+			$needles = array_map(
+				function ( $needle ) {
+					return str_replace( '_', '[_-]', preg_quote( $needle, '/' ) );
+				},
+				self::SECRET_KEY_NEEDLES
+			);
+			$pattern = '/(^|[?&])([a-z0-9_-]*(?:' . implode( '|', $needles ) . ')[a-z0-9_-]*)=([^&\s]+)/i';
+		}
+
+		return preg_replace_callback(
+			$pattern,
+			function ( $match ) {
+				return $match[1] . $match[2] . '=' . self::redactUrlSecretValue( $match[2], $match[3] );
+			},
+			$value
+		);
+	}
+
+	private static function redactUrlSecretValue( $name, $value ) {
+		if ( false === strpos( str_replace( '-', '_', strtolower( $name ) ), 'site_key' ) ) {
+			return '[REMOVED]';
+		}
+
+		$lastCharactersCount = 4;
+		if ( strlen( $value ) <= $lastCharactersCount ) {
+			return $value;
+		}
+
+		return str_repeat( 'x', strlen( $value ) - $lastCharactersCount ) . substr( $value, -$lastCharactersCount );
+	}
+
+	private static function getUrlParams() {
+		$contentLength = isset( $_SERVER['CONTENT_LENGTH'] ) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+		if ( $contentLength > self::MAX_INPUT_BYTES ) {
+			return [
+				'_oversized_input' => [
+					'content_length' => $contentLength,
+					'cap_bytes'      => self::MAX_INPUT_BYTES,
+				],
+			];
+		}
+
+		$body = @file_get_contents( 'php://input', false, null, 0, self::MAX_INPUT_BYTES + 1 );
+
+		if ( $body === false || $body === '' ) {
 			return [];
+		}
+
+		if ( strlen( $body ) > self::MAX_INPUT_BYTES ) {
+			return [
+				'_oversized_input' => [
+					'cap_bytes' => self::MAX_INPUT_BYTES,
+				],
+			];
 		}
 
 		$params = json_decode( $body, true );
 
-		return is_array($params) ? $params : [];
+		return is_array( $params ) ? $params : [];
 	}
 
-	/**
-	 * Get simplified backtrace for logging.
-	 *
-	 * @return array<string>
-	 */
 	private static function getTrace() {
-		$debug_backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS );
+		$debug_backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 20 );
 		$traces          = [];
 
 		foreach ( $debug_backtrace as $trace ) {
 			$trace = [
-				'file' => $trace['file'] ?? '',
-				'line' => $trace['line'] ?? '',
-				'class' => $trace['class'] ?? '',
-				'type' => $trace['type'] ?? '',
+				'file'     => $trace['file'] ?? '',
+				'line'     => $trace['line'] ?? '',
+				'class'    => $trace['class'] ?? '',
+				'type'     => $trace['type'] ?? '',
 				'function' => $trace['function'] ?? '',
 			];
 

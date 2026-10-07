@@ -6,11 +6,6 @@ use WPML\FP\Obj;
 
 class Entry {
 
-	/**
-	 * @param int $id
-	 *
-	 * @return string|null
-	 */
 	public static function getLanguageById( int $id ) {
 		$entryMetas = wpforms()
 			->get( 'entry_meta' )

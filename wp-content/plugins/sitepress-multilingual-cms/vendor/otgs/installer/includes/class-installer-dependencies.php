@@ -1,5 +1,6 @@
 <?php
 
+use OTGS\Installer\OutboundLink;
 use OTGS\Installer\Settings;
 
 class Installer_Dependencies {
@@ -20,18 +21,18 @@ class Installer_Dependencies {
 				add_action( 'admin_head', array(
 					$this,
 					'prevent_plugins_update_on_updates_screen'
-				) );         //iframe/bulk
+				) );
 			} else {
 				add_action( 'all_admin_notices', array(
 					$this,
 					'prevent_plugins_update_on_updates_screen'
-				) );  //regular/singular
+				) );
 			}
 		}
 		add_action( 'wp_ajax_update-plugin', array(
 			$this,
 			'prevent_plugins_update_on_updates_screen'
-		), 0 ); // high priority, before WP
+		), 0 );
 
 	}
 
@@ -48,12 +49,11 @@ class Installer_Dependencies {
 
 				$upgrade_path_length = strlen( WP_CONTENT_DIR . '/upgrade' );
 
-				// Some possible plugin download url (doesn't matter if valid) it's just for length calculation.
 				$a_plugin = 'https://' . $repository_id . '.org/?download=637370&version=5.5.2';
 
 				$url            = OTGS_Installer()->append_site_key_to_download_url( $a_plugin, 'xxxxxx', $repository_id );
 				$tmpfname       = wp_tempnam( $url );
-				$tmpname_length = strlen( basename( $tmpfname ) ) - 4; // -.tmp
+				$tmpname_length = strlen( basename( $tmpfname ) ) - 4;
 				wp_delete_file( $tmpfname );
 
 				if ( $upgrade_path_length + $tmpname_length + $longest_path[ $repository_id ] + $margin > $windows_max_path_length ) {
@@ -71,7 +71,7 @@ class Installer_Dependencies {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 			require_once WP_Installer()->plugin_path() . '/includes/class-installer-upgrader-skins.php';
 
-			$upgrader_skins = new Installer_Upgrader_Skins(); //use our custom (mute) Skin
+			$upgrader_skins = new Installer_Upgrader_Skins();
 			$upgrader       = new Plugin_Upgrader( $upgrader_skins );
 
 			ob_start();
@@ -102,7 +102,6 @@ class Installer_Dependencies {
 
 	public function prevent_plugins_update_on_plugins_page() {
 		if ( strtoupper( substr( constant('PHP_OS'), 0, 3 ) ) !== 'WIN' ) {
-			// Only for Windows.
 			return;
 		}
 
@@ -145,7 +144,7 @@ class Installer_Dependencies {
 								}
 
 								foreach ( $repositories_plugins as $slug => $name ) {
-									if ( $wp_plugin_slug == $slug || $name == $plugin['Name'] || $name == $plugin['Title'] ) { //match order: slug, name, title
+									if ( $wp_plugin_slug == $slug || $name == $plugin['Name'] || $name == $plugin['Title'] ) {
 
 										remove_action( "after_plugin_row_$plugin_id", 'wp_plugin_update_row', 10 );
 										add_action( "after_plugin_row_$plugin_id", array(
@@ -171,7 +170,6 @@ class Installer_Dependencies {
 	}
 
 	public function wp_plugin_update_row_win_exception() {
-		/** @var WP_Plugins_List_Table $wp_list_table */
 		$wp_list_table = _get_list_table( 'WP_Plugins_List_Table' );
 		echo '<tr class="plugin-update-tr">';
 		echo '<td  class="plugin-update colspanchange" colspan="' . esc_attr( (string) $wp_list_table->get_column_count() ) .
@@ -187,7 +185,6 @@ class Installer_Dependencies {
 
 			$installer_settings = WP_Installer()->settings;
 
-			//bulk mode
 			if ( 'update-selected' == $action ) {
 
 				global $plugins;
@@ -254,7 +251,6 @@ class Installer_Dependencies {
 								foreach ( $product['plugins'] as $plugin_slug ) {
 									$download = $installer_settings['repositories'][ $repository_id ]['data']['downloads']['plugins'][ $plugin_slug ];
 
-									//match by folder, will change to match by name and folder
 									if ( $download['slug'] == $wp_plugin_slug && empty ( $download['free-on-wporg'] ) ) {
 
 										echo '<div class="updated error"><p>' . $this->win_paths_exception_message() . '</p></div>';
@@ -296,7 +292,10 @@ class Installer_Dependencies {
 	}
 
 	public function missing_php_functions_notice() {
-		$installer_doc_url  = 'https://wpml.org/?p=72674#automated-updates';
+		$installer_doc_url  = OutboundLink::to(
+			'https://wpml.org/documentation/getting-started-guide/download-and-install/',
+			array( 'medium' => 'notice', 'campaign' => 'requirements' )
+		);
 		$installer_doc_link = '<a href="' . $installer_doc_url . '">' . __( 'OTGS Installer', 'installer' ) . '</a>';
 
 		echo '<div class="updated error">';
@@ -308,7 +307,11 @@ class Installer_Dependencies {
 		echo '<code>' . join( ', ', $this->missing_php_libraries ) . '</code>';
 		echo '</p>';
 
-		$minimum_requirements_link = '<a href="https://wpml.org/?page_id=716">' . __( 'Minimum WPML requirements' ) . '</a>';
+		$minimum_requirements_url  = OutboundLink::to(
+			'https://wpml.org/home/minimum-requirements/',
+			array( 'medium' => 'notice', 'campaign' => 'requirements' )
+		);
+		$minimum_requirements_link = '<a href="' . $minimum_requirements_url . '">' . __( 'Minimum WPML requirements' ) . '</a>';
 		echo '<p>' . sprintf( __( 'Learn more: %s', 'installer' ), $minimum_requirements_link ) . '</p>';
 
 		echo '</div>';

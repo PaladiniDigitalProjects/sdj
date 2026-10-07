@@ -2,10 +2,6 @@
 
 class WPML_ST_TM_Jobs extends WPML_WPDB_User {
 
-	/**
-	 * @param wpdb $wpdb
-	 * WPML_ST_TM_Jobs constructor.
-	 */
 	public function __construct( &$wpdb ) {
 		parent::__construct( $wpdb );
 		add_filter(
@@ -32,11 +28,6 @@ class WPML_ST_TM_Jobs extends WPML_WPDB_User {
 		return $this->get_jobs_table_sql_part( $sql_statements, $args );
 	}
 
-	/**
-	 * @param string $table
-	 *
-	 * @return string
-	 */
 	public function filter_tm_post_job_table( $table ) {
 		return " (SELECT ID, post_type FROM {$table}
 						UNION ALL
@@ -57,20 +48,8 @@ class WPML_ST_TM_Jobs extends WPML_WPDB_User {
 		return $sql_statements;
 	}
 
-	/**
-	 * @param array $args
-	 *          string_where
-	 *          translator_id
-	 *          from
-	 *          to
-	 *          status
-	 *          service
-	 *
-	 * @return string
-	 */
 	private function build_string_where( $args ) {
 		if ( isset( $args['overdue'] ) && $args['overdue'] ) {
-			// We do not save "deadline" for string jobs so we just want to exclude them in such case
 			return 'WHERE 1 = 0';
 		}
 
@@ -113,9 +92,10 @@ class WPML_ST_TM_Jobs extends WPML_WPDB_User {
 		if ( count( $wheres ) > 0 && count( $wheres ) === count( $where_args ) ) {
 			$where_sql = implode( ' AND ', $wheres );
 
-			/** @var string $sql */
-			$sql = $this->wpdb->prepare( $where_sql, $where_args );
-			$string_where = 'WHERE ' . $sql;
+			$prepared_where = $this->wpdb->prepare( $where_sql, $where_args );
+			if ( is_string( $prepared_where ) ) {
+				$string_where = 'WHERE ' . $prepared_where;
+			}
 		}
 
 		return $string_where;

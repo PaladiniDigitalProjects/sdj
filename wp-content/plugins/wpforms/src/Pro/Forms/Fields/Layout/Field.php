@@ -82,7 +82,7 @@ class Field extends WPForms_Field {
 
 		// Define field type information.
 		$this->name            = esc_html__( 'Layout', 'wpforms' );
-		$this->keywords        = esc_html__( 'column, row', 'wpforms' );
+		$this->keywords        = esc_html__( 'column, row, side by side, side-by-side, multi-column, multi column, two-column, two column, grid, arrange', 'wpforms' );
 		$this->type            = 'layout';
 		$this->icon            = 'fa-columns';
 		$this->order           = 140;

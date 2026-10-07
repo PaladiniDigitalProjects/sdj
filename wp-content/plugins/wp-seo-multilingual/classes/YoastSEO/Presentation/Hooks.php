@@ -15,9 +15,11 @@ class Hooks implements \IWPML_Frontend_Action {
 
 	const OPTION_KEY = 'wpseo_titles';
 
-	/**
-	 * Add hooks.
-	 */
+	const AUTHOR_META_KEYS = [
+		'title'    => Utils::KEY_META_TITLE,
+		'metadesc' => Utils::KEY_USER_META_DESC,
+	];
+
 	public function add_hooks() {
 		add_filter( 'wpseo_title', [ $this, 'translateTitle' ], 10, 2 );
 		add_filter( 'wpseo_metadesc', [ $this, 'translateDescription' ], 10, 2 );
@@ -38,52 +40,23 @@ class Hooks implements \IWPML_Frontend_Action {
 		}
 	}
 
-	/**
-	 * Translates a title.
-	 *
-	 * @param string                 $title        The title in the default language.
-	 * @param Indexable_Presentation $presentation The presentation class.
-	 *
-	 * @return string
-	 */
 	public function translateTitle( $title, $presentation ) {
 		return $this->translate( 'title', $title, $presentation );
 	}
 
-	/**
-	 * Translates a description.
-	 *
-	 * @param string                 $description  The description in the default language.
-	 * @param Indexable_Presentation $presentation The presentation class.
-	 *
-	 * @return string
-	 */
 	public function translateDescription( $description, $presentation ) {
 		return $this->translate( 'metadesc', $description, $presentation );
 	}
 
-	/**
-	 * Translates a breadcrumb title.
-	 *
-	 * @param string                           $title        The title in the default language.
-	 * @param Indexable_Presentation|\stdClass $presentation The presentation class.
-	 *
-	 * @return string
-	 */
 	public function translateBreadcrumbTitle( $title, $presentation ) {
 		return $this->translate( 'bctitle', $title, $presentation );
 	}
 
-	/**
-	 * Get the translations from the options table, which will include the translated admin-texts.
-	 *
-	 * @param string                 $type         The object type of the Indesable, used as a prefix for the option name.
-	 * @param string                 $text         The text in the default language.
-	 * @param Indexable_Presentation $presentation The presentation class.
-	 *
-	 * @return string
-	 */
 	private function translate( $type, $text, $presentation ) {
+		if ( 'user' === Obj::path( [ 'model', 'object_type' ], $presentation ) ) {
+			return $this->translateAuthorMeta( $type, $text, $presentation );
+		}
+
 		$translation = Obj::prop( $this->getOptionKey( $type, $presentation ), get_option( self::OPTION_KEY, [] ) );
 
 		if ( $translation ) {
@@ -93,14 +66,18 @@ class Hooks implements \IWPML_Frontend_Action {
 		return $text;
 	}
 
-	/**
-	 * Returns the option key for the object being translated.
-	 *
-	 * @param string                 $type         How to prefix the option name.
-	 * @param Indexable_Presentation $presentation The presentation class.
-	 *
-	 * @return string
-	 */
+	private function translateAuthorMeta( $type, $text, $presentation ) {
+		$metaKey = Obj::prop( $type, self::AUTHOR_META_KEYS );
+
+		if ( ! $metaKey ) {
+			return $text;
+		}
+
+		$value = get_the_author_meta( $metaKey, $presentation->model->object_id );
+
+		return $value ? wpseo_replace_vars( $value, $presentation ) : $text;
+	}
+
 	private function getOptionKey( $type, $presentation ) {
 		$systemPageSubType = wpml_collect(
 			[
@@ -117,13 +94,6 @@ class Hooks implements \IWPML_Frontend_Action {
 		)->get( $presentation->model->object_type, '' );
 	}
 
-	/**
-	 * Translate titles and links for home and archives.
-	 *
-	 * @param Indexable[] $indexables An array of Indexable objects representing the breacrumbs.
-	 *
-	 * @return Indexable[]
-	 */
 	public function translateBreadcrumbs( $indexables ) {
 		foreach ( $indexables as &$indexable ) {
 			if ( 'post-type-archive' === $indexable->object_type ) {
@@ -155,13 +125,6 @@ class Hooks implements \IWPML_Frontend_Action {
 		return $indexables;
 	}
 
-	/**
-	 * Translate permalinks.
-	 *
-	 * @param Indexable_Presentation $presentation The indexable presentation.
-	 *
-	 * @return Indexable_Presentation
-	 */
 	public function translatePermalinks( $presentation ) {
 		$newLink      = null;
 		$originalLink = Obj::path( [ 'model', 'permalink' ], $presentation );
@@ -173,6 +136,8 @@ class Hooks implements \IWPML_Frontend_Action {
 			$newLink = self::getTermLink( $presentation->model->object_id, $originalLink );
 		} elseif ( 'post-type-archive' === $objectType ) {
 			$newLink = self::getPostTypeArchiveLink( $presentation->model->object_sub_type, $originalLink );
+		} elseif ( 'user' === $objectType ) {
+			$newLink = self::getAuthorLink( $presentation->model->object_id, $originalLink );
 		}
 
 		if ( $newLink ) {
@@ -182,13 +147,6 @@ class Hooks implements \IWPML_Frontend_Action {
 		return $presentation;
 	}
 
-	/**
-	 *
-	 * @param Indexable_Presentation $presentation The indexable presentation.
-	 * @param object                 $context      The Meta Tags Context.
-	 *
-	 * @return Indexable_Presentation
-	 */
 	public function setSchemaGraphData( $presentation, $context ) {
 		$context->site_url = apply_filters( 'wpml_permalink', $context->site_url );
 
@@ -200,35 +158,22 @@ class Hooks implements \IWPML_Frontend_Action {
 		return $presentation;
 	}
 
-	/**
-	 * @param \WP_Post|int $post
-	 * @param string       $fallback
-	 *
-	 * @return string
-	 */
 	private static function getPermalink( $post, $fallback ) {
 		return Maybe::fromNullable( get_permalink( $post ) )
 			->getOrElse( $fallback );
 	}
 
-	/**
-	 * @param \WP_Term|int $term
-	 * @param string       $fallback
-	 *
-	 * @return string
-	 */
 	private static function getTermLink( $term, $fallback ) {
 		return Maybe::fromNullable( get_term_link( $term ) )
 			->filter( pipe( 'is_wp_error', Logic::not() ) )
 			->getOrElse( $fallback );
 	}
 
-	/**
-	 * @param string $postType
-	 * @param string $fallback
-	 *
-	 * @return string
-	 */
+	private static function getAuthorLink( $userId, $fallback ) {
+		return Maybe::fromNullable( get_author_posts_url( $userId ) )
+			->getOrElse( $fallback );
+	}
+
 	private static function getPostTypeArchiveLink( $postType, $fallback ) {
 		return Maybe::fromNullable( get_post_type_archive_link( $postType ) )
 			->getOrElse( $fallback );

@@ -15,12 +15,6 @@ class SubLabels {
 			->then( spreadArgs( [ $this, 'addSubLabelsTranslations' ] ) );
 	}
 
-	/**
-	 * @param array $properties Field properties.
-	 * @param array $field      Field data and settings.
-	 *
-	 * @return array
-	 */
 	public function addSubLabelsTranslations( array $properties, array $field ) : array {
 		if ( $this->hasSubLabels( $field ) ) {
 			foreach ( [
@@ -37,13 +31,7 @@ class SubLabels {
 		return $properties;
 	}
 
-	/**
-	 * @param array $form
-	 *
-	 * @return array
-	 */
 	public function addFieldSubLabels( array $form ) : array {
-		// Get a filtered form content.
 		$formData = wpforms_decode( wp_unslash( $form['post_content'] ) );
 
 		$addSubLabels = function( array $field ) : array {
@@ -63,11 +51,6 @@ class SubLabels {
 		return array_merge( $form, [ 'post_content' => wpforms_encode( $formData ) ] );
 	}
 
-	/**
-	 * @param array $field
-	 *
-	 * @return bool
-	 */
 	private function hasSubLabels( array $field ) : bool {
 		return 'name' === $field['type'] && 'simple' !== $field['format'];
 	}

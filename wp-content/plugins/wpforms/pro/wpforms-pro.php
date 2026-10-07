@@ -14,14 +14,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WPForms\Admin\Builder\TemplateSingleCache;
 use WPForms\Admin\Builder\TemplatesCache;
+use WPForms\Db\Analytics\Forms;
+use WPForms\Db\Analytics\Snapshots;
 use WPForms\Db\Payments\Meta as PaymentsMeta;
 use WPForms\Db\Payments\Payment;
+use WPForms\Db\ProductEvents\Queue as ProductEventsQueue;
+use WPForms\Pro\Db\Analytics\Fields;
+use WPForms\Pro\Db\Analytics\SnapshotFields;
+use WPForms\Pro\Db\Dashboard\FormDaily;
+use WPForms\Pro\Db\Dashboard\LocationDaily;
+use WPForms\Pro\Db\Dashboard\PaymentDaily;
 use WPForms\Pro\Db\Files\ProtectedFiles;
 use WPForms\Pro\Db\Files\Restrictions;
 use WPForms\Helpers\DB;
 use WPForms\Integrations\UsageTracking\UsageTracking;
 use WPForms\Logger\Repository;
 use WPForms\Pro\Integrations\LiteConnect\Integration;
+use WPForms\SetupWizard\RestApi;
 use WPForms\Tasks\Meta as TasksMeta;
 use WPForms\Admin\Notice;
 
@@ -38,15 +47,23 @@ class WPForms_Pro {
 	 * @since 1.9.0
 	 */
 	public const CUSTOM_TABLES = [
-		'wpforms_entries'           => WPForms_Entry_Handler::class,
-		'wpforms_entry_fields'      => WPForms_Entry_Fields_Handler::class,
-		'wpforms_entry_meta'        => WPForms_Entry_Meta_Handler::class,
-		'wpforms_logs'              => Repository::class,
-		'wpforms_payment_meta'      => PaymentsMeta::class,
-		'wpforms_payments'          => Payment::class,
-		'wpforms_protected_files'   => ProtectedFiles::class,
-		'wpforms_file_restrictions' => Restrictions::class,
-		'wpforms_tasks_meta'        => TasksMeta::class,
+		'wpforms_entries'                   => WPForms_Entry_Handler::class,
+		'wpforms_entry_fields'              => WPForms_Entry_Fields_Handler::class,
+		'wpforms_entry_meta'                => WPForms_Entry_Meta_Handler::class,
+		'wpforms_logs'                      => Repository::class,
+		'wpforms_payment_meta'              => PaymentsMeta::class,
+		'wpforms_payments'                  => Payment::class,
+		'wpforms_protected_files'           => ProtectedFiles::class,
+		'wpforms_file_restrictions'         => Restrictions::class,
+		'wpforms_tasks_meta'                => TasksMeta::class,
+		'wpforms_analytics_snapshots'       => Snapshots::class,
+		'wpforms_analytics_forms'           => Forms::class,
+		'wpforms_analytics_snapshot_fields' => SnapshotFields::class,
+		'wpforms_analytics_fields'          => Fields::class,
+		'wpforms_dashboard_form_daily'      => FormDaily::class,
+		'wpforms_dashboard_location_daily'  => LocationDaily::class,
+		'wpforms_dashboard_payment_daily'   => PaymentDaily::class,
+		'wpforms_product_events_queue'      => ProductEventsQueue::class,
 	];
 
 	/**
@@ -94,7 +111,7 @@ class WPForms_Pro {
 		require_once WPFORMS_PLUGIN_DIR . 'pro/includes/class-conditional-logic-fields.php';
 		require_once WPFORMS_PLUGIN_DIR . 'pro/includes/payments/class-payment.php';
 
-		if ( is_admin() || wp_doing_cron() || wpforms_doing_wp_cli() ) {
+		if ( is_admin() || wp_doing_cron() || wpforms_doing_wp_cli() || RestApi::is_install_request() ) {
 			require_once WPFORMS_PLUGIN_DIR . 'pro/includes/admin/ajax-actions.php';
 			require_once WPFORMS_PLUGIN_DIR . 'pro/includes/admin/entries/class-entries-single.php';
 			require_once WPFORMS_PLUGIN_DIR . 'pro/includes/admin/class-updater.php';
@@ -164,7 +181,12 @@ class WPForms_Pro {
 		wpforms()->register_instance( 'entry_fields', wpforms()->entry_fields );
 		wpforms()->register_instance( 'entry_meta', wpforms()->entry_meta );
 
-		if ( is_admin() && ! wpforms()->obj( 'license' ) instanceof WPForms_License ) {
+		if ( wpforms()->obj( 'license' ) instanceof WPForms_License ) {
+			return;
+		}
+
+		if ( is_admin() || RestApi::is_install_request() ) {
+
 			wpforms()->license = new WPForms_License();
 
 			wpforms()->register_instance( 'license', wpforms()->license );
@@ -836,7 +858,7 @@ class WPForms_Pro {
 				'gdpr-disable-details' => [
 					'id'        => 'gdpr-disable-details',
 					'name'      => esc_html__( 'Disable User Details', 'wpforms' ),
-					'desc'      => esc_html__( 'Disable storage IP addresses and User Agent on all forms. If unchecked, then this can be managed on a form-by-form basis inside the form builder under Settings → General', 'wpforms' ),
+					'desc'      => esc_html__( 'Disable storage IP addresses, User Agent, and browser language on all forms. If unchecked, then this can be managed on a form-by-form basis inside the form builder under Settings → General', 'wpforms' ),
 					'type'      => 'toggle',
 					'is_hidden' => ! wpforms_setting( 'gdpr' ),
 					'status'    => true,
@@ -967,7 +989,7 @@ class WPForms_Pro {
 				'settings',
 				'disable_ip',
 				$instance->form_data,
-				esc_html__( 'Disable storing user details (IP address and user agent)', 'wpforms' )
+				esc_html__( 'Disable storing user details (IP address, user agent, and browser language)', 'wpforms' )
 			);
 		}
 	}
@@ -1245,7 +1267,7 @@ class WPForms_Pro {
 							'subsection'  => $id,
 							'input_id'    => 'wpforms-panel-field-notifications-email-' . $id,
 							'input_class' => 'wpforms-smart-tags-enabled',
-							'class'       => 'email-recipient',
+							'class'       => 'email-recipient js-wpforms-recipient-email-validation',
 						]
 					);
 					if ( $cc ) :
@@ -1269,6 +1291,7 @@ class WPForms_Pro {
 								'subsection'  => $id,
 								'input_id'    => 'wpforms-panel-field-notifications-carboncopy-' . $id,
 								'input_class' => 'wpforms-smart-tags-enabled',
+								'class'       => 'js-wpforms-recipient-email-validation js-wpforms-copy-recipient',
 							]
 						);
 					endif;
@@ -1679,6 +1702,7 @@ class WPForms_Pro {
 							'input_class' => 'wpforms-panel-field-confirmations-page',
 							'parent'      => 'settings',
 							'subsection'  => $field_id,
+							'placeholder' => esc_html__( 'Search for a page', 'wpforms' ),
 							'choicesjs'   => [
 								'use_ajax'    => true,
 								'callback_fn' => 'select_pages',

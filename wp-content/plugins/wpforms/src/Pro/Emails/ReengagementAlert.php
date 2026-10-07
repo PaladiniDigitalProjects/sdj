@@ -3,12 +3,18 @@
 namespace WPForms\Pro\Emails;
 
 use WPForms\Emails\Templates\Summary;
+use WPForms\Pro\Reports\EntriesCount;
 
 /**
  * Re-engagement alert box for the weekly summary email.
  *
- * Renders a tenure-based blue alert for paid users with forms but zero entries.
- * Stateless — relies on the weekly cron cadence to fire each variant at most once.
+ * Renders a blue alert inside the weekly summary for paid users. Two conditional
+ * states share the same block:
+ *  - Tenure-based variants for sites that have forms but have never collected entries.
+ *  - An engagement-drop state for sites whose forms were active and then went quiet.
+ *
+ * Stateless — the weekly cron cadence and the detection windows themselves ensure each
+ * state fires at most once per event (see detect_drop() for the drop suppression logic).
  *
  * @since 1.10.1.1
  */
@@ -47,6 +53,27 @@ class ReengagementAlert {
 			'utm_content'  => '0entries-phase-b',
 		],
 	];
+
+	/**
+	 * Minimum entries in a week for a form to count as active for drop detection.
+	 *
+	 * @since 2.0.0
+	 */
+	private const DROP_MIN_ENTRIES = 5;
+
+	/**
+	 * Consecutive active weeks required before a drop to zero fires the alert.
+	 *
+	 * @since 2.0.0
+	 */
+	private const DROP_STREAK_WEEKS = 3;
+
+	/**
+	 * Slug and UTM content identifier for the engagement-drop state.
+	 *
+	 * @since 2.0.0
+	 */
+	private const DROP_VARIANT_SLUG = 'engagement-drop';
 
 	/**
 	 * Initialize the class.
@@ -207,6 +234,90 @@ class ReengagementAlert {
 	}
 
 	/**
+	 * Whether any form suddenly went quiet: active for several consecutive weeks
+	 * and then zero entries in the week being reported.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return bool
+	 */
+	private function has_engagement_drop(): bool {
+
+		return $this->detect_drop( $this->get_weekly_counts_by_form() );
+	}
+
+	/**
+	 * Per-form entry counts for the reported week and the preceding streak weeks.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array
+	 */
+	private function get_weekly_counts_by_form(): array {
+
+		// The reported week ends on the previous Sunday, matching Summaries::get_entries().
+		$last_sunday = date_create( 'previous sunday' );
+		$reports     = new EntriesCount();
+		$weekly      = [];
+
+		for ( $week = 0; $week <= self::DROP_STREAK_WEEKS; $week++ ) {
+			$week_end = ( clone $last_sunday )->modify( '-' . ( $week * self::WINDOW_DAYS ) . ' days' );
+			$counts   = $reports->get_by( 'form', 0, self::WINDOW_DAYS, $week_end->format( 'Y-m-d' ) );
+
+			// get_by( 'form' ) is keyed by form ID; wp_list_pluck keeps those keys (no re-index).
+			$weekly[ $week ] = wp_list_pluck( $counts, 'count' );
+		}
+
+		return $weekly;
+	}
+
+	/**
+	 * Detect an engagement drop in the given per-week counts.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $weekly Per-form counts keyed by week index (0 = reported week).
+	 *
+	 * @return bool
+	 */
+	private function detect_drop( array $weekly ): bool {
+
+		// Need the reported week plus a full streak of preceding weeks to decide.
+		if ( count( $weekly ) <= self::DROP_STREAK_WEEKS ) {
+			return false;
+		}
+
+		$reported_week = $weekly[0] ?? [];
+
+		// A dropped form must have been active in the most recent streak week,
+		// so candidates come from that week alone.
+		foreach ( $weekly[1] ?? [] as $form_id => $count ) {
+
+			// Skip forms below the threshold last week, or still active this week.
+			if ( $count < self::DROP_MIN_ENTRIES || ! empty( $reported_week[ $form_id ] ) ) {
+				continue;
+			}
+
+			// Confirm the threshold held across the remaining streak weeks.
+			$has_active_streak = true;
+
+			for ( $week = 2; $week <= self::DROP_STREAK_WEEKS; $week++ ) {
+				if ( ( $weekly[ $week ][ $form_id ] ?? 0 ) < self::DROP_MIN_ENTRIES ) {
+					$has_active_streak = false;
+
+					break;
+				}
+			}
+
+			if ( $has_active_streak ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Build the alert template args for the resolved variant.
 	 *
 	 * @since 1.10.1.1
@@ -263,6 +374,35 @@ class ReengagementAlert {
 	}
 
 	/**
+	 * Build the alert template args for the engagement-drop state.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array Alert args (slug, title, content, content_plain, button_text, button_url).
+	 */
+	private function build_drop_args(): array {
+
+		$button_url = add_query_arg(
+			[
+				'utm_source'   => 'wpforms-plugin',
+				'utm_medium'   => 'email',
+				'utm_campaign' => 'weekly-summary-reengagement',
+				'utm_content'  => self::DROP_VARIANT_SLUG,
+			],
+			admin_url( 'admin.php?page=wpforms-overview' )
+		);
+
+		return [
+			'slug'          => self::DROP_VARIANT_SLUG,
+			'title'         => __( 'Your forms have gone quiet this week.', 'wpforms' ),
+			'content'       => __( 'Your submissions dropped compared to recent activity. If this is unexpected, take a look at your form analytics or <a href="mailto:support@wpforms.com">reach out to our support team</a>.', 'wpforms' ),
+			'content_plain' => __( 'Your submissions dropped compared to recent activity. If this is unexpected, take a look at your form analytics or reach out to our support team at support@wpforms.com.', 'wpforms' ),
+			'button_text'   => __( 'Check Your Forms', 'wpforms' ),
+			'button_url'    => $button_url,
+		];
+	}
+
+	/**
 	 * Inject the re-engagement alert args into the summary template when conditions are met.
 	 *
 	 * @since 1.10.1.1
@@ -277,20 +417,38 @@ class ReengagementAlert {
 			return $template;
 		}
 
-		$variant = $this->get_active_variant();
+		$alert_args = $this->get_alert_args();
 
-		if ( $variant === null ) {
+		if ( $alert_args === null ) {
 			return $template;
 		}
 
 		$template->set_args(
 			[
 				'body' => [
-					'reengagement_alert' => $this->build_args( $variant ),
+					'reengagement_alert' => $alert_args,
 				],
 			]
 		);
 
 		return $template;
+	}
+
+	/**
+	 * Resolve the alert args for whichever conditional state applies, or null when none does.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return array|null Alert args or null.
+	 */
+	private function get_alert_args(): ?array {
+
+		if ( $this->has_engagement_drop() ) {
+			return $this->build_drop_args();
+		}
+
+		$variant = $this->get_active_variant();
+
+		return $variant === null ? null : $this->build_args( $variant );
 	}
 }

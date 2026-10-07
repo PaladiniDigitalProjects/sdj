@@ -4,14 +4,6 @@ namespace OTGS\Installer\Api;
 
 class SiteUrl {
 
-	/**
-	 * @copied \WP_Installer::get_installer_site_url
-	 * @copied \OTGS_Installer_Fetch_Subscription::get_installer_site_url
-	 *
-	 * @param string $repository_id
-	 *
-	 * @return mixed
-	 */
 	public function get( $repository_id = false ) {
 		global $current_site;
 

@@ -8,8 +8,10 @@ use WPML\FP\Obj;
 use WPML\FP\Relation;
 use WPML\TM\API\Job\Map;
 use WPML\TM\API\Jobs;
+use WPML\TM\ATE\ClonedSites\ApiCommunication;
 use WPML\TM\ATE\Download\Job;
 use WPML\TM\ATE\Log\EventsTypes;
+use WPML_TM_ATE_AMS_Endpoints;
 use WPML_TM_ATE_API;
 use WPML_TM_ATE_Job_Repository;
 use WPML\TM\ATE\Log\Storage;
@@ -22,10 +24,10 @@ class Process {
 
 	const LOCK_RELEASE_TIMEOUT = 1 * MINUTE_IN_SECONDS;
 
-	/** @var WPML_TM_ATE_API $api */
+	const SYNC_ALL_CHUNK = 50;
+
 	private $api;
 
-	/** @var WPML_TM_ATE_Job_Repository $ateRepository */
 	private $ateRepository;
 
 	public function __construct( WPML_TM_ATE_API $api, WPML_TM_ATE_Job_Repository $ateRepository ) {
@@ -33,11 +35,6 @@ class Process {
 		$this->ateRepository = $ateRepository;
 	}
 
-	/**
-	 * @param Arguments $args
-	 *
-	 * @return Result
-	 */
 	public function run( Arguments $args ) {
 		$result          = new Result();
 
@@ -60,23 +57,19 @@ class Process {
 			JobLog::finishCurrentGroup();
 		} else {
 			$includeManualAndLongstandingJobs  = (bool) Obj::propOr( true , 'includeManualAndLongstandingJobs', $args);
-			$result = $this->runSyncInit( $result, $includeManualAndLongstandingJobs );
+			$explicitAteJobIds = isset( $args->ateJobIds ) && is_array( $args->ateJobIds ) ? $args->ateJobIds : null;
+			$result            = $this->runSyncInit( $result, $includeManualAndLongstandingJobs, $explicitAteJobIds );
 		}
 
 		return $result;
 	}
 
-	/**
-	 * This will run the sync on extra pages.
-	 *
-	 * @param Result $result
-	 * @param Arguments $args
-	 *
-	 * @return Result
-	 */
 	private function runSyncOnPages( Result $result, Arguments $args ) {
-		$apiPage = $args->page - 1; // ATE API pagination starts at 0.
+		$apiPage = $args->page - 1;
 		$data    = $this->api->sync_page( $args->ateToken, $apiPage );
+
+		$result->ateTransportFailure = self::isTransportFailure( $data );
+		$result->ateRefusedLocally   = self::isRefusedLocally( $data );
 
 		$jobs         = Obj::propOr( [], 'items', $data );
 		$result->jobs = $this->handleJobs( $jobs );
@@ -113,20 +106,20 @@ class Process {
 		return $result;
 	}
 
-	/**
-	 * This will run the first sync iteration.
-	 * We send all the job IDs we want to sync.
-	 *
-	 * @param Result $result
-	 * @param boolean $includeManualAndLongstandingJobs
-	 *
-	 * @return Result
-	 */
-	private function runSyncInit( Result $result, $includeManualAndLongstandingJobs = true ) {
-		$ateJobIds = $this->ateRepository->get_jobs_to_sync( $includeManualAndLongstandingJobs, true );
-
+	private function runSyncInit( Result $result, $includeManualAndLongstandingJobs = true, $explicitAteJobIds = null ) {
+		$jobsData = null === $explicitAteJobIds
+			? $this->ateRepository->get_jobs_to_sync_with_element_ids( $includeManualAndLongstandingJobs )
+			: $this->explicitJobsData( $explicitAteJobIds );
+		$ateJobIds  = $jobsData['ateJobIds'];
+		$postIds    = $jobsData['postIds'];
+		$stringIds  = $jobsData['stringIds'];
+		$packageIds = $jobsData['packageIds'];
+		$termIds    = isset( $jobsData['termIds'] ) ? $jobsData['termIds'] : [];
 
 		if ( $ateJobIds ) {
+			$total     = count( $ateJobIds );
+			$ateJobIds = array_slice( $ateJobIds, 0, self::syncAllChunkSize() );
+
 			JobLog::maybeInitRequest();
 			JobLog::createNewGroup(
 				JobLog::GROUP_ID_SYNC_JOBS,
@@ -136,8 +129,20 @@ class Process {
 					'includeManualAndLongstandingJobs' => $includeManualAndLongstandingJobs,
 				]
 			);
+			if ( count( $ateJobIds ) < $total ) {
+				JobLog::add(
+					'Sync init chunked',
+					[
+						'total' => $total,
+						'sent'  => count( $ateJobIds ),
+					]
+				);
+			}
 			$this->ateRepository->increment_ate_sync_count( $ateJobIds );
-			$data = $this->api->sync_all( $ateJobIds );
+			$data = $this->api->sync_all( $ateJobIds, $postIds, $stringIds, $packageIds, $termIds );
+
+			$result->ateTransportFailure = self::isTransportFailure( $data );
+			$result->ateRefusedLocally   = self::isRefusedLocally( $data );
 
 			$jobs         = Obj::propOr( [], 'items', $data );
 			$result->jobs = $this->handleJobs( $jobs );
@@ -147,9 +152,9 @@ class Process {
 			}
 
 			if ( isset( $data->next->pagination_token, $data->next->pages_number ) ) {
-				$result->ateToken      = $data->next->pagination_token;
+				$result->ateToken = $data->next->pagination_token;
 				$result->numberOfPages = $data->next->pages_number;
-				$result->nextPage      = 1; // We start pagination at 1 to avoid carrying a falsy value.
+				$result->nextPage = 1;
 			}
 
 			JobLog::add(
@@ -164,27 +169,40 @@ class Process {
 		return $result;
 	}
 
-	/**
-	 * @param boolean $includeManualAndLongstandingJobs
-	 *
-	 * @return array
-	 */
+	private function explicitJobsData( array $ateJobIds ) {
+		return [
+			'ateJobIds'  => $this->ateRepository->order_ate_job_ids_by_sync_count( $ateJobIds ),
+			'postIds'    => [],
+			'stringIds'  => [],
+			'packageIds' => [],
+			'termIds'    => [],
+		];
+	}
+
+	private static function isTransportFailure( $data ) {
+		return $data instanceof \WP_Error && 'http_request_failed' === $data->get_error_code();
+	}
+
+	private static function isRefusedLocally( $data ) {
+		return $data instanceof \WP_Error && ApiCommunication::RECONNECTING_ERROR_CODE === $data->get_error_code();
+	}
+
+	private static function syncAllChunkSize() {
+		$size = apply_filters( 'wpml_ate_sync_all_chunk', self::SYNC_ALL_CHUNK );
+
+		return ( is_int( $size ) && $size >= 1 ) ? $size : self::SYNC_ALL_CHUNK;
+	}
+
 	private function getAteJobIdsToSync( $includeManualAndLongstandingJobs = true ) {
 		return $this->ateRepository
 			->get_jobs_to_sync( $includeManualAndLongstandingJobs )
 			->map_to_property( 'editor_job_id' );
 	}
 
-	/**
-	 * @param array $items
-	 *
-	 * @return Job[] $items
-	 */
 	private function handleJobs( array $items ) {
-		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 		return wpml_collect( $items )
 			->map( [ Job::class, 'fromAteResponse' ] )
-			->map( Obj::over( Obj::lensProp( 'jobId' ), Map::fromRid() ) ) // wpmlJobId returned by ATE endpoint represents RID column in wp_icl_translation_status.
+			->map( Obj::over( Obj::lensProp( 'jobId' ), Map::fromRid() ) )
 			->map(
 				function ( $job ) {
 					if ( $job->isUnsolvable ) {
@@ -199,27 +217,59 @@ class Process {
 			)
 			->each(
 				function ( $job ) {
+					$this->reflectCancelledByAte( $job );
 					if ( $job->isUnsolvable ) {
-						$this->logUnsolvableJob( $job );
+						if ( $this->isCanceledByUser( $job ) ) {
+							$this->clearUnsolvableJob( $job );
+						} else {
+							$this->logUnsolvableJob( $job );
+						}
 					}
 				}
 			)
 			->toArray();
-		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 	}
 
-	/**
-	 * Log unsolvable job error to the database.
-	 *
-	 * @param Job $job
-	 *
-	 * @return void
-	 */
-	private function logUnsolvableJob( $job ) {
-		// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-		$service = TranslateJobErrorServiceFactory::create();
+	private function reflectCancelledByAte( Job $job ) {
+		$ateStatus = (int) $job->ateStatus;
 
-		$service->logError(
+		if (
+			WPML_TM_ATE_AMS_Endpoints::ATE_JOB_STATUS_CANCELLED_NOT_ENOUGH !== $ateStatus &&
+			WPML_TM_ATE_AMS_Endpoints::ATE_JOB_STATUS_CANCELED_BY_USER_SHOULD_HIDE !== $ateStatus
+		) {
+			return;
+		}
+
+		$jobId       = (int) $job->jobId;
+		$freshStatus = Jobs::getStatus( $jobId );
+
+		if ( null === $freshStatus || ICL_TM_COMPLETE === $freshStatus ) {
+			JobLog::add( 'ate_cancelled_not_enough_row_left_alone', [
+				'job_id'     => $jobId,
+				'ate_job_id' => (int) $job->ateJobId,
+				'status'     => $freshStatus,
+			] );
+
+			return;
+		}
+
+		if ( ICL_TM_ATE_CANCELLED !== $freshStatus ) {
+			Jobs::setStatus( $jobId, ICL_TM_ATE_CANCELLED );
+		}
+
+		$job->status = ICL_TM_ATE_CANCELLED;
+
+		JobLog::add( 'ate_cancelled_not_enough_reflected', [
+			'job_id'      => $jobId,
+			'ate_job_id'  => (int) $job->ateJobId,
+			'from_status' => $freshStatus,
+		] );
+	}
+
+	private function logUnsolvableJob( $job ) {
+		$recorder = new \WPML\TM\ATE\JobError\Recorder( TranslateJobErrorServiceFactory::create() );
+
+		$recorder->record(
 			$job->jobId,
 			$job->ateJobId,
 			'SyncError',
@@ -229,6 +279,14 @@ class Process {
 				'jobData'   => $job->errorData,
 			]
 		);
-		// phpcs:enable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+	}
+
+	private function clearUnsolvableJob( $job ) {
+		$recorder = new \WPML\TM\ATE\JobError\Recorder( TranslateJobErrorServiceFactory::create() );
+		$recorder->clear( $job->jobId );
+	}
+
+	private function isCanceledByUser( $job ) {
+		return WPML_TM_ATE_AMS_Endpoints::ATE_JOB_STATUS_CANCELED_BY_USER_SHOULD_HIDE === (int) $job->ateStatus;
 	}
 }

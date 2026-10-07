@@ -1,0 +1,2 @@
+<?php
+return ['items'=>['PDS: List Terms (Ver más)\\4block title'=>['urls'=>[],'names'=>[],'cmp'=>['pds-ver-mas-terms',1]],'Lista términos con límite y opción Ver más / Ver menos.\\4block description'=>['urls'=>[],'names'=>[],'cmp'=>['pds-ver-mas-terms',1]],'Ver más'=>['urls'=>[],'names'=>[],'cmp'=>['pds-ver-mas-terms',1]],'Ver menos'=>['urls'=>[],'names'=>[],'cmp'=>['pds-ver-mas-terms',1]],'Cargando…'=>['urls'=>[],'names'=>[],'cmp'=>['pds-ver-mas-terms',1]]]];

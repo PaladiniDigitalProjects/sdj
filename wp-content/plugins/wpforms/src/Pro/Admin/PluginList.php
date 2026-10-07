@@ -159,9 +159,9 @@ class PluginList {
 
 		printf(
 			'<style>
-				#wpforms-update td.plugin-update {
-					box-shadow: 0 1px 0 0 rgba(0,0,0,.1);
-					transform: translateY(-1px);
+				/* Remove the divider under the main plugin row only when our notice row follows it, so the notice connects seamlessly (matching WP core behavior for rows with available updates) while keeping the divider when no notice is shown. */
+				.plugins tr[data-slug="%1$s"]:has(+ .plugin-update-tr) > * {
+					box-shadow: none;
 				}
 
 				.plugins tr.update[data-slug="%1$s"] .second,
@@ -271,7 +271,10 @@ class PluginList {
 					$addon['url']
 				);
 
-				$icon_url = WPFORMS_PLUGIN_URL . 'assets/images/' . ( $addon['icon'] ?? 'sullie.png' );
+				// An empty icon must fall back too: `??` only catches a missing key, and an empty
+				// value would build a bare-directory URL that renders as a broken image.
+				$icon     = ! empty( $addon['icon'] ) ? $addon['icon'] : 'sullie.png';
+				$icon_url = WPFORMS_PLUGIN_URL . 'assets/images/' . $icon;
 				$icons    = [
 					'1x'      => $icon_url,
 					'2x'      => $icon_url,

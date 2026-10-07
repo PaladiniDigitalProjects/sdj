@@ -102,6 +102,7 @@ class Settings {
 				'class'      => 'wpforms-builder-notifications-advanced',
 				'group'      => 'settings_notifications_advanced',
 				'title'      => esc_html__( 'Advanced', 'wpforms' ),
+				'title_attr' => __( 'Toggle Advanced Settings', 'wpforms' ),
 				'unfoldable' => true,
 			]
 		);

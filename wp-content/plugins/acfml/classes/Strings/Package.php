@@ -9,12 +9,12 @@ use WPML\LIB\WP\Cache;
 
 class Package {
 
-	// Deprecated! Use one of the constants below.
 	const KIND_SLUG = 'acf-field-group';
 
-	const FIELD_GROUP_PACKAGE_KIND      = 'ACF Field Group';
-	const FIELD_GROUP_PACKAGE_KIND_SLUG = 'acf-field-group';
-	const FIELD_GROUP_PACKAGE_TITLE     = 'Field Group Labels %s';
+	const FIELD_GROUP_PACKAGE_KIND         = 'ACF Field Group';
+	const FIELD_GROUP_PACKAGE_KIND_SLUG    = 'acf-field-group';
+	const FIELD_GROUP_PACKAGE_TITLE        = 'Field Group Labels %s';
+	const FIELD_GROUP_PACKAGE_ELEMENT_TYPE = 'package_' . self::FIELD_GROUP_PACKAGE_KIND_SLUG;
 
 	const CPT_PACKAGE_KIND      = 'ACF Post Type Labels';
 	const CPT_PACKAGE_KIND_SLUG = 'acf-post-type-labels';
@@ -33,6 +33,7 @@ class Package {
 	const OPTION_PACKAGE_TITLE         = 'ACF Options Values for %s';
 	const OPTION_PACKAGE_TITLE_DEFAULT = 'ACF Options Values';
 	const OPTION_PACKAGE_NAMESPACE     = 'options';
+	const OPTION_PACKAGE_ELEMENT_TYPE  = 'package_' . self::OPTION_PACKAGE_KIND_SLUG;
 
 	const STATUS_ST_INACTIVE          = 'st_inactive';
 	const STATUS_NOT_REGISTERED       = 'not_registered';
@@ -40,14 +41,8 @@ class Package {
 	const STATUS_PARTIALLY_TRANSLATED = 'partially_translated';
 	const STATUS_FULLY_TRANSLATED     = 'fully_translated';
 
-	/**
-	 * @var string|int $packageId
-	 */
 	private $packageId;
 
-	/**
-	 * @var string $kind
-	 */
 	private $kind;
 
 	public function __construct( $packageId, $kind = self::FIELD_GROUP_PACKAGE_KIND_SLUG ) {
@@ -55,25 +50,6 @@ class Package {
 		$this->kind      = $kind;
 	}
 
-	/**
-	 * The 'kind_slug' entry must be a sanitized version of the 'kind' entry,
-	 * because the deletion process gets a 'kind' and builds a 'kind-slug' from it
-	 * to identify the package to be deleted.
-	 *
-	 * @see WPML_Package_Helper::delete_package_action
-	 * @see WPML_Package::sanitize_kind
-	 *
-	 * The 'kind-slug' entry must not match any registered post type;
-	 * otherwise, if it is translatable, the Type column in TM will show the post type label
-	 * and not the 'kind' entry defined here.
-	 *
-	 * For backward compatibility reasons, Field Groups match their 'kind' and 'kind-slug'
-	 * to their related post types.
-	 *
-	 * @see WPML_TM_Dashboard_Document_Row::display
-	 *
-	 * @return array
-	 */
 	private function getPackageData() {
 		switch ( $this->kind ) {
 			case self::CPT_PACKAGE_KIND_SLUG:
@@ -114,40 +90,20 @@ class Package {
 		}
 	}
 
-	/**
-	 * @param string $value
-	 * @param array  $stringData
-	 *
-	 * @return void
-	 */
 	public function register( $value, $stringData ) {
 		if ( $value ) {
 			do_action( 'wpml_register_string', $value, self::getStringName( $value, $stringData ), $this->getPackageData(), Obj::prop( 'title', $stringData ), Obj::prop( 'type', $stringData ) );
 		}
 	}
 
-	/**
-	 * @return void
-	 */
 	public function recordRegisteredStrings() {
 		do_action( 'wpml_start_string_package_registration', $this->getPackageData() );
 	}
 
-	/**
-	 * @return void
-	 */
 	public function cleanupUnusedStrings() {
 		do_action( 'wpml_delete_unused_package_strings', $this->getPackageData() );
 	}
 
-	/**
-	 * @param string $value
-	 * @param array  $stringData
-	 *
-	 * @return string
-	 *
-	 * phpcs:disable WordPress.WP.I18n
-	 */
 	public function translate( $value, $stringData ) {
 		if ( $value ) {
 			return apply_filters( 'wpml_translate_string', $value, self::getStringName( $value, $stringData ), $this->getPackageData() );
@@ -156,27 +112,15 @@ class Package {
 		return $value;
 	}
 
-	/**
-	 * @return void
-	 */
 	public function delete() {
 		$packageData = $this->getPackageData();
 		do_action( 'wpml_delete_package', $packageData['name'], $packageData['kind'] );
 	}
 
-	/**
-	 * @param string $value
-	 * @param array  $meta
-	 *
-	 * @return string
-	 */
 	public static function getStringName( $value, $meta ) {
 		return $meta['namespace'] . '-' . $meta['id'] . '-' . $meta['key'] . '-' . md5( $value );
 	}
 
-	/**
-	 * @return \WPML_Package
-	 */
 	private function getWpmlPackage() {
 		return Factory::createWpmlPackage( $this->getPackageData() );
 	}
@@ -186,11 +130,6 @@ class Package {
 		Cache::flushGroup( 'WPML_ST_CACHE' );
 	}
 
-	/**
-	 * @param string $languageCode
-	 *
-	 * @return array
-	 */
 	public function getUntranslatedStrings( $languageCode ) {
 		$package = $this->getWpmlPackage();
 		$strings = $package->get_package_strings();
@@ -211,42 +150,35 @@ class Package {
 		return $results;
 	}
 
-	/**
-	 * @param array $translations
-	 *
-	 * @return void
-	 */
 	public function setStringTranslations( $translations ) {
 		do_action( 'wpml_set_translated_strings', $translations, $this->getPackageData() );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getStatus() {
-		// $getPackageStringsCount :: void -> int
 		$getPackageStringsCount = Fns::memorize( function() {
 			$strings = $this->getWpmlPackage()->get_package_strings();
 			return is_array( $strings ) ? count( $strings ) : 0;
 		} );
 
-		// $getTranslatedStrings :: void -> array
 		$getTranslatedStrings = Fns::memorize( function() {
 			return $this->getWpmlPackage()->get_translated_strings( [] );
 		} );
 
-		// $isPartiallyTranslated :: void -> bool
-		$isPartiallyTranslated = function() use ( $getTranslatedStrings ) {
+		$isFullyTranslated = function() use ( $getPackageStringsCount, $getTranslatedStrings ) {
 			$translatedStrings   = $getTranslatedStrings();
 			$secondaryLangsCount = count( Languages::getSecondaries() );
 
+			if ( count( $translatedStrings ) < $getPackageStringsCount() ) {
+				return false;
+			}
+
 			foreach ( $translatedStrings as $translatedStringGroup ) {
 				if ( count( $translatedStringGroup ) < $secondaryLangsCount ) {
-					return true;
+					return false;
 				}
 			}
 
-			return false;
+			return true;
 		};
 
 		if ( ! defined( 'WPML_ST_VERSION' ) ) {
@@ -255,28 +187,17 @@ class Package {
 			return self::STATUS_NOT_REGISTERED;
 		} elseif ( ! $getTranslatedStrings() ) {
 			return self::STATUS_NOT_TRANSLATED;
-		} elseif ( $isPartiallyTranslated() ) {
+		} elseif ( ! $isFullyTranslated() ) {
 			return self::STATUS_PARTIALLY_TRANSLATED;
 		}
 
 		return self::STATUS_FULLY_TRANSLATED;
 	}
 
-	/**
-	 * @param  string|int $packageId
-	 * @param  string     $kind
-	 *
-	 * @return Package
-	 */
 	public static function create( $packageId, $kind = self::FIELD_GROUP_PACKAGE_KIND_SLUG ) {
 		return new self( $packageId, $kind );
 	}
 
-	/**
-	 * @param  string $status
-	 *
-	 * @return string
-	 */
 	public static function status2text( $status ) {
 		switch ( $status ) {
 			case self::STATUS_FULLY_TRANSLATED:

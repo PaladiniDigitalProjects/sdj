@@ -1,5 +1,76 @@
 /* eslint no-undef: "off", no-alert: "off" */
 ( function( $ ) {
+	/**
+	 * Display a lightweight toast notification in the bottom-right corner.
+	 *
+	 * Replaces the previous SweetAlert popups. Toasts stack vertically,
+	 * auto-dismiss after a delay, and can also be closed manually.
+	 *
+	 * @param {string} message    - The text to display.
+	 * @param {string} [type]     - One of 'success', 'error', 'info'. Defaults to 'success'.
+	 * @param {number} [duration] - Milliseconds before auto-dismiss. Defaults to 4000.
+	 */
+	function showToast( message, type = 'success', duration = 4000 ) {
+		// Ensure a single shared container exists to stack toasts.
+		let $container = $( '.onetap-toast-container' );
+		if ( ! $container.length ) {
+			$container = $( '<div class="onetap-toast-container" role="region" aria-live="polite"></div>' );
+			$( 'body' ).append( $container );
+		}
+
+		// Icon markup per toast type.
+		const icons = {
+			success: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12.5l4 4 10-10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+			error: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+			info: '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8h.01M11 12h1v5h1" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+		};
+		const toastType = icons[ type ] ? type : 'success';
+
+		// Close (X) icon for manual dismissal.
+		const closeIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+		// Build the toast element.
+		const $toast = $(
+			'<div class="onetap-toast onetap-toast--' + toastType + '" role="alert">' +
+				'<span class="onetap-toast__icon">' + icons[ toastType ] + '</span>' +
+				'<span class="onetap-toast__message"></span>' +
+				'<button type="button" class="onetap-toast__close" aria-label="Close">' + closeIcon + '</button>' +
+			'</div>'
+		);
+
+		// Use text() so the message is never interpreted as HTML.
+		$toast.find( '.onetap-toast__message' ).text( message );
+		$container.append( $toast );
+
+		// Trigger the slide-in transition on the next frame.
+		window.requestAnimationFrame( function() {
+			$toast.addClass( 'onetap-toast--visible' );
+		} );
+
+		// Slide-out then remove from the DOM.
+		let dismissed = false;
+		function dismiss() {
+			if ( dismissed ) {
+				return;
+			}
+			dismissed = true;
+			$toast.removeClass( 'onetap-toast--visible' );
+			$toast.one( 'transitionend', function() {
+				$toast.remove();
+			} );
+			// Fallback removal in case transitionend never fires.
+			setTimeout( function() {
+				$toast.remove();
+			}, 400 );
+		}
+
+		$toast.find( '.onetap-toast__close' ).on( 'click', dismiss );
+
+		if ( duration > 0 ) {
+			setTimeout( dismiss, duration );
+		}
+	}
+
 	// Event handler for click on label within icon settings group
 	$( '.settings-group.icons .boxes .box label' ).on( 'click', function() {
 		// Get the image URL from the img element inside the clicked label
@@ -1021,35 +1092,17 @@
 					$textarea.replaceWith( '<span class="text">' + newText + '</span>' );
 
 					// Show success message
-					if ( typeof swal !== 'undefined' ) {
-						swal( {
-							title: 'Success!',
-							text: 'Alt text saved successfully',
-							icon: 'success',
-							timer: 2000,
-							showConfirmButton: false,
-						} );
-					}
-				} else if ( typeof swal !== 'undefined' ) {
+					showToast( 'Your changes have been saved.', 'success' );
+				} else {
 					// Show error message
-					swal( {
-						title: 'Error!',
-						text: response.error || 'Failed to save alt text',
-						icon: 'error',
-					} );
+					showToast( response.error || 'Failed to save alt text', 'error' );
 				}
 			},
 			error( xhr, textStatus, errorThrown ) {
 				console.error( 'Error saving alt text:', errorThrown );
 
 				// Show error message
-				if ( typeof swal !== 'undefined' ) {
-					swal( {
-						title: 'Error!',
-						text: 'Failed to save alt text. Please try again.',
-						icon: 'error',
-					} );
-				}
+				showToast( 'Failed to save alt text. Please try again.', 'error' );
 			},
 		} );
 	} );

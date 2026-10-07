@@ -3,58 +3,103 @@
 use WPML\FP\Lst;
 use WPML\FP\Relation;
 
-/**
- * Fetch the wpml config files for known plugins and themes
- *
- * @package wpml-core
- */
 class WPML_Config_Update {
 
 	const CONFIG_KEY_GLOBAL_NOTICES        = 'global-wpml-notices';
 	const OPTION_KEY_GLOBAL_NOTICES_CONFIG = 'wpml_global_notices_config';
+	const OPTION_KEY_IMPORT_STATE          = 'wpml_config_import_state';
 	const HTTP_REQUEST_ARGS                = [
 		'timeout' => 45,
 	];
 
-	/** @var bool */
 	private $has_errors;
 	private $log;
-	/** @var  SitePress $sitepress */
 	protected $sitepress;
 
-	/**
-	 * @var WP_Http $http
-	 */
 	private $http;
 
-	/**
-	 * @var WPML_Active_Plugin_Provider
-	 */
 	private $active_plugin_provider;
 
-	/**
-	 * WPML_Config_Update constructor.
-	 *
-	 * @param SitePress     $sitepress
-	 * @param WP_Http       $http
-	 * @param WPML_Log|null $log
-	 */
-	public function __construct( $sitepress, $http, WPML_Log $log = null ) {
+	private $importer;
+
+	public function __construct( $sitepress, $http, ?WPML_Log $log = null ) {
 		$this->sitepress = $sitepress;
 		$this->http      = $http;
 		$this->log       = $log;
 	}
 
-	/**
-	 * @param WPML_Active_Plugin_Provider $active_plugin_provider
-	 */
 	public function set_active_plugin_provider( WPML_Active_Plugin_Provider $active_plugin_provider ) {
 		$this->active_plugin_provider = $active_plugin_provider;
 	}
 
-	/**
-	 * @return WPML_Active_Plugin_Provider
-	 */
+	public function set_importer( $importer ) {
+		$this->importer = $importer;
+	}
+
+	private function import_config() {
+		$importer = $this->importer ? $this->importer : array( 'WPML_Config', 'import_now' );
+
+		call_user_func( $importer );
+	}
+
+	private function defer_import() {
+		$state = get_option( self::OPTION_KEY_IMPORT_STATE, array() );
+		$state = is_array( $state ) ? $state : array();
+
+		$state['downloaded'] = WPML_Config::config_files_signature();
+
+		update_option( self::OPTION_KEY_IMPORT_STATE, $state, true );
+	}
+
+	public function run_deferred_import() {
+		if ( ! $this->has_pending_import() ) {
+			return;
+		}
+
+		$lock_factory = \WPML\Container\make( \WPML\Utilities\AdvisoryLockFactory::class );
+		if ( ! $lock_factory ) {
+			return;
+		}
+
+		global $wpdb;
+		$lock = $lock_factory->create( 'wpml_config_import_' . md5( ( defined( 'DB_NAME' ) ? DB_NAME : '' ) . $wpdb->prefix ) );
+		if ( ! $lock->acquire( 0 ) ) {
+			return;
+		}
+
+		try {
+			$state      = $this->read_import_state_uncached();
+			$downloaded = isset( $state['downloaded'] ) ? $state['downloaded'] : null;
+			$attempted  = isset( $state['attempted'] ) ? $state['attempted'] : null;
+
+			if ( $downloaded && $downloaded !== $attempted && WPML_Config::can_import() ) {
+				$state['attempted'] = $downloaded;
+				update_option( self::OPTION_KEY_IMPORT_STATE, $state, true );
+				$this->import_config();
+			}
+		} finally {
+			$lock->release();
+		}
+	}
+
+	private function has_pending_import() {
+		$state = get_option( self::OPTION_KEY_IMPORT_STATE, array() );
+		$state = is_array( $state ) ? $state : array();
+
+		$downloaded = isset( $state['downloaded'] ) ? $state['downloaded'] : null;
+		$attempted  = isset( $state['attempted'] ) ? $state['attempted'] : null;
+
+		return $downloaded && $downloaded !== $attempted;
+	}
+
+	private function read_import_state_uncached() {
+		global $wpdb;
+
+		$row = $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", self::OPTION_KEY_IMPORT_STATE ) );
+
+		return $row ? (array) maybe_unserialize( $row ) : array();
+	}
+
 	public function get_active_plugin_provider() {
 		if ( null === $this->active_plugin_provider ) {
 
@@ -168,12 +213,8 @@ class WPML_Config_Update {
 					$config_files->themes  = $config_files_for_themes;
 					$config_files->plugins = $config_files_for_plugins;
 
-					update_option( 'wpml_config_files_arr', $config_files, false );
+					$stored_index_changed = update_option( 'wpml_config_files_arr', $config_files, false );
 
-					/**
-					 * Fetch and save/update the remote XML notices.
-					 * To keep DB entries light, we'll store it in a dedicated option.
-					 */
 					$remote_notices_config_index = Lst::find( Relation::propEq( 'name', self::CONFIG_KEY_GLOBAL_NOTICES ), $global );
 
 					if ( $remote_notices_config_index ) {
@@ -185,6 +226,14 @@ class WPML_Config_Update {
 							if ( $local_notices_config ) {
 								update_option( self::OPTION_KEY_GLOBAL_NOTICES_CONFIG, (string) $local_notices_config, false );
 							}
+						}
+					}
+
+					if ( $stored_index_changed ) {
+						if ( doing_action( 'activated_plugin' ) ) {
+							$this->defer_import();
+						} else {
+							$this->import_config();
 						}
 					}
 				}
@@ -202,12 +251,6 @@ class WPML_Config_Update {
 		return ! $this->has_errors;
 	}
 
-	/**
-	 * @param string $path
-	 * @param string $component_name
-	 *
-	 * @return string|null
-	 */
 	private function fetch_config_file_content( $path, $component_name ) {
 		$response = $this->http->get( ICL_REMOTE_WPML_CONFIG_FILES_INDEX . $path, self::HTTP_REQUEST_ARGS );
 
@@ -220,11 +263,6 @@ class WPML_Config_Update {
 		return null;
 	}
 
-	/**
-	 * @param array|WP_Error $response
-	 *
-	 * @return bool
-	 */
 	private function is_a_valid_remote_response( $response ) {
 		return $response && ! is_wp_error( $response ) && ! $this->is_http_error( $response );
 	}
@@ -238,12 +276,6 @@ class WPML_Config_Update {
 					|| '' === trim( $response['body'] ) );
 	}
 
-	/**
-	 * @param string|array|WP_Error $response
-	 * @param string                $request_type
-	 * @param ?string               $component
-	 * @param array|stdClass|null   $extra_data
-	 */
 	private function log_response( $response, $request_type = 'unknown', $component = null, $extra_data = null ) {
 		if ( ! $this->log ) {
 			return;
@@ -252,7 +284,6 @@ class WPML_Config_Update {
 		$message_type = 'message';
 
 		if ( ! defined( 'JSON_PRETTY_PRINT' ) ) {
-			// Fallback -> Introduced in PHP 5.4.0
 			define( 'JSON_PRETTY_PRINT', 128 );
 		}
 

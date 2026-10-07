@@ -3,21 +3,13 @@
 use WPML\FP\Obj;
 use WPML\FP\Str;
 use WPML\FP\Fns;
+use WPML\PB\Elementor\Helper\ElementTree;
 use function WPML\FP\pipe;
 
-/**
- * Class WPML_Elementor_Translate_IDs
- */
 class WPML_Elementor_Translate_IDs implements IWPML_Action {
 
-	/** @var \WPML\Utils\DebugBackTrace */
 	private $debug_backtrace;
 
-	/**
-	 * WPML_Elementor_Translate_IDs constructor.
-	 *
-	 * @param \WPML\Utils\DebugBackTrace $debug_backtrace
-	 */
 	public function __construct( \WPML\Utils\DebugBackTrace $debug_backtrace ) {
 		$this->debug_backtrace = $debug_backtrace;
 	}
@@ -35,21 +27,7 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $this->translate_id( $template_id );
 	}
 
-	/**
-	 * @param int|string $sub_id
-	 * @param array      $parsed_condition
-	 *
-	 * @return int|string
-	 */
 	public function translate_location_condition_sub_id( $sub_id, $parsed_condition ) {
-		/**
-		 * `$sub_name` gives a context for the `$sub_id`, it can be either:
-		 * - `child_of`
-		 * - `in_{taxonomy}`
-		 * - `in_{taxonomy}_children`
-		 * - `{post_type}`
-		 * - `{taxonomy}`
-		 */
 		$sub_name = isset( $parsed_condition['sub_name'] ) ? $parsed_condition['sub_name'] : null;
 
 		if ( (int) $sub_id > 0 && $sub_name ) {
@@ -79,22 +57,18 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $sub_id;
 	}
 
-	/**
-	 * @param int|string $template_id
-	 *
-	 * @return int|string
-	 */
 	public function translate_template_id( $template_id ) {
-		if ( $this->should_translate_template() ) {
+		if ( $this->should_translate_template() && ! $this->is_kit( $template_id ) ) {
 			$template_id = $this->translate_id( $template_id );
 		}
 
 		return $template_id;
 	}
 
-	/**
-	 * @return bool
-	 */
+	private function is_kit( $template_id ) {
+		return 'kit' === get_post_meta( (int) $template_id, '_elementor_template_type', true );
+	}
+
 	private function should_translate_template() {
 		$wpWidgetCall        = [ 'ElementorPro\Modules\Library\WP_Widgets\Elementor_Library', 'widget' ];
 		$shortcodeCall       = [ 'ElementorPro\Modules\Library\Classes\Shortcode', 'shortcode' ];
@@ -119,55 +93,42 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		);
 	}
 
-	/**
-	 * @param array $data_array
-	 * @param int   $post_id
-	 *
-	 * @return array The modified data array with translated IDs.
-	 */
-	public function translate_global_widget_ids( $data_array, $post_id ) {
-		foreach ( $data_array as &$data ) {
-			if ( isset( $data['elType'] ) && 'widget' === $data['elType'] ) {
-				if ( 'global' === $data['widgetType'] ) {
-					$data['templateID'] = $this->translate_id( $data['templateID'] );
-				} elseif ( 'template' === $data['widgetType'] ) {
-					$data['settings']['template_id'] = $this->translate_id( $data['settings']['template_id'] );
-				}
-			}
-			$data['elements'] = $this->translate_global_widget_ids( $data['elements'], $post_id );
-		}
-
-		return $data_array;
+	public function translate_global_widget_ids( $data_array, $post_id = null ) {
+		return ElementTree::map( $data_array, [ $this, 'translate_global_widget_id_in_element' ] );
 	}
 
-	/**
-	 * @param array $data_array
-	 * @param int   $post_id
-	 *
-	 * @return array
-	 */
-	public function translate_product_ids( $data_array, $post_id ) {
-		foreach ( $data_array as &$data ) {
-			if (
-				Obj::prop( 'elType', $data ) === 'widget'
-				&& Obj::prop( 'widgetType', $data ) === 'wc-add-to-cart'
-				&& Obj::propOr( false, 'product_id', $data['settings'] )
-			) {
-				$data['settings']['product_id'] = $this->translate_id( $data['settings']['product_id'] );
-			}
-
-			$data['elements'] = $this->translate_product_ids( $data['elements'], $post_id );
+	public function translate_global_widget_id_in_element( $element ) {
+		if ( ! isset( $element['elType'] ) || 'widget' !== $element['elType'] ) {
+			return $element;
 		}
 
-		return $data_array;
+		$widget_type = Obj::prop( 'widgetType', $element );
+
+		if ( 'global' === $widget_type ) {
+			$element['templateID'] = $this->translate_id( Obj::prop( 'templateID', $element ) );
+		} elseif ( 'template' === $widget_type ) {
+			$element['settings']['template_id'] = $this->translate_id( Obj::path( [ 'settings', 'template_id' ], $element ) );
+		}
+
+		return $element;
 	}
 
-	/**
-	 * @param int|string $element_id
-	 * @param string     $element_type
-	 *
-	 * @return int
-	 */
+	public function translate_product_ids( $data_array, $post_id = null ) {
+		return ElementTree::map( $data_array, [ $this, 'translate_product_id_in_element' ] );
+	}
+
+	public function translate_product_id_in_element( $element ) {
+		if (
+			Obj::prop( 'elType', $element ) === 'widget'
+			&& Obj::prop( 'widgetType', $element ) === 'wc-add-to-cart'
+			&& Obj::propOr( false, 'product_id', Obj::prop( 'settings', $element ) )
+		) {
+			$element['settings']['product_id'] = $this->translate_id( $element['settings']['product_id'] );
+		}
+
+		return $element;
+	}
+
 	private function translate_id( $element_id, $element_type = null ) {
 		if ( ! $element_type || 'any_child_of' === $element_type ) {
 			$element_type = get_post_type( $element_id );
@@ -186,63 +147,22 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $translated_id;
 	}
 
-	/**
-	 * @param array $data_array
-	 * @param int   $post_id
-	 *
-	 * @return array
-	 */
-	public function translate_ids_in_widget_fields( $data_array, $post_id ) {
-		foreach ( $data_array as &$data ) {
-			if ( isset( $data['elType'] ) && 'widget' === $data['elType'] ) {
-				$data = $this->translate_widget_ids( $data );
-			}
-
-			if ( ! empty( $data['elements'] ) ) {
-				$data['elements'] = $this->translate_ids_in_widget_fields( $data['elements'], $post_id );
-			}
-		}
-
-		return $data_array;
+	public function translate_ids_in_widget_fields( $data_array, $post_id = null ) {
+		return ElementTree::map( $data_array, [ $this, 'translate_widget_field_ids_in_element' ] );
 	}
 
-	/**
-	 * @return array
-	 */
+	public function translate_widget_field_ids_in_element( $element ) {
+		if ( isset( $element['elType'] ) && 'widget' === $element['elType'] ) {
+			$element = $this->translate_widget_ids( $element );
+		}
+
+		return $element;
+	}
+
 	private function get_widget_fields_with_ids() {
-		/**
-		 * Filters the configuration array for fields containing IDs that need translation in Elementor widgets.
-		 *
-		 * @since 2.3.0
-		 *
-		 * @param array<
-		 *     string, array{
-		 *         fields: array<
-		 *             array{
-		 *                 field_key: string,
-		 *                 repeater_key?: string,
-		 *                 id_type?: "term",
-		 *                 type?: string
-		 *             }
-		 *         >
-		 *     }
-		 * > $fields_with_ids Configuration array where:
-		 *   - key is the widget name (string).
-		 *   - value is an array containing:
-		 *     - fields: array of field configurations:
-		 *       - field_key: (required) The name of the field containing the ID(s).
-		 *       - repeater_key: (optional) If set, indicates this is a repeater field and contains the repeater field name.
-		 *       - id_type: (optional) Set to "term" for taxonomy term IDs. Defaults to post IDs if not set.
-		 *       - type: (optional) You can set the specific post-type slug or taxonomy slug for a slight improvement in performance.
-		 */
 		return apply_filters( 'wpmlpb_elementor_fields_with_ids', [] );
 	}
 
-	/**
-	 * @param array $data
-	 *
-	 * @return array Modified data with translated IDs
-	 */
 	private function translate_widget_ids( $data ) {
 		$widget_name     = $data['widgetType'] ?? null;
 		$fields_with_ids = $this->get_widget_fields_with_ids();
@@ -260,12 +180,6 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $data;
 	}
 
-	/**
-	 * @param array $settings
-	 * @param array $field_config
-	 *
-	 * @return array Modified settings with translated IDs
-	 */
 	private function translate_repeater_field_ids( $settings, $field_config ) {
 		$repeater_key = $field_config['repeater_key'];
 		$field_key    = $field_config['field_key'];
@@ -284,12 +198,6 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $settings;
 	}
 
-	/**
-	 * @param array $settings
-	 * @param array $field_config
-	 *
-	 * @return array Modified settings with translated IDs
-	 */
 	private function translate_field_ids( $settings, $field_config ) {
 		$field_path = explode( '>', $field_config['field_key'] );
 		$current    = &$settings;
@@ -311,12 +219,6 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $settings;
 	}
 
-	/**
-	 * @param array $ids
-	 * @param array $field_config
-	 *
-	 * @return array
-	 */
 	private function translate_ids_from_array( $ids, $field_config ) {
 		$translated_ids = [];
 
@@ -334,12 +236,6 @@ class WPML_Elementor_Translate_IDs implements IWPML_Action {
 		return $translated_ids;
 	}
 
-	/**
-	 * @param int|string $id
-	 * @param array      $field_config
-	 *
-	 * @return string|null
-	 */
 	private function get_element_type( $id, $field_config ) {
 		if ( isset( $field_config['id_type'] ) && 'term' === $field_config['id_type'] ) {
 			$term = get_term( $id );

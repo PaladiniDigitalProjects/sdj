@@ -11,15 +11,11 @@ use function WPML\FP\pipe;
 
 abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
-	/** @var \WPML_Translation_Element_Factory $elementFactory */
 	protected $elementFactory;
 
-	/** @var array|null $activeLanguages */
 	private $activeLanguages = null;
-	/** @var array|null */
 	private $mapLangToHrefLang = null;
 
-	/** @var int[]|null */
 	private $fullResolutionPageIds = null;
 
 	const KEY = 'alternateLangs';
@@ -28,23 +24,12 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		$this->elementFactory = $elementFactory;
 	}
 
-	/**
-	 * @return string
-	 */
 	abstract protected function getUtils();
 
-	/**
-	 * @param string $urlset
-	 *
-	 * @return string
-	 */
 	public function addNamespace( $urlset ) {
 		return str_replace( '>', ' xmlns:xhtml="http://www.w3.org/1999/xhtml">', $urlset );
 	}
 
-	/**
-	 * @return string[]
-	 */
 	private function getActiveLanguages() {
 		if ( null === $this->activeLanguages ) {
 			$this->activeLanguages = array_keys( Languages::getActive() );
@@ -53,11 +38,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return $this->activeLanguages;
 	}
 
-	/**
-	 * @param array $link
-	 *
-	 * @return array
-	 */
 	public function addAlternateLangDataToFirstLink( $link ) {
 		$link[ self::KEY ] = [];
 		foreach ( $this->getActiveLanguages() as $lang ) {
@@ -67,13 +47,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return $link;
 	}
 
-	/**
-	 * @param array  $entry
-	 * @param string $type
-	 * @param object $obj
-	 *
-	 * @return array
-	 */
 	public function addAlternateLangData( $entry, $type, $obj ) {
 		if ( empty( $entry ) ) {
 			return $entry;
@@ -82,17 +55,14 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		list( $elements, $getPermalink, $isIndexable ) = $this->getEntryHelpers( $type, $obj );
 
 		if ( $elements && $getPermalink && $isIndexable ) {
-			/** @var callable(mixed, string):bool $isActiveLanguage */
 			$isActiveLanguage = function ( $element, $language ) {
 				return in_array( $language, $this->getActiveLanguages(), true );
 			};
 
-			/** @var callable(int, string):string $mapPermalink */
 			$mapPermalink = function ( $mixed_id, $language ) use ( $getPermalink ) {
 				return apply_filters( 'wpml_permalink', $getPermalink( $mixed_id ), $language, $this->needsFullResolution( $mixed_id ) );
 			};
 
-			/** @var callable(string):bool $isValidPermalink */
 			$isValidPermalink = Fns::unary( 'is_string' );
 
 			$entry[ static::KEY ] = wpml_collect( $elements )
@@ -106,9 +76,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return $entry;
 	}
 
-	/**
-	 * @param string|int|object $id - can be \WP_Term.
-	 */
 	private function needsFullResolution( $id ): bool {
 		if ( ! is_numeric( $id ) ) {
 			return false;
@@ -152,12 +119,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return [];
 	}
 
-	/**
-	 * @param string $type
-	 * @param object $obj
-	 *
-	 * @return array{0: ?array, 1: ?callable, 2: ?callable}
-	 */
 	private function getEntryHelpers( $type, $obj ) {
 		switch ( $type ) {
 			case 'post':
@@ -203,12 +164,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return [ null, null, null ];
 	}
 
-	/**
-	 * @param string $output
-	 * @param array  $url
-	 *
-	 * @return string
-	 */
 	public function insertAlternateLinks( $output, $url ) {
 		$alternateLangs = Obj::prop( static::KEY, $url );
 
@@ -224,11 +179,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return $output;
 	}
 
-	/**
-	 * @param array $alternateLangs
-	 *
-	 * @return string
-	 */
 	private function getAlternateLinks( $alternateLangs ) {
 		$buildAlternateLink = function ( $url, $lang ) {
 			return '<xhtml:link rel="alternate" hreflang="' . esc_attr( $this->getHrefLangForLang( $lang ) ) . '" href="' . esc_url( $url ) . '" />';
@@ -241,11 +191,6 @@ abstract class BaseAlternateLangHooks implements \IWPML_Frontend_Action, \IWPML_
 		return $links ? "\n\t\t" . $links : '';
 	}
 
-	/**
-	 * @param string $lang
-	 *
-	 * @return string
-	 */
 	private function getHrefLangForLang( $lang ) {
 		if ( is_null( $this->mapLangToHrefLang ) ) {
 			$this->mapLangToHrefLang = Lst::pluck( 'tag', (array) apply_filters( 'wpml_active_languages', null, [] ) );

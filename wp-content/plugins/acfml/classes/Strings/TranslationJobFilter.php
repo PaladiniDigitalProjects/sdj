@@ -9,22 +9,12 @@ class TranslationJobFilter {
 	const PREFIX = 'acfml';
 	const GROUP  = 'group';
 
-	/**
-	 * @var Factory $factory
-	 */
 	private $factory;
 
 	public function __construct( Factory $factory ) {
 		$this->factory = $factory;
 	}
 
-	/**
-	 * @param array    $package
-	 * @param \WP_Post $post
-	 * @param string   $targetLangCode
-	 *
-	 * @return array
-	 */
 	public function appendStrings( $package, $post, $targetLangCode ) {
 		$groupKeys = wpml_collect( acf_get_field_groups( [ 'post_id' => $post->ID ] ) )
 			->pluck( 'key' )
@@ -34,12 +24,6 @@ class TranslationJobFilter {
 		return $this->buildEntries( $package, $strings );
 	}
 
-	/**
-	 * @param array $package
-	 * @param array $strings
-	 *
-	 * @return array
-	 */
 	private function buildEntries( $package, $strings ) {
 		foreach ( $strings as $groupKey => $groupStrings ) {
 			foreach ( $groupStrings as $name => $string ) {
@@ -54,22 +38,10 @@ class TranslationJobFilter {
 		return $package;
 	}
 
-	/**
-	 * @param string $groupKey
-	 * @param string $stringName
-	 *
-	 * @return string
-	 */
 	private static function getFieldName( $groupKey, $stringName ) {
 		return self::PREFIX . '-' . self::GROUP . '-' . $groupKey . '-' . $stringName;
 	}
 
-	/**
-	 * @param array  $groupKeys
-	 * @param string $languageCode
-	 *
-	 * @return array
-	 */
 	private function getUntranslatedStrings( $groupKeys, $languageCode ) {
 		$strings = [];
 
@@ -80,12 +52,6 @@ class TranslationJobFilter {
 		return $strings;
 	}
 
-	/**
-	 * @param array     $fields
-	 * @param \stdClass $job
-	 *
-	 * @return void
-	 */
 	public function saveTranslations( $fields, $job ) {
 		$allTranslations = [];
 
@@ -111,16 +77,10 @@ class TranslationJobFilter {
 		}
 	}
 
-	/**
-	 * @param string      $fieldName
-	 * @param string|null $groupKey
-	 *
-	 * @return array
-	 */
 	public static function parseFieldName( $fieldName, $groupKey = null ) {
 		$mainPattern = '([^-]+)-(?:[^-]+)-([^-]+)-.*';
 
-		if ( $groupKey ) { // If the group key is passed, we can use the short pattern.
+		if ( $groupKey ) {
 			$matches = Str::match( '/^' . $mainPattern . '$/', $fieldName );
 
 			$stringName = $fieldName;

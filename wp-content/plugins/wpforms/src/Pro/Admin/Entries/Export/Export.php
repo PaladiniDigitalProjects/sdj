@@ -121,6 +121,13 @@ class Export {
 	 */
 	public function init() {
 
+		// The cleanup task must be listened for in every context, so it is registered before the
+		// guards below. Action Scheduler usually processes its queue through the async loopback
+		// request to admin-ajax.php, which is neither the export AJAX call, nor the Tools page,
+		// nor WP-Cron, so the scheduled action used to fire with no listener attached and was
+		// marked complete, leaving the temporary exports on disk indefinitely.
+		add_action( self::TASK_CLEANUP, [ $this, 'remove_old_export_files' ] );
+
 		if ( ! wpforms_current_user_can( 'view_entries' ) && ! wp_doing_cron() ) {
 			return;
 		}
@@ -141,6 +148,48 @@ class Export {
 		$this->admin = new Admin( $this );
 		$this->file  = new File( $this );
 		$this->ajax  = new Ajax( $this );
+	}
+
+	/**
+	 * Remove the temporary export files that outlived the request data TTL.
+	 *
+	 * The scheduled action reaches this method in contexts where init() bailed out before the
+	 * collaborators were built, so the settings the sweep needs are initialized and the file
+	 * handler is created here rather than assumed.
+	 *
+	 * @since 2.0.1
+	 */
+	public function remove_old_export_files() {
+
+		$this->maybe_init_settings();
+
+		if ( ! $this->file ) {
+			$this->file = new File( $this );
+		}
+
+		$this->file->remove_old_export_files();
+	}
+
+	/**
+	 * Initialize the export settings for a scheduled (background) export task.
+	 *
+	 * Background export tasks (e.g., the Entry Automation addon) can run in contexts
+	 * where init() bails early (the Action Scheduler async loopback request, WP-CLI)
+	 * and the settings stay empty. When init() did run (WP-Cron, the admin Scheduled
+	 * Actions screen), the settings were built before the provider addons registered
+	 * their export hooks on `wpforms_tasks_start_executing`, so during a scheduled
+	 * task the settings are rebuilt to pick those hooks up.
+	 *
+	 * @since 2.0.1
+	 */
+	public function maybe_init_settings() {
+
+		if ( ! empty( $this->additional_info_fields ) && ! wpforms_doing_scheduled_action() ) {
+			return;
+		}
+
+		$this->init_args();
+		$this->init_settings();
 	}
 
 	/**
@@ -207,6 +256,7 @@ class Export {
 			'file_empty'                 => esc_html__( 'Export file is empty.', 'wpforms' ),
 			'form_empty'                 => esc_html__( 'The form does not have any fields for export.', 'wpforms' ),
 			'file_system_not_configured' => esc_html__( 'File system is not configured.', 'wpforms' ),
+			'request_data_save_failed'   => esc_html__( 'The export request could not be saved, possibly due to unsupported characters in the form data. Please contact support.', 'wpforms' ),
 		];
 
 		// Strings to localize.
@@ -545,6 +595,16 @@ class Export {
 			return false;
 		}
 
+		/*
+		 * The Referer has to point at an admin page, not only carry the `page` query var: otherwise a
+		 * crafted Referer registers these handlers for a request coming from anywhere. Authorization
+		 * itself does not rely on this check - every handler verifies the `view_entries_form_single`
+		 * capability of the requested form on its own.
+		 */
+		if ( ! $this->is_admin_referer( $ref ) ) {
+			return false;
+		}
+
 		$query = wp_parse_url( $ref, PHP_URL_QUERY );
 
 		wp_parse_str( $query, $query_vars );
@@ -571,5 +631,80 @@ class Export {
 		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		return true;
+	}
+
+	/**
+	 * Encode the export request data for charset-safe storage.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $request_data Export request data.
+	 *
+	 * @return string ASCII-only encoded payload.
+	 */
+	public static function encode_request_data( array $request_data ): string {
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode,WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- Charset-safe transient payload; own serialized array.
+		return base64_encode( serialize( $request_data ) );
+	}
+
+	/**
+	 * Decode a stored export request payload.
+	 *
+	 * Tolerates legacy payloads stored as a raw (already-unserialized) array.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param mixed $stored Stored payload (encoded string, or legacy array).
+	 *
+	 * @return array Decoded request data, or empty array when undecodable.
+	 */
+	public static function decode_request_data( $stored ): array {
+
+		if ( is_array( $stored ) ) {
+			// An export started before this change stored the payload as a raw array.
+			return $stored;
+		}
+
+		if ( ! is_string( $stored ) || $stored === '' ) {
+			return [];
+		}
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode -- Charset-safe transient payload.
+		$decoded = base64_decode( $stored, true );
+
+		if ( $decoded === false ) {
+			return [];
+		}
+
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- Own serialized array, classes disallowed.
+		$data = unserialize( $decoded, [ 'allowed_classes' => false ] );
+
+		return is_array( $data ) ? $data : [];
+	}
+
+	/**
+	 * Determine whether the given Referer points at an admin page.
+	 *
+	 * Both the current admin path and the default one are accepted. Plugins that serve the admin area
+	 * from a custom URL filter `admin_url()` while normalizing an incoming Referer back to the real
+	 * path, so the two never match each other and no export request would be recognized at all.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param string $referer Raw HTTP Referer of the request.
+	 *
+	 * @return bool
+	 */
+	private function is_admin_referer( string $referer ): bool {
+
+		$path       = (string) wp_parse_url( $referer, PHP_URL_PATH );
+		$admin_path = (string) wp_parse_url( admin_url(), PHP_URL_PATH );
+
+		if ( $admin_path !== '' && strpos( $path, $admin_path ) !== false ) {
+			return true;
+		}
+
+		return strpos( $path, '/wp-admin/' ) !== false;
 	}
 }

@@ -1,0 +1,41 @@
+<?php
+
+namespace WPML\Import\Integrations\Base\Strategies\Simulate;
+
+use WPML\Import\Helper\PostTypes;
+
+class ExportPostsHooks extends ExportObjectsHooks {
+
+	const META_TYPE = 'post';
+
+	private $sitepress;
+
+	private $postTypes;
+
+	public function __construct(
+		\SitePress $sitepress,
+		PostTypes $postTypes
+	) {
+		$this->sitepress = $sitepress;
+		$this->postTypes = $postTypes;
+	}
+
+	protected function getMetaType() {
+		return self::META_TYPE;
+	}
+
+	protected function getElementLanguageDetails( $objectId ) {
+		$postType = get_post_type( $objectId );
+
+		if ( ! $this->postTypes->isTranslatable( $postType ) ) {
+			return null;
+		}
+
+		$element = $this->sitepress->get_element_language_details( $objectId, 'post_' . $postType );
+		if ( $element ) {
+			return $element;
+		}
+
+		return null;
+	}
+}

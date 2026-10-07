@@ -687,8 +687,14 @@ class PDSMLFPlugin {
 
     $html = mlf_get_template_part( 'tienda-lista.php', $variables, 'tienda-lista' );
 
+    $wrapper_class = 'pds-tienda-block-wrapper';
+    if ( ! empty( $attrs['className'] ) ) {
+        $wrapper_class .= ' ' . sanitize_html_class( $attrs['className'] );
+    }
+
     return sprintf(
-        '<div class="pds-tienda-block-wrapper" data-block-init="%s">%s</div>',
+        '<div class="%s" data-block-init="%s">%s</div>',
+        esc_attr( $wrapper_class ),
         esc_attr( wp_json_encode( $attrs ) ),
         $html
     );

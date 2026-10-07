@@ -9,11 +9,6 @@ class FindJobAndStatusDataQueryBuilder {
 		return $wpdb->prefix;
 	}
 
-	/**
-	 * @param int[] $rids
-	 *
-	 * @return string
-	 */
 	public function build( array $rids ) {
 		$sql = "
             SELECT

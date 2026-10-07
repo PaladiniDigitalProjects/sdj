@@ -10,9 +10,6 @@ class StringTaxonomyHooks implements \IWPML_Backend_Action {
 	const TAXONOMY_SINGULAR_NAME_PREFIX = 'taxonomy singular name: ';
 	const TAXONOMY_GENERAL_NAME_PREFIX  = 'taxonomy general name: ';
 
-	/**
-	 * @var SitePress
-	 */
 	private $sitepress;
 
 	public function __construct( SitePress $sitepress ) {
@@ -28,14 +25,6 @@ class StringTaxonomyHooks implements \IWPML_Backend_Action {
 		);
 	}
 
-	/**
-	 *
-	 * @param string|null $sourceLang
-	 * @param string      $text
-	 * @param string      $name
-	 *
-	 * @return string|null The filtered source language
-	 */
 	public function acfmlTaxonomyStringsSourceLanguage( $sourceLang, $text, $name ) {
 		$acfTaxonomies       = wp_list_pluck( acf_get_acf_taxonomies(), 'labels' );
 		$acfTaxonomiesValues = [];

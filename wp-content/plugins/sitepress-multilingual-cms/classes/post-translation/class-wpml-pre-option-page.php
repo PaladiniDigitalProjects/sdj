@@ -14,6 +14,8 @@ class WPML_Pre_Option_Page extends WPML_WPDB_And_SP_User {
 		add_action( 'update_option_wp_page_for_privacy_policy', [ self::class, 'clear_privacy_policy_cache' ] );
 	}
 
+	private static $core_reset_language = null;
+
 	private $switched;
 	private $lang;
 
@@ -23,7 +25,6 @@ class WPML_Pre_Option_Page extends WPML_WPDB_And_SP_User {
 		$this->switched = $switched;
 		$this->lang     = $lang;
 
-		// Register hooks once
 		self::add_cache_clearing_hooks();
 	}
 
@@ -38,19 +39,19 @@ class WPML_Pre_Option_Page extends WPML_WPDB_And_SP_User {
 		if ( ( ( ! $cache_found || ! isset ( $results[ $type ] ) ) && ! $this->switched )
 		     || ( $this->switched && $this->sitepress->get_setting( 'setup_complete' ) )
 		) {
+			$wpdb = $this->wpdb;
 			$results = [];
 			$results[ $type ] = [];
-			// Fetch for all languages and cache them.
-			$values = $this->wpdb->get_results(
-				$this->wpdb->prepare(
+			$values = $wpdb->get_results(
+				$wpdb->prepare(
 					"	SELECT element_id, language_code
-						FROM {$this->wpdb->prefix}icl_translations
+						FROM {$wpdb->prefix}icl_translations
 						WHERE trid =
 							(SELECT trid
-							 FROM {$this->wpdb->prefix}icl_translations
+							 FROM {$wpdb->prefix}icl_translations
 							 WHERE element_type = 'post_page'
 							 AND element_id = (SELECT option_value
-											   FROM {$this->wpdb->options}
+											   FROM {$wpdb->options}
 											   WHERE option_name=%s
 											   LIMIT 1))
 						",
@@ -67,9 +68,28 @@ class WPML_Pre_Option_Page extends WPML_WPDB_And_SP_User {
 			$cache->set( $cache_key, $results );
 		}
 
-		$target_language = $from_language ? $from_language : $this->lang;
+		$target_language = $from_language ? $from_language : ( self::$core_reset_language ? self::$core_reset_language : $this->lang );
 
 		return isset( $results[ $type ][ $target_language ] ) ? $results[ $type ][ $target_language ] : false;
+	}
+
+	public function get_skipping_trashed( $type ) {
+		$page_id = $this->get( $type );
+		if ( ! $page_id || 'trash' !== get_post_status( (int) $page_id ) ) {
+			return $page_id;
+		}
+
+		$default_page_id = $this->get( $type, $this->sitepress->get_default_language() );
+
+		return $default_page_id ? $default_page_id : $page_id;
+	}
+
+	public static function answer_in_language_during_core_reset( $language ) {
+		self::$core_reset_language = $language;
+	}
+
+	public static function end_core_reset() {
+		self::$core_reset_language = null;
 	}
 
 

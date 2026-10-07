@@ -4,17 +4,12 @@ use WPML\ST\TranslationFile\StringEntity;
 
 class WPML_ST_JED_File_Builder extends WPML\ST\TranslationFile\Builder {
 
-	/** @var string $decoded_eot */
 	private $decoded_eot;
 
 	public function __construct() {
 		$this->decoded_eot = json_decode( WPML_ST_Translations_File_JED::DECODED_EOT_CHAR );
 	}
 
-	/**
-	 * @param StringEntity[] $strings
-	 * @return string
-	 */
 	public function get_content( array $strings ) {
 		$data = new stdClass();
 
@@ -46,16 +41,6 @@ class WPML_ST_JED_File_Builder extends WPML\ST\TranslationFile\Builder {
 		return $string->get_original();
 	}
 
-	/**
-	 * We will take all translations from the custom WPML file,
-	 * and add all the stings translations from the native file
-	 * that are missing the custom WPML file.
-	 *
-	 * @param string $native_filepath
-	 * @param string $wpml_filepath
-	 *
-	 * @return string The JED file content.
-	 */
 	public function merge_files( $native_filepath, $wpml_filepath ) {
 		$original_contents = file_get_contents( $native_filepath );
 		$wpml_contents     = file_get_contents( $wpml_filepath );
@@ -91,18 +76,10 @@ class WPML_ST_JED_File_Builder extends WPML\ST\TranslationFile\Builder {
 		return $this->encode_jed_content( $wpml_data );
 	}
 
-	/**
-	 * @return string
-	 */
 	private function get_date() {
 		return (string) date( 'Y-m-d H:i:sO' );
 	}
 
-	/**
-	 * @param array|stdClass $data
-	 *
-	 * @return string
-	 */
 	private function encode_jed_content( $data ) {
 		$jed_content = (string) wp_json_encode( $data );
 

@@ -1,16 +1,2 @@
 <?php
-
-namespace WPML\UserInterface\Web\Core\SharedKernel\Config;
-
-interface ExistingPageInterface {
-
-
-  /** @return bool */
-  public function isActive();
-
-
-  /** @return void */
-  public function renderNotice( Notice $notice );
-
-
-}
+require_once __DIR__ . '/../../../../../../../../../wpml/src/UserInterface/Web/Core/SharedKernel/Config/ExistingPageInterface.php';

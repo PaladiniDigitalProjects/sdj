@@ -61,9 +61,6 @@ class AteFieldAdjuster {
 		],
 	];
 
-	/**
-	 * @var array
-	 */
 	private $formData;
 
 	public function __construct( array $formData ) {
@@ -144,7 +141,7 @@ class AteFieldAdjuster {
 		return $field;
 	}
 
-	private function adjustField( array $field, string $stringName, int $fieldId, int $index = null ): array {
+	private function adjustField( array $field, string $stringName, int $fieldId, ?int $index = null ): array {
 		if ( is_null( $index ) ) {
 			$appendTitle = self::getAppendTitle( self::getLabelFor( 'labels', $stringName ) );
 		} else {

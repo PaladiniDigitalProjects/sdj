@@ -2,9 +2,9 @@
 /**
  * Plugin Name: PDS Ver Más Terms
  * Plugin URI:  https://example.com/
- * Description: Lista términos con límite y opción Ver más / Ver menos.
- * Version:     1.1.2
- * Author:      Ricard PDS
+ * Description: Lista términos con límite y opción Ver más / Ver menos. Permite elegir todos, específicos o excluir algunos.
+ * Version:     1.2.0
+ * Author:      Dariush Lotfi
  * Text Domain: pds-ver-mas-terms
  */
 
@@ -46,6 +46,7 @@ function pds_terms_register_block() {
 				'wp-components',
 				'wp-editor',
 				'wp-server-side-render',
+				'wp-api-fetch',
 			),
 			$ver,
 			true
@@ -92,13 +93,22 @@ add_action( 'rest_api_init', function () {
 });
 
 /**
- * Callback REST API
+ * Callback REST API.
+ *
+ * Acepta opcionalmente `include` o `exclude` (listas de term_id separadas por
+ * coma) para que la paginación del botón "Ver más" respete la misma selección
+ * de términos configurada en el bloque.
  */
 function pds_get_terms_rest( WP_REST_Request $request ) {
-	$taxonomy = sanitize_text_field( $request->get_param( 'taxonomy' ) );
-	$page = intval( $request->get_param( 'page' ) ?? 1 );
-	$per_page = intval( $request->get_param( 'per_page' ) ?? 20 );
-	$offset = ($page - 1) * $per_page;
+	$taxonomy     = sanitize_text_field( $request->get_param( 'taxonomy' ) );
+	$per_page     = intval( $request->get_param( 'per_page' ) ?? 20 ); // 0 = sin límite (todos desde offset).
+	$offset_param = $request->get_param( 'offset' );
+	if ( null !== $offset_param && '' !== $offset_param ) {
+		$offset = intval( $offset_param );
+	} else {
+		$page   = intval( $request->get_param( 'page' ) ?? 1 );
+		$offset = ( $page - 1 ) * $per_page;
+	}
 
 	if ( ! taxonomy_exists( $taxonomy ) ) {
 		return new WP_Error( 'invalid_taxonomy', 'Taxonomía no válida', array( 'status' => 400 ) );
@@ -106,15 +116,33 @@ function pds_get_terms_rest( WP_REST_Request $request ) {
 
 	$args = array(
 		'taxonomy'   => $taxonomy,
-		'number'     => $per_page,
-		'offset'     => $offset,
 		'hide_empty' => false,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
 	);
+	// WP_Term_Query ignora 'offset' cuando 'number' es 0 (sin límite), así que en ese
+	// caso pedimos todo y recortamos nosotros mismos desde $offset.
+	if ( $per_page > 0 ) {
+		$args['number'] = $per_page;
+		$args['offset'] = $offset;
+	}
+
+	$include = $request->get_param( 'include' );
+	$exclude = $request->get_param( 'exclude' );
+	if ( ! empty( $include ) ) {
+		$args['include'] = array_map( 'absint', explode( ',', sanitize_text_field( $include ) ) );
+	} elseif ( ! empty( $exclude ) ) {
+		$args['exclude'] = array_map( 'absint', explode( ',', sanitize_text_field( $exclude ) ) );
+	}
 
 	$terms = get_terms( $args );
 
 	if ( is_wp_error( $terms ) ) {
 		return new WP_Error( 'get_terms_failed', $terms->get_error_message(), array( 'status' => 500 ) );
+	}
+
+	if ( 0 === $per_page && $offset > 0 ) {
+		$terms = array_slice( $terms, $offset );
 	}
 
 	$data = array_map(
@@ -130,9 +158,17 @@ function pds_get_terms_rest( WP_REST_Request $request ) {
 		$terms
 	);
 
+	// Total de términos que cumplen el mismo filtro, para saber si quedan más páginas.
+	$count_args = $args;
+	unset( $count_args['taxonomy'], $count_args['number'], $count_args['offset'] );
+	$total       = (int) wp_count_terms( $taxonomy, $count_args );
+	$total_pages = $per_page > 0 ? (int) ceil( $total / $per_page ) : 1;
+
 	return array(
-		'terms' => $data,
-		'total' => count( $data ),
+		'terms'      => $data,
+		'total'      => count( $data ),
+		'totalItems' => $total,
+		'totalPage'  => max( 1, $total_pages ),
 	);
 }
 
@@ -140,20 +176,44 @@ function pds_get_terms_rest( WP_REST_Request $request ) {
  * Renderizado del bloque
  */
 function pds_terms_render_callback( $attributes ) {
-	$dir = plugin_dir_path( __FILE__ );
-
 	// --- Atributos (coinciden con block.json) ---
-	$taxonomy   = isset( $attributes['taxonomy'] ) ? sanitize_text_field( $attributes['taxonomy'] ) : 'ambito';
-	$limit      = absint( $attributes['limit'] ?? 5 );
-	$show_more  = (bool) ( $attributes['show_more'] ?? true );
-	$show_count = (bool) ( $attributes['show_count'] ?? false );
-	$show_desc  = (bool) ( $attributes['show_description'] ?? false );
+	$taxonomy       = isset( $attributes['taxonomy'] ) ? sanitize_text_field( $attributes['taxonomy'] ) : 'ambito';
+	$limit          = absint( $attributes['limit'] ?? 5 );
+	$show_more      = (bool) ( $attributes['show_more'] ?? true );
+	$show_count     = (bool) ( $attributes['show_count'] ?? false );
+	$show_desc      = (bool) ( $attributes['show_description'] ?? false );
+	$selection_mode = isset( $attributes['selection_mode'] ) && 'selected' === $attributes['selection_mode'] ? 'selected' : 'all';
+	$term_ids       = isset( $attributes['term_ids'] ) ? array_map( 'absint', (array) $attributes['term_ids'] ) : array();
+	$excluded_ids   = isset( $attributes['excluded_ids'] ) ? array_map( 'absint', (array) $attributes['excluded_ids'] ) : array();
 
 	$instance_id = 'pds-terms-' . wp_unique_id();
 
+	// --- Términos que cumplen la selección configurada (todos / específicos / con exclusiones) ---
+	$terms_args = array(
+		'taxonomy'   => $taxonomy,
+		'hide_empty' => false,
+		'orderby'    => 'name',
+		'order'      => 'ASC',
+	);
+	if ( 'selected' === $selection_mode && ! empty( $term_ids ) ) {
+		$terms_args['include'] = $term_ids;
+	} elseif ( ! empty( $excluded_ids ) ) {
+		$terms_args['exclude'] = $excluded_ids;
+	}
+
+	$matching_terms = get_terms( $terms_args );
+	if ( is_wp_error( $matching_terms ) ) {
+		$matching_terms = array();
+	}
+
+	$total_terms      = count( $matching_terms );
+	$effective_limit  = $limit > 0 ? $limit : $total_terms;
+	$all_terms        = array_slice( $matching_terms, 0, $effective_limit );
+	$has_more         = $total_terms > count( $all_terms );
+
 	// --- Enqueue scripts ---
 	if ( wp_script_is( 'pds-terms-frontend', 'registered' ) ) {
-		if ( $show_more ) {
+		if ( $show_more && $has_more ) {
 			wp_enqueue_script( 'pds-terms-frontend' );
 		}
 		$data = array(
@@ -161,7 +221,9 @@ function pds_terms_render_callback( $attributes ) {
 			'rest_base'   => esc_url_raw( rest_url( 'pds/v1/terms' ) ),
 			'taxonomy'    => $taxonomy,
 			'per_page'    => $limit,
-			'total_terms' => (int) wp_count_terms( $taxonomy, array( 'hide_empty' => false ) ),
+			'include'     => ( 'selected' === $selection_mode && ! empty( $term_ids ) ) ? implode( ',', $term_ids ) : '',
+			'exclude'     => ( 'selected' !== $selection_mode && ! empty( $excluded_ids ) ) ? implode( ',', $excluded_ids ) : '',
+			'total_terms' => $total_terms,
 			'strings'     => array(
 				'ver_mas'   => __( 'Ver más', 'pds-ver-mas-terms' ),
 				'ver_menos' => __( 'Ver menos', 'pds-ver-mas-terms' ),
@@ -182,39 +244,19 @@ function pds_terms_render_callback( $attributes ) {
 		wp_enqueue_style( 'pds-terms-style' );
 	}
 
-	// --- Obtener términos iniciales ---
-	$total_terms = wp_count_terms( $taxonomy, [ 'hide_empty' => false ] );
-
-		$terms_args = array(
-		'taxonomy'   => $taxonomy,
-		'hide_empty' => false,
-		'orderby'    => 'name',
-		'order'      => 'ASC',
-		'number'     => $limit,
-		);
-
-		$all_terms = get_terms( $terms_args );
-		$has_more  = $total_terms > $limit;
-
-	
-
 	$list_id = $instance_id . '-list';
 	$btn_id  = $instance_id . '-btn';
 
-	$out = sprintf( '<div class="wp-block-categories-list pds-terms-wrapper" id="%s">', esc_attr( $instance_id ) );
+	$out  = sprintf( '<div class="wp-block-categories-list pds-terms-wrapper" id="%s">', esc_attr( $instance_id ) );
 	$out .= sprintf(
 		'<ul id="%s" class="pds-terms-list" data-limit="%d" data-taxonomy="%s" data-instance="%s" aria-live="polite">',
 		esc_attr( $list_id ),
-		$limit,
+		$effective_limit,
 		esc_attr( $taxonomy ),
 		esc_attr( $instance_id )
 	);
 
-	$shown = 0;
 	foreach ( $all_terms as $t ) {
-		if ( $shown >= $limit ) {
-			break;
-		}
 		$out .= sprintf(
 			'<li class="pds-terms-item cat-item"><a href="%s">%s</a>%s</li>',
 			esc_url( get_term_link( $t ) ),
@@ -224,18 +266,17 @@ function pds_terms_render_callback( $attributes ) {
 		if ( $show_desc && ! empty( $t->description ) ) {
 			$out .= sprintf( '<div class="pds-terms-desc">%s</div>', esc_html( $t->description ) );
 		}
-		$shown++;
 	}
 	$out .= '</ul>';
 
-	if ( $total_terms > $limit && $show_more ) {
+	if ( $has_more && $show_more ) {
 		$out .= sprintf(
 			'<button id="%s" type="button" class="pds-terms-toggle wp-block-button__link" aria-controls="%s" aria-expanded="false">%s</button>',
 			esc_attr( $btn_id ),
 			esc_attr( $list_id ),
 			esc_html__( 'Ver más', 'pds-ver-mas-terms' )
 		);
-		}
+	}
 
 	$out .= '</div>';
 

@@ -52,7 +52,6 @@ class File {
 
 		add_action( 'wpforms_tools_init', [ $this, 'entries_export_download_file' ] );
 		add_action( 'wpforms_tools_init', [ $this, 'single_entry_export_download_file' ] );
-		add_action( Export::TASK_CLEANUP, [ $this, 'remove_old_export_files' ] );
 	}
 
 	/**
@@ -321,6 +320,21 @@ class File {
 
 		$export_path = trailingslashit( $upload_path ) . 'export';
 
+		/**
+		 * Filters the directory the temporary export files are written to.
+		 *
+		 * Everything writing an export through this class inherits the directory, so a consumer
+		 * whose files are never downloaded through the admin handler - a scheduled export
+		 * delivered to email or cloud storage, for instance - can move them somewhere that is
+		 * not reachable by URL. The directory is created and protected below either way.
+		 *
+		 * @since 2.0.1
+		 *
+		 * @param string $export_path Absolute path to the export directory.
+		 */
+		$filtered_path = (string) apply_filters( 'wpforms_pro_admin_entries_export_file_get_tmpdir', $export_path );
+		$export_path   = $filtered_path !== '' ? $filtered_path : $export_path;
+
 		if ( ! file_exists( $export_path ) ) {
 			wp_mkdir_p( $export_path );
 		}
@@ -331,6 +345,9 @@ class File {
 		// Check if the index.html exists in the directories, if not - create it.
 		wpforms_create_index_html_file( $upload_path );
 		wpforms_create_index_html_file( $export_path );
+
+		// Check if the .htaccess exists in the export directory, if not - create it.
+		wpforms_create_export_dir_htaccess_file( $export_path );
 
 		// Normalize slashes for Windows.
 		$export_path = wp_normalize_path( $export_path );
@@ -424,6 +441,9 @@ class File {
 			echo $filesystem->get_contents( $export_file );
 		}
 
+		// The file is deliberately left on disk: the export page offers a fallback download link
+		// pointing at this very URL, and re-serving the same bytes is the only way that link can
+		// return what the user already downloaded. The scheduled sweep below removes it later.
 		// Schedule clean up.
 		$this->schedule_remove_old_export_files();
 
@@ -460,8 +480,16 @@ class File {
 				throw new Exception( $this->export->errors['unknown_request'] );
 			}
 
-			// Get stored request data.
-			$request_data = Transient::get( 'wpforms-tools-entries-export-request-' . $args['request_id'] );
+			// Get stored request data. It is decoded from its charset-safe stored form.
+			$request_data = Export::decode_request_data( Transient::get( 'wpforms-tools-entries-export-request-' . $args['request_id'] ) );
+
+			// An expired or unknown request must not be reported as a lack of permissions.
+			if ( empty( $request_data ) ) {
+				throw new Exception( $this->export->errors['unknown_request'] );
+			}
+
+			// Object-level check: the user must be allowed to view entries of the exact form staged in the request.
+			$this->guard_form_entries_access( (int) ( $request_data['db_args']['form_id'] ?? 0 ) );
 
 			$this->output_file( $request_data );
 
@@ -527,6 +555,9 @@ class File {
 			) {
 				throw new Exception( $this->export->errors['security'] );
 			}
+
+			// Object-level check: the user must be allowed to view entries of the requested form.
+			$this->guard_form_entries_access( (int) $args['form_id'] );
 
 			// Get stored request data.
 			$request_data = $this->export->ajax->get_request_data( $args );
@@ -602,9 +633,9 @@ class File {
 		}
 
 		$tasks->create( Export::TASK_CLEANUP )
-			  ->recurring( time() + 60, $this->export->configuration['request_data_ttl'] )
-			  ->params()
-			  ->register();
+				->recurring( time() + 60, $this->export->configuration['request_data_ttl'] )
+				->params()
+				->register();
 	}
 
 	/**
@@ -618,13 +649,18 @@ class File {
 		$files = glob( $this->get_tmpdir() . '/*' );
 		$now   = time();
 
-		foreach ( $files as $file ) {
+		// The task also runs where the export settings were never initialized, and an empty TTL
+		// would make every file, including one being written right now, look expired.
+		$ttl = (int) ( $this->export->configuration['request_data_ttl'] ?? DAY_IN_SECONDS );
+		$ttl = $ttl > 0 ? $ttl : DAY_IN_SECONDS;
+
+		foreach ( (array) $files as $file ) {
 			clearstatcache( true, $file );
 
 			if (
 				is_file( $file ) &&
 				pathinfo( $file, PATHINFO_BASENAME ) !== 'index.html' &&
-				( $now - filemtime( $file ) ) > $this->export->configuration['request_data_ttl']
+				( $now - filemtime( $file ) ) > $ttl
 			) {
 				// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 				unlink( $file );
@@ -657,7 +693,7 @@ class File {
 				continue;
 			}
 
-			$performed[ $label ]++;
+			++$performed[ $label ];
 
 			$columns_row[ $id ] = sprintf( '%s (%d)', $label, $performed[ $label ] );
 		}

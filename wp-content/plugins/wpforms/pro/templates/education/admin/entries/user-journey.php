@@ -28,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<h2 class="hndle">
 			<span><?php esc_html_e( 'User Journey', 'wpforms' ); ?></span>
 			<a class="wpforms-education-hide wpforms-dismiss-button"
-			   data-section="admin-user-journey-metabox"
-			   data-nonce="<?php echo esc_attr( $nonce ); ?>">
+				data-section="admin-user-journey-metabox"
+				data-nonce="<?php echo esc_attr( $nonce ); ?>">
 				<span class="dashicons dashicons-no"></span>
 			</a>
 		</h2>
@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<tr>
 						<td colspan="3" class="date">
 							<?php
-							$user_journey_time = time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+							$user_journey_time = time() + (int) ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 
 							$user_journey_time -= 17 * MINUTE_IN_SECONDS;
 

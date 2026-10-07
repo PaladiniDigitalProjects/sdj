@@ -7,17 +7,8 @@ class OTGS_Installer_Plugin_Finder {
 	private $_repositories;
 	private $_plugins;
 
-	/**
-	 * @var array
-	 */
 	private $installed_plugins;
 
-	/**
-	 * OTGS_Installer_Plugin_Finder constructor.
-	 *
-	 * @param OTGS_Installer_Plugin_Factory $plugin_factory
-	 * @param WP_Installer|null              $installer
-	 */
 	public function __construct( OTGS_Installer_Plugin_Factory $plugin_factory, $installer = null ) {
 		$this->plugin_factory = $plugin_factory;
 		$this->installer      = $installer && $installer instanceof WP_Installer ? $installer : null;
@@ -27,7 +18,9 @@ class OTGS_Installer_Plugin_Finder {
 		if ( null === $this->_repositories ) {
 			$installer           = $this->installer ?: OTGS_Installer();
 			$settings            = $installer->get_settings() ?? [];
-			$this->_repositories = $settings['repositories'];
+			$this->_repositories = ( isset( $settings['repositories'] ) && is_array( $settings['repositories'] ) )
+				? $settings['repositories']
+				: [];
 		}
 
 		return $this->_repositories;
@@ -37,6 +30,10 @@ class OTGS_Installer_Plugin_Finder {
 		if ( null === $this->_plugins ) {
 			$this->_plugins = array();
 			foreach ( $this->repositories() as $repo_key => $repository ) {
+				if ( ! isset( $repository['data']['downloads']['plugins'] ) ) {
+					continue;
+				}
+
 				foreach ( $repository['data']['downloads']['plugins'] as $slug => $plugin ) {
 					$plugin_id = $this->get_installed_plugin_id_by_slug( $plugin['slug'] );
 
@@ -70,16 +67,10 @@ class OTGS_Installer_Plugin_Finder {
 		return $this->_plugins;
 	}
 
-	/**
-	 * @return OTGS_Installer_Plugin[]
-	 */
 	public function get_all() {
 		return $this->plugins();
 	}
 
-	/**
-	 * @return array<string, string>
-	 */
 	public function getLocalPluginVersions() {
 		$versions = [];
 
@@ -100,7 +91,6 @@ class OTGS_Installer_Plugin_Finder {
 	public function getOTGSInstalledPluginsByRepository( $withActiveFlag = false, $withVersions = false ) {
 		$installed_plugins = [];
 
-		/** @var OTGS_Installer_Plugin $plugin */
 		foreach ( $this->plugins() as $plugin ) {
 			if ( $plugin->get_installed_version() ) {
 				$pluginInfo = [
@@ -125,12 +115,6 @@ class OTGS_Installer_Plugin_Finder {
 		return $installed_plugins;
 	}
 
-	/**
-	 * @param string|int $slug
-	 * @param string     $repo
-	 *
-	 * @return null|OTGS_Installer_Plugin
-	 */
 	public function get_plugin( $slug, $repo = '' ) {
 		foreach ( $this->plugins() as $plugin ) {
 			if ( $slug === $plugin->get_slug() ) {
@@ -144,11 +128,6 @@ class OTGS_Installer_Plugin_Finder {
 		return null;
 	}
 
-	/**
-	 * @param string $name
-	 *
-	 * @return null|OTGS_Installer_Plugin
-	 */
 	public function get_plugin_by_name( $name ) {
 		foreach ( $this->plugins() as $plugin ) {
 			if ( $name === strip_tags( $plugin->get_name() ) ) {
@@ -159,11 +138,6 @@ class OTGS_Installer_Plugin_Finder {
 		return null;
 	}
 
-	/**
-	 * @param $slug
-	 *
-	 * @return null|string
-	 */
 	private function get_installed_plugin_id_by_slug( $slug ) {
 		foreach ( $this->get_installed_plugins() as $plugin_id => $plugin ) {
 			$plugin_slug = explode( '/', $plugin_id );
@@ -184,11 +158,6 @@ class OTGS_Installer_Plugin_Finder {
 		return $this->installed_plugins;
 	}
 
-	/**
-	 * @param string $name
-	 *
-	 * @return string|null
-	 */
 	private function get_installed_plugin_id_by_name( $name ) {
 		$plugin_id = array_keys( wp_list_filter( $this->get_installed_plugins(), array( 'Name' => $name ) ) );
 

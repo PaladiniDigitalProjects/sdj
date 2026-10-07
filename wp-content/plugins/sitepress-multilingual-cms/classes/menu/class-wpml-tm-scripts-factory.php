@@ -4,15 +4,11 @@ use WPML\Element\API\Languages;
 use WPML\FP\Obj;
 use WPML\TM\API\ATE\CachedLanguageMappings;
 use WPML\TM\TranslationDashboard\FiltersStorage;
-use WPML\TM\TranslationDashboard\SentContentMessages;
 use WPML\Core\WP\App\Resources;
 use WPML\UIPage;
 use WPML\Media\Option;
 use function WPML\Container\make;
 
-/**
- * @author OnTheGo Systems
- */
 class WPML_TM_Scripts_Factory {
 	private $ate;
 	private $auth;
@@ -24,19 +20,8 @@ class WPML_TM_Scripts_Factory {
 		add_filter( 'wpml_tm_translators_view_strings', array( $this, 'filter_translators_view_strings' ), 10, 2 );
 	}
 
-	/**
-	 * @throws \InvalidArgumentException
-	 */
 	public function admin_enqueue_scripts() {
 		$this->register_otgs_notices();
-
-		wp_register_script(
-			'ate-translation-editor-classic',
-			WPML_TM_URL . '/dist/js/ate-translation-editor-classic/app.js',
-			array( Resources::vendorAsDependency() ),
-			ICL_SITEPRESS_SCRIPT_VERSION,
-			true
-		);
 
 		if (
 			WPML_TM_Page::is_tm_translators()
@@ -54,14 +39,20 @@ class WPML_TM_Scripts_Factory {
 				'shouldHandleMediaAuto' => Option::shouldHandleMediaAuto() ? "1" : "0",
 			] );
 			$this->create_ate()->init_hooks();
+		}
+
+		if ( WPML_TM_Subview_Detection::is_on_settings_page() ) {
 			wp_enqueue_script( 'wpml-tooltip' );
 			wp_enqueue_style( 'wpml-tooltip' );
+		}
+
+		if ( ( new WPML_WP_API() )->is_taxonomy_translation_page() ) {
+			wp_enqueue_style( 'otgs-notices' );
 		}
 
 		if ( WPML_TM_Page::is_translation_queue() && WPML_TM_ATE_Status::is_enabled() ) {
 			$this->localize_script( 'ate-translation-queue' );
 			wp_enqueue_script( 'ate-translation-queue' );
-			wp_enqueue_script( 'ate-translation-editor-classic' );
 			wp_enqueue_style( 'otgs-notices' );
 		}
 
@@ -89,12 +80,7 @@ class WPML_TM_Scripts_Factory {
 	}
 
 	private function load_notices_scripts_on_tm_dashboard() {
-		// Since WPML 4.7, the old TM scripts are no longer needed.
-		// However, we still need Ant Design framework and otgs-notices CSS for styling.
 
-		// TODO:
-		// - Refactor the dashboard CSS to remove these dependencies.
-		// - Remove translationDashboard scripts once the WPML > TM > Jobs page migration is complete.
 		wp_enqueue_style( 'otgs-notices' );
 		$enqueueApp = Resources::enqueueApp( 'translationDashboard' );
 		$enqueueApp();
@@ -105,16 +91,12 @@ class WPML_TM_Scripts_Factory {
 			wp_register_style(
 				'otgs-notices',
 				ICL_PLUGIN_URL . '/res/css/otgs-notices.css',
-				array( 'sitepress-style' )
+				array( 'sitepress-style' ),
+				ICL_SITEPRESS_SCRIPT_VERSION
 			);
 		}
 	}
 
-	/**
-	 * @param $handle
-	 *
-	 * @throws \InvalidArgumentException
-	 */
 	public function localize_script( $handle, $additional_data = array() ) {
 		wp_localize_script( $handle, 'WPML_TM_SETTINGS', $this->build_localize_script_data( $additional_data ) );
 	}
@@ -125,6 +107,7 @@ class WPML_TM_Scripts_Factory {
 			'restUrl'            => untrailingslashit( $this->getRestUrl() ),
 			'restNonce'          => wp_create_nonce( 'wp_rest' ),
 			'syncJobStatesNonce' => wp_create_nonce( 'sync-job-states' ),
+			'batchSyncMaxAttempts' => (int) apply_filters( 'wpml_tp_batch_sync_max_attempts', 5 ),
 			'ate'                => $this->create_ate()
 			                        ->get_script_data(),
 			'currentUser'   => null,
@@ -153,10 +136,6 @@ class WPML_TM_Scripts_Factory {
 		return $data;
 	}
 
-	/**
-	 * @return WPML_TM_MCS_ATE
-	 * @throws \InvalidArgumentException
-	 */
 	public function create_ate() {
 		if ( ! $this->ate ) {
 			$this->ate = new WPML_TM_MCS_ATE(
@@ -193,12 +172,6 @@ class WPML_TM_Scripts_Factory {
 		return $this->strings;
 	}
 
-	/**
-	 * @param array $strings
-	 * @param bool  $all_users_have_subscription
-	 *
-	 * @return array
-	 */
 	public function filter_translators_view_strings( array $strings, $all_users_have_subscription ) {
 		if ( WPML_TM_ATE_Status::is_enabled() ) {
 			$strings['ate'] = $this->create_ate_strings()
@@ -211,9 +184,6 @@ class WPML_TM_Scripts_Factory {
 		return $strings;
 	}
 
-	/**
-	 * @return string
-	 */
 	private function get_ate_activation_status() {
 		$status = $this->create_ate_strings()
 					   ->get_status();
@@ -224,9 +194,6 @@ class WPML_TM_Scripts_Factory {
 		return $status;
 	}
 
-	/**
-	 * @return string
-	 */
 	private function fetch_and_update_ate_activation_status() {
 		$ams_api = WPML\Container\make( WPML_TM_AMS_API::class );
 		$ams_api->get_status();
@@ -235,14 +202,7 @@ class WPML_TM_Scripts_Factory {
 					->get_status();
 	}
 
-	/**
-	 * @return string
-	 */
 	private function getRestUrl(): string {
-		$restUrl = get_rest_url();
-		if ( get_option( 'permalink_structure' ) === '' ) {
-			$restUrl = add_query_arg( 'rest_route', '/', home_url( '/' ) );
-		}
-		return $restUrl;
+		return get_rest_url();
 	}
 }

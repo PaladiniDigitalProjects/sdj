@@ -127,7 +127,8 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 			$block_number = $key >= 1 ? ' #' . ( $key + 1 ) : '';
 			$divider      = $this->get_header( $this->field['label'] . $block_number );
 
-			$fields_message = '';
+			$fields_message        = '';
+			$has_subfield_messages = false;
 
 			foreach ( $rows as $row_key => $row ) {
 				// Add additional rows for compact display.
@@ -146,12 +147,16 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 					$field_id = $column['field'];
 
 					if ( isset( $this->form_data['fields'][ $field_id ] ) ) {
-						$fields_message .= $this->get_subfield_message( $this->form_data['fields'][ $column['field'] ] );
+						$subfield_message = $this->get_subfield_message( $this->form_data['fields'][ $column['field'] ] );
+
+						$has_subfield_messages = $has_subfield_messages || $subfield_message !== '';
+						$fields_message       .= $subfield_message;
 					}
 				}
 			}
 
-			if ( $fields_message ) {
+			// The compact display adds structural rows above, so gate on actual sub-field content.
+			if ( $has_subfield_messages ) {
 				$repeater_message .= $divider . $fields_message;
 			}
 		}
@@ -233,7 +238,13 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 			return '';
 		}
 
-		$display = $this->field['display'] ?? 'rows';
+		$display        = $this->field['display'] ?? 'rows';
+		$blocks_message = $this->get_block_message( $blocks, $display );
+
+		// Rendering nothing keeps the field label and the table wrapper out of the email.
+		if ( $blocks_message === '' ) {
+			return '';
+		}
 
 		$output = sprintf(
 			'<tr class="wpforms-layout-table wpforms-layout-table-display-%s"><td>',
@@ -247,7 +258,7 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 			);
 		}
 
-		$output .= $this->get_block_message( $blocks, $display );
+		$output .= $blocks_message;
 
 		$output .= '</td></tr>';
 
@@ -271,9 +282,15 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 					$field_id    = $column['field'] ?? null;
 					$field_value = $this->fields[ $field_id ]['value'] ?? null;
 
-					if ( $field_value !== null && ! wpforms_is_empty_string( $field_value ) ) {
-						return false;
+					if ( $field_value === null || wpforms_is_empty_string( $field_value ) ) {
+						continue;
 					}
+
+					if ( $this->notifications->is_field_excluded( $this->form_data['fields'][ $field_id ] ?? [ 'id' => $field_id ] ) ) {
+						continue;
+					}
+
+					return false;
 				}
 			}
 		}
@@ -293,35 +310,62 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 	 */
 	private function get_block_message( array $blocks, string $display ): string {
 
-		ob_start();
-		?>
-		<?php foreach ( $blocks as $key => $rows ) : ?>
-			<?php
+		$blocks_message = '';
 
-			if ( $display === 'blocks' ) {
-				$block_number = $key >= 1 ? ' #' . ( $key + 1 ) : '';
+		foreach ( $blocks as $key => $rows ) {
+			$rows_message = '';
 
-				echo '<table style="width: 100%;">' . $this->get_header( $this->field['label'] . $block_number ) . '</table>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			foreach ( $rows as $row ) {
+				$columns_message = $this->get_columns_message( $row );
+
+				if ( $columns_message === '' ) {
+					continue;
+				}
+
+				$rows_message .= '<tr>' . $columns_message . '</tr>';
 			}
-			?>
 
-			<table class="wpforms-layout-table-row <?php echo $key === 0 ? esc_attr( 'wpforms-first-row' ) : ''; ?>">
-				<?php foreach ( $rows as $row ) : ?>
-					<tr>
-						<?php echo $this->get_columns_message( $row ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					</tr>
-				<?php endforeach; ?>
-			</table>
-		<?php endforeach; ?>
-		<?php
+			// Skipping the whole block keeps its header out of the email as well.
+			if ( $rows_message === '' ) {
+				continue;
+			}
 
-		return ob_get_clean();
+			$blocks_message .= $this->get_block_header( $key, $display ) . sprintf(
+				'<table class="wpforms-layout-table-row %1$s">%2$s</table>',
+				$key === 0 ? 'wpforms-first-row' : '',
+				$rows_message
+			);
+		}
+
+		return $blocks_message;
+	}
+
+	/**
+	 * Get the header of a single repeater block.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param int    $key     Block index.
+	 * @param string $display Display type.
+	 *
+	 * @return string
+	 */
+	private function get_block_header( int $key, string $display ): string {
+
+		if ( $display !== 'blocks' ) {
+			return '';
+		}
+
+		$block_number = $key >= 1 ? ' #' . ( $key + 1 ) : '';
+
+		return '<table style="width: 100%;">' . $this->get_header( $this->field['label'] . $block_number ) . '</table>';
 	}
 
 	/**
 	 * Render repeater columns.
 	 *
 	 * @since 1.9.3
+	 * @since 2.0.2 Returns an empty string when no sub-field of the row renders.
 	 *
 	 * @param array $row Row data.
 	 *
@@ -329,19 +373,29 @@ class Notifications extends \WPForms\Pro\Forms\Fields\Base\Notifications {
 	 */
 	private function get_columns_message( array $row ): string {
 
+		$has_subfield_messages = false;
+
 		ob_start();
 		?>
 		<?php foreach ( $row as $column ) : ?>
 			<td style="width: <?php echo esc_attr( wpforms_get_column_width( $column ) ); ?>%">
 				<?php if ( isset( $column['field'], $this->form_data['fields'][ $column['field'] ] ) ) : ?>
 					<table class="wpforms-layout-table-cell">
-						<?php echo $this->get_subfield_message( $this->form_data['fields'][ $column['field'] ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						<?php
+						$subfield_message = $this->get_subfield_message( $this->form_data['fields'][ $column['field'] ] );
+
+						$has_subfield_messages = $has_subfield_messages || $subfield_message !== '';
+
+						echo $subfield_message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+						?>
 					</table>
 				<?php endif; ?>
 			</td>
 		<?php endforeach; ?>
 		<?php
 
-		return ob_get_clean();
+		$columns_message = ob_get_clean();
+
+		return $has_subfield_messages ? $columns_message : '';
 	}
 }

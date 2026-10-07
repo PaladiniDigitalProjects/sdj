@@ -15,39 +15,43 @@
  * @wordpress-plugin
  * Plugin Name:       WP Swiper
  * Plugin URI:        https://digitalapps.com/wp-swiper/
- * Description:       Swiper JS as a Gutenberg Block.
- * Version:           1.4.3
+ * Description:       Build responsive Swiper carousels with images, media, and nested WordPress blocks.
+ * Version:           1.5.0
+ * Requires at least: 6.3
+ * Requires PHP:      7.4
  * Author:            Digital Apps
  * Author URI:        https://digitalapps.com/
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       wpswiper
- * Domain Path:       /languages
- * Tested up to:      6.9
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain:       wp-swiper
+ * Tested up to:      7.0
  */
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-    die;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-define( 'DAWPS_PLUGIN_VERSION', '1.4.3' );
-define( 'DAWPS_BUNDLE_VERSION', '12.0.2' );
+define( 'DAWPS_PLUGIN_VERSION', '1.5.0' );
+define( 'DAWPS_BUNDLE_VERSION', '14.0.5' );
 define( 'DAWPS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'DAWPS_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-function activate_wpswiper() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper-activator.php';
-    WP_Swiper_Activator::activate();
-}
+register_activation_hook(
+	__FILE__,
+	static function () {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper-activator.php';
+		WP_Swiper_Activator::activate();
+	}
+);
 
-function deactivate_wpswiper() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper-deactivator.php';
-    WP_Swiper_Deactivator::deactivate();
-}
-
-register_activation_hook( __FILE__, 'activate_wpswiper' );
-register_deactivation_hook( __FILE__, 'deactivate_wpswiper' );
+register_deactivation_hook(
+	__FILE__,
+	static function () {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper-deactivator.php';
+		WP_Swiper_Deactivator::deactivate();
+	}
+);
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -64,10 +68,4 @@ require plugin_dir_path( __FILE__ ) . 'includes/core/class-wp-swiper.php';
  *
  * @since    1.0.0
  */
-function run_wp_swiper() {
-
-    $plugin = new WP_Swiper();
-    $plugin->run();
-
-}
-run_wp_swiper();
+( new WP_Swiper() )->run();

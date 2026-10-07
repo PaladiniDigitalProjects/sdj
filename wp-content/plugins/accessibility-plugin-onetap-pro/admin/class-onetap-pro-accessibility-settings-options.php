@@ -147,6 +147,15 @@ class Onetap_Pro_Accessibility_Settings_Options {
 
 		add_submenu_page(
 			'apop-settings', // Parent menu slug.
+			__( 'Alt Text', 'accessibility-plugin-onetap-pro' ), // Page title.
+			__( 'Alt Text', 'accessibility-plugin-onetap-pro' ), // Menu title.
+			'manage_options', // Capability required.
+			'apop-alt-text', // Menu slug.
+			array( $this, 'callback_template_for_alt_text' ) // Callback function.
+		);
+
+		add_submenu_page(
+			'apop-settings', // Parent menu slug.
 			__( 'Settings', 'accessibility-plugin-onetap-pro' ), // Page title.
 			__( 'Settings', 'accessibility-plugin-onetap-pro' ), // Menu title.
 			'manage_options', // Capability required.
@@ -826,6 +835,20 @@ class Onetap_Pro_Accessibility_Settings_Options {
 					'switch_style'      => 'switch1',
 				),
 				array(
+					'name'              => 'toggle-widget-button-focus-style',
+					'feature_name'      => __( 'Button Focus Indicator', 'accessibility-plugin-onetap-pro' ),
+					'feature_desc'      => __( 'Show a visible dotted border on the floating toolbar icon image when the button is focused (e.g. keyboard navigation).', 'accessibility-plugin-onetap-pro' ),
+					'first_control'     => false,
+					'last_control'      => false,
+					'show_save_button'  => false,
+					'type'              => 'switch',
+					'callback'          => 'callback_template_switch',
+					'switch_style'      => 'switch1',
+					'is_pro'            => false,
+					'default'           => Onetap_Pro_Config::get_setting( 'toggle-widget-button-focus-style' ),
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				array(
 					'name'              => 'open_with_url',
 					'feature_name'      => __( 'Open with URL', 'accessibility-plugin-onetap-pro' ),
 					'feature_desc'      => __( 'Open the OneTap Toolbar with URL', 'accessibility-plugin-onetap-pro' ),
@@ -862,7 +885,6 @@ class Onetap_Pro_Accessibility_Settings_Options {
 					'show_save_button'  => false,
 					'button_text'       => __( 'Start with AltPilot.ai', 'accessibility-plugin-onetap-pro' ),
 					'button_icon'       => ACCESSIBILITY_PLUGIN_ONETAP_PRO_PLUGINS_URL . 'assets/images/admin/logo-altpilot.svg',
-					'button_link'       => 'https://www.altpilot.ai/',
 					'feature_style'     => 'style1',
 					'type'              => 'feature_card',
 					'callback'          => 'callback_template_feature_card',
@@ -886,12 +908,27 @@ class Onetap_Pro_Accessibility_Settings_Options {
 					'switch_style'      => 'switch1',
 				),
 				array(
-					'name'              => 'bigger-text',
+					'name'              => 'skip-to-content',
 					'setting_title'     => __( 'Content Modules', 'accessibility-plugin-onetap-pro' ),
+					'feature_name'      => __( 'Skip To Content', 'accessibility-plugin-onetap-pro' ),
+					'feature_desc'      => __( 'Let visitors jump to main content, navigation, or footer landmarks.', 'accessibility-plugin-onetap-pro' ),
+					'switch_icon'       => ACCESSIBILITY_PLUGIN_ONETAP_PRO_PLUGINS_URL . 'assets/images/admin/modules/skip-to-content.svg',
+					'is_beta'           => true,
+					'first_control'     => true,
+					'last_control'      => false,
+					'show_save_button'  => false,
+					'type'              => 'switch',
+					'callback'          => 'callback_template_switch',
+					'default'           => Onetap_Pro_Config::get_module( 'skip_to_content' ),
+					'sanitize_callback' => 'sanitize_text_field',
+					'switch_style'      => 'switch1',
+				),
+				array(
+					'name'              => 'bigger-text',
 					'feature_name'      => __( 'Font Size', 'accessibility-plugin-onetap-pro' ),
 					'feature_desc'      => __( 'Easily enlarge text for improved readability and accessibility for all', 'accessibility-plugin-onetap-pro' ),
 					'switch_icon'       => ACCESSIBILITY_PLUGIN_ONETAP_PRO_PLUGINS_URL . 'assets/images/admin/modules/bigger-text.svg',
-					'first_control'     => true,
+					'first_control'     => false,
 					'last_control'      => false,
 					'show_save_button'  => false,
 					'type'              => 'switch',
@@ -1441,11 +1478,26 @@ class Onetap_Pro_Accessibility_Settings_Options {
 					'module_labels_style' => 'style1',
 				),
 				array(
-					'name'                => 'bigger-text',
+					'name'                => 'skip-to-content',
 					'setting_title'       => __( 'Content Modules', 'accessibility-plugin-onetap-pro' ),
+					'feature_name'        => __( 'Skip To Content', 'accessibility-plugin-onetap-pro' ),
+					'feature_desc'        => __( 'Let visitors jump to main content, navigation, or footer landmarks.', 'accessibility-plugin-onetap-pro' ),
+					'is_beta'             => true,
+					'first_control'       => true,
+					'last_control'        => false,
+					'show_save_button'    => false,
+					'type'                => 'module-labels',
+					'status'              => false,
+					'callback'            => 'callback_template_module_labels',
+					'default'             => '',
+					'sanitize_callback'   => 'sanitize_text_field',
+					'module_labels_style' => 'style1',
+				),
+				array(
+					'name'                => 'bigger-text',
 					'feature_name'        => __( 'Font Size', 'accessibility-plugin-onetap-pro' ),
 					'feature_desc'        => __( 'Easily enlarge text for improved readability and accessibility for all', 'accessibility-plugin-onetap-pro' ),
-					'first_control'       => true,
+					'first_control'       => false,
 					'last_control'        => false,
 					'show_save_button'    => false,
 					'type'                => 'module-labels',

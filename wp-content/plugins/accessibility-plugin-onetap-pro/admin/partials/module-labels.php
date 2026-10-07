@@ -236,7 +236,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="text-current-language">
 				<strong class="language-editing"><?php esc_html_e( 'You’re currently editing', 'accessibility-plugin-onetap-pro' ); ?></strong>
 				<strong class="language-name"><?php esc_html_e( 'English', 'accessibility-plugin-onetap-pro' ); ?></strong> 
-				<strong class="language-labels"><?php esc_html_e( 'labels', 'accessibility-plugin-onetap-pro' ); ?></strong> 
+				<strong class="language-labels"><?php esc_html_e( 'labels.', 'accessibility-plugin-onetap-pro' ); ?></strong> 
 				<span class="language-description"><?php esc_html_e( 'Choose another language to edit its translations.', 'accessibility-plugin-onetap-pro' ); ?></span>
 			</span>
 		</a>

@@ -2,24 +2,12 @@
 
 class WPML_Media_Attachment_By_URL {
 
-	/**
-	 * @var wpdb
-	 */
 	private $wpdb;
 
-	/**
-	 * @var string
-	 */
 	private $url;
 
-	/**
-	 * @var string
-	 */
 	private $language;
 
-	/**
-	 * @var \WPML\Media\Classes\WPML_Media_Attachment_By_URL_Query
-	 */
 	private $media_attachment_by_url_query;
 
 	const SIZE_SUFFIX_REGEXP = '/-([0-9]+)x([0-9]+)\.([a-z]{3,4})$/';
@@ -28,45 +16,51 @@ class WPML_Media_Attachment_By_URL {
 	const CACHE_GROUP      = 'wpml-media-setup';
 	const CACHE_EXPIRATION = 1800;
 
-	/** @var null|boolean */
 	public $cache_hit_flag = null;
 
-	/**
-	 * WPML_Media_Attachment_By_URL constructor.
-	 *
-	 * @param wpdb                                                   $wpdb
-	 * @param string                                                 $url
-	 * @param string                                                 $language
-	 * @param \WPML\Media\Classes\WPML_Media_Attachment_By_URL_Query $media_attachment_by_url_query
-	 */
 	public function __construct(
 		wpdb $wpdb,
 			 $url,
 			 $language,
 		\WPML\Media\Classes\WPML_Media_Attachment_By_URL_Query $media_attachment_by_url_query
 	) {
-		$this->url                           = $url;
+		$this->url                           = self::normalizeUrl( $url );
 		$this->language                      = $language;
 		$this->wpdb                          = $wpdb;
 		$this->media_attachment_by_url_query = $media_attachment_by_url_query;
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return string
-	 */
+	public static function normalizeUrl( $url ) {
+		if ( ! is_string( $url ) || '' === $url || '/' !== $url[0] ) {
+			return $url;
+		}
+
+		$uploads_dir = wp_get_upload_dir();
+		$baseurl     = wp_parse_url( $uploads_dir['baseurl'] );
+
+		if ( empty( $baseurl['scheme'] ) ) {
+			return $url;
+		}
+
+		if ( 0 === strpos( $url, '//' ) ) {
+			return $baseurl['scheme'] . ':' . $url;
+		}
+
+		if ( empty( $baseurl['host'] ) ) {
+			return $url;
+		}
+
+		$port = isset( $baseurl['port'] ) ? ':' . $baseurl['port'] : '';
+
+		return $baseurl['scheme'] . '://' . $baseurl['host'] . $port . $url;
+	}
+
 	public static function getUrl( $url ) {
 		$url = preg_replace( self::SIZE_SUFFIX_REGEXP, '.$3', $url );
 
 		return $url;
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return string
-	 */
 	public static function getUrlNotScaled( $url ) {
 		$url = preg_replace( self::SIZE_SUFFIX_REGEXP, '.$3', $url );
 		$url = str_replace( '-scaled', '', $url );
@@ -74,32 +68,17 @@ class WPML_Media_Attachment_By_URL {
 		return $url;
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return string
-	 */
 	public static function getUrlRelativePath( $url ) {
 		$uploads_dir   = wp_get_upload_dir();
-		$relative_path = ltrim( preg_replace( '@^' . $uploads_dir['baseurl'] . '@', '', $url ), '/' );
+		$relative_path = ltrim( preg_replace( '@^' . preg_quote( $uploads_dir['baseurl'], '@' ) . '@', '', $url ), '/' );
 
 		return $relative_path;
 	}
 
-	/**
-	 * @param string $relative_path
-	 *
-	 * @return string
-	 */
 	public static function getUrlRelativePathOriginal( $relative_path ) {
 		return preg_replace( self::SIZE_SUFFIX_REGEXP, '.$3', $relative_path );
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return string
-	 */
 	public static function getUrlRelativePathScaled( $url ) {
 		$relative_path = self::getUrlRelativePath( $url );
 		$relative_path = str_replace( '-scaled', '', $relative_path );
@@ -141,13 +120,11 @@ class WPML_Media_Attachment_By_URL {
 		$relative_path        = self::getUrlRelativePath( $this->url );
 		$relative_path_scaled = self::getUrlRelativePathScaled( $this->url );
 
-		// Using _wp_attached_file.
 		$attachment_id = $this->media_attachment_by_url_query->getIdFromMeta( $relative_path, $this->language );
 		if ( ! $attachment_id ) {
 			$attachment_id = $this->media_attachment_by_url_query->getIdFromMeta( $relative_path_scaled, $this->language );
 		}
 
-		// Using attachment meta (fallback).
 		if ( ! $attachment_id && preg_match( self::SIZE_SUFFIX_REGEXP, $relative_path ) ) {
 			$attachment_id = $this->get_attachment_image_from_meta_fallback( $relative_path );
 		}
@@ -161,7 +138,6 @@ class WPML_Media_Attachment_By_URL {
 		$relative_path_original = self::getUrlRelativePathOriginal( $relative_path );
 		$attachment_id_original = $this->media_attachment_by_url_query->getIdFromMeta( $relative_path_original, $this->language );
 
-		// Validate size.
 		if ( $attachment_id_original ) {
 			$attachment_meta_data = wp_get_attachment_metadata( $attachment_id_original );
 			if ( $this->validate_image_size( $relative_path, $attachment_meta_data ) ) {

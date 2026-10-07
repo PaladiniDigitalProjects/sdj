@@ -8,15 +8,8 @@ use WPML\FP\Obj;
 class Fields {
 
 	const WRAPPER_FIELDS = [ 'repeater', 'flexible_content' ];
+	const LAYOUT_KEY     = 'acf_fc_layout';
 
-	/**
-	 * @param array    $fields
-	 * @param callable $transformField
-	 * @param callable $transformLayout
-	 * @param string   $fieldBasePattern
-	 *
-	 * @return array
-	 */
 	public static function iterate( $fields, $transformField, $transformLayout, $fieldBasePattern = '' ) {
 		foreach ( $fields as &$field ) {
 			$fieldPattern = $fieldBasePattern . preg_quote( $field['name'] );
@@ -41,27 +34,25 @@ class Fields {
 		return $fields;
 	}
 
-	/**
-	 * @param array  $fields Array of fields.
-	 * @param string $type   Field type.
-	 *
-	 * @return bool
-	 */
+	public static function getFresh( array $fieldGroup ): array {
+		self::evictFromStore( acf_get_store( 'fields' ), $fieldGroup['ID'] );
+
+		return acf_get_fields( $fieldGroup );
+	}
+
+	private static function evictFromStore( $store, $parentId ) {
+		foreach ( acf_get_raw_fields( $parentId ) as $field ) {
+			$store->remove( $field['key'] );
+			self::evictFromStore( $store, $field['ID'] );
+		}
+	}
+
 	public static function containsType( $fields, $type ) {
 		$isType = Relation::propEq( 'type', $type );
 		return (bool) wpml_collect( $fields )
 			->first( $isType );
 	}
 
-	/**
-	 * Checks if a field is a wrapper of other fields.
-	 *  - Repeater field has sub_fields.
-	 *  - Flexible content field has layouts, which also have sub_fields.
-	 *
-	 * @param array $field
-	 *
-	 * @return bool|callable
-	 */
 	public static function isWrapper( $field ) {
 		return in_array(
 			Obj::prop( 'type', $field ),
@@ -70,20 +61,15 @@ class Fields {
 		);
 	}
 
-	/**
-	 * Checks if a field is a wrapper of other fields.
-	 *  - Repeater field has sub_fields.
-	 *  - Flexible content field has layouts, which also have sub_fields.
-	 *
-	 * @param array $field
-	 *
-	 * @return bool|callable
-	 */
 	public static function isWrapperOrGroup( $field ) {
 		return in_array(
 			Obj::prop( 'type', $field ),
 			array_merge( [ 'group' ], self::WRAPPER_FIELDS ),
 			true
 		);
+	}
+
+	public static function getLayoutsByName( array $field ): array {
+		return array_column( (array) Obj::propOr( [], 'layouts', $field ), null, 'name' );
 	}
 }

@@ -7,23 +7,12 @@ use WPML\FP\Obj;
 
 class CptHooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
-	// See _acf_apply_get_local_internal_posts loaded at priority 20.
 	const AFTER_LOAD_LOCAL_CPTS_PRIORITY = 30;
 
-	/**
-	 * @var Factory $factory
-	 */
 	private $factory;
 
-	/**
-	 * @var Translator $translator
-	 */
 	private $translator;
 
-	/**
-	 * @param Factory    $factory
-	 * @param Translator $translator
-	 */
 	public function __construct( Factory $factory, Translator $translator ) {
 		$this->factory    = $factory;
 		$this->translator = $translator;
@@ -36,20 +25,11 @@ class CptHooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_
 		add_action( 'acf/delete_post_type', [ $this, 'delete' ] );
 	}
 
-	/**
-	 * @param array $postData
-	 */
 	public function register( $postData ) {
 		$this->translator->registerCpt( $postData );
 	}
 
-	/**
-	 * @param  array $postTypeArgs
-	 * @param  array $postData
-	 *
-	 * @return array
-	 */
-	public function translate( $postTypeArgs, $postData ) { // phpcs:disable WordPress.WP.I18n
+	public function translate( $postTypeArgs, $postData ) {
 		return ContentTypeLabels::translateLabels(
 			$postTypeArgs,
 			$this->translator->translateCpt( $postData, $postTypeArgs ),
@@ -57,21 +37,12 @@ class CptHooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_
 		);
 	}
 
-	/**
-	 * @param array $postData
-	 */
 	public function delete( $postData ) {
 		$this->factory->createPackage( $postData['post_type'], Package::CPT_PACKAGE_KIND_SLUG )->delete();
 	}
 
-	/**
-	 * @param  array $postsData
-	 *
-	 * @return array
-	 */
 	public function enterCptTitleHere( $postsData ) {
 		array_walk( $postsData, function( &$value ) {
-			/* phpcs:disable WordPress.CodeAnalysis.AssignmentInCondition.Found */
 			if ( ! $this->isDoingEnterTitleHereFilter( $value['post_type'] ) ) {
 				return;
 			}
@@ -87,16 +58,12 @@ class CptHooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_
 				]
 			);
 
-			/* phpcs:disable WordPress.CodeAnalysis.AssignmentInCondition.Found */
 			$value['enter_title_here'] = Obj::propOr( $value['enter_title_here'], 'enter_title_here', $translatedLabels );
 		} );
 
 		return $postsData;
 	}
 
-	/**
-	 * @return string|null
-	 */
 	private static function getCurrentScreenPostType() {
 		$currentScreen = get_current_screen();
 		if ( ! $currentScreen ) {
@@ -105,11 +72,6 @@ class CptHooks implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_
 		return $currentScreen->post_type;
 	}
 
-	/**
-	 * @param  string $postType
-	 *
-	 * @return bool
-	 */
 	private function isDoingEnterTitleHereFilter( $postType ) {
 		global $pagenow;
 

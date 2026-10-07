@@ -8,70 +8,67 @@
             "lang": "ar"
          },
          "WPML has detected changed or new MO files": [
-            "اكتشف WPML ملفات MO متغيرة أو جديدة"
+            "اكتشف WPML ملفات MO جديدة أو متغيرة"
          ],
          "There are new or updated .mo files. WPML needs to scan them to find strings for translation.": [
-            "توجد ملفات mo. جديدة أو محدثة. يحتاج WPML إلى فحصها للعثور على سلاسل للترجمة."
+            "توجد ملفات .mo جديدة أو محدثة. يحتاج WPML إلى فحصها للعثور على نصوص للترجمة."
          ],
          "Scan translation files": [
             "فحص ملفات الترجمة"
          ],
          "Scanned %1$d of %2$d files...": [
-            "تم فحص %1$d من %2$d ملفات..."
+            "تم فحص %1$d من أصل %2$d ملفًا..."
          ],
          "Generated files for %1$d of %2$d sites...": [
-            "تم إنشاء ملفات لـ %1$d من %2$d مواقع..."
+            "تم إنشاء ملفات لـ %1$d من أصل %2$d موقعًا..."
          ],
          "Generated %1$d of %2$d files...": [
-            "تم إنشاء %1$d من %2$d ملفات..."
+            "تم إنشاء %1$d من أصل %2$d ملفًا..."
          ],
          "WPML needs to generate .mo files": [
-            "يحتاج WPML إلى إنشاء ملفات mo."
+            "يحتاج WPML إلى إنشاء ملفات .mo"
          ],
          "WPML String Translation uses .mo files instead of database calls. WPML needs to generate these .mo files in order for translations to appear on the front-end. However, the folder that should hold these .mo files is not open for writing.": [
-            "تستخدم ترجمة سلاسل WPML ملفات mo. بدلاً من استدعاءات قاعدة البيانات. يحتاج WPML إلى إنشاء ملفات mo. هذه لكي تظهر الترجمات في الواجهة الأمامية. ومع ذلك، فإن المجلد الذي يجب أن يحتوي على ملفات mo. هذه غير مفتوح للكتابة."
+            "يستخدم WPML String Translation ملفات .mo بدلاً من استدعاءات قاعدة البيانات. يحتاج WPML إلى إنشاء ملفات .mo هذه لكي تظهر الترجمات في الواجهة الأمامية. ومع ذلك، فإن المجلد الذي يجب أن يحتوي على ملفات .mo هذه غير مفتوح للكتابة."
          ],
          "Please use your admin control panel or an FTP program to make the following folder writeable:": [
             "يرجى استخدام لوحة تحكم المسؤول أو برنامج FTP لجعل المجلد التالي قابلاً للكتابة:"
          ],
          "There was a problem creating the .mo files": [
-            "حدثت مشكلة أثناء إنشاء ملفات mo."
+            "حدثت مشكلة أثناء إنشاء ملفات .mo"
          ],
-         "You can try again now or try again later by going to ": [
-            "يمكنك المحاولة مرة أخرى الآن أو المحاولة لاحقًا بالانتقال إلى "
+         "You can try again now or try again later by going to <strong>WPML->Theme and plugins localization</strong>.": [
+            "يمكنك المحاولة مرة أخرى الآن أو لاحقًا بالانتقال إلى <strong>WPML->تعريب القوالب والإضافات</strong>."
          ],
          "Translations are missing from the front-end until you generate .mo files": [
-            "الترجمات مفقودة من الواجهة الأمامية حتى تقوم بإنشاء ملفات mo."
+            "الترجمات مفقودة من الواجهة الأمامية حتى تقوم بإنشاء ملفات .mo"
          ],
-         "Your site doesn't have the .mo files that WPML needs in order to display translated strings on the front-end. To generate these .mo files, remember to go to ": [
-            "موقعك لا يحتوي على ملفات mo. التي يحتاجها WPML لعرض السلاسل المترجمة في الواجهة الأمامية. لإنشاء ملفات mo. هذه، تذكر الانتقال إلى "
-         ],
-         "WPML->Theme and plugins localization.": [
-            "WPML->ترجمة القوالب والإضافات."
+         "Your site doesn't have the .mo files that WPML needs in order to display translated strings on the front-end. To generate these .mo files, remember to go to <strong>WPML->Theme and plugins localization</strong>.": [
+            "لا يحتوي موقعك على ملفات .mo التي يحتاجها WPML لعرض النصوص المترجمة في الواجهة الأمامية. لإنشاء ملفات .mo هذه، تذكر الانتقال إلى <strong>WPML->تعريب القوالب والإضافات</strong>."
          ],
          "WPML String Translation uses .mo files instead of database calls. WPML needs to generate these .mo files in order for translations to appear on the front-end.": [
-            "تستخدم ترجمة سلاسل WPML ملفات mo. بدلاً من استدعاءات قاعدة البيانات. يحتاج WPML إلى إنشاء ملفات mo. هذه لكي تظهر الترجمات في الواجهة الأمامية."
+            "يستخدم WPML String Translation ملفات .mo بدلاً من استدعاءات قاعدة البيانات. يحتاج WPML إلى إنشاء ملفات .mo هذه لكي تظهر الترجمات في الواجهة الأمامية."
          ],
          "Try again": [
             "حاول مرة أخرى"
          ],
          "Generate .mo files": [
-            "إنشاء ملفات mo."
+            "إنشاء ملفات .mo"
          ],
          "Close this message": [
             "إغلاق هذه الرسالة"
          ],
          "Find additional texts that WordPress, the theme and plugins created and choose which ones to translate": [
-            "ابحث عن نصوص إضافية أنشأها WordPress والقالب والإضافات واختر أيها تريد ترجمته"
+            "ابحث عن نصوص إضافية أنشأها WordPress والقالب والإضافات واختر النصوص التي تريد ترجمتها"
          ],
          "Choose texts for translation": [
-            "اختر النصوص للترجمة"
+            "اختر نصوصًا للترجمة"
          ],
          "Some of the translations have changed": [
             "تغيرت بعض الترجمات"
          ],
          "Scan the selected components to make new texts available for translation.": [
-            "افحص المكونات المحددة لجعل النصوص الجديدة متاحة للترجمة."
+            "افحص المكونات المحددة لإتاحة نصوص جديدة للترجمة."
          ],
          "Select all": [
             "تحديد الكل"
@@ -83,16 +80,16 @@
             "القوالب:"
          ],
          "Core:": [
-            "الأساسي:"
+            "النواة:"
          ],
          "Can't find the strings you're looking to translate?": [
-            "لا يمكنك العثور على السلاسل التي تبحث عن ترجمتها؟"
+            "ألا يمكنك العثور على النصوص التي تتطلع لترجمتها؟"
          ],
          "Most likely you cannot see the strings you want to translate because:": [
-            "على الأرجح لا يمكنك رؤية السلاسل التي تريد ترجمتها للأسباب التالية:"
+            "على الأرجح لا يمكنك رؤية النصوص التي تريد ترجمتها بسبب:"
          ],
          "Texts are not selected for translation": [
-            "النصوص غير محددة للترجمة"
+            "لم يتم تحديد النصوص للترجمة"
          ]
       }
    }

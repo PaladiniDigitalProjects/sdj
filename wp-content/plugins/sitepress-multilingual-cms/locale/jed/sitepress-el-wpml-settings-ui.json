@@ -8,44 +8,66 @@
             "lang": "el"
          },
          "You must use the Advanced Translation Editor if you want to translate your content automatically.": [
-            "Πρέπει να χρησιμοποιήσετε το Advanced Translation Editor αν θέλετε να μεταφράσετε το περιεχόμενό σας αυτόματα."
+            "Πρέπει να χρησιμοποιήσετε το Προηγμένο πρόγραμμα επεξεργασίας μετάφρασης εάν θέλετε να μεταφράσετε το περιεχόμενό σας αυτόματα."
          ],
          "Synchronize translators and translation managers with ATE": [
-            "Συγχρονίστε τους μεταφραστές και τους διαχειριστές μεταφράσεων με το ATE"
+            "Συγχρονισμός μεταφραστών και διαχειριστών μετάφρασης με το ATE"
          ],
-         "Please try again in a few minutes. If the problem persists, please contact %sWPML support%s.": [
-            "Παρακαλούμε δοκιμάστε ξανά σε λίγα λεπτά. Εάν το πρόβλημα παραμένει, παρακαλούμε επικοινωνήστε με την %sυποστήριξη του WPML%s."
+         "Please try again in a few minutes. If the problem persists, please contact %1$sWPML support%2$s.": [
+            "Δοκιμάστε ξανά σε λίγα λεπτά. Εάν το πρόβλημα επιμένει, επικοινωνήστε με την %1$sυποστήριξη του WPML%2$s."
+         ],
+         "Are you sure you want to change the translation option?": [
+            "Είστε σίγουροι ότι θέλετε να αλλάξετε την επιλογή μετάφρασης;"
+         ],
+         "No, go back": [
+            "Όχι, πίσω"
+         ],
+         "Yes, continue": [
+            "Ναι, συνέχεια"
+         ],
+         "Once saved, WPML will automatically send affected posts to translation. This may use additional translation words.": [
+            "Μόλις αποθηκευτεί, το WPML θα στείλει αυτόματα τα επηρεαζόμενα άρθρα για μετάφραση. Αυτό μπορεί να χρησιμοποιήσει επιπλέον λέξεις μετάφρασης."
+         ],
+         "Are you OK with this?": [
+            "Συμφωνείτε με αυτό;"
          ],
          "Save": [
             "Αποθήκευση"
          ],
-         "Please confirm this translation setting": [
-            "Παρακαλούμε επιβεβαιώστε αυτήν τη ρύθμιση μετάφρασης"
+         "This change affects %d post. Once saved, WPML will update the translation status of this post. This can take up to 1 minute.": [
+            "Αυτή η αλλαγή επηρεάζει %d άρθρο. Μόλις αποθηκευτεί, το WPML θα ενημερώσει την κατάσταση μετάφρασης αυτού του άρθρου. Αυτό μπορεί να διαρκέσει έως 1 λεπτό.",
+            "Αυτή η αλλαγή επηρεάζει %d άρθρα. Μόλις αποθηκευτεί, το WPML θα ενημερώσει την κατάσταση μετάφρασης αυτών των άρθρων. Αυτό μπορεί να διαρκέσει έως 1 λεπτό."
          ],
-         "Your site is set to translate all content automatically. When you make <PostTypesNames /> translatable, WPML will automatically translate the %1$d existing item.": [
-            "Ο ιστότοπός σας έχει ρυθμιστεί να μεταφράζει αυτόματα όλο το περιεχόμενο. Όταν κάνετε τις <PostTypesNames /> μεταφράσιμες, το WPML θα μεταφράσει αυτόματα το %1$d υπάρχον στοιχείο.",
-            "Ο ιστότοπός σας έχει ρυθμιστεί να μεταφράζει αυτόματα όλο το περιεχόμενο. Όταν κάνετε τις <PostTypesNames /> μεταφράσιμες, το WPML θα μεταφράσει αυτόματα τα %1$d υπάρχοντα στοιχεία."
+         "This change affects %1$d post. Once saved, WPML will update the translation status of this post. This can take up to %2$d hours.": [
+            "Αυτή η αλλαγή επηρεάζει %1$d άρθρο. Μόλις αποθηκευτεί, το WPML θα ενημερώσει την κατάσταση μετάφρασης αυτού του άρθρου. Αυτό μπορεί να διαρκέσει έως %2$d ώρες.",
+            "Αυτή η αλλαγή επηρεάζει %1$d άρθρα. Μόλις αποθηκευτεί, το WPML θα ενημερώσει την κατάσταση μετάφρασης αυτών των άρθρων. Αυτό μπορεί να διαρκέσει έως %2$d ώρες."
          ],
-         "Your site is set to translate all content automatically. When you make <PostTypesNames /> translatable, WPML will automatically translate all future content.": [
-            "Ο ιστότοπός σας έχει ρυθμιστεί να μεταφράζει αυτόματα όλο το περιεχόμενο. Όταν κάνετε τις <PostTypesNames /> μεταφράσιμες, το WPML θα μεταφράσει αυτόματα όλο το μελλοντικό περιεχόμενο."
+         "This change affects %1$d post. Once saved, WPML will update the translation status of this post. This can take up to %2$d minutes.": [
+            "Αυτή η αλλαγή επηρεάζει %1$d άρθρο. Μόλις αποθηκευτεί, το WPML θα ενημερώσει την κατάσταση μετάφρασης αυτού του άρθρου. Αυτό μπορεί να διαρκέσει έως %2$d λεπτά.",
+            "Αυτή η αλλαγή επηρεάζει %1$d άρθρα. Μόλις αποθηκευτεί, το WPML θα ενημερώσει την κατάσταση μετάφρασης αυτών των άρθρων. Αυτό μπορεί να διαρκέσει έως %2$d λεπτά."
          ],
-         "Are you OK with paying for this?": [
-            "Συμφωνείτε να πληρώσετε για αυτό;"
+         "Calculate Costs": [
+            "Υπολογισμός κόστους"
          ],
-         "Cancel": [
-            "Ακύρωση"
+         "WPML will automatically translate %1$s into %2$s.": [
+            "Το WPML θα μεταφράσει αυτόματα %1$s σε %2$s."
          ],
-         "Make translatable": [
-            "Να γίνει μεταφράσιμο"
+         "Automatic translation uses translation words.": [
+            "Η αυτόματη μετάφραση χρησιμοποιεί λέξεις μετάφρασης."
          ],
-         "Yes, translate <b>existing</b> and <b>future</b> content automatically": [
-            "Ναι, μεταφράστε αυτόματα το <b>υπάρχον</b> και το <b>μελλοντικό</b> περιεχόμενο"
+         "%d term": [
+            "%d όρο",
+            "%d όρους"
          ],
-         "Yes, but only translate <b>future</b> content automatically": [
-            "Ναι, αλλά μεταφράστε αυτόματα μόνο το <b>μελλοντικό</b> περιεχόμενο"
+         "%d language": [
+            "%d γλώσσα",
+            "%d γλώσσες"
          ],
-         "Yes, translate <b>future</b> content automatically": [
-            "Ναι, μεταφράστε αυτόματα το <b>μελλοντικό</b> περιεχόμενο"
+         "%s will be translated.": [
+            "Το %s θα μεταφραστεί."
+         ],
+         "WPML's automatic translation service did not accept this request (it answered %d). Wait a minute and try again, and contact WPML support if it keeps happening.": [
+            "Η υπηρεσία αυτόματης μετάφρασης του WPML δεν αποδέχτηκε αυτό το αίτημα (απάντησε %d). Περιμένετε ένα λεπτό και δοκιμάστε ξανά, και επικοινωνήστε με την υποστήριξη του WPML εάν το πρόβλημα επιμένει."
          ]
       }
    }

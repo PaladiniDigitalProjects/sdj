@@ -56,7 +56,18 @@ class FormEditor {
 			return;
 		}
 
+		$min = wpforms_get_min_suffix();
+
 		wp_enqueue_script( 'jquery-ui-resizable' );
+
+		// Shared modal drag/resize utility (WPForms.Admin.AIChatModal) — also used by the admin chat.
+		wp_enqueue_script(
+			'wpforms-admin-chat-modal',
+			WPFORMS_PLUGIN_URL . "assets/js/admin/share/chat-modal$min.js",
+			[],
+			WPFORMS_VERSION,
+			true
+		);
 
 		wp_localize_script(
 			'wpforms-builder',
@@ -117,6 +128,7 @@ class FormEditor {
 		return (array) apply_filters(
 			'wpforms_integrations_ai_admin_builder_form_editor_get_allowed_scopes',
 			[
+				'restore'           => [ 'priority' => 5 ],
 				'fields'            => [ 'priority' => 10 ],
 				'calculation'       => [ 'priority' => 20 ],
 				'conditional_logic' => [ 'priority' => 30 ],
@@ -173,12 +185,14 @@ class FormEditor {
 			$sorted_scopes[] = [ 'key' => $key ];
 		}
 
-		return [
+		$is_lite_connect_allowed = LiteConnect::is_allowed();
+
+		$data = [
 			'nonce'                 => wp_create_nonce( 'wpforms-ai-nonce' ),
 			'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
 			'isPro'                 => wpforms()->is_pro(),
 			'isLicenseActive'       => Helpers::is_license_active(),
-			'liteConnectAllowed'    => LiteConnect::is_allowed(),
+			'liteConnectAllowed'    => $is_lite_connect_allowed,
 			'liteConnectEnabled'    => LiteConnect::is_enabled(),
 			'scopes'                => $sorted_scopes,
 			'revisionToastTitle'    => esc_html__( 'Changes Saved', 'wpforms-lite' ),
@@ -194,6 +208,12 @@ class FormEditor {
 			'checkpointError'       => esc_html__( 'Restore point not saved', 'wpforms-lite' ),
 			'checkpointErrorReason' => esc_html__( "Your AI edit didn't run because the form couldn't be saved. Please try again.", 'wpforms-lite' ),
 		];
+
+		if ( ! $is_lite_connect_allowed ) {
+			$data['liteConnectNotAllowed'] = esc_html__( 'WPForms AI is not available on local sites.', 'wpforms-lite' );
+		}
+
+		return $data;
 	}
 
 	/**
@@ -302,7 +322,10 @@ class FormEditor {
 				'clear'   => esc_html__( 'Clear chat history', 'wpforms-lite' ),
 			],
 			'noChanges'          => esc_html__( 'No changes needed.', 'wpforms-lite' ),
+			'restoreSuccess'     => esc_html__( 'I undid the last change to the form. You can also use Undo and Redo in the builder toolbar, or Form Revisions, for finer control.', 'wpforms-lite' ),
+			'restoreNothing'     => esc_html__( 'There are no changes to undo in this session. To roll back earlier changes, check Form Revisions.', 'wpforms-lite' ),
 			'scopeProgress'      => [
+				'restore'           => esc_html__( 'Undoing the last change...', 'wpforms-lite' ),
 				'fields'            => esc_html__( 'Generating field changes...', 'wpforms-lite' ),
 				'settings'          => esc_html__( 'Updating form settings...', 'wpforms-lite' ),
 				'calculation'       => esc_html__( 'Generating calculations...', 'wpforms-lite' ),

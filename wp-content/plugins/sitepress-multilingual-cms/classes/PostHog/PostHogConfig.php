@@ -7,6 +7,7 @@ use WPML\Infrastructure\WordPress\Component\Site\Application\Query\SiteUrlQuery;
 use WPML\Legacy\SharedKernel\Installer\Application\Query\WpmlActivePluginsQuery;
 use WPML\Legacy\SharedKernel\Installer\Application\Query\WpmlSiteKeyQuery;
 use WPML\LIB\WP\User;
+use WPML\PostHog\State\PostHogState;
 
 class PostHogConfig {
 
@@ -31,6 +32,7 @@ class PostHogConfig {
 			'wpUserEmail'             => $currentUser ? $currentUser->user_email : null,
 			'siteUrl'                 => $siteUrlQuery->get(),
 			'wpmlActivePlugins'       => $wpmlActivePluginsQuery->getActivePlugins(),
+			'trackingMode'            => PostHogState::getTrackingMode(),
 		];
 	}
 }

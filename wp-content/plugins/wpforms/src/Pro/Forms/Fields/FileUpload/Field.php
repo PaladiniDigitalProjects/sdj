@@ -6,6 +6,7 @@ use WPForms\Forms\Fields\FileUpload\Field as FieldLite;
 use WPForms\Pro\Helpers\Upload;
 use WPForms\Forms\Fields\Traits\FileDisplayTrait;
 use WPForms\Forms\Fields\Traits\FileMethodsTrait;
+use WPForms\Pro\Tasks\Actions\TmpDirCleanupTask;
 
 /**
  * File upload field.
@@ -155,6 +156,25 @@ class Field extends FieldLite {
 		add_filter( 'wpforms_pro_admin_entries_export_ajax_get_entry_fields_data_field', [ $this, 'export_entry_field_data' ] );
 
 		add_action( 'wpforms_form_handler_duplicate_form', [ $this, 'duplicate_fields_restrictions' ], 10, 3 );
+
+		add_filter( 'wpforms_tasks_get_tasks', [ $this, 'add_tmp_dir_cleanup_task' ] );
+	}
+
+	/**
+	 * Add the tmp uploads directory cleanup task to the task registry.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $tasks List of available tasks.
+	 *
+	 * @return array
+	 */
+	public function add_tmp_dir_cleanup_task( $tasks ): array {
+
+		$tasks   = (array) $tasks;
+		$tasks[] = TmpDirCleanupTask::class;
+
+		return $tasks;
 	}
 
 	/**
@@ -489,6 +509,7 @@ class Field extends FieldLite {
 	public function add_builder_strings( $strings, $form ) {
 
 		$strings['file_upload'] = $this->get_strings();
+		$strings['file_upload']['users_search_placeholder'] = esc_html__( 'Search by username', 'wpforms' );
 
 		return $strings;
 	}
@@ -1421,6 +1442,9 @@ class Field extends FieldLite {
 			->value();
 
 		if ( count( $errors ) > 0 ) {
+			// Remove the metadata created above so the rejected upload session cannot be resumed.
+			$handler->delete_metadata();
+
 			wp_send_json_error( implode( ',', $errors ) );
 		}
 
@@ -1479,8 +1503,14 @@ class Field extends FieldLite {
 	 */
 	public function ajax_chunk_upload_finalize(): void {
 
-		$default_error = esc_html__( 'Something went wrong, please try again.', 'wpforms' );
-		$handler       = Chunk::from_current_request( $this );
+		$default_error        = esc_html__( 'Something went wrong, please try again.', 'wpforms' );
+		$validated_form_field = $this->ajax_validate_form_field_modern();
+
+		if ( empty( $validated_form_field ) ) {
+			wp_send_json_error( $default_error );
+		}
+
+		$handler = Chunk::from_current_request( $this );
 
 		if ( ! $handler || ! $handler->load_metadata() ) {
 			wp_send_json_error( $default_error, 403 );
@@ -1501,6 +1531,9 @@ class Field extends FieldLite {
 		$is_valid_type = $this->validate_wp_filetype_and_ext( $tmp_path, $file_name );
 
 		if ( $is_valid_type !== false ) {
+			// Remove the assembled file so a rejected type is never left on disk.
+			wp_delete_file( $tmp_path );
+
 			wp_send_json_error( $is_valid_type, 403 );
 		}
 

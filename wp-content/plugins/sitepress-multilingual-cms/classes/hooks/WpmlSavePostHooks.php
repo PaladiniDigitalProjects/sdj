@@ -4,14 +4,8 @@ namespace WPML\Hooks;
 
 class WpmlSavePostHooks {
 
-	/**
-	 * @var \SitePress $sitepress
-	 */
 	private $sitepress;
 
-	/**
-	 * @var \wpdb $wpdb
-	 */
 	private $wpdb;
 
 	public function __construct( \SitePress $sitepress, \wpdb $wpdb ) {
@@ -24,9 +18,12 @@ class WpmlSavePostHooks {
 		add_action( 'woocommerce_after_product_object_save', array( $this, 'on_product_save' ), 100, 1 );
 	}
 
-	public function on_product_save( $post ) {
-		$post = get_post( $post );
-		$this->process_post_save( $post, false, null, true );
+	public function on_product_save( $product ) {
+		if ( ! is_object( $product ) || ! method_exists( $product, 'get_id' ) ) {
+			return;
+		}
+
+		$this->process_post_save( (int) $product->get_id(), false, null, true );
 	}
 
 	private function is_original_post( $post ) {
@@ -75,10 +72,6 @@ class WpmlSavePostHooks {
 		$this->executeSavePostHook( $post );
 	}
 
-	/**
-	 * @param int|string $post_id
-	 * @param bool       $update
-	 */
 	public function executeOnPostTranslationSave( $post_id ) {
 		$post = get_post( (int) $post_id );
 
@@ -94,19 +87,11 @@ class WpmlSavePostHooks {
 		$this->executeSavePostHook( $post, true );
 	}
 
-	/**
-	 * @param \WP_Post $post
-	 * @param bool     $isPostTranslation
-	 */
 	private function executeSavePostHook( \WP_Post $post, $isPostTranslation = false ) {
 		do_action( 'wpml_save_post', $post->ID, $isPostTranslation );
 		do_action( 'wpml_save_post_' . $post->post_type, $post->ID, $isPostTranslation );
 	}
 
-	/**
-	 * @param \WP_Post $post
-	 * @param bool     $isPostTranslation
-	 */
 	private function executeSaveProductHook( \WP_Post $post, $isPostTranslation = false ) {
 		do_action( 'wpml_save_product', $post->ID, $isPostTranslation );
 	}

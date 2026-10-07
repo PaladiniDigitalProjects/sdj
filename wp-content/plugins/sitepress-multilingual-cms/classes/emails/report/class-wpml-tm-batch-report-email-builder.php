@@ -1,50 +1,23 @@
 <?php
 
-/**
- * Class WPML_TM_Batch_Report_Email
- */
 class WPML_TM_Batch_Report_Email_Builder {
 
 	const JOBS_LIST_MODE_ASSIGNED  = 'assigned';
 	const JOBS_LIST_MODE_AVAILABLE = 'available';
 	const JOBS_LIST_MODE_WAITING   = 'waiting';
 
-	/**
-	 * @var WPML_TM_Batch_Report
-	 */
 	private $batch_report;
 
-	/**
-	 * @var array
-	 */
 	private $emails;
 
-	/**
-	 * @var WPML_TM_Email_Jobs_Summary_View
-	 */
 	private $email_template;
 
-	/**
-	 * @var int[]
-	 */
 	private $orphaned_translators_ids;
 
-	/**
-	 * @var int[]
-	 */
 	private $dnd_translators_ids;
 
-	/**
-	 * @var array<string,array<string,string>>
-	 */
 	private $job_list_titles = [];
 
-	/**
-	 * WPML_TM_Notification_Batch_Email constructor.
-	 *
-	 * @param WPML_TM_Batch_Report            $batch_report
-	 * @param WPML_TM_Email_Jobs_Summary_View $email_template
-	 */
 	public function __construct( WPML_TM_Batch_Report $batch_report, WPML_TM_Email_Jobs_Summary_View $email_template ) {
 		$this->batch_report             = $batch_report;
 		$this->email_template           = $email_template;
@@ -53,28 +26,29 @@ class WPML_TM_Batch_Report_Email_Builder {
 		$this->dnd_translators_ids      = [];
 	}
 
-	/**
-	 * @param string $mode
-	 *
-	 * @return array<string,string>
-	 */
 	private function get_jobs_list_titles( $mode ) {
 		if ( empty( $this->job_list_titles ) ) {
 			$this->job_list_titles = [
 				self::JOBS_LIST_MODE_ASSIGNED => [
-					'singular' => __( 'You\'ve been assigned a new translation job:', 'wpml-translation-management' ),
-					'plural'   => __( 'You\'ve been assigned %s new translation jobs:', 'wpml-translation-management' ),
-					'sliced'   => __( 'You\'ve been assigned %2$s new translation jobs (showing the first %1$s):', 'wpml-translation-management' ),
+					'singular' => __( 'You\'ve been assigned a new translation job:', 'sitepress' ),
+					/* translators: %s: number of translation jobs. */
+					'plural'   => __( 'You\'ve been assigned %s new translation jobs:', 'sitepress' ),
+					/* translators: Line in the email WPML sends to a translator, above a shortened list of jobs. %2$s: how many jobs there are in all, %1$s: how many of them the email lists. */
+					'sliced'   => __( 'You\'ve been assigned %2$s new translation jobs (showing the first %1$s):', 'sitepress' ),
 				],
 				self::JOBS_LIST_MODE_AVAILABLE => [
-					'singular' => __( 'There\'s another new job you can take:', 'wpml-translation-management' ),
-					'plural'   => __( 'There are %s other new jobs you can take:', 'wpml-translation-management' ),
-					'sliced'   => __( 'There are %2$s other new jobs you can take (showing the first %1$s):', 'wpml-translation-management' ),
+					'singular' => __( 'There\'s another new job you can take:', 'sitepress' ),
+					/* translators: %s: number of translation jobs. */
+					'plural'   => __( 'There are %s other new jobs you can take:', 'sitepress' ),
+					/* translators: Line in the email WPML sends to a translator, above a shortened list of jobs that are free to take. %2$s: how many such jobs there are in all, %1$s: how many of them the email lists. */
+					'sliced'   => __( 'There are %2$s other new jobs you can take (showing the first %1$s):', 'sitepress' ),
 				],
 				self::JOBS_LIST_MODE_WAITING => [
-					'singular' => __( 'There\'s 1 new job waiting for a translator:', 'wpml-translation-management' ),
-					'plural'   => __( 'There are %s new jobs waiting for a translator:', 'wpml-translation-management' ),
-					'sliced'   => __( 'There are %2$s new jobs waiting for a translator (showing the first %1$s):', 'wpml-translation-management' ),
+					'singular' => __( 'There\'s 1 new job waiting for a translator:', 'sitepress' ),
+					/* translators: %s: number of translation jobs. */
+					'plural'   => __( 'There are %s new jobs waiting for a translator:', 'sitepress' ),
+					/* translators: Line in the email WPML sends to a manager, above a shortened list of jobs with no translator. %2$s: how many such jobs there are in all, %1$s: how many of them the email lists. */
+					'sliced'   => __( 'There are %2$s new jobs waiting for a translator (showing the first %1$s):', 'sitepress' ),
 				],
 			];
 		}
@@ -82,9 +56,6 @@ class WPML_TM_Batch_Report_Email_Builder {
 		return array_key_exists( $mode, $this->job_list_titles ) ? $this->job_list_titles[ $mode ] : $this->job_list_titles[ self::JOBS_LIST_MODE_WAITING ];
 	}
 
-	/**
-	 * @param array $batch_jobs
-	 */
 	public function prepare_assigned_jobs_emails( $batch_jobs ) {
 		$unassigned_jobs = [];
 		if ( array_key_exists( 0, $batch_jobs ) ) {
@@ -158,9 +129,6 @@ class WPML_TM_Batch_Report_Email_Builder {
 		}
 	}
 
-	/**
-	 * @param array $batch_jobs
-	 */
 	public function prepare_unassigned_jobs_emails( $batch_jobs ) {
 		if ( array_key_exists( 0, $batch_jobs ) ) {
 
@@ -174,6 +142,12 @@ class WPML_TM_Batch_Report_Email_Builder {
 					$this->orphaned_translators_ids[] = $translator;
 					continue;
 				}
+
+				if ( ! WPML_User_Jobs_Notification_Settings::is_new_job_notification_enabled( $translator_user->ID ) ) {
+					$this->dnd_translators_ids[] = $translator_user->ID;
+					continue;
+				}
+
 				$render_jobs_list = $this->email_template->render_jobs_list(
 					$unassigned_jobs,
 					$translator_user->ID,
@@ -204,12 +178,6 @@ class WPML_TM_Batch_Report_Email_Builder {
 		}
 	}
 
-	/**
-	 * @param array $email
-	 * @param array $jobs
-	 *
-	 * @return string|string[]
-	 */
 	private function get_attachments( $email, $jobs ) {
 		$attachments = array();
 		foreach ( $jobs as $job ) {
@@ -232,37 +200,24 @@ class WPML_TM_Batch_Report_Email_Builder {
 		return [];
 	}
 
-	/**
-	 * @return string
-	 */
 	private function get_subject_assigned_job() {
-		return sprintf( __( 'New translation job from %s', 'wpml-translation-management' ), get_bloginfo( 'name' ) );
+		/* translators: %s: site name. */
+		return sprintf( __( 'New translation job from %s', 'sitepress' ), get_bloginfo( 'name' ) );
 	}
 
-	/**
-	 * @return string
-	 */
 	private function get_subject_unassigned_job() {
-		return sprintf( __( 'Job waiting for a translator in %s', 'wpml-translation-management' ), get_bloginfo( 'name' ) );
+		/* translators: Subject of the email WPML sends when a translation is waiting for somebody to take it. %s: the name of the site. */
+		return sprintf( __( 'Job waiting for a translator in %s', 'sitepress' ), get_bloginfo( 'name' ) );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function get_emails() {
 		return $this->emails;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function get_orphaned_translators_ids() {
 		return $this->orphaned_translators_ids;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function get_dnd_translators_ids() {
 		return $this->dnd_translators_ids;
 	}

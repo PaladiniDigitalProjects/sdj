@@ -23,18 +23,6 @@ class Flush implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 
 	const FLUSH_PRIORITY_AFTER_ACF_LOGIC = 99;
 
-	/**
-	 * @var string|null|false
-	 */
-	private $defaultLanguage;
-
-	/**
-	 * @param \SitePress $sitepress
-	 */
-	public function __construct( \SitePress $sitepress ) {
-		$this->defaultLanguage = $sitepress->get_default_language();
-	}
-
 	public function add_hooks() {
 		foreach ( self::ACTIONS as $actionPrefix ) {
 			$this->registerFlushOnAction( $actionPrefix );
@@ -42,9 +30,6 @@ class Flush implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 		}
 	}
 
-	/**
-	 * @param string $actionPrefix
-	 */
 	private function registerFlushOnAction( $actionPrefix ) {
 		foreach ( self::OBJECT_TYPES_TO_CACHE_KEYS as $objectType => $cacheKey ) {
 			add_action(
@@ -57,14 +42,8 @@ class Flush implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 		}
 	}
 
-	/**
-	 * @param string $actionPrefix
-	 */
 	private function registerFieldFlushOnAction( $actionPrefix ) {
 		if ( 'acf/update_%s' === $actionPrefix ) {
-			// For fields, the 'acf/update_field' hook is a filter, not an action,
-			// and contrary to other 'acf/update_%s' actions, it runs BEFORE the main cache cleanup.
-			// Here, the 'acf/updated_field' action is fired in the right moment.
 			$actionPrefix = 'acf/updated_%s';
 		}
 		add_action(
@@ -87,9 +66,6 @@ class Flush implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC
 		);
 	}
 
-	/**
-	 * @param string $cacheKey
-	 */
 	private function flushMultilingualCache( $cacheKey ) {
 		$activeLanguages = Languages::getActive();
 		foreach ( $activeLanguages as $languageCode => $language ) {

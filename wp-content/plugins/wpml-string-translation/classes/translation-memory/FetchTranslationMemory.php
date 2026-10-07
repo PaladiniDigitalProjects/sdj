@@ -12,7 +12,6 @@ use WPML\FP\Obj;
 
 class FetchTranslationMemory implements IHandler {
 
-	/** @var \WPML_ST_Translation_Memory_Records $records */
 	private $records;
 
 	public function __construct( \WPML_ST_Translation_Memory_Records $records ) {
@@ -45,9 +44,17 @@ class FetchTranslationMemory implements IHandler {
 		$gettext_context = Obj::prop( 'gettext_context', $data );
 
 		if ( $string && $source && $target ) {
+			if ( ! self::isTranslationMemoryEnabled() ) {
+				return [];
+			}
+
 			return $this->records->get( [ $string ], $source, $target, $context, $gettext_context );
 		} else {
 			return false;
 		}
+	}
+
+	private static function isTranslationMemoryEnabled() {
+		return defined( 'WPML_USE_ST_TRANSLATION_MEMORY' ) && WPML_USE_ST_TRANSLATION_MEMORY;
 	}
 }

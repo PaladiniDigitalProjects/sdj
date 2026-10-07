@@ -41,6 +41,14 @@ A: Yes, it's compatible with all public post types.
 
 ## Changelog
 
+### 1.0.7
+
+-   **Dev:** Updated Freemius SDK and WordPress tested-up-to version.
+
+### 1.0.6
+
+-   **Dev:** Update freemius SDK and maintenance update.
+
 ### 1.0.5
 
 -   **Fix:** Add support for similar post names.

@@ -51,6 +51,8 @@ class Upload {
 		$file_name_new = sprintf( '%s-%s.%s', $file_base, wp_hash( wp_rand() . microtime() . $form_data['id'] . $field_id ), strtolower( $file_ext ) );
 
 		// Sanitize SVG uploads before storage to strip scripts and event handlers. Reject the file on failure.
+		// This is the sanitization point for File Upload and Rich Text ( Content ) field uploads, which do not
+		// pass through wp_handle_upload(); media-library uploads are covered separately by \WPForms\Admin\MediaLibrary.
 		if ( ! empty( $file['tmp_name'] ) && ! wpforms_sanitize_svg_file( $file['tmp_name'], $file_name ) ) {
 			return [];
 		}

@@ -13,7 +13,8 @@ class Settings {
 		'channel',
 		'ts_info',
 		'last_successful_subscription_fetch',
-		'using_products_fallback'
+		'using_products_fallback',
+		'products_feed_problem',
 	];
 
 	public static function load() {
@@ -23,11 +24,15 @@ class Settings {
 
 		$settings = \get_option( 'wp_installer_settings' );
 
-		if ( is_array( $settings ) || empty( $settings ) ) { //backward compatibility 1.1
+		if ( is_array( $settings ) || empty( $settings ) ) {
 			return $settings;
 		}
 
 		$settings = self::uncompress( $settings );
+		if ( ! is_array( $settings ) ) {
+			return false;
+		}
+
 		$settings = self::pre_1_8_clean_up( $settings );
 
 		self::$settings = $settings;
@@ -84,10 +89,18 @@ class Settings {
 		return false;
 	}
 
+	public static function products_feed_problem( $repository_id ) {
+		$common  = self::load_common();
+		$problem = isset( $common['repositories'][ $repository_id ]['products_feed_problem'] )
+			? $common['repositories'][ $repository_id ]['products_feed_problem'] : null;
+
+		return is_array( $problem ) && ! empty( $problem['kind'] ) ? $problem : null;
+	}
+
 	public static function requires_update() {
 		$last_update = \get_option( 'wp_installer_last_update', false );
 
-		if ( ! $last_update || ( time() - $last_update ) > 86400 ) { // 24 hours
+		if ( ! $last_update || ( time() - $last_update ) > 86400 ) {
 			\update_option( 'wp_installer_last_update', time(), false );
 			return true;
 		}
@@ -124,10 +137,44 @@ class Settings {
 
 	private static function uncompress( $content ) {
 		$content = base64_decode( $content );
-		if ( self::is_gz_on() ) {
-			$content = gzuncompress( $content );
+		if ( self::is_zlib_stream( $content ) ) {
+			$content = self::inflate( $content );
+			if ( false === $content ) {
+				return false;
+			}
 		}
 		return unserialize( (string) $content );
+	}
+
+	private static function inflate( $bytes ) {
+		switch ( self::inflater() ) {
+			case 'gzuncompress':
+				return gzuncompress( $bytes );
+			case 'zlib_decode':
+				return zlib_decode( $bytes );
+			case 'gzinflate':
+				return gzinflate( substr( $bytes, 2 ) );
+		}
+
+		return false;
+	}
+
+	public static function inflater() {
+		foreach ( [ 'gzuncompress', 'zlib_decode', 'gzinflate' ] as $function ) {
+			if ( function_exists( $function ) ) {
+				return $function;
+			}
+		}
+
+		return null;
+	}
+
+	private static function is_zlib_stream( $bytes ) {
+		if ( ! is_string( $bytes ) || strlen( $bytes ) < 2 || "\x78" !== $bytes[0] ) {
+			return false;
+		}
+
+		return 0 === ( ( ord( $bytes[0] ) << 8 ) | ord( $bytes[1] ) ) % 31;
 	}
 
 	private static function get_common( $settings ) {
@@ -149,11 +196,14 @@ class Settings {
 	private static function extract_changelog( &$settings ) {
 		$changelog = array();
 		foreach ( $settings['repositories'] as $repository_id => $repository ) {
+			if ( ! isset( $repository['data']['downloads']['plugins'] ) ) {
+				continue;
+			}
+
 			foreach ( $repository['data']['downloads']['plugins'] as $slug => $download ) {
 				if ( isset( $download['changelog'] ) && ! empty( $download['changelog'] ) ) {
 					$changelog[ $slug ] = $download['changelog'];
 
-					// Don't remove the changelog key for backward compatibility.
 					$settings['repositories'][ $repository_id ]['data']['downloads']['plugins'][ $slug ]['changelog'] = '';
 				}
 			}
@@ -202,7 +252,6 @@ class Settings {
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-		// Initialize filesystem — in admin it may prompt for creds if needed.
 		$creds_ok = WP_Filesystem();
 		if ( ! $creds_ok ) {
 			return '';
@@ -239,6 +288,10 @@ class Settings {
 		if ( empty( $settings['_pre_1_8_clean_up'] ) ) {
 			$settings['_pre_1_8_clean_up'] = true;
 			foreach ( $settings['repositories'] as $repository_id => $repository ) {
+				if ( ! isset( $repository['data']['downloads']['plugins'] ) ) {
+					continue;
+				}
+
 				foreach ( $repository['data']['downloads']['plugins'] as $slug => $download ) {
 					if ( ! isset( $download['channel'] ) ) {
 						$settings['repositories'][ $repository_id ]['data']['downloads']['plugins'][ $slug ]['channel'] = '';

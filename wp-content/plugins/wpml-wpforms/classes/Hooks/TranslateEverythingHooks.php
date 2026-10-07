@@ -21,11 +21,6 @@ class TranslateEverythingHooks {
 			->then( spreadArgs( [ $this, 'registerActiveStringPackageKinds' ] ) );
 	}
 
-	/**
-	 * @param array $kinds
-	 *
-	 * @return array
-	 */
 	public function registerActiveStringPackageKinds( $kinds ) {
 		return array_merge( $kinds, self::KINDS );
 	}

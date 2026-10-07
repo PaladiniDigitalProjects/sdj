@@ -111,6 +111,12 @@ class SpamEntry {
 	 */
 	public function add_meta_data( $fields, $entry, $form_data, $entry_id ) {
 
+		// Entry meta rows require a parent entry. Skip when entry storage is disabled
+		// (entry_id is 0), otherwise we orphan the spam/post_data_raw rows in the table.
+		if ( empty( $entry_id ) ) {
+			return;
+		}
+
 		$spam_reason = ! empty( $form_data['spam_reason'] ) ? $form_data['spam_reason'] : null;
 
 		if ( ! $spam_reason ) {
@@ -506,6 +512,9 @@ class SpamEntry {
 		$form_data['post_data_raw'] = $this->get_entry_post_data_raw( $entry_id );
 
 		wpforms()->obj( 'process' )->process_complete( $form_id, $form_data, $fields, [], $entry_id );
+
+		/** This filter is documented in pro/includes/admin/entries/class-entries-single.php. */
+		$form_data = apply_filters( 'wpforms_entries_single_process_notifications_form_data', $form_data, $entry ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
 
 		// Send email notification.
 		$this->send_entry_email( $entry_id, $fields, $form_data );

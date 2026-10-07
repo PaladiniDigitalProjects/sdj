@@ -2,6 +2,7 @@
 
 namespace ACFML\Options;
 
+use ACFML\Field\CompositeValue;
 use ACFML\Strings\Factory;
 use ACFML\Strings\Package;
 use WPML\FP\Obj;
@@ -13,13 +14,8 @@ class TranslationJobHooks implements \IWPML_Backend_Action, \IWPML_REST_Action {
 		add_action( 'wpml_pro_translation_completed', [ $this, 'saveFieldGroupStringsTranslations' ], 10, 3 );
 	}
 
-	/**
-	 * @param int       $translatedPostId
-	 * @param array     $fields
-	 * @param \stdClass $job
-	 */
 	public function saveFieldGroupStringsTranslations( $translatedPostId, $fields, $job ) {
-		if ( 'package_' . Package::OPTION_PACKAGE_KIND_SLUG !== Obj::prop( 'original_post_type', $job ) ) {
+		if ( Package::OPTION_PACKAGE_ELEMENT_TYPE !== Obj::prop( 'original_post_type', $job ) ) {
 			return;
 		}
 
@@ -38,11 +34,37 @@ class TranslationJobHooks implements \IWPML_Backend_Action, \IWPML_REST_Action {
 				continue;
 			}
 
-			$translatedValue = base64_decode( Obj::propOr( '', 'field_data_translated', $element ) );
-			$optionName      = $packageObject->name . '_' . $language . '_' . $optionField;
+			list( $fieldName, $subKey ) = CompositeValue::splitName( $optionField );
+
+			$optionName      = $packageObject->name . '_' . $language . '_' . $fieldName;
+			$translatedValue = $this->getValueToStore(
+				base64_decode( Obj::propOr( '', 'field_data_translated', $element ) ),
+				$subKey,
+				$packageObject->name . '_' . $fieldName,
+				$optionName
+			);
+
+			if ( null === $translatedValue ) {
+				continue;
+			}
+
 			update_option( $optionName, $translatedValue );
 			update_option( '_' . $optionName, $optionKey );
 		}
+	}
+
+	private function getValueToStore( $translatedValue, $subKey, $sourceOptionName, $optionName ) {
+		if ( null === $subKey ) {
+			return $translatedValue;
+		}
+
+		$storedValue = get_option( $optionName );
+
+		return CompositeValue::merge(
+			is_array( $storedValue ) ? $storedValue : get_option( $sourceOptionName ),
+			$subKey,
+			$translatedValue
+		);
 	}
 
 }

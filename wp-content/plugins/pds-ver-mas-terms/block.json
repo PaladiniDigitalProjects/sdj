@@ -11,7 +11,10 @@
     "limit": { "type": "number", "default": 5 },
     "show_more": { "type": "boolean", "default": true },
     "show_count": { "type": "boolean", "default": false },
-    "show_description": { "type": "boolean", "default": false }
+    "show_description": { "type": "boolean", "default": false },
+    "selection_mode": { "type": "string", "default": "all" },
+    "term_ids": { "type": "array", "default": [], "items": { "type": "integer" } },
+    "excluded_ids": { "type": "array", "default": [], "items": { "type": "integer" } }
   },
   "editorScript": "file:./build/editor.js",
   "script": "file:./build/frontend.js",

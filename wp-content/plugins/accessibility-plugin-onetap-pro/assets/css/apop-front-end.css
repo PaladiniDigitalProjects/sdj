@@ -124,6 +124,12 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
  * Provides consistent styling for dropdown option items (list items)
  * Usage: @extend %dropdown-option-item;
  */
+
+/**
+ * Beta Badge Placeholder
+ * Provides consistent styling for the "Beta" pill shown next to feature/section titles.
+ * Usage: @extend %onetap-admin-beta-badge;
+ */
 html.onetap-cursor-feature1 {
   cursor: url(../../assets/images/cursor1.png), default !important;
 }
@@ -219,7 +225,8 @@ body.onetap-light-contrast p,
 body.onetap-light-contrast pre,
 body.onetap-light-contrast select,
 body.onetap-light-contrast span,
-body.onetap-light-contrast textarea {
+body.onetap-light-contrast textarea,
+body.onetap-light-contrast i::before {
   color: #27272d !important;
   background-color: #fff !important;
 }
@@ -279,7 +286,8 @@ body.onetap-dark-contrast p,
 body.onetap-dark-contrast pre,
 body.onetap-dark-contrast select,
 body.onetap-dark-contrast span,
-body.onetap-dark-contrast textarea {
+body.onetap-dark-contrast textarea,
+body.onetap-dark-contrast i::before {
   color: #fff !important;
   background-color: #181818 !important;
 }
@@ -1035,7 +1043,7 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
   border-radius: 100% !important;
   width: 4px !important;
   height: 4px !important;
-  top: 8px !important;
+  top: 9px !important;
   left: -10px !important;
 }
 
@@ -1056,6 +1064,8 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-information .onetap-statement button:hover {
   opacity: 0.7 !important;
+  border-bottom: 2px solid #fff !important;
+  text-decoration: none !important;
 }
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-information .onetap-hide-toolbar {
@@ -1070,7 +1080,7 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
   border-radius: 100% !important;
   width: 4px !important;
   height: 4px !important;
-  top: 8px !important;
+  top: 9px !important;
   left: -10px !important;
 }
 
@@ -1089,6 +1099,8 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-information .onetap-hide-toolbar button:hover {
   opacity: 0.7 !important;
+  border-bottom: 2px solid #fff !important;
+  text-decoration: none !important;
 }
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings header.onetap-header-top .onetap-site-container .onetap-site-info .onetap-information a,
@@ -1207,6 +1219,10 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
   outline: none !important;
 }
 
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature .onetap-right .box-swich label.switch input {
+  display: none !important;
+}
+
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings div.onetap-multi-functional-feature .onetap-box-functions .onetap-functional-feature .onetap-right .box-swich label.switch:focus .slider {
   outline: 2px solid #0048FE;
   outline-offset: 2px;
@@ -1280,6 +1296,50 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
   position: relative !important;
   width: 100% !important;
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.02);
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-skip-content-control {
+  width: 100% !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-skip-content-control label {
+  color: #181D27 !important;
+  font-style: normal !important;
+  display: block !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  font-size: 18px !important;
+  font-size: 14px !important;
+  line-height: 28px !important;
+  margin-bottom: 16px !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-skip-content-control select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  border: 1px solid #eef2f6 !important;
+  outline: none !important;
+  border-radius: 8px !important;
+  text-align: left !important;
+  padding: 10px 12px !important;
+  margin: 0 !important;
+  line-height: inherit !important;
+  height: auto !important;
+  width: 100% !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  background-image: url(data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2216%22%20height=%2216%22%20viewBox=%220%200%2024%2024%22%20fill=%22none%22%20stroke=%22%23475569%22%20stroke-width=%222%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22%3E%3Cpolyline%20points=%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E) !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-skip-content-control select:focus-visible, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-skip-content-control select:focus {
+  border-color: #0048FE !important;
+  box-shadow: 0 0 0 1px #0048FE !important;
 }
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-title {
@@ -1499,6 +1559,66 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessib
   border-radius: 100%;
   padding: 10px !important;
   background: #fff !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature .onetap-icon .onetap-text-align-icons {
+  position: relative !important;
+  width: 44px !important;
+  height: 44px !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature .onetap-icon .onetap-text-align-icon {
+  display: none !important;
+  position: absolute !important;
+  inset: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature .onetap-icon .onetap-text-align-icon svg {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 100%;
+  padding: 10px !important;
+  background: #fff !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-off .onetap-text-align-icon--center {
+  display: flex !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-left .onetap-text-align-icon--left {
+  display: flex !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-left .onetap-text-align-icon--left svg {
+  color: #fff !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-center .onetap-text-align-icon--center {
+  display: flex !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-center .onetap-text-align-icon--center svg {
+  color: #fff !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-right .onetap-text-align-icon--right {
+  display: flex !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-align-center.onetap-text-align-mode-right .onetap-text-align-icon--right svg {
+  color: #fff !important;
+}
+
+nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active.onetap-text-align-mode-left, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active.onetap-text-align-mode-center, nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active.onetap-text-align-mode-right {
+  border-color: #0048FE !important;
+  box-shadow: 0 0 0 1px #0048FE !important;
+  outline: 2px solid #eef2f6 !important;
+  outline-offset: -5px !important;
+  border-radius: 12px !important;
 }
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature .onetap-title span {
@@ -1799,6 +1919,7 @@ nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-du
   padding: 0 !important;
   margin: 0 !important;
   border: none !important;
+  overflow: visible !important;
 }
 
 nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration form fieldset legend {

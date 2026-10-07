@@ -2,9 +2,6 @@
 
 class WPML_WPSEO_Main_Factory implements IWPML_Backend_Action_Loader, IWPML_Frontend_Action_Loader, IWPML_AJAX_Action_Loader {
 
-	/**
-	 * Instantiate required classes.
-	 */
 	public function create() {
 		global $sitepress, $wpml_url_converter, $pagenow;
 
@@ -20,9 +17,6 @@ class WPML_WPSEO_Main_Factory implements IWPML_Backend_Action_Loader, IWPML_Fron
 		return $hooks;
 	}
 
-	/**
-	 * @return \WPML_ST_Slug_Translation_Settings_Factory|null
-	 */
 	private function getSlugTranslationSettingsFactory() {
 		return class_exists( \WPML_ST_Slug_Translation_Settings_Factory::class ) ? new \WPML_ST_Slug_Translation_Settings_Factory() : null;
 	}

@@ -2,10 +2,18 @@
 
 namespace WPForms\Pro\Admin\Builder;
 
+use WPForms\Pro\Admin\LicenseModal;
+
 /**
  * Form Builder License alert/overlay.
  *
+ * Superseded by the License Validation Modal — the same inactive-license states
+ * are prompted there, so the builder is no longer blocked.
+ *
+ * @see LicenseModal
+ *
  * @since 1.5.7
+ * @deprecated 2.0.1
  */
 class LicenseAlert {
 
@@ -34,7 +42,7 @@ class LicenseAlert {
 	 */
 	public function __construct() {
 
-		$this->hooks();
+		// Deprecated — see the class docblock. Hooks are intentionally not attached.
 	}
 
 	/**

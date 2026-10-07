@@ -30,6 +30,13 @@ class PurgeEntriesTask extends Task {
 	private const DEFAULT_RETENTION_DAYS = 365;
 
 	/**
+	 * Maximum number of entries purged per form in a single run.
+	 *
+	 * @since 2.0.1
+	 */
+	private const MAX_ENTRIES_PER_RUN = 500;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 1.10.0
@@ -132,12 +139,15 @@ class PurgeEntriesTask extends Task {
 
 		$table_name = wpforms()->obj( 'entry' )->table_name;
 
+		// The task recurs daily and picks up where it left off, so a large backlog is drained over
+		// several runs instead of in one unbounded batch that cannot finish inside a request.
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery
 		return $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT entry_id FROM {$table_name} WHERE form_id = %d AND date < %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT entry_id FROM {$table_name} WHERE form_id = %d AND date < %s LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$form_id,
-				$date_threshold
+				$date_threshold,
+				self::MAX_ENTRIES_PER_RUN
 			)
 		);
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery
@@ -156,10 +166,11 @@ class PurgeEntriesTask extends Task {
 		add_filter( 'wpforms_pro_forms_fields_file_upload_field_delete_uploaded_file_force', '__return_true' );
 		add_filter( 'wpforms_pro_forms_fields_camera_field_delete_uploaded_file_force', '__return_true' );
 
-		// Delete uploaded files (file upload, camera, and rich text fields).
+		// Delete uploaded files (file upload and camera fields). Rich Text attachments are deleted
+		// in delete_entries(), after the entry rows are gone, so that entries expiring together
+		// cannot be mistaken for living references to each other.
 		array_map( [ FileUploadField::class, 'delete_uploaded_files_from_entry' ], $entry_ids );
 		array_map( [ CameraField::class, 'delete_uploaded_files_from_entry' ], $entry_ids );
-		array_map( [ RichtextField::class, 'delete_uploaded_files_from_entry' ], $entry_ids );
 
 		// Remove force deleting uploaded files filter.
 		remove_filter( 'wpforms_pro_forms_fields_file_upload_field_delete_uploaded_file_force', '__return_true' );
@@ -177,6 +188,10 @@ class PurgeEntriesTask extends Task {
 	private function delete_entries( array $entry_ids, int $form_id ): void {
 
 		global $wpdb;
+
+		// Rich Text attachments have to be collected while the purged entries are still readable,
+		// and the collected list is persisted so that an interrupted sweep resumes on the next run.
+		RichtextField::queue_attachment_cleanup( RichtextField::get_purgeable_attachment_ids( $entry_ids ) );
 
 		// Delete uploaded files before removing the entry itself.
 		$this->delete_uploaded_files( $entry_ids );
@@ -208,6 +223,9 @@ class PurgeEntriesTask extends Task {
 			)
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		// The purged rows are gone, so whatever still references an attachment is a living entry.
+		RichtextField::process_queued_attachment_cleanup();
 
 		// Log the deletion.
 		if ( $deleted > 0 ) {

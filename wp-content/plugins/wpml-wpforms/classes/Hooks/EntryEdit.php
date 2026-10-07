@@ -2,29 +2,27 @@
 
 namespace WPML\Forms\WPForms\Hooks;
 
+use SitePress;
+use WPML\Forms\WPForms\Helpers\DynamicChoices;
+use WPML\Forms\WPForms\Helpers\Entry;
 use WPML\Forms\WPForms\SharedAPI\Strings;
 use WPML\LIB\WP\Hooks;
 use function WPML\FP\spreadArgs;
-use WPML\Element\API\Languages;
-use WPML\Forms\WPForms\Helpers\Entry;
-use WPML\Forms\WPForms\Helpers\DynamicChoices;
 
 class EntryEdit {
 
-	/** @var Strings */
 	private $strings;
 
-	public function __construct( Strings $strings ) {
-		$this->strings = $strings;
+	private $sitepress;
+
+	public function __construct( Strings $strings, SitePress $sitepress ) {
+		$this->strings   = $strings;
+		$this->sitepress = $sitepress;
 	}
 
-	/**
-	 * @return void
-	 */
 	public function addHooks() {
 		$maybeAddHooks = function( $mode ) {
 			if ( 'edit' === $mode ) {
-				// phpcs:ignore WordPress.Security.NonceVerification
 				$entryEdit = (int) $_GET['entry_id'];
 
 				Hooks::onFilter( 'wpforms_pro_admin_entries_edit_form_data' )
@@ -38,30 +36,24 @@ class EntryEdit {
 			->then( spreadArgs( $maybeAddHooks ) );
 	}
 
-	/**
-	 * @param int $entryEdit
-	 *
-	 * @return callable(array):array
-	 */
 	public function getMaybeTranslateFormData( int $entryEdit ) : callable {
 		return function( array $formData ) use ( $entryEdit ) {
 			$language = Entry::getLanguageById( $entryEdit );
 
-			if ( $language && Languages::getCurrentCode() !== $language ) {
-				return Languages::whileInLanguage( $language )
-					->invoke( [ $this->strings, 'applyTranslations' ] )
-					->runWith( $formData );
+			if ( $language && $this->sitepress->get_current_language() !== $language ) {
+				$this->sitepress->switch_lang( $language );
+
+				try {
+					return $this->strings->applyTranslations( $formData );
+				} finally {
+					$this->sitepress->switch_lang();
+				}
 			}
 
 			return $formData;
 		};
 	}
 
-	/**
-	 * @param array $fields
-	 *
-	 * @return array
-	 */
 	public function maybeConvertDynamicChoices( array $fields ) : array {
 		return wpml_collect( $fields )
 			->map( [ DynamicChoices::class, 'convertRawValue' ] )

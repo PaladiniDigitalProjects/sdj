@@ -8,10 +8,10 @@
             "lang": "he_IL"
          },
          "WPML has detected changed or new MO files": [
-            "WPML זיהה קובצי MO ששונו או חדשים"
+            "WPML זיהה קובצי MO חדשים או כאלה שהשתנו"
          ],
          "There are new or updated .mo files. WPML needs to scan them to find strings for translation.": [
-            "קיימים קובצי mo. חדשים או מעודכנים. WPML צריך לסרוק אותם כדי למצוא מחרוזות לתרגום."
+            "ישנם קובצי.mo חדשים או מעודכנים. WPML צריך לסרוק אותם כדי למצוא מחרוזות לתרגום."
          ],
          "Scan translation files": [
             "סרוק קובצי תרגום"
@@ -26,43 +26,40 @@
             "נוצרו %1$d מתוך %2$d קבצים..."
          ],
          "WPML needs to generate .mo files": [
-            "WPML צריך ליצור קובצי mo."
+            "WPML צריך ליצור קובצי.mo"
          ],
          "WPML String Translation uses .mo files instead of database calls. WPML needs to generate these .mo files in order for translations to appear on the front-end. However, the folder that should hold these .mo files is not open for writing.": [
-            "WPML String Translation משתמש בקובצי mo. במקום בקריאות למסד הנתונים. WPML צריך ליצור קובצי mo. אלה כדי שהתרגומים יופיעו בחזית האתר. עם זאת, התיקייה שאמורה להכיל קובצי mo. אלה אינה פתוחה לכתיבה."
+            "WPML String Translation משתמש בקובצי.mo במקום בקריאות למסד הנתונים. WPML צריך ליצור את קובצי ה-.mo האלה כדי שהתרגומים יופיעו בחזית האתר. עם זאת, התיקייה שאמורה להכיל את קובצי ה-.mo האלה אינה פתוחה לכתיבה."
          ],
          "Please use your admin control panel or an FTP program to make the following folder writeable:": [
-            "אנא השתמש בלוח הבקרה הניהולי שלך או בתוכנת FTP כדי להפוך את התיקייה הבאה לניתנת לכתיבה:"
+            "אנא השתמש בלוח הבקרה של הניהול או בתוכנת FTP כדי להפוך את התיקייה הבאה לניתנת לכתיבה:"
          ],
          "There was a problem creating the .mo files": [
-            "אירעה בעיה ביצירת קובצי mo."
+            "הייתה בעיה ביצירת קובצי ה-.mo"
          ],
-         "You can try again now or try again later by going to ": [
-            "באפשרותך לנסות שוב כעת או לנסות שוב מאוחר יותר על ידי מעבר אל "
+         "You can try again now or try again later by going to <strong>WPML->Theme and plugins localization</strong>.": [
+            "תוכל לנסות שוב כעת או לנסות שוב מאוחר יותר על ידי מעבר אל <strong>WPML->לוקליזציה של ערכות עיצוב ותוספים</strong>."
          ],
          "Translations are missing from the front-end until you generate .mo files": [
-            "תרגומים חסרים בחזית האתר עד שתייצר קובצי mo."
+            "התרגומים חסרים בחזית האתר עד שתיצור קובצי.mo"
          ],
-         "Your site doesn't have the .mo files that WPML needs in order to display translated strings on the front-end. To generate these .mo files, remember to go to ": [
-            "לאתר שלך אין את קובצי ה-mo. ש-WPML צריך כדי להציג מחרוזות מתורגמות בחזית האתר. כדי ליצור קובצי mo. אלה, זכור לעבור אל "
-         ],
-         "WPML->Theme and plugins localization.": [
-            "WPML->תרגום תבניות ותוספים."
+         "Your site doesn't have the .mo files that WPML needs in order to display translated strings on the front-end. To generate these .mo files, remember to go to <strong>WPML->Theme and plugins localization</strong>.": [
+            "באתר שלך אין את קובצי ה-.mo ש-WPML צריך כדי להציג מחרוזות מתורגמות בחזית האתר. כדי ליצור את קובצי ה-.mo האלה, זכור לעבור אל <strong>WPML->לוקליזציה של ערכות עיצוב ותוספים</strong>."
          ],
          "WPML String Translation uses .mo files instead of database calls. WPML needs to generate these .mo files in order for translations to appear on the front-end.": [
-            "WPML String Translation משתמש בקובצי mo. במקום בקריאות למסד הנתונים. WPML צריך ליצור קובצי mo. אלה כדי שהתרגומים יופיעו בחזית האתר."
+            "WPML String Translation משתמש בקובצי.mo במקום בקריאות למסד הנתונים. WPML צריך ליצור את קובצי ה-.mo האלה כדי שהתרגומים יופיעו בחזית האתר."
          ],
          "Try again": [
             "נסה שוב"
          ],
          "Generate .mo files": [
-            "צור קובצי mo."
+            "צור קובצי.mo"
          ],
          "Close this message": [
             "סגור הודעה זו"
          ],
          "Find additional texts that WordPress, the theme and plugins created and choose which ones to translate": [
-            "מצא טקסטים נוספים ש-WordPress, התבנית והתוספים יצרו ובחר אילו מהם לתרגם"
+            "מצא טקסטים נוספים ש-WordPress, ערכת העיצוב והתוספים יצרו ובחר אילו מהם לתרגם"
          ],
          "Choose texts for translation": [
             "בחר טקסטים לתרגום"
@@ -80,7 +77,7 @@
             "תוספים:"
          ],
          "Themes:": [
-            "תבניות:"
+            "ערכות עיצוב:"
          ],
          "Core:": [
             "ליבה:"

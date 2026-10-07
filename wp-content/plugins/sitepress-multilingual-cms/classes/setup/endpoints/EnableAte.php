@@ -20,6 +20,7 @@ class EnableAte implements IHandler {
 		}
 		Option::setTranslateEverythingDefault();
 
-		return make( \WPML\TM\ATE\AutoTranslate\Endpoint\EnableATE::class )->run( wpml_collect( [] ) );
+		// Trusted internal caller: this setup endpoint has its own license gate
+		return make( \WPML\TM\ATE\AutoTranslate\Endpoint\EnableATE::class )->enable();
 	}
 }

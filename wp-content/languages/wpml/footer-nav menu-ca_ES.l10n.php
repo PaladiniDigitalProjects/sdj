@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['Canal de denuncia'=>'Canal de denúncia','La Casa de Todos'=>'La Casa de Tots','Menu Item Label 22935'=>'Canal de denúncia','Menu Item Label 23829'=>'La Casa de Tots','Menu Item URL 22935'=>'https://canaldenuncia.sjd.es/','Menu Item URL 23829'=>'https://dev.sjd.es/la-casa-de-todos/','https://canaldenuncia.sjd.es/'=>'https://canaldenuncia.sjd.es/','https://dev.sjd.es/la-casa-de-todos/'=>'https://dev.sjd.es/la-casa-de-todos/']];

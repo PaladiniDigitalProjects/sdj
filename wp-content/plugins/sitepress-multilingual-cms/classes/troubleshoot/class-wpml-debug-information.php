@@ -2,18 +2,12 @@
 
 class WPML_Debug_Information {
 
-	/** @var wpdb $wpdb */
 	public $wpdb;
 
-	/** @var SitePress $sitepress */
 	protected $sitepress;
 
 	protected $info;
 
-	/**
-	 * @param wpdb      $wpdb
-	 * @param SitePress $sitepress
-	 */
 	public function __construct( $wpdb, $sitepress ) {
 		$this->wpdb      = $wpdb;
 		$this->sitepress = $sitepress;
@@ -36,12 +30,46 @@ class WPML_Debug_Information {
 					$output['theme'] = $this->get_theme_info();
 					break;
 				case 'extra-debug':
-					$output['extra-debug'] = apply_filters( 'icl_get_extra_debug_info', array() );
+					$output['extra-debug'] = $this->mask_installer_site_keys( apply_filters( 'icl_get_extra_debug_info', array() ) );
 					break;
 			}
 		}
 
 		return $output;
+	}
+
+	private function mask_installer_site_keys( $extra_debug ) {
+		if (
+			! isset( $extra_debug['installer'] )
+			|| ! is_array( $extra_debug['installer'] )
+			|| ! isset( $extra_debug['installer']['repositories'] )
+			|| ! is_array( $extra_debug['installer']['repositories'] )
+		) {
+			return $extra_debug;
+		}
+
+		foreach ( $extra_debug['installer']['repositories'] as $repository_id => $repository ) {
+			if ( isset( $repository['subscription'] ) && is_array( $repository['subscription'] ) && array_key_exists( 'key', $repository['subscription'] ) ) {
+				$extra_debug['installer']['repositories'][ $repository_id ]['subscription']['key'] = $this->mask_site_key( $repository['subscription']['key'] );
+			}
+		}
+
+		return $extra_debug;
+	}
+
+	private function mask_site_key( $key ) {
+		if ( null === $key || is_bool( $key ) || '' === $key ) {
+			return $key;
+		}
+		if ( ! is_scalar( $key ) ) {
+			return null;
+		}
+
+		$key    = (string) $key;
+		$length = strlen( $key );
+		$shown  = $length > 4 ? substr( $key, -4 ) : '';
+
+		return str_repeat( '*', $length - strlen( $shown ) ) . $shown;
 	}
 
 	function get_core_info() {
@@ -58,7 +86,8 @@ class WPML_Debug_Information {
 				'RestEnabled'        => wpml_is_rest_enabled(false) ? 'Yes' : 'No',
 			),
 			'Server'    => array(
-				'jQueryVersion'  => wp_script_is( 'jquery', 'registered' ) ? $GLOBALS['wp_scripts']->registered['jquery']->ver : __( 'n/a', 'bbpress' ),
+				/* translators: Shown in a table cell in place of a value that is not there. Keep the short form your language uses for "not available". */
+				'jQueryVersion'  => wp_script_is( 'jquery', 'registered' ) ? $GLOBALS['wp_scripts']->registered['jquery']->ver : __( 'n/a', 'sitepress' ),
 				'PHPVersion'     => $this->sitepress->get_wp_api()->phpversion(),
 				'MySQLVersion'   => $this->wpdb->db_version(),
 				'ServerSoftware' => $_SERVER['SERVER_SOFTWARE'],
@@ -108,7 +137,6 @@ class WPML_Debug_Information {
 	function get_theme_info() {
 
 		if ( $this->sitepress->get_wp_api()->get_bloginfo( 'version' ) < '3.4' ) {
-			/** @var \WP_Theme $current_theme */
 			$current_theme = get_theme_data( get_stylesheet_directory() . '/style.css' );
 			$theme         = $current_theme;
 			unset( $theme['Description'] );
@@ -158,57 +186,42 @@ class WPML_Debug_Information {
 		return $json_data;
 	}
 
-	/**
-	 * Get OPcache status information
-	 *
-	 * @return array OPcache status details
-	 */
 	function get_opcache_info() {
 		$opcache_info = array();
 
-		// Check if OPcache extension is loaded
 		if ( ! function_exists( 'opcache_get_status' ) ) {
 			$opcache_info['OPcache'] = 'Not Installed';
 			return $opcache_info;
 		}
 
-		// Get OPcache status (false = don't include script details)
 		$status = @opcache_get_status( false );
 
-		// If status is false, OPcache is installed but disabled or restricted
 		if ( false === $status ) {
 			$opcache_info['OPcache'] = 'Installed but Disabled';
 			return $opcache_info;
 		}
 
-		// OPcache is enabled
 		$opcache_info['OPcache'] = 'Enabled';
 
-		// Add memory usage statistics if available
 		if ( isset( $status['memory_usage'] ) ) {
 			$memory = $status['memory_usage'];
 
-			// used_memory: Total bytes currently used by OPcache to store compiled scripts
 			$used_memory_mb = isset( $memory['used_memory'] )
 				? round( $memory['used_memory'] / 1024 / 1024, 2 )
 				: 0;
 
-			// free_memory: Total bytes still available for caching more scripts
 			$free_memory_mb = isset( $memory['free_memory'] )
 				? round( $memory['free_memory'] / 1024 / 1024, 2 )
 				: 0;
 
-			// wasted_memory: Bytes wasted due to restarts or invalidated scripts
 			$wasted_memory_mb = isset( $memory['wasted_memory'] )
 				? round( $memory['wasted_memory'] / 1024 / 1024, 2 )
 				: 0;
 
-			// current_wasted_percentage: Percentage of memory that is wasted
 			$wasted_percentage = isset( $memory['current_wasted_percentage'] )
 				? round( $memory['current_wasted_percentage'], 2 )
 				: 0;
 
-			// Calculate total memory and usage percentage
 			$total_memory_mb   = $used_memory_mb + $free_memory_mb + $wasted_memory_mb;
 			$usage_percentage  = $total_memory_mb > 0
 				? round( ( $used_memory_mb / $total_memory_mb ) * 100, 2 )
@@ -221,17 +234,13 @@ class WPML_Debug_Information {
 			$opcache_info['Memory Usage']      = $usage_percentage . '%';
 		}
 
-		// Add hit/miss statistics if available
 		if ( isset( $status['opcache_statistics'] ) ) {
 			$stats = $status['opcache_statistics'];
 
-			// hits: Number of times a script was served from cache (fast path)
 			$hits = isset( $stats['hits'] ) ? $stats['hits'] : 0;
 
-			// misses: Number of times a script was not in cache and had to be compiled
 			$misses = isset( $stats['misses'] ) ? $stats['misses'] : 0;
 
-			// Calculate hit rate percentage
 			$total_requests = $hits + $misses;
 			$hit_rate       = $total_requests > 0
 				? round( ( $hits / $total_requests ) * 100, 2 )
@@ -241,7 +250,6 @@ class WPML_Debug_Information {
 			$opcache_info['Cache Misses'] = number_format( $misses );
 			$opcache_info['Hit Rate']     = $hit_rate . '%';
 
-			// num_cached_scripts: Total number of scripts currently cached
 			if ( isset( $stats['num_cached_scripts'] ) ) {
 				$opcache_info['Cached Scripts'] = number_format( $stats['num_cached_scripts'] );
 			}

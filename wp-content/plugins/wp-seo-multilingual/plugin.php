@@ -1,14 +1,15 @@
 <?php
 /**
  * Plugin Name: WPML SEO
- * Plugin URI: https://wpml.org/
+ * Plugin URI: https://wpml.org/documentation/wpml-core-and-add-on-plugins/wpml-seo/
  * Description: Multilingual support for popular SEO plugins
  * Author: OnTheGoSystems
  * Author URI: http://www.onthegosystems.com/
- * Version: 2.2.5
+ * Version: 5.1.0
  * Plugin Slug: wp-seo-multilingual
  * Text Domain: wp-seo-multilingual
- * Tested up to: 6.8
+ * Domain Path: /languages
+ * Tested up to: 7.1
  *
  * @package wpml/wpseo
  */
@@ -17,19 +18,23 @@ use WPML\WPSEO\YoastSEO\Loaders as YoastSEOLoaders;
 use WPML\WPSEO\RankMathSEO\Loaders as RankMathSEOLoaders;
 use WPML\WPSEO\YoastSEO\Utils;
 
-// Check if we are already active.
 if ( defined( 'WPSEOML_VERSION' ) ) {
 	return;
 }
 
-define( 'WPSEOML_VERSION', '2.2.5' );
+define( 'WPSEOML_VERSION', '5.1.0' );
 define( 'WPSEOML_PLUGIN_PATH', __DIR__ );
 
-/**
- * We need to do the redirection checks before wordpress-seo loads.
- * To resolve this we move ourselves first in the plugins list.
- * By using priority 1 we will go after WPML core.
- */
+const WPSEOML_TEXTDOMAIN_BEFORE_UPGRADE_NOTICES = -10;
+
+add_action(
+	'init',
+	function () {
+		load_plugin_textdomain( 'wp-seo-multilingual', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	},
+	WPSEOML_TEXTDOMAIN_BEFORE_UPGRADE_NOTICES
+);
+
 function wpml_wpseo_loads_first() {
 	$path    = str_replace( WP_PLUGIN_DIR . '/', '', __FILE__ );
 	$plugins = get_option( 'active_plugins' );
@@ -52,7 +57,6 @@ if ( ! WPML_Core_Version_Check::is_ok( WPSEOML_PLUGIN_PATH . '/wpml-dependencies
 
 require_once WPSEOML_PLUGIN_PATH . '/vendor/autoload.php';
 
-// We have to do this early because wordpress-seo does it early too.
 if ( Utils::isPremium() && apply_filters( 'wpml_setting', false, 'setup_complete' ) ) {
 	$redirector = new WPML_WPSEO_Redirection();
 	if ( $redirector->is_redirection() ) {
@@ -60,9 +64,6 @@ if ( Utils::isPremium() && apply_filters( 'wpml_setting', false, 'setup_complete
 	}
 }
 
-/**
- * Initialize plugin when WPML has loaded.
- */
 function wpml_wpseo_init() {
 	if ( defined( 'WPSEO_VERSION' ) ) {
 		$actions_filters_loader = new WPML_Action_Filter_Loader();

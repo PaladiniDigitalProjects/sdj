@@ -10,65 +10,37 @@ use function WPML\FP\invoke;
 use function WPML\FP\partialRight;
 use function WPML\Container\make;
 
-/**
- * Class WPML_PB_Integration
- *
- * phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText, WordPress.WP.I18n.LowLevelTranslationFunction
- */
 class WPML_PB_Integration {
 
 	const MIGRATION_DONE_POST_META = '_wpml_location_migration_done';
 
-	/** @var SitePress */
 	private $sitepress;
 
-	/** @var WPML_PB_Factory */
 	private $factory;
 
-	/** @var bool */
 	private $new_translations_recieved = false;
 
-	/** @var array */
 	private $save_post_queue = array();
 
-	/** @var bool */
 	private $is_registering_string = false;
 
-	/** @var array */
 	private $strategies = array();
 
-	/** @var StringCleanUp[]  */
 	private $stringCleanUp = [];
 
-	/**
-	 * @var WPML_PB_Integration_Rescan
-	 */
 	private $rescan;
 
-	/** @var array $media_updaters */
 	private $media_updaters = [];
 
-	/**
-	 * WPML_PB_Integration constructor.
-	 *
-	 * @param SitePress       $sitepress
-	 * @param WPML_PB_Factory $factory
-	 */
 	public function __construct( SitePress $sitepress, WPML_PB_Factory $factory ) {
 		$this->sitepress = $sitepress;
 		$this->factory   = $factory;
 	}
 
-	/**
-	 * @param IWPML_PB_Strategy $strategy
-	 */
 	public function add_strategy( IWPML_PB_Strategy $strategy ) {
 		$this->strategies[] = $strategy;
 	}
 
-	/**
-	 * @return WPML_PB_Integration_Rescan
-	 */
 	public function get_rescan() {
 		if ( null === $this->rescan ) {
 			$this->rescan = new WPML_PB_Integration_Rescan( $this );
@@ -77,9 +49,6 @@ class WPML_PB_Integration {
 		return $this->rescan;
 	}
 
-	/**
-	 * @param WPML_PB_Integration_Rescan $rescan
-	 */
 	public function set_rescan( WPML_PB_Integration_Rescan $rescan ) {
 		$this->rescan = $rescan;
 	}
@@ -99,10 +68,14 @@ class WPML_PB_Integration {
 		$updated_packages = $this->factory->get_package_strings_resave()->from_element( $post_element );
 
 		if ( ! $updated_packages ) {
-			$this->factory->get_handle_post_body()->copy(
-				$post_element->get_id(),
-				$post_element->get_source_element()->get_id(),
-				array()
+			$this->resave_translation_without_tm_status_update(
+				function () use ( $post_element ) {
+					$this->factory->get_handle_post_body()->copy(
+						$post_element->get_id(),
+						$post_element->get_source_element()->get_id(),
+						array()
+					);
+				}
 			);
 		}
 
@@ -119,23 +92,15 @@ class WPML_PB_Integration {
 		$this->queue_save_post_actions( $post_element->get_id(), $post_element->get_wp_object() );
 	}
 
-	/**
-	 * @param int|string $post_id
-	 * @param \WP_Post   $post
-	 */
 	public function queue_save_post_actions( $post_id, $post ) {
 		$this->update_last_editor_mode( (int) $post_id );
 		$this->save_post_queue[ $post_id ] = $post;
 	}
 
-	/**
-	 * @return \WP_Post[]
-	 */
 	public function get_save_post_queue() {
 		return $this->save_post_queue;
 	}
 
-	/** @param int $post_id */
 	private function update_last_editor_mode( $post_id ) {
 		if ( ! $this->is_translation( $post_id ) ) {
 			return;
@@ -146,35 +111,19 @@ class WPML_PB_Integration {
 		}
 	}
 
-	/**
-	 * @param string|int $post_id
-	 */
 	public function set_last_editor_mode_to_translation_editor( $post_id ) {
 		WPML_PB_Last_Translation_Edit_Mode::set_translation_editor( $post_id );
 	}
 
-	/**
-	 * Due to the "translation auto-update" feature, an original update
-	 * can also trigger an update on the translations.
-	 * We need to make sure the globally edited post is matching with
-	 * the local one.
-	 *
-	 * @param int $translatedPostId
-	 *
-	 * @return bool
-	 */
 	private function is_editing_translation_with_native_editor( $translatedPostId ) {
-		// $getPOST :: string -> mixed
-		$getPOST = Obj::prop( Fns::__, $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$getPOST = Obj::prop( Fns::__, $_POST );
 
-		// $isQuickEditAction :: int -> bool
 		$isQuickEditAction = function ( $id ) use ( $getPOST ) {
 			return wp_doing_ajax()
 				&& 'inline-save' === $getPOST( 'action' )
 				&& $id === (int) $getPOST( 'post_ID' );
 		};
 
-		// $isSavingPostWithREST :: int -> bool
 		$isSavingPostWithREST = function ( $translatedPostId ) {
 			if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || ! in_array( $_SERVER['REQUEST_METHOD'], [ 'POST', 'PUT', 'PATCH' ], true ) ) {
 				return false;
@@ -202,7 +151,7 @@ class WPML_PB_Integration {
 				function ( $postType ) {
 					return Obj::prop( 'rest_base', $postType ) ?: Obj::prop( 'name', $postType );
 				}
-			)->filter( $hasValidBase ) // Filter out variable bases, see wpmlpb-450.
+			)->filter( $hasValidBase )
 				->map( $quoteComposedBase )
 				->implode( '|' );
 
@@ -212,10 +161,8 @@ class WPML_PB_Integration {
 			return $RESTPostId === $translatedPostId;
 		};
 
-		// $getGET :: string -> mixed
-		$getGET = Obj::prop( Fns::__, $_GET ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$getGET = Obj::prop( Fns::__, $_GET );
 
-		// $isBulkEditAction :: int -> bool
 		$isBulkEditAction = function ( $id ) use ( $getGET ) {
 			$screenAction = 'edit-' . get_post_type( $id );
 			return $screenAction === $getGET( 'screen' )
@@ -229,31 +176,13 @@ class WPML_PB_Integration {
 			|| ( ( $isQuickEditAction( $translatedPostId ) || $isBulkEditAction( $translatedPostId ) ) && WPML_PB_Last_Translation_Edit_Mode::is_native_editor( $translatedPostId ) )
 			|| $isSavingPostWithREST( $translatedPostId );
 
-		/**
-		 * This filter allows to override the result if a translation
-		 * is edited with a native editor, but not the WP one.
-		 *
-		 * @since WPML 4.5.0
-		 *
-		 * @param bool $isTranslationWithNativeEditor
-		 * @param int  $translatedPostId
-		 */
 		return apply_filters( 'wpml_pb_is_editing_translation_with_native_editor', $isTranslationWithNativeEditor, $translatedPostId );
 	}
 
-	/**
-	 * @param int $postId
-	 *
-	 * @return bool
-	 */
 	private function is_translation( $postId ) {
 		return (bool) $this->factory->get_post_element( $postId )->get_source_language_code();
 	}
 
-	/**
-	 * @param WP_Post|mixed $post
-	 * @param bool          $allowRegisteringPostTranslation Specifies if the string registration must be allowed for posts that are not original.
-	 */
 	public function register_all_strings_for_translation( $post, $allowRegisteringPostTranslation = false ) {
 		if ( $post instanceof \WP_Post && $this->is_post_status_ok( $post ) && ( $allowRegisteringPostTranslation || $this->is_original_post( $post ) ) ) {
 			$this->is_registering_string = true;
@@ -262,27 +191,14 @@ class WPML_PB_Integration {
 		}
 	}
 
-	/**
-	 * @param \WP_Post|\stdClass $post
-	 *
-	 * @return bool
-	 */
 	private function is_original_post( $post ) {
-		return (int) $post->ID === (int) $this->sitepress->get_original_element_id( $post->ID, 'post_' . $post->post_type, false, false, false, true );
+		return (int) $post->ID === (int) $this->sitepress->get_original_element_id( $post->ID, 'post_' . $post->post_type, false, true, false, true );
 	}
 
-	/**
-	 * @param \WP_Post|\stdClass $post
-	 *
-	 * @return bool
-	 */
 	public function is_post_status_ok( $post ) {
 		return ! in_array( $post->post_status, array( 'trash', 'auto-draft', 'inherit' ), true );
 	}
 
-	/**
-	 * Add all actions filters.
-	 */
 	public function add_hooks() {
 		add_action( 'pre_post_update', array( $this, 'migrate_location' ) );
 		add_action( 'save_post', array( $this, 'queue_save_post_actions' ), PHP_INT_MAX, 2 );
@@ -306,12 +222,6 @@ class WPML_PB_Integration {
 		add_filter( 'wpml_get_page_builder_text_domains', [ $this, 'getPageBuildersKinds' ] );
 	}
 
-	/**
-	 * @param bool         $enabled
-	 * @param WPML_Package $package
-	 *
-	 * @return bool
-	 */
 	public function disableTranslateEverything( $enabled, $package ) {
 		$kind  = Obj::prop( 'kind', $package );
 		$kinds = $this->getPageBuildersKinds( [] );
@@ -323,11 +233,6 @@ class WPML_PB_Integration {
 		return $enabled;
 	}
 
-	/**
-	 * @param string[]|string $pbBuilders
-	 *
-	 * @return string[]
-	 */
 	public function getPageBuildersKinds( $pbBuilders ) {
 		if ( ! is_array( $pbBuilders ) ) {
 			$pbBuilders = [];
@@ -339,11 +244,6 @@ class WPML_PB_Integration {
 			->all();
 	}
 
-	/**
-	 * @param int      $new_post_id
-	 * @param array    $fields
-	 * @param stdClass $job
-	 */
 	public function cleanup_strings_after_translation_completed( $new_post_id, array $fields, stdClass $job ) {
 		if ( 'post' === $job->element_type_prefix ) {
 			$original_post = get_post( $job->original_doc_id );
@@ -362,21 +262,10 @@ class WPML_PB_Integration {
 		}
 	}
 
-	/**
-	 * @param callable $callback
-	 */
 	private function with_strategies( callable $callback ) {
 		Fns::each( $callback, $this->strategies );
 	}
 
-	/**
-	 * When a Page Builder content has only a "LINK" string, it's won't be part
-	 * of the translation job as it's automatically converted.
-	 * We need to add the package to the update list (by strategies).
-	 *
-	 * @param int $new_post_id
-	 * @param int $original_doc_id
-	 */
 	public function process_pb_content_with_hidden_strings_only( $new_post_id, $original_doc_id ) {
 		if (
 			! did_action( 'wpml_add_string_translation' )
@@ -401,21 +290,31 @@ class WPML_PB_Integration {
 
 	public function save_translations_to_post() {
 		if ( $this->new_translations_recieved ) {
-			$this->with_strategies(
-				function ( IWPML_PB_Strategy $strategy ) {
-					$this->factory->get_string_translations( $strategy )->save_translations_to_post();
+			$this->resave_translation_without_tm_status_update(
+				function () {
+					$this->with_strategies(
+						function ( IWPML_PB_Strategy $strategy ) {
+							$this->factory->get_string_translations( $strategy )->save_translations_to_post();
+						}
+					);
 				}
 			);
 			$this->new_translations_recieved = false;
 		}
 	}
 
-	/**
-	 * @param string $content
-	 * @param string $lang
-	 *
-	 * @return string
-	 */
+	private function resave_translation_without_tm_status_update( callable $callback ) {
+		$was_attached = remove_action( 'wpml_tm_save_post', 'wpml_tm_save_post', 10 );
+
+		try {
+			$callback();
+		} finally {
+			if ( $was_attached ) {
+				add_action( 'wpml_tm_save_post', 'wpml_tm_save_post', 10, 3 );
+			}
+		}
+	}
+
 	public function update_translations_in_content( $content, $lang ) {
 		$this->with_strategies(
 			function ( IWPML_PB_Strategy $strategy ) use ( &$content, $lang ) {
@@ -426,13 +325,6 @@ class WPML_PB_Integration {
 		return $content;
 	}
 
-	/**
-	 * @see https://onthegosystems.myjetbrains.com/youtrack/issue/wpmlst-958
-	 * @param array                $translation_package
-	 * @param WP_Post|WPML_Package $post
-	 *
-	 * @return array
-	 */
 	public function rescan( array $translation_package, $post ) {
 		if ( $post instanceof WP_Post ) {
 			$translation_package = $this->get_rescan()->rescan( $translation_package, $post );
@@ -441,9 +333,6 @@ class WPML_PB_Integration {
 		return $translation_package;
 	}
 
-	/**
-	 * @param int $post_id
-	 */
 	public function migrate_location( $post_id ) {
 		if ( $this->post_has_strings( $post_id ) && ! $this->is_migrate_location_done( $post_id ) ) {
 			$wpdb = $this->sitepress->get_wpdb();
@@ -456,13 +345,6 @@ class WPML_PB_Integration {
 		}
 	}
 
-	/**
-	 * @param bool       $registered
-	 * @param string|int $post_id
-	 * @param string     $content
-	 *
-	 * @return bool
-	 */
 	public function register_strings_in_content( $registered, $post_id, $content ) {
 		foreach ( $this->strategies as $strategy ) {
 			$registered = $strategy->register_strings_in_content( $post_id, $content, $this->stringCleanUp[ $post_id ] ) || $registered;
@@ -484,11 +366,6 @@ class WPML_PB_Integration {
 		$this->stringCleanUp[ $post->ID ]->cleanUp();
 	}
 
-	/**
-	 * @param int $post_id
-	 *
-	 * @return bool
-	 */
 	private function post_has_strings( $post_id ) {
 		$wpdb                  = $this->sitepress->get_wpdb();
 		$string_packages_table = $wpdb->prefix . 'icl_string_packages';
@@ -499,52 +376,37 @@ class WPML_PB_Integration {
 			return false;
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$string_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(ID) FROM {$string_packages_table} WHERE post_id = %d", $post_id ) );
 
 		return $string_count > 0;
 	}
 
-	/**
-	 * @param int $post_id
-	 *
-	 * @return bool
-	 */
 	private function is_migrate_location_done( $post_id ) {
 		return get_post_meta( $post_id, self::MIGRATION_DONE_POST_META, true );
 	}
 
-	/**
-	 * @param int $post_id
-	 */
 	private function mark_migrate_location_done( $post_id ) {
 		update_post_meta( $post_id, self::MIGRATION_DONE_POST_META, true );
 	}
 
-	/**
-	 * @param WP_Post $post
-	 */
 	public function translate_media( $post ) {
+		if ( ! defined( 'WPML_MEDIA_VERSION' ) ) {
+			return;
+		}
+
 		if ( $this->is_post_status_ok( $post ) && ! $this->is_original_post( $post ) ) {
-			foreach ( $this->get_media_updaters( $post ) as $updater ) {
-				$updater->translate( $post );
-			}
+			$this->resave_translation_without_tm_status_update(
+				function () use ( $post ) {
+					foreach ( $this->get_media_updaters( $post ) as $updater ) {
+						$updater->translate( $post );
+					}
+				}
+			);
 		}
 	}
 
-	/**
-	 * @param \WP_Post $post
-	 *
-	 * @return IWPML_PB_Media_Update[]
-	 */
 	private function get_media_updaters( $post ) {
 		if ( ! isset( $this->media_updaters[ $post->ID ] ) ) {
-			/**
-			 * Gets all media updaters.
-			 *
-			 * @param IWPML_PB_Media_Update[] $media_updaters
-			 * @param \WP_Post                $post
-			 */
 			$this->media_updaters[ $post->ID ] = apply_filters( 'wpml_pb_get_media_updaters', [], $post );
 		}
 

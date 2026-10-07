@@ -1032,8 +1032,6 @@ class WPForms_Entries_Single {
 					// Whoops, no fields! This shouldn't happen under normal use cases.
 					echo '<p class="no-fields">' . esc_html__( 'This entry does not have any fields', 'wpforms' ) . '</p>';
 				} else {
-					add_filter( 'wp_kses_allowed_html', [ $this, 'modify_allowed_tags_entry_field_value' ], 10, 2 );
-
 					// Content, Divider, HTML and layout fields must always be included because it's allowed to show and hide these fields.
 					$forced_allowed_fields = [ 'content', 'divider', 'html', 'layout', 'pagebreak', 'repeater' ];
 
@@ -1093,7 +1091,6 @@ class WPForms_Entries_Single {
 						do_action( 'wpforms_entries_single_after_fields', $entry, $form_data );
 
 					echo '</div>';
-					remove_filter( 'wp_kses_allowed_html', [ $this, 'modify_allowed_tags_entry_field_value' ] );
 				}
 				?>
 
@@ -1153,6 +1150,9 @@ class WPForms_Entries_Single {
 
 		// Always use a value for dynamic choices.
 		$field_value = ! empty( $field['dynamic'] ) ? $field['value'] : $field_value;
+
+		// Malformed entries can store an array where a string is expected.
+		$field_value = wpforms_flatten_field_value( $field_value );
 
 		/** This filter is documented in src/SmartTags/SmartTag/FieldHtmlId.php.*/
 		$field_value = apply_filters( 'wpforms_html_field_value', wp_kses_post( $field_value ), $field, $form_data, 'entry-single' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
@@ -1340,7 +1340,7 @@ class WPForms_Entries_Single {
 
 		printf( '<div class="%s">', wpforms_sanitize_classes( $field_classes, true ) );
 			echo ! wpforms_is_empty_string( $field_value )
-				? wp_kses_post( $field_value )
+				? wpforms_esc_entry_field_value( $field_value, wpforms_is_entry_field_value_iframe_allowed( $field ) )
 				: esc_html__( 'Empty', 'wpforms' );
 		echo '</div>';
 	}
@@ -1403,6 +1403,7 @@ class WPForms_Entries_Single {
 	 * Allow additional tags for the wp_kses_post function.
 	 *
 	 * @since 1.7.1
+	 * @deprecated 2.0.1
 	 *
 	 * @param array|mixed $allowed_html List of allowed HTML.
 	 * @param string      $context      Context name.
@@ -1411,18 +1412,9 @@ class WPForms_Entries_Single {
 	 */
 	public function modify_allowed_tags_entry_field_value( $allowed_html, string $context ): array {
 
-		$allowed_html = (array) $allowed_html;
+		_deprecated_function( __METHOD__, '2.0.1 of the WPForms plugin', 'wpforms_get_allowed_html_tags_for_entry_field_value()' );
 
-		if ( $context !== 'post' ) {
-			return $allowed_html;
-		}
-
-		$allowed_html['iframe'] = [
-			'data-src' => [],
-			'class'    => [],
-		];
-
-		return $allowed_html;
+		return wpforms_get_allowed_html_tags_for_entry_field_value( $allowed_html, $context );
 	}
 
 	/**
@@ -2423,7 +2415,7 @@ class WPForms_Entries_Single {
 	 */
 	private function get_formatted_field_value( $field ): string {
 
-		$field_value = isset( $field['value'] ) ? wp_strip_all_tags( $field['value'] ) : '';
+		$field_value = wpforms_neutralize_html_tags( wpforms_flatten_field_value( $field['value'] ?? '' ) );
 
 		if ( $field['type'] === 'html' ) {
 			return $field['code'] ?? '';
@@ -2708,10 +2700,11 @@ class WPForms_Entries_Single {
 		$show_values      = $this->form_data['fields'][ $field['id'] ]['show_values'] ?? false;
 		$choice_value_key = ! wpforms_is_empty_string( $field['value_raw'] ?? '' ) && $show_values ? 'value' : 'label';
 
-		$label = wpforms_is_empty_string( $choice[ $choice_value_key ] )
-			/* translators: %s - choice number. */
-			? sprintf( esc_html__( 'Choice %s', 'wpforms' ), $key )
-			: sanitize_text_field( $choice[ $choice_value_key ] );
+		// Guard against a missing dynamic key (label or value) on a label-less leftover choice.
+		// A '0' is a valid value, so check with isset() rather than empty().
+		$label = isset( $choice[ $choice_value_key ] ) && ! wpforms_is_empty_string( $choice[ $choice_value_key ] )
+			? sanitize_text_field( $choice[ $choice_value_key ] )
+			: $this->get_choice_label( $field, $choice, $key );
 
 		return in_array( $label, $active_choices, true );
 	}

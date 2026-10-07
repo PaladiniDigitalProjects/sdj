@@ -4,8 +4,8 @@
  * Description:       A native query loop extension that adds a new option in the filter that allows user to specifically pick certain posts to display
  * Requires at least: 5.8
  * Requires PHP:      7.0
- * Version:           1.0.6
- * Tested up to:      7.0.0
+ * Version:           1.0.7
+ * Tested up to:      7.1
  * Author:            Small Plugins
  * Author URI:        https://smallplugins.com
  * License:           GPL-2.0-or-later

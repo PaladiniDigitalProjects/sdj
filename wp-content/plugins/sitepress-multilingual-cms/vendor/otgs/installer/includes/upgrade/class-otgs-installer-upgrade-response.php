@@ -2,29 +2,14 @@
 
 class OTGS_Installer_Upgrade_Response {
 
-	/**
-	 * @var array
-	 */
 	private $_plugins;
 
-	/**
-	 * @var OTGS_Installer_Plugin_Finder
-	 */
 	private $plugin_finder;
 
-	/**
-	 * @var OTGS_Installer_Repositories
-	 */
 	private $repositories;
 
-	/**
-	 * @var OTGS_Installer_Source_Factory
-	 */
 	private $source_factory;
 
-	/**
-	 * @var OTGS_Installer_Package_Product_Finder
-	 */
 	private $product_finder;
 
 	public function __construct( OTGS_Installer_Plugin_Finder $plugin_finder, OTGS_Installer_Repositories $repositories, OTGS_Installer_Source_Factory $source_factory, OTGS_Installer_Package_Product_Finder $product_finder ) {
@@ -50,10 +35,6 @@ class OTGS_Installer_Upgrade_Response {
 		return $this->_plugins;
 	}
 
-	/**
-	 * @param stdClass|null $update_plugins
-	 * @return mixed
-	 */
 	public function modify_upgrade_response( $update_plugins ) {
 		if ( isset( $update_plugins ) && is_object( $update_plugins ) ) {
 			foreach ( $this->plugins() as $plugin ) {

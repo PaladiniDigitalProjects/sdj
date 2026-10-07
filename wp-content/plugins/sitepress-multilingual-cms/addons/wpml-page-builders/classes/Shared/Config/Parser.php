@@ -15,10 +15,8 @@ class Parser {
 		Helper::TYPE_TAXONOMY_IDS,
 	];
 
-	/** @var string $configRoot */
 	private $configRoot;
 
-	/** @var string $defaultConditionKey */
 	private $defaultConditionKey;
 
 	public function __construct( $configRoot, $defaultConditionKey ) {
@@ -26,16 +24,6 @@ class Parser {
 		$this->defaultConditionKey = $defaultConditionKey;
 	}
 
-	/**
-	 * Receives a raw config array (from XML) and convert it into
-	 * a page builder configuration array.
-	 *
-	 * @see WPML_Elementor_Translatable_Nodes::get_nodes_to_translate()
-	 *
-	 * @param array $allConfig
-	 *
-	 * @return array
-	 */
 	public function extract( array $allConfig ) {
 		$pbConfig   = [];
 		$allWidgets = Obj::pathOr( [], [ 'wpml-config', $this->configRoot, 'widget' ], $allConfig );
@@ -52,7 +40,7 @@ class Parser {
 
 			if ( $fieldsInItems ) {
 				$pbConfig[ $widgetName ]['fields_in_item'] = [];
-				$fieldsInItems                             = $this->normalize( $fieldsInItems );
+				$fieldsInItems                             = self::normalize( $fieldsInItems );
 
 				foreach ( $fieldsInItems as $fieldsInItem ) {
 					$itemOf                                               = Obj::path( [ 'attr', 'items_of' ], $fieldsInItem );
@@ -70,12 +58,6 @@ class Parser {
 		return $pbConfig;
 	}
 
-	/**
-	 * @param array  $widget
-	 * @param string $widgetName
-	 *
-	 * @return array
-	 */
 	private function parseConditions( array $widget, $widgetName ) {
 		$makePair = function( $condition ) {
 			return [ Obj::pathOr( $this->defaultConditionKey, ['attr', 'key'], $condition ), $condition['value'] ];
@@ -88,15 +70,10 @@ class Parser {
 			->getOrElse( [ $this->defaultConditionKey => $widgetName ] );
 	}
 
-	/**
-	 * @param array $rawFields
-	 *
-	 * @return array
-	 */
 	private function parseFields( array $rawFields ) {
 		$parsedFields = [];
 
-		foreach ( $this->normalize( $rawFields ) as $field ) {
+		foreach ( self::normalize( $rawFields ) as $field ) {
 			if ( in_array( Obj::path( [ 'attr', 'type' ], $field ), self::EXCLUDE_TYPES, true ) ) {
 				continue;
 			}
@@ -124,11 +101,6 @@ class Parser {
 		return $parsedFields;
 	}
 
-	/**
-	 * @param array $widget
-	 *
-	 * @return array
-	 */
 	private function parseIntegrationClasses( array $widget ) {
 		return Maybe::fromNullable( Obj::path( [ 'integration-classes', 'integration-class' ], $widget ) )
 			->map( [ $this, 'normalize' ] )
@@ -136,15 +108,7 @@ class Parser {
 			->getOrElse( [] );
 	}
 
-	/**
-	 * If a sequence has only one element, we will wrap it
-	 * in order to have the same data shape as for multiple elements.
-	 *
-	 * @param array $partialConfig
-	 *
-	 * @return array
-	 */
-	public function normalize( array $partialConfig ) {
+	public static function normalize( array $partialConfig ) {
 		$isAssocArray = count( array_filter( array_keys( $partialConfig ), 'is_string' ) ) > 0;
 
 		return $isAssocArray ? [ $partialConfig ] : $partialConfig;

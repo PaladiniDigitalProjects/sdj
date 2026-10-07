@@ -9,12 +9,6 @@ use OTGS_Installer_Plugin_Factory;
 use OTGS_Installer_Plugin_Finder;
 
 class InstallerApiClientFactory {
-	/**
-	 * @param string $repositoryId
-	 * @param string $repositoryApiUrl
-	 *
-	 * @return InstallerApiClient
-	 */
 	public static function create( OTGS_Installer_Logger_Storage $loggerStorage, $repositoryId, $repositoryApiUrl ) {
 		$client = new Client\Client( new \WP_Http(), $repositoryApiUrl );
 

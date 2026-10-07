@@ -7,7 +7,7 @@ class WPML_String_Translation_Job extends WPML_Translation_Job {
 	protected function load_job_data( $string_translation_id ) {
 		global $wpdb;
 
-		$query = $wpdb->prepare(
+		return $wpdb->get_row( $wpdb->prepare(
 			"SELECT st.id,
                          s.language AS source_language_code,
                          st.language AS language_code,
@@ -30,9 +30,7 @@ class WPML_String_Translation_Job extends WPML_Translation_Job {
                     WHERE st.id = %d
                     LIMIT 1",
 			$string_translation_id
-		);
-
-		return $wpdb->get_row( $query );
+		) );
 	}
 
 	public function get_title() {
@@ -41,9 +39,6 @@ class WPML_String_Translation_Job extends WPML_Translation_Job {
 		return esc_html( $this->basic_data->value );
 	}
 
-	/**
-	 * @return string
-	 */
 	public function get_id() {
 
 		return 'string|' . parent::get_id();
@@ -109,9 +104,6 @@ class WPML_String_Translation_Job extends WPML_Translation_Job {
 		);
 	}
 
-	/**
-	 * Retrieves the batch ID for a string job
-	 */
 	protected function load_batch_id() {
 		global $wpdb;
 

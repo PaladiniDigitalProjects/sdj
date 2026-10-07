@@ -1,6 +1,6 @@
 {
 	"name": "query-loop-post-selector",
-	"version": "1.0.5",
+	"version": "1.0.7",
 	"description": "A native query loop extension that adds a new option in the filter that allows user to specifically pick certain posts to display",
 	"author": "The WordPress Contributors",
 	"license": "GPL-2.0-or-later",

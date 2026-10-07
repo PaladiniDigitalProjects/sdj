@@ -1,19 +1,2 @@
 <?php
-
-namespace WPML\UserInterface\Web\Core\Component\Notices\PromoteUsingDashboard\Application\Repository;
-
-interface DashboardTranslationsRepositoryInterface {
-
-
-  /**
-   * @param int $translatorId
-   *
-   * @return void
-   */
-  public function recordTranslator( int $translatorId );
-
-
-  public function doesTranslatorHaveAny( int $translatorId ): bool;
-
-
-}
+require_once __DIR__ . '/../../../../../../../../../../../../wpml/src/UserInterface/Web/Core/Component/Notices/PromoteUsingDashboard/Application/Repository/DashboardTranslationsRepositoryInterface.php';

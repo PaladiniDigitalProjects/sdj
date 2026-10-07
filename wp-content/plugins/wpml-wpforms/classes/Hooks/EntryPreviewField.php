@@ -4,41 +4,35 @@ namespace WPML\Forms\WPForms\Hooks;
 
 use SitePress;
 use WPML\Forms\Hooks\Base;
+use WPML\Forms\WPForms\Language\RequestScope;
 use WPML\FP\Obj;
 
 class EntryPreviewField  extends Base {
 
 	const BEFORE_WPFORMS_PRO = 9;
 
-	/** @var SitePress */
 	private $sitepress;
 
-	/**
-	 * WPML\Forms\WPForms\Hooks\EntryPreviewField constructor.
-	 *
-	 * @param string    $slug Form type slug.
-	 * @param string    $kind Translation package kind.
-	 * @param \WPML\Forms\Translation\Factory $factory Translation package factory.
-	 * @param SitePress $sitepress
-	 */
-	public function __construct( $slug, $kind, \WPML\Forms\Translation\Factory $factory, SitePress $sitepress ) {
-		$this->sitepress = $sitepress;
+	private $languageScope;
+
+	public function __construct( $slug, $kind, \WPML\Forms\Translation\Factory $factory, SitePress $sitepress, RequestScope $languageScope ) {
+		$this->sitepress     = $sitepress;
+		$this->languageScope = $languageScope;
 		parent::__construct( $slug, $kind, $factory );
 	}
 
 	public function addHooks() {
 		add_filter( 'wpforms_frontend_form_data', [ $this, 'mayBeAddLanguageField' ] );
-		add_action( 'wp_ajax_wpforms_get_entry_preview', [ $this, 'markAsNeedsTranslations' ], self::BEFORE_WPFORMS_PRO );
-		add_action( 'wp_ajax_nopriv_wpforms_get_entry_preview', [ $this, 'markAsNeedsTranslations' ], self::BEFORE_WPFORMS_PRO );
+		\WPML\Forms\Request\Ajax::listen(
+			'wpforms_get_entry_preview',
+			[ $this, 'markAsNeedsTranslations' ],
+			'WPForms entry preview (front-end, incl. anonymous): switches the WPML language for the host request only; WPForms verifies its own nonce',
+			self::BEFORE_WPFORMS_PRO,
+			1,
+			true
+		);
 	}
 
-	/**
-	 * Add a temporary language hidden field to be displayed on page.
-	 * This makes the language code be submitted with the form.
-	 *
-	 * @param array $formData
-	 * @return array $formData
-	 */
 	public function mayBeAddLanguageField( array $formData ) {
 		if ( $this->hasPreviewEntryField( $formData ) ) {
 			$formData['fields'][0] = [
@@ -50,24 +44,15 @@ class EntryPreviewField  extends Base {
 		return $formData;
 	}
 
-	/**
-	 * Switch to the correct language code used on original request.
-	 */
 	public function markAsNeedsTranslations() {
 		$submittedData = filter_input( INPUT_POST, 'wpforms', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
 		$languageCode  = Obj::pathOr( '', [ 'fields', 0 ], $submittedData );
-		$this->sitepress->switch_lang( $languageCode, true );
+		if ( is_string( $languageCode ) && array_key_exists( $languageCode, $this->sitepress->get_active_languages() ) ) {
+			$this->languageScope->open( $languageCode, true );
+		}
 		add_filter( 'wpforms_pro_fields_entry_preview_get_field_label', [ $this, 'mayBeApplyPreviewLabelTranslation' ], 10, 3 );
 	}
 
-	/**
-	 * Translate the field's label if it's a preview request
-	 *
-	 * @param string $label
-	 * @param array  $rawField
-	 * @param array  $formData
-	 * @return string
-	 */
 	public function mayBeApplyPreviewLabelTranslation( $label, $rawField, $formData ) {
 		$package         = $this->newPackage( $this->getId( $formData ) );
 		$fieldId         = $this->getId( $rawField );
@@ -77,9 +62,6 @@ class EntryPreviewField  extends Base {
 		return Obj::propOr( $label, 'label', $translatedField );
 	}
 
-	/**
-	 * Whether the form contains an entry preview field.
-	 */
 	private function hasPreviewEntryField( array $formData ): bool {
 		foreach ( $formData['fields'] as $field ) {
 			if ( $field['type'] === 'entry-preview' ) {

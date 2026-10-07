@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class WPML_PB_Register_Shortcodes
- */
 class WPML_PB_Shortcode_Encoding {
 	const ENCODE_TYPES_BASE64                 = 'base64';
 	const ENCODE_TYPES_VISUAL_COMPOSER_LINK   = 'vc_link';
@@ -21,7 +18,6 @@ class WPML_PB_Shortcode_Encoding {
 
 		switch ( $encoding ) {
 			case self::ENCODE_TYPES_BASE64:
-				/* phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode */
 				$content = html_entity_decode( rawurldecode( base64_decode( wp_strip_all_tags( $content ) ) ) );
 				break;
 
@@ -51,7 +47,7 @@ class WPML_PB_Shortcode_Encoding {
 				$rows    = (array) json_decode( urldecode( $encoded_content ), true );
 				foreach ( $rows as $i => $row ) {
 					foreach ( $row as $key => $value ) {
-						if ( 'label' === $key ) {
+						if ( in_array( $key, [ 'label', 'title' ], true ) ) {
 							$content[ $key . '_' . $i ] = [
 								'value'     => $value,
 								'translate' => true,
@@ -67,7 +63,6 @@ class WPML_PB_Shortcode_Encoding {
 				break;
 
 			case self::ENCODE_TYPES_ENFOLD_LINK:
-				// Note: We can't handle 'lightbox' mode because we don't know how to re-encode it.
 				$link = explode( ',', $content, 2 );
 				if ( 'manually' === $link[0] ) {
 					$content = $link[1];
@@ -90,7 +85,6 @@ class WPML_PB_Shortcode_Encoding {
 
 		switch ( $encoding ) {
 			case self::ENCODE_TYPES_BASE64:
-				/* phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode */
 				$content = base64_encode( $content );
 				break;
 
@@ -130,11 +124,6 @@ class WPML_PB_Shortcode_Encoding {
 		return apply_filters( 'wpml_pb_shortcode_encode', $content, $encoding, $decoded_content );
 	}
 
-	/**
-	 * @param string $condition
-	 *
-	 * @return bool
-	 */
 	private function should_decode( $condition ) {
 		preg_match( '/(?P<type>\w+):(?P<field>\w+)=(?P<value>\w+)/', $condition, $matches );
 

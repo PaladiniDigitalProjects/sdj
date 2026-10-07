@@ -2,14 +2,8 @@
 
 class OTGS_Installer_WP_Components_Sender {
 
-	/**
-	 * @var WP_Installer
-	 */
 	private $installer;
 
-	/**
-	 * @var OTGS_Installer_WP_Share_Local_Components_Setting
-	 */
 	private $settings;
 
 	public function __construct( WP_Installer $installer, OTGS_Installer_WP_Share_Local_Components_Setting $settings ) {

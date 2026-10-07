@@ -130,6 +130,11 @@ class Integration extends \WPForms\Integrations\LiteConnect\Integration {
 			return false;
 		}
 
+		// A successful fetch resets the consecutive-failure counter, so a retry
+		// after previous failures gets a fresh attempts budget and the failure
+		// notice does not outlive a completed restore.
+		Transient::delete( 'lite_connect_error' );
+
 		$this->prepare_import();
 
 		// Import entries to the database.
@@ -380,7 +385,7 @@ class Integration extends \WPForms\Integrations\LiteConnect\Integration {
 		}
 
 		if ( ! isset( $settings['import']['started_at'] ) ) {
-			$settings['import']['started_at'] = time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$settings['import']['started_at'] = time() + (int) ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 		}
 
 		if ( ! isset( $settings['import']['pages'] ) ) {
@@ -410,7 +415,7 @@ class Integration extends \WPForms\Integrations\LiteConnect\Integration {
 			$settings['import']['status']         = 'scheduled';
 			$settings['import']['last_import_id'] = end( $response['entries'] )['id'];
 
-			$settings['import']['pages']++;
+			++$settings['import']['pages'];
 
 			( new ImportEntriesTask() )->create( $settings['import']['last_import_id'] );
 
@@ -418,7 +423,7 @@ class Integration extends \WPForms\Integrations\LiteConnect\Integration {
 
 			// Change import status to 'done'.
 			$settings['import']['status']   = 'done';
-			$settings['import']['ended_at'] = time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$settings['import']['ended_at'] = time() + (int) ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 
 			// Send email notification about import completion.
 			$this->send_email_notification();

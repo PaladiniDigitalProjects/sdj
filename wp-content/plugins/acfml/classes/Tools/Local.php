@@ -10,18 +10,11 @@ use function WPML\FP\spreadArgs;
 
 class Local extends Transfer implements \IWPML_Backend_Action, \IWPML_Frontend_Action, \IWPML_DIC_Action {
 
-	// Needs to happen before WPML_ACF_Field_Settings::processSubfieldsQueue() at priority 10.
 	const PROCESS_SUBFIELDS_QUEUE_PRIORITY = 9;
 	const SCAN_MODE_CACHE_OPTION_KEY       = 'acfml_local_fields_preferences';
 
-	/**
-	 * @var \WPML_ACF_Field_Settings
-	 */
 	private $field_settings;
 
-	/**
-	 * @var array
-	 */
 	private $subfieldsQueue = [];
 
 	public function __construct( \WPML_ACF_Field_Settings $field_settings ) {
@@ -34,7 +27,6 @@ class Local extends Transfer implements \IWPML_Backend_Action, \IWPML_Frontend_A
 			add_filter( 'acf/prepare_field_group_for_import', [ $this, 'unsetTranslated' ] );
 			if ( is_admin() && LocalSettings::shouldRunScan() ) {
 				add_filter( 'acf/prepare_fields_for_import', [ $this, 'syncTranslationPreferences' ] );
-				// Save changes in translation preferences for existing subfields.
 				add_action( 'shutdown', [ $this, 'processSubfieldsQueue' ], self::PROCESS_SUBFIELDS_QUEUE_PRIORITY );
 			}
 		}
@@ -46,15 +38,9 @@ class Local extends Transfer implements \IWPML_Backend_Action, \IWPML_Frontend_A
 		}
 	}
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return array
-	 */
 	public function unsetTranslated( $fieldGroup ) {
 		if ( $this->isGroupTranslatable() && isset( $fieldGroup[ self::LANGUAGE_PROPERTY ], $fieldGroup['key'] ) ) {
 			if ( apply_filters( 'wpml_current_language', null ) !== $fieldGroup[ self::LANGUAGE_PROPERTY ] ) {
-				// reset field group but keep 'key', otherwise ACF will php notice.
 				$fieldGroup = [
 					'key' => $fieldGroup['key'],
 				];
@@ -64,11 +50,6 @@ class Local extends Transfer implements \IWPML_Backend_Action, \IWPML_Frontend_A
 		return $fieldGroup;
 	}
 
-	/**
-	 * @param array $fields
-	 *
-	 * @return mixed
-	 */
 	public function syncTranslationPreferences( $fields ) {
 		foreach ( $fields as $field ) {
 			$this->field_settings->update_field_settings( $field, false );
@@ -78,7 +59,6 @@ class Local extends Transfer implements \IWPML_Backend_Action, \IWPML_Frontend_A
 	}
 
 	private function isImportFromFile() {
-		// phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected
 		return isset( $_FILES['acf_import_file'] );
 	}
 
@@ -86,11 +66,6 @@ class Local extends Transfer implements \IWPML_Backend_Action, \IWPML_Frontend_A
 		acf_register_admin_tool( 'ACFML\Tools\LocalUI' );
 	}
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return array
-	 */
 	public function ensureTranslationMode( $fieldGroup ) {
 		if ( Mode::getMode( $fieldGroup ) === null ) {
 			$fieldGroup[ Mode::KEY ] = Mode::ADVANCED;

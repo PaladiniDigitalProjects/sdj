@@ -11,13 +11,6 @@ class ScriptRegisterHooks implements \IWPML_Action {
 		add_action( 'shutdown', [ $this, 'register' ] );
 	}
 
-	/**
-	 * @param string $tag
-	 * @param string $handle
-	 * @param string $src
-	 *
-	 * @return string
-	 */
 	public function mapHandleSrc( $tag, $handle, $src ) {
 		$this->scriptMap[ $handle ] = $src;
 

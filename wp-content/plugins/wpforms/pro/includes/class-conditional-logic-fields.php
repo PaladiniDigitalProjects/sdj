@@ -910,15 +910,19 @@ class WPForms_Conditional_Logic_Fields {
 									true
 								)
 							) {
-								if ( in_array( $form['fields'][ $rule_field ]['type'], [ 'payment-multiple', 'payment-checkbox', 'payment-select' ], true ) ) {
+								$rule_field_data = $form['fields'][ $rule_field ];
+
+								if ( in_array( $rule_field_data['type'], [ 'payment-multiple', 'payment-checkbox', 'payment-select' ], true ) ) {
 									// Payment items values are different, they are the actual IDs.
 									$val = $rule['value'];
-								} elseif ( ! empty( $form['fields'][ $rule_field ]['choices'][ $rule_value ]['value'] ) ) {
-									// For rules referring to fields with choices,
-									// we need to replace the choice key with the choice value.
-									$val = esc_attr( $form['fields'][ $rule_field ]['choices'][ $rule_value ]['value'] );
-								} elseif ( isset( $form['fields'][ $rule_field ]['choices'][ $rule_value ]['label'] ) && '' !== trim( $form['fields'][ $rule_field ]['choices'][ $rule_value ]['label'] ) ) {
-									$val = esc_attr( $form['fields'][ $rule_field ]['choices'][ $rule_value ]['label'] );
+								} elseif ( $this->field_renders_raw_values( $rule_field_data ) && ! empty( $rule_field_data['choices'][ $rule_value ]['value'] ) ) {
+									// The field puts raw choice values into the DOM,
+									// so the rule must compare against the choice value.
+									$val = esc_attr( $rule_field_data['choices'][ $rule_value ]['value'] );
+								} elseif ( isset( $rule_field_data['choices'][ $rule_value ]['label'] ) && '' !== trim( $rule_field_data['choices'][ $rule_value ]['label'] ) ) {
+									// With Show Values off, the field renders choice labels,
+									// so the rule must compare against the label.
+									$val = esc_attr( $rule_field_data['choices'][ $rule_value ]['label'] );
 								} else {
 									/* translators: %d - choice number. */
 									$val = sprintf( esc_html__( 'Choice %d', 'wpforms' ), (string) $rule_value );
@@ -939,6 +943,29 @@ class WPForms_Conditional_Logic_Fields {
 		}
 
 		return $conditionals;
+	}
+
+	/**
+	 * Determine whether a choice-based field renders raw choice values instead of labels.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param array $field_data Trigger field data and settings.
+	 *
+	 * @return bool
+	 */
+	private function field_renders_raw_values( array $field_data ): bool {
+
+		if ( ! empty( $field_data['dynamic_choices'] ) ) {
+			return true;
+		}
+
+		if ( $field_data['type'] === 'radio' ) {
+			return ! empty( $field_data['show_values'] );
+		}
+
+		// Checkboxes and Dropdown render raw values whenever the key is present, even if falsy.
+		return isset( $field_data['show_values'] );
 	}
 
 	/**

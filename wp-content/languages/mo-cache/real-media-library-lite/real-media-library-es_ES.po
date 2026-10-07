@@ -292,13 +292,13 @@ msgstr "No hay ningún tipo válido."
 msgid "PolyLang: Automatically move translations"
 msgstr "PolyLang: Mover traducciones automáticamente"
 
-#: inc/comp/PolyLang.php:76 inc/comp/WPML.php:332
+#: inc/comp/PolyLang.php:76 inc/comp/WPML.php:330
 msgid ""
 "If you move a file, the corresponding translated file will also be moved."
 msgstr ""
 "Si mueves un archivo, mueve también los archivos de traducción asociados."
 
-#: inc/comp/WPML.php:315
+#: inc/comp/WPML.php:313
 msgid "WPML: Automatically move translations"
 msgstr "WPML: Mover traducciones automáticamente"
 

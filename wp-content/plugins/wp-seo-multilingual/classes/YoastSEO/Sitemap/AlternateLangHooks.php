@@ -15,18 +15,10 @@ class AlternateLangHooks extends BaseAlternateLangHooks {
 		add_filter( 'wpseo_sitemap_post_type_first_links', [ $this, 'addAlternateLangDataToFirstLinks' ] );
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getUtils() {
 		return Utils::class;
 	}
 
-	/**
-	 * @param array $links
-	 *
-	 * @return array
-	 */
 	public function addAlternateLangDataToFirstLinks( $links ) {
 		foreach ( $links as &$link ) {
 			$link = $this->addAlternateLangDataToFirstLink( $link );

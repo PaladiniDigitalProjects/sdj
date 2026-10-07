@@ -5,6 +5,7 @@ namespace WPML\Forms\WPForms\SharedAPI;
 use SitePress;
 use WPML\Forms\Hooks\Registration;
 use WPML\Forms\Translation\Factory;
+use WPML\Forms\WPForms\Language\RequestScope;
 use WPML\FP\Fns;
 use WPML\FP\Lst;
 use WPML\FP\Obj;
@@ -12,23 +13,16 @@ use function WPML\FP\pipe;
 
 class Strings extends Registration {
 
-	/** @var SitePress */
 	private $sitepress;
 
-	/**
-	 * WPML\Forms\WPForms\Hooks\Strings constructor.
-	 *
-	 * @param string    $slug Form type slug.
-	 * @param string    $kind Translation package kind.
-	 * @param Factory   $factory Translation package factory.
-	 * @param SitePress $sitepress
-	 */
-	public function __construct( $slug, $kind, Factory $factory, SitePress $sitepress ) {
-		$this->sitepress = $sitepress;
+	private $languageScope;
+
+	public function __construct( $slug, $kind, Factory $factory, SitePress $sitepress, RequestScope $languageScope ) {
+		$this->sitepress     = $sitepress;
+		$this->languageScope = $languageScope;
 		parent::__construct( $slug, $kind, $factory );
 	}
 
-	/** Adds hooks. */
 	public function addHooks() {
 		parent::addHooks();
 		add_action( 'wpforms_save_form', [ $this, 'register' ] );
@@ -38,24 +32,12 @@ class Strings extends Registration {
 		add_filter( 'wpforms_process_before_filter', [ $this, 'translateEntry' ], 10, 2 );
 	}
 
-	/**
-	 * Gets field ID from provided data.
-	 *
-	 * @param array $data Field data.
-	 *
-	 * @return string|null
-	 */
 	public function getFieldId( array $data ) {
 		return ( array_key_exists( 'id', $data )
 			&& ( is_string( $data['id'] ) || is_int( $data['id'] ) ) )
 			? strval( $data['id'] ) : null;
 	}
 
-	/**
-	 * Registers form for translation.
-	 *
-	 * @param int $formId Form ID.
-	 */
 	public function register( $formId ) {
 
 		$content = get_post_field( 'post_content', $formId, 'raw' );
@@ -77,13 +59,6 @@ class Strings extends Registration {
 		$package->cleanup();
 	}
 
-	/**
-	 * Applies translations to form.
-	 *
-	 * @param array $formData Form data.
-	 *
-	 * @return array
-	 */
 	public function applyTranslations( array $formData ) {
 
 		$package = $this->newPackage( $this->getId( $formData ) );
@@ -92,7 +67,6 @@ class Strings extends Registration {
 			$formData['settings'] = $package->translateFormSettings( $formData['settings'] );
 		}
 
-		// if form was submitted, fields are already translated.
 		if ( did_action( 'wpforms_process_before' ) ) {
 			return $formData;
 		} else {
@@ -100,13 +74,6 @@ class Strings extends Registration {
 		}
 	}
 
-	/**
-	 * Applies translations to form for processing submitted fields.
-	 *
-	 * @param array $formData Form data.
-	 *
-	 * @return array
-	 */
 	public function applySubmissionTranslations( array $formData ) {
 
 		$package = $this->newPackage( $this->getId( $formData ) );
@@ -125,13 +92,6 @@ class Strings extends Registration {
 		return $formData;
 	}
 
-	/**
-	 * Adds forms info for bulk registration.
-	 *
-	 * @param array $items Array of form infos.
-	 *
-	 * @return array
-	 */
 	public function bulkRegistrationItems( array $items ) {
 
 		$forms = wpforms()->get( 'form' )->get();
@@ -144,41 +104,24 @@ class Strings extends Registration {
 		return $items;
 	}
 
-	/**
-	 * Registers forms for translation.
-	 *
-	 * @param array $forms Array of form IDs.
-	 */
 	public function bulkRegistration( array $forms ) {
 		foreach ( $forms as $formId ) {
 			$this->register( $formId );
 		}
 	}
 
-	/**
-	 * If within an AJAX request, then parse the language from the 'page_url' submitted by WPForms and switch to it.
-	 */
 	private function ajaxSwitchLanguage() {
 		if ( wpml_is_ajax() ) {
 			$pageUrl = filter_input( INPUT_POST, 'page_url' );
 			if ( $pageUrl ) {
 				$languageCode = $this->sitepress->get_language_from_url( $pageUrl );
-				$this->sitepress->switch_lang( $languageCode, true );
+				if ( is_string( $languageCode ) && array_key_exists( $languageCode, $this->sitepress->get_active_languages() ) ) {
+					$this->languageScope->open( $languageCode, true );
+				}
 			}
 		}
 	}
 
-	/**
-	 * Revert entry to default language to avoid saving translation on polls.
-	 *
-	 * @param array $entry    Original Subbmitted Entry.
-	 * @param array $formData Form data and settings.
-	 *
-	 * @return array
-	 *
-	 * @todo Check if this should affect only 'poll' templates from WPForms Surveys and Polls,
-	 * or also native polls from WPForms.
-	 */
 	public function translateEntry( $entry, $formData ) {
 		$originalForm = wpforms()->get( 'form' )->get(
 			$formData['id'],

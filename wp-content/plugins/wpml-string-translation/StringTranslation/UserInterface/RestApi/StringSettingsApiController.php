@@ -6,15 +6,14 @@ use WP_REST_Request;
 use WPML\Rest\Adaptor;
 use WPML\StringTranslation\Application\Setting\Repository\PluginRepositoryInterface;
 use WPML\StringTranslation\Application\Setting\Repository\SettingsRepositoryInterface;
+use WPML\StringTranslation\Infrastructure\TranslateEverything\EnglishSourceLanguage;
 
 class StringSettingsApiController extends AbstractController {
 
 	const ROUTE = 'strings/settings';
 
-	/** @var SettingsRepositoryInterface */
 	private $settingsRepository;
 
-	/** @var PluginRepositoryInterface */
 	private $pluginRepository;
 
 	public function __construct(
@@ -27,9 +26,6 @@ class StringSettingsApiController extends AbstractController {
 		$this->pluginRepository   = $pluginRepository;
 	}
 
-	/**
-	 * @return array
-	 */
 	public function get_routes() {
 		return [
 			[
@@ -50,7 +46,7 @@ class StringSettingsApiController extends AbstractController {
 							'type'    => 'integer',
 							'default' => 0,
 						],
-						'setDetectStringsInJS' => [
+						'setDetectStringsInJS'         => [
 							'type'    => 'integer',
 							'default' => 0,
 						],
@@ -67,11 +63,6 @@ class StringSettingsApiController extends AbstractController {
 		];
 	}
 
-	/**
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return array
-	 */
 	public function post( WP_REST_Request $request ) {
 		$visibleColumns                                      = $request->get_param( 'visibleColumns' );
 		$autoregisterType                                    = $request->get_param( 'autoregisterType' );
@@ -102,13 +93,14 @@ class StringSettingsApiController extends AbstractController {
 		return [];
 	}
 
-	/**
-	 * @param WP_REST_Request $request The request object.
-	 *
-	 * @return array
-	 */
 	public function get( WP_REST_Request $request ) {
 		global $sitepress;
+		$activeLanguages       = (array) $sitepress->get_active_languages();
+		$englishSourceLanguage = EnglishSourceLanguage::resolve(
+			array_keys( $activeLanguages ),
+			(string) $sitepress->get_default_language()
+		);
+
 		$autoregisterAllowedLanguages = array_values(
 			array_map(
 				function ( $data ) use ( $sitepress ) {
@@ -118,9 +110,9 @@ class StringSettingsApiController extends AbstractController {
 					];
 				},
 				array_filter(
-					$sitepress->get_active_languages(),
-					function ( $data ) {
-						return 'en' !== $data['code'];
+					$activeLanguages,
+					function ( $data ) use ( $englishSourceLanguage ) {
+						return $englishSourceLanguage !== $data['code'];
 					}
 				)
 			)

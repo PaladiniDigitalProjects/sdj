@@ -196,6 +196,8 @@ class Accessibility_Plugin_Onetap_Pro {
 		$this->loader->add_action( 'wp_ajax_nopriv_apop_deactivate_license', $plugin_admin, 'handle_ajax_deactivate_license' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'save_localized_module_labels' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings_for_accessibility_status' );
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'register_missing_alt_text_dashboard_widget' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_dashboard_missing_alt_widget_styles' );
 	}
 
 	/**

@@ -17,13 +17,6 @@ class AdminHooks implements \IWPML_Backend_Action {
 			->then( spreadArgs( [ $this, 'copyOnceTermMeta' ] ) );
 	}
 
-	/**
-	 * @param int    $termId
-	 * @param int    $ttId
-	 * @param string $taxonomy
-	 *
-	 * @return void
-	 */
 	public function copyOnceTermMeta( $termId, $ttId, $taxonomy ) {
 		$disableTermAdjustId = Fns::always( true );
 
@@ -31,20 +24,16 @@ class AdminHooks implements \IWPML_Backend_Action {
 
 		$wpSeoTaxonomyMeta = WPSEO_Taxonomy_Meta::get_instance();
 
-		/** @var callable(object):\WP_Term|false $getTermByElement */
 		$getTermByElement = function ( $translationElement ) use ( $taxonomy ) {
 			return get_term_by( 'term_taxonomy_id', $translationElement->element_id, $taxonomy );
 		};
 
-		/** @var callable(\WP_Term):array $getOriginalMeta */
 		$getOriginalMeta = function ( $originalTerm ) use ( $wpSeoTaxonomyMeta, $taxonomy ) {
 			return $wpSeoTaxonomyMeta->get_term_meta( $originalTerm, $taxonomy );
 		};
 
-		/** @var callable(array):array $filterValuesToCopyOnce */
 		$filterValuesToCopyOnce = Obj::pick( self::getKeysToCopyOnce() );
 
-		/** @var callable(array):void $setTranslationMeta */
 		$setTranslationMeta = function ( $filteredMeta ) use ( $wpSeoTaxonomyMeta, $termId, $taxonomy ) {
 			$wpSeoTaxonomyMeta->set_values( $termId, $taxonomy, $filteredMeta );
 		};
@@ -58,9 +47,6 @@ class AdminHooks implements \IWPML_Backend_Action {
 		remove_filter( 'wpml_disable_term_adjust_id', $disableTermAdjustId );
 	}
 
-	/**
-	 * @return array
-	 */
 	private static function getKeysToCopyOnce() {
 		$keys = [
 			'wpseo_noindex',
@@ -70,13 +56,6 @@ class AdminHooks implements \IWPML_Backend_Action {
 			'wpseo_twitter-image-id',
 		];
 
-		/**
-		 * Allows to extend the keys to copy once for the Yoast term meta.
-		 *
-		 * @since 2.1.0
-		 *
-		 * @param array $keys Default keys to copy once.
-		 */
 		return (array) apply_filters( 'wpmlseo_yoast_term_meta_keys_to_copy_once', $keys );
 	}
 }

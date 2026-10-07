@@ -113,6 +113,7 @@ class Accessibility_Pro_Public {
 			'highlight-titles'       => 'highlight_titles',
 			'highlight-all'          => 'highlight_all',
 			'stop-animations'        => 'stop_animations',
+			'skip-to-content'        => 'skip_to_content',
 		);
 
 		$module_settings = array();
@@ -250,9 +251,11 @@ class Accessibility_Pro_Public {
 		wp_enqueue_style( $this->plugin_name, plugins_url( $this->plugin_name ) . '/assets/css/apop-front-end.min.css', array(), $this->version, 'all' );
 
 		// Get the plugin settings, specifically the color option.
-		$onetap_settings = get_option( 'apop_settings' );
+		$onetap_settings         = get_option( 'apop_settings' );
+		$onetap_general_settings = get_option( 'apop_general_settings' );
 
 		// Use the user-defined color setting, or fall back to the default if not set.
+		$onetap_setting_widget_button_focus_style      = $this->get_setting_with_fallback( $onetap_general_settings, 'toggle-widget-button-focus-style', 'esc_html' );
 		$onetap_setting_color                          = $this->get_setting_with_fallback( $onetap_settings, 'color', 'esc_html' );
 		$onetap_setting_position_top_bottom            = $this->get_setting_with_fallback( $onetap_settings, 'position-top-bottom', 'absint' );
 		$onetap_setting_position_left_right            = $this->get_setting_with_fallback( $onetap_settings, 'position-left-right', 'absint' );
@@ -353,7 +356,11 @@ class Accessibility_Pro_Public {
 		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature:focus-visible,
 		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features button.onetap-box-feature.onetap-inactive:hover,
 		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active,
-		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-inactive:focus-visible {
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active.onetap-text-align-mode-left,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active.onetap-text-align-mode-center,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-active.onetap-text-align-mode-right,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-feature.onetap-inactive:focus-visible,
+		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-skip-content-control select:focus-visible {
 			border-color: {$onetap_setting_color} !important;
 			box-shadow: 0 0 0 1px {$onetap_setting_color} !important;
 		}
@@ -361,6 +368,13 @@ class Accessibility_Pro_Public {
 		nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .toolbar-hide-duration .box-hide-duration .box-btn-action button.hide-toolbar {
 			border-color: {$onetap_setting_color} !important;
 		}";
+
+		if ( 'on' === $onetap_setting_widget_button_focus_style ) {
+			$style .= '
+		.onetap-container-toggle .onetap-toggle:focus img {
+			border: dotted 2px #fff !important;
+		}';
+		}
 
 		if ( '#0048FE' === $onetap_setting_color ) {
 			$style .= 'nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-reset-settings button:hover {
@@ -443,6 +457,13 @@ class Accessibility_Pro_Public {
 		if ( 'on' !== $module_settings['bigger_text'] ) {
 			$style .= '
 			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container .onetap-features .onetap-box-features .onetap-box-step-controls.onetap-font-size {
+				display: none !important;
+			}';
+		}
+
+		if ( 'on' !== $module_settings['skip_to_content'] ) {
+			$style .= '
+			nav.onetap-accessibility.onetap-plugin-onetap .onetap-container .onetap-accessibility-settings .onetap-features-container.onetap-skip-content {
 				display: none !important;
 			}';
 		}
@@ -921,6 +942,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientation Modules',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Skip To Content',
+							'skipChoose'         => 'Choose...',
+							'skipMain'           => 'Main Content',
+							'skipNavigation'     => 'Navigation',
+							'skipFooter'         => 'Footer',
 							'biggerText'         => 'Font Size',
 							'highlightLinks'     => 'Highlight Links',
 							'lineHeight'         => 'Line Height',
@@ -928,7 +954,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Big Cursor',
 							'textMagnifier'      => 'Text Magnifier',
 							'dyslexicFont'       => 'Dyslexic Font',
-							'alignCenter'        => 'Align Text',
+							'alignDefault'       => 'Align Text',
+							'alignLeft'          => 'Align Left',
+							'alignCenter'        => 'Align Center',
+							'alignRight'         => 'Align Right',
 							'letterSpacing'      => 'Letter Spacing',
 							'fontWeight'         => 'Font Weight',
 							'darkContrast'       => 'Dark Contrast',
@@ -1014,6 +1043,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientierungsmodule',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Zum Inhalt springen',
+							'skipChoose'         => 'Auswählen...',
+							'skipMain'           => 'Hauptinhalt',
+							'skipNavigation'     => 'Navigation',
+							'skipFooter'         => 'Fußzeile',
 							'biggerText'         => 'Schriftgröße',
 							'highlightLinks'     => 'Links hervorheben',
 							'lineHeight'         => 'Zeilenhöhe',
@@ -1021,7 +1055,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Großer Cursor',
 							'textMagnifier'      => 'Textvergrößerung',
 							'dyslexicFont'       => 'Dyslexische Schriftart',
+							'alignDefault'       => 'Ausrichten',
+							'alignLeft'          => 'Linksbündig',
 							'alignCenter'        => 'Zentriert ausrichten',
+							'alignRight'         => 'Rechtsbündig',
 							'letterSpacing'      => 'Buchstabenabstand',
 							'fontWeight'         => 'Schriftstärke',
 							'darkContrast'       => 'Dunkler Kontrast',
@@ -1107,6 +1144,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Módulos de orientación',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Saltar al contenido',
+							'skipChoose'         => 'Elegir...',
+							'skipMain'           => 'Contenido principal',
+							'skipNavigation'     => 'Navegación',
+							'skipFooter'         => 'Pie de página',
 							'biggerText'         => 'Tamaño de fuente',
 							'highlightLinks'     => 'Resaltar enlaces',
 							'lineHeight'         => 'Altura de línea',
@@ -1114,7 +1156,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Cursor grande',
 							'textMagnifier'      => 'Lupa de texto',
 							'dyslexicFont'       => 'Fuente para dislexia',
+							'alignDefault'       => 'Alinear texto',
+							'alignLeft'          => 'Alinear a la izquierda',
 							'alignCenter'        => 'Alinear al centro',
+							'alignRight'         => 'Alinear a la derecha',
 							'letterSpacing'      => 'Espaciado de letras',
 							'fontWeight'         => 'Grosor de fuente',
 							'darkContrast'       => 'Contraste oscuro',
@@ -1200,6 +1245,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Modules d\'orientation',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Aller au contenu',
+							'skipChoose'         => 'Choisir...',
+							'skipMain'           => 'Contenu principal',
+							'skipNavigation'     => 'Navigation',
+							'skipFooter'         => 'Pied de page',
 							'biggerText'         => 'Taille de police',
 							'highlightLinks'     => 'Surligner les liens',
 							'lineHeight'         => 'Hauteur de ligne',
@@ -1207,7 +1257,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Grand curseur',
 							'textMagnifier'      => 'Loupe de texte',
 							'dyslexicFont'       => 'Police pour dyslexie',
+							'alignDefault'       => 'Aligner le texte',
+							'alignLeft'          => 'Aligner à gauche',
 							'alignCenter'        => 'Aligner au centre',
+							'alignRight'         => 'Aligner à droite',
 							'letterSpacing'      => 'Espacement des lettres',
 							'fontWeight'         => 'Épaisseur de police',
 							'darkContrast'       => 'Contraste sombre',
@@ -1293,6 +1346,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduli di orientamento',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Vai al contenuto',
+							'skipChoose'         => 'Scegli...',
+							'skipMain'           => 'Contenuto principale',
+							'skipNavigation'     => 'Navigazione',
+							'skipFooter'         => 'Piè di pagina',
 							'biggerText'         => 'Dimensione del carattere',
 							'highlightLinks'     => 'Evidenzia i link',
 							'lineHeight'         => 'Altezza della linea',
@@ -1300,7 +1358,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Cursore grande',
 							'textMagnifier'      => 'Lente di ingrandimento del testo',
 							'dyslexicFont'       => 'Carattere per dislessia',
+							'alignDefault'       => 'Allinea testo',
+							'alignLeft'          => 'Allinea a sinistra',
 							'alignCenter'        => 'Allinea al centro',
+							'alignRight'         => 'Allinea a destra',
 							'letterSpacing'      => 'Spaziatura delle lettere',
 							'fontWeight'         => 'Spessore del carattere',
 							'darkContrast'       => 'Contrasto scuro',
@@ -1386,6 +1447,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduły orientacji',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Przejdź do treści',
+							'skipChoose'         => 'Wybierz...',
+							'skipMain'           => 'Główna treść',
+							'skipNavigation'     => 'Nawigacja',
+							'skipFooter'         => 'Stopka',
 							'biggerText'         => 'Rozmiar czcionki',
 							'highlightLinks'     => 'Wyróżnij linki',
 							'lineHeight'         => 'Wysokość linii',
@@ -1393,7 +1459,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Duży kursor',
 							'textMagnifier'      => 'Lupa tekstu',
 							'dyslexicFont'       => 'Czcionka dla dyslektyków',
+							'alignDefault'       => 'Wyrównaj tekst',
+							'alignLeft'          => 'Wyrównaj do lewej',
 							'alignCenter'        => 'Wyśrodkuj',
+							'alignRight'         => 'Wyrównaj do prawej',
 							'letterSpacing'      => 'Odstępy między literami',
 							'fontWeight'         => 'Grubość czcionki',
 							'darkContrast'       => 'Ciemny kontrast',
@@ -1479,6 +1548,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientationsmoduler',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Hoppa till innehåll',
+							'skipChoose'         => 'Välj...',
+							'skipMain'           => 'Huvudinnehåll',
+							'skipNavigation'     => 'Navigering',
+							'skipFooter'         => 'Sidfot',
 							'biggerText'         => 'Teckenstorlek',
 							'highlightLinks'     => 'Markera länkar',
 							'lineHeight'         => 'Radhöjd',
@@ -1486,7 +1560,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Stor muspekare',
 							'textMagnifier'      => 'Textförstorare',
 							'dyslexicFont'       => 'Font för dyslexi',
+							'alignDefault'       => 'Justera text',
+							'alignLeft'          => 'Vänsterjustera',
 							'alignCenter'        => 'Centrera',
+							'alignRight'         => 'Högerjustera',
 							'letterSpacing'      => 'Bokstavsavstånd',
 							'fontWeight'         => 'Teckenvikt',
 							'darkContrast'       => 'Mörk kontrast',
@@ -1572,6 +1649,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientointimoduulit',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Siirry sisältöön',
+							'skipChoose'         => 'Valitse...',
+							'skipMain'           => 'Pääsisältö',
+							'skipNavigation'     => 'Navigointi',
+							'skipFooter'         => 'Alatunniste',
 							'biggerText'         => 'Fonttikoko',
 							'highlightLinks'     => 'Korosta linkkejä',
 							'lineHeight'         => 'Riviväli',
@@ -1579,7 +1661,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Suuri hiiren osoitin',
 							'textMagnifier'      => 'Tekstin suurennuslasia',
 							'dyslexicFont'       => 'Dyslektikon fontti',
+							'alignDefault'       => 'Tasaa teksti',
+							'alignLeft'          => 'Tasaa vasemmalle',
 							'alignCenter'        => 'Keskitä',
+							'alignRight'         => 'Tasaa oikealle',
 							'letterSpacing'      => 'Kirjainväli',
 							'fontWeight'         => 'Fontin paksuus',
 							'darkContrast'       => 'Tumma kontrasti',
@@ -1665,6 +1750,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Módulos de Orientação',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Ir para o conteúdo',
+							'skipChoose'         => 'Escolher...',
+							'skipMain'           => 'Conteúdo principal',
+							'skipNavigation'     => 'Navegação',
+							'skipFooter'         => 'Rodapé',
 							'biggerText'         => 'Tamanho da Fonte',
 							'highlightLinks'     => 'Destacar Links',
 							'lineHeight'         => 'Altura da Linha',
@@ -1672,7 +1762,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Cursor Grande',
 							'textMagnifier'      => 'Lupa de Texto',
 							'dyslexicFont'       => 'Fonte para Dislexia',
+							'alignDefault'       => 'Alinhar texto',
+							'alignLeft'          => 'Alinhar à esquerda',
 							'alignCenter'        => 'Centralizar',
+							'alignRight'         => 'Alinhar à direita',
 							'letterSpacing'      => 'Espaçamento das Letras',
 							'fontWeight'         => 'Peso da Fonte',
 							'darkContrast'       => 'Contraste Escuro',
@@ -1758,6 +1851,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Module de orientare',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Salt la conținut',
+							'skipChoose'         => 'Alege...',
+							'skipMain'           => 'Conținut principal',
+							'skipNavigation'     => 'Navigare',
+							'skipFooter'         => 'Subsol',
 							'biggerText'         => 'Dimensiunea fontului',
 							'highlightLinks'     => 'Subliniază link-uri',
 							'lineHeight'         => 'Înălțimea liniei',
@@ -1765,7 +1863,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Cursor mare',
 							'textMagnifier'      => 'Lupă text',
 							'dyslexicFont'       => 'Font pentru dislexie',
+							'alignDefault'       => 'Aliniere text',
+							'alignLeft'          => 'Aliniere la stânga',
 							'alignCenter'        => 'Centrare',
+							'alignRight'         => 'Aliniere la dreapta',
 							'letterSpacing'      => 'Spațierea literelor',
 							'fontWeight'         => 'Grosimea fontului',
 							'darkContrast'       => 'Contrast întunecat',
@@ -1851,6 +1952,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduli orientacije',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Preskoči na vsebino',
+							'skipChoose'         => 'Izberite...',
+							'skipMain'           => 'Glavna vsebina',
+							'skipNavigation'     => 'Navigacija',
+							'skipFooter'         => 'Noga',
 							'biggerText'         => 'Velikost pisave',
 							'highlightLinks'     => 'Poudari povezave',
 							'lineHeight'         => 'Višina vrstice',
@@ -1858,7 +1964,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Velik kazalec',
 							'textMagnifier'      => 'Lupa besedila',
 							'dyslexicFont'       => 'Pisava za disleksijo',
+							'alignDefault'       => 'Poravnaj besedilo',
+							'alignLeft'          => 'Leva poravnava',
 							'alignCenter'        => 'Sredinska poravnava',
+							'alignRight'         => 'Desna poravnava',
 							'letterSpacing'      => 'Razmik med črkami',
 							'fontWeight'         => 'Debelina pisave',
 							'darkContrast'       => 'Temen kontrast',
@@ -1944,6 +2053,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduly orientácie',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Preskočiť na obsah',
+							'skipChoose'         => 'Vybrať...',
+							'skipMain'           => 'Hlavný obsah',
+							'skipNavigation'     => 'Navigácia',
+							'skipFooter'         => 'Päta',
 							'biggerText'         => 'Veľkosť písma',
 							'highlightLinks'     => 'Zvýrazniť odkazy',
 							'lineHeight'         => 'Výška riadku',
@@ -1951,7 +2065,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Veľký kurzor',
 							'textMagnifier'      => 'Lupa textu',
 							'dyslexicFont'       => 'Font pre dyslexiu',
+							'alignDefault'       => 'Zarovnať text',
+							'alignLeft'          => 'Zarovnať doľava',
 							'alignCenter'        => 'Vycentrovať',
+							'alignRight'         => 'Zarovnať doprava',
 							'letterSpacing'      => 'Medzera medzi písmenami',
 							'fontWeight'         => 'Hrúbka písma',
 							'darkContrast'       => 'Tmavý kontrast',
@@ -2037,6 +2154,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Oriëntatiemodules',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Naar inhoud springen',
+							'skipChoose'         => 'Kiezen...',
+							'skipMain'           => 'Hoofdinhoud',
+							'skipNavigation'     => 'Navigatie',
+							'skipFooter'         => 'Voettekst',
 							'biggerText'         => 'Lettergrootte',
 							'highlightLinks'     => 'Markeer links',
 							'lineHeight'         => 'Regelhoogte',
@@ -2044,7 +2166,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Grote cursor',
 							'textMagnifier'      => 'Tekst vergrootglas',
 							'dyslexicFont'       => 'Lettertype voor dyslexie',
+							'alignDefault'       => 'Tekst uitlijnen',
+							'alignLeft'          => 'Links uitlijnen',
 							'alignCenter'        => 'Centreren',
+							'alignRight'         => 'Rechts uitlijnen',
 							'letterSpacing'      => 'Letterafstand',
 							'fontWeight'         => 'Lettergewicht',
 							'darkContrast'       => 'Donker contrast',
@@ -2130,6 +2255,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientationsmoduler',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Spring til indhold',
+							'skipChoose'         => 'Vælg...',
+							'skipMain'           => 'Hovedindhold',
+							'skipNavigation'     => 'Navigation',
+							'skipFooter'         => 'Sidefod',
 							'biggerText'         => 'Skriftstørrelse',
 							'highlightLinks'     => 'Fremhæv links',
 							'lineHeight'         => 'Linjehøjde',
@@ -2137,7 +2267,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Stor cursor',
 							'textMagnifier'      => 'Tekstforstørrelse',
 							'dyslexicFont'       => 'Skrifttype til dysleksi',
+							'alignDefault'       => 'Juster tekst',
+							'alignLeft'          => 'Juster venstre',
 							'alignCenter'        => 'Centrer',
+							'alignRight'         => 'Juster højre',
 							'letterSpacing'      => 'Bogstavafstand',
 							'fontWeight'         => 'Skriftvægt',
 							'darkContrast'       => 'Mørk kontrast',
@@ -2223,6 +2356,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Μονάδες προσανατολισμού',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Μετάβαση στο περιεχόμενο',
+							'skipChoose'         => 'Επιλέξτε...',
+							'skipMain'           => 'Κύριο περιεχόμενο',
+							'skipNavigation'     => 'Πλοήγηση',
+							'skipFooter'         => 'Υποσέλιδο',
 							'biggerText'         => 'Μέγεθος γραμματοσειράς',
 							'highlightLinks'     => 'Επισήμανση συνδέσμων',
 							'lineHeight'         => 'Ύψος γραμμής',
@@ -2230,7 +2368,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Μεγάλος δείκτης',
 							'textMagnifier'      => 'Μεγεθυντικό φακό κειμένου',
 							'dyslexicFont'       => 'Γραμματοσειρά για δυσλεξία',
+							'alignDefault'       => 'Στοίχιση κειμένου',
+							'alignLeft'          => 'Αριστερή στοίχιση',
 							'alignCenter'        => 'Κεντράρισμα',
+							'alignRight'         => 'Δεξιά στοίχιση',
 							'letterSpacing'      => 'Απόσταση γραμμάτων',
 							'fontWeight'         => 'Βάρος γραμματοσειράς',
 							'darkContrast'       => 'Σκούρη αντίθεση',
@@ -2316,6 +2457,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduly orientace',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Přejít na obsah',
+							'skipChoose'         => 'Vybrat...',
+							'skipMain'           => 'Hlavní obsah',
+							'skipNavigation'     => 'Navigace',
+							'skipFooter'         => 'Zápatí',
 							'biggerText'         => 'Velikost písma',
 							'highlightLinks'     => 'Zvýraznění odkazů',
 							'lineHeight'         => 'Výška řádku',
@@ -2323,7 +2469,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Velký ukazatel',
 							'textMagnifier'      => 'Lupa na text',
 							'dyslexicFont'       => 'Font pro dyslexii',
+							'alignDefault'       => 'Zarovnat text',
+							'alignLeft'          => 'Zarovnat doleva',
 							'alignCenter'        => 'Vycentrovat',
+							'alignRight'         => 'Zarovnat doprava',
 							'letterSpacing'      => 'Mezera mezi písmeny',
 							'fontWeight'         => 'Tloušťka písma',
 							'darkContrast'       => 'Tmavý kontrast',
@@ -2409,6 +2558,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientációs modulok',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Ugrás a tartalomhoz',
+							'skipChoose'         => 'Válasszon...',
+							'skipMain'           => 'Fő tartalom',
+							'skipNavigation'     => 'Navigáció',
+							'skipFooter'         => 'Lábléc',
 							'biggerText'         => 'Betűméret',
 							'highlightLinks'     => 'Linkek kiemelése',
 							'lineHeight'         => 'Sormagasság',
@@ -2416,7 +2570,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Nagy kurzor',
 							'textMagnifier'      => 'Szöveg nagyító',
 							'dyslexicFont'       => 'Diszlexiás betűtípus',
+							'alignDefault'       => 'Szövegigazítás',
+							'alignLeft'          => 'Balra igazítás',
 							'alignCenter'        => 'Középre igazítás',
+							'alignRight'         => 'Jobbra igazítás',
 							'letterSpacing'      => 'Betűköz',
 							'fontWeight'         => 'Betűvastagság',
 							'darkContrast'       => 'Sötét kontraszt',
@@ -2502,6 +2659,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientacijos moduliai',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Pereiti prie turinio',
+							'skipChoose'         => 'Pasirinkite...',
+							'skipMain'           => 'Pagrindinis turinys',
+							'skipNavigation'     => 'Naršymas',
+							'skipFooter'         => 'Poraštė',
 							'biggerText'         => 'Šrifto dydis',
 							'highlightLinks'     => 'Nuorodų paryškinimas',
 							'lineHeight'         => 'Eilutės aukštis',
@@ -2509,7 +2671,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Didelis kursorius',
 							'textMagnifier'      => 'Teksto didinamoji lupa',
 							'dyslexicFont'       => 'Dysleksijai pritaikytas šriftas',
+							'alignDefault'       => 'Lygiuoti tekstą',
+							'alignLeft'          => 'Lygiuoti į kairę',
 							'alignCenter'        => 'Centruoti',
+							'alignRight'         => 'Lygiuoti į dešinę',
 							'letterSpacing'      => 'Rašto tarpai',
 							'fontWeight'         => 'Šrifto storis',
 							'darkContrast'       => 'Tamsus kontrastas',
@@ -2595,6 +2760,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientācijas moduļi',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Pāriet uz saturu',
+							'skipChoose'         => 'Izvēlieties...',
+							'skipMain'           => 'Galvenais saturs',
+							'skipNavigation'     => 'Navigācija',
+							'skipFooter'         => 'Kājene',
 							'biggerText'         => 'Fonta izmērs',
 							'highlightLinks'     => 'Saistītās saites izcelšana',
 							'lineHeight'         => 'Rindas augstums',
@@ -2602,7 +2772,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Liels kursors',
 							'textMagnifier'      => 'Teksta palielinātājs',
 							'dyslexicFont'       => 'Dysleksijas fonts',
+							'alignDefault'       => 'Izlīdzināt tekstu',
+							'alignLeft'          => 'Izlīdzināt pa kreisi',
 							'alignCenter'        => 'Centrēt',
+							'alignRight'         => 'Izlīdzināt pa labi',
 							'letterSpacing'      => 'Burbu attālums',
 							'fontWeight'         => 'Fonta biezums',
 							'darkContrast'       => 'Tumšs kontrasts',
@@ -2688,6 +2861,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientatsiooni moodulid',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Liigu sisule',
+							'skipChoose'         => 'Vali...',
+							'skipMain'           => 'Põhisisu',
+							'skipNavigation'     => 'Navigeerimine',
+							'skipFooter'         => 'Jalus',
 							'biggerText'         => 'Fondi suurus',
 							'highlightLinks'     => 'Linkide esiletõstmine',
 							'lineHeight'         => 'Ridade kõrgus',
@@ -2695,7 +2873,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Suur kursor',
 							'textMagnifier'      => 'Teksti suurendaja',
 							'dyslexicFont'       => 'Düslia font',
+							'alignDefault'       => 'Joonda tekst',
+							'alignLeft'          => 'Joonda vasakule',
 							'alignCenter'        => 'Keskendada',
+							'alignRight'         => 'Joonda paremale',
 							'letterSpacing'      => 'Tähe vaheline kaugus',
 							'fontWeight'         => 'Fondi paksus',
 							'darkContrast'       => 'Tume kontrast',
@@ -2781,6 +2962,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduli orijentacije',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Prijeđi na sadržaj',
+							'skipChoose'         => 'Odaberite...',
+							'skipMain'           => 'Glavni sadržaj',
+							'skipNavigation'     => 'Navigacija',
+							'skipFooter'         => 'Podnožje',
 							'biggerText'         => 'Veličina fonta',
 							'highlightLinks'     => 'Isticanje poveznica',
 							'lineHeight'         => 'Visina linije',
@@ -2788,7 +2974,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Veliki kursor',
 							'textMagnifier'      => 'Povećalo za tekst',
 							'dyslexicFont'       => 'Font za disleksiju',
+							'alignDefault'       => 'Poravnanje teksta',
+							'alignLeft'          => 'Poravnanje lijevo',
 							'alignCenter'        => 'Centriranje',
+							'alignRight'         => 'Poravnanje desno',
 							'letterSpacing'      => 'Razmak između slova',
 							'fontWeight'         => 'Debljina fonta',
 							'darkContrast'       => 'Tamni kontrast',
@@ -2874,6 +3063,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Modúil Treoshuíomh',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Léigh go dtí an t-ábhar',
+							'skipChoose'         => 'Roghnaigh...',
+							'skipMain'           => 'Príomhábhar',
+							'skipNavigation'     => 'Nascleanúint',
+							'skipFooter'         => 'Buntásc',
 							'biggerText'         => 'Méid Cló',
 							'highlightLinks'     => 'Samhlaigh Ceangail',
 							'lineHeight'         => 'Airde Líne',
@@ -2881,7 +3075,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Cúrsóir Mór',
 							'textMagnifier'      => 'Méadaí Téacs',
 							'dyslexicFont'       => 'Cló do Dhiolachas',
+							'alignDefault'       => 'Ailínigh téacs',
+							'alignLeft'          => 'Ailínigh ar chlé',
 							'alignCenter'        => 'Lárú',
+							'alignRight'         => 'Ailínigh ar dheis',
 							'letterSpacing'      => 'Spásáil Litreach',
 							'fontWeight'         => 'Tromas Cló',
 							'darkContrast'       => 'Codarsnacht Dorcha',
@@ -2967,6 +3164,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Модули за ориентация',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Към съдържанието',
+							'skipChoose'         => 'Изберете...',
+							'skipMain'           => 'Основно съдържание',
+							'skipNavigation'     => 'Навигация',
+							'skipFooter'         => 'Долен колонтитул',
 							'biggerText'         => 'Размер на шрифта',
 							'highlightLinks'     => 'Подчертаване на линкове',
 							'lineHeight'         => 'Височина на реда',
@@ -2974,7 +3176,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Голям курсор',
 							'textMagnifier'      => 'Лупа за текст',
 							'dyslexicFont'       => 'Шрифт за дислексия',
+							'alignDefault'       => 'Подравняване',
+							'alignLeft'          => 'Наляво',
 							'alignCenter'        => 'Центриране',
+							'alignRight'         => 'Надясно',
 							'letterSpacing'      => 'Разстояние между буквите',
 							'fontWeight'         => 'Дебелина на шрифта',
 							'darkContrast'       => 'Тъмен контраст',
@@ -3060,6 +3265,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientasjonsmoduler',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Hopp til innhold',
+							'skipChoose'         => 'Velg...',
+							'skipMain'           => 'Hovedinnhold',
+							'skipNavigation'     => 'Navigasjon',
+							'skipFooter'         => 'Bunntekst',
 							'biggerText'         => 'Skriftstørrelse',
 							'highlightLinks'     => 'Fremhev lenker',
 							'lineHeight'         => 'Linjeavstand',
@@ -3067,7 +3277,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Stor markør',
 							'textMagnifier'      => 'Tekstforstørrelse',
 							'dyslexicFont'       => 'Dysleksivennlig skrifttype',
+							'alignDefault'       => 'Juster tekst',
+							'alignLeft'          => 'Juster venstre',
 							'alignCenter'        => 'Senter',
+							'alignRight'         => 'Juster høyre',
 							'letterSpacing'      => 'Bokstavavstand',
 							'fontWeight'         => 'Skriftvekt',
 							'darkContrast'       => 'Mørk kontrast',
@@ -3153,6 +3366,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Yönlendirme Modülleri',
 						),
 						'features'               => array(
+							'skipToContent'      => 'İçeriğe geç',
+							'skipChoose'         => 'Seçin...',
+							'skipMain'           => 'Ana içerik',
+							'skipNavigation'     => 'Gezinme',
+							'skipFooter'         => 'Alt bilgi',
 							'biggerText'         => 'Yazı Boyutu',
 							'highlightLinks'     => 'Bağlantıları Vurgula',
 							'lineHeight'         => 'Satır Yüksekliği',
@@ -3160,7 +3378,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Büyük İmleç',
 							'textMagnifier'      => 'Metin Büyüteci',
 							'dyslexicFont'       => 'Disleksi Dostu Yazı Tipi',
+							'alignDefault'       => 'Metni hizala',
+							'alignLeft'          => 'Sola hizala',
 							'alignCenter'        => 'Ortala',
+							'alignRight'         => 'Sağa hizala',
 							'letterSpacing'      => 'Harf Aralığı',
 							'fontWeight'         => 'Yazı Kalınlığı',
 							'darkContrast'       => 'Koyu Kontrast',
@@ -3246,6 +3467,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Modul Orientasi',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Langsung ke konten',
+							'skipChoose'         => 'Pilih...',
+							'skipMain'           => 'Konten Utama',
+							'skipNavigation'     => 'Navigasi',
+							'skipFooter'         => 'Footer',
 							'biggerText'         => 'Ukuran Font',
 							'highlightLinks'     => 'Sorot Tautan',
 							'lineHeight'         => 'Tinggi Baris',
@@ -3253,7 +3479,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Kursor Besar',
 							'textMagnifier'      => 'Pembesar Teks',
 							'dyslexicFont'       => 'Font Ramah Disleksia',
+							'alignDefault'       => 'Ratakan teks',
+							'alignLeft'          => 'Rata kiri',
 							'alignCenter'        => 'Tengah',
+							'alignRight'         => 'Rata kanan',
 							'letterSpacing'      => 'Jarak Huruf',
 							'fontWeight'         => 'Ketebalan Font',
 							'darkContrast'       => 'Kontras Gelap',
@@ -3339,6 +3568,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Módulos de Orientação',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Pular para o conteúdo',
+							'skipChoose'         => 'Escolher...',
+							'skipMain'           => 'Conteúdo principal',
+							'skipNavigation'     => 'Navegação',
+							'skipFooter'         => 'Rodapé',
 							'biggerText'         => 'Tamanho da Fonte',
 							'highlightLinks'     => 'Destacar Links',
 							'lineHeight'         => 'Altura da Linha',
@@ -3346,7 +3580,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Cursor Grande',
 							'textMagnifier'      => 'Lupa de Texto',
 							'dyslexicFont'       => 'Fonte para Dislexia',
+							'alignDefault'       => 'Alinhar texto',
+							'alignLeft'          => 'Alinhar à esquerda',
 							'alignCenter'        => 'Centralizar',
+							'alignRight'         => 'Alinhar à direita',
 							'letterSpacing'      => 'Espaçamento de Letras',
 							'fontWeight'         => 'Peso da Fonte',
 							'darkContrast'       => 'Contraste Escuro',
@@ -3432,6 +3669,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'オリエンテーションモジュール',
 						),
 						'features'               => array(
+							'skipToContent'      => 'コンテンツへスキップ',
+							'skipChoose'         => '選択...',
+							'skipMain'           => 'メインコンテンツ',
+							'skipNavigation'     => 'ナビゲーション',
+							'skipFooter'         => 'フッター',
 							'biggerText'         => 'フォントサイズ',
 							'highlightLinks'     => 'リンクを強調表示',
 							'lineHeight'         => '行の高さ',
@@ -3439,7 +3681,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => '大きなカーソル',
 							'textMagnifier'      => 'テキスト拡大鏡',
 							'dyslexicFont'       => 'ディスレクシア用フォント',
+							'alignDefault'       => 'テキストの配置',
+							'alignLeft'          => '左揃え',
 							'alignCenter'        => '中央揃え',
+							'alignRight'         => '右揃え',
 							'letterSpacing'      => '文字間隔',
 							'fontWeight'         => 'フォントの太さ',
 							'darkContrast'       => 'ダークコントラスト',
@@ -3525,6 +3770,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => '방향 모듈',
 						),
 						'features'               => array(
+							'skipToContent'      => '본문으로 건너뛰기',
+							'skipChoose'         => '선택...',
+							'skipMain'           => '본문',
+							'skipNavigation'     => '탐색',
+							'skipFooter'         => '바닥글',
 							'biggerText'         => '글꼴 크기',
 							'highlightLinks'     => '링크 강조 표시',
 							'lineHeight'         => '줄 높이',
@@ -3532,7 +3782,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => '큰 커서',
 							'textMagnifier'      => '텍스트 확대경',
 							'dyslexicFont'       => '디스렉시아용 글꼴',
+							'alignDefault'       => '텍스트 정렬',
+							'alignLeft'          => '왼쪽 정렬',
 							'alignCenter'        => '가운데 정렬',
+							'alignRight'         => '오른쪽 정렬',
 							'letterSpacing'      => '글자 간격',
 							'fontWeight'         => '글꼴 굵기',
 							'darkContrast'       => '어두운 대비',
@@ -3622,6 +3875,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => '方向模块',
 						),
 						'features'               => array(
+							'skipToContent'      => '跳到主要内容',
+							'skipChoose'         => '选择...',
+							'skipMain'           => '主要内容',
+							'skipNavigation'     => '导航',
+							'skipFooter'         => '页脚',
 							'biggerText'         => '字体大小',
 							'highlightLinks'     => '突出显示链接',
 							'lineHeight'         => '行高',
@@ -3629,7 +3887,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => '大光标',
 							'textMagnifier'      => '文本放大器',
 							'dyslexicFont'       => '阅读障碍字体',
+							'alignDefault'       => '文字对齐',
+							'alignLeft'          => '左对齐',
 							'alignCenter'        => '居中对齐',
+							'alignRight'         => '右对齐',
 							'letterSpacing'      => '字母间距',
 							'fontWeight'         => '字体粗细',
 							'darkContrast'       => '深色对比',
@@ -3719,6 +3980,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'وحدات التوجه',
 						),
 						'features'               => array(
+							'skipToContent'      => 'تخطي إلى المحتوى',
+							'skipChoose'         => 'اختر...',
+							'skipMain'           => 'المحتوى الرئيسي',
+							'skipNavigation'     => 'التنقل',
+							'skipFooter'         => 'تذييل الصفحة',
 							'biggerText'         => 'حجم الخط',
 							'highlightLinks'     => 'تسليط الضوء على الروابط',
 							'lineHeight'         => 'ارتفاع السطر',
@@ -3726,7 +3992,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'مؤشر كبير',
 							'textMagnifier'      => 'مكبر النص',
 							'dyslexicFont'       => 'خط مخصص لمرضى الديسلكسيا',
+							'alignDefault'       => 'محاذاة النص',
+							'alignLeft'          => 'محاذاة اليسار',
 							'alignCenter'        => 'محاذاة الوسط',
+							'alignRight'         => 'محاذاة اليمين',
 							'letterSpacing'      => 'تباعد الحروف',
 							'fontWeight'         => 'سمك الخط',
 							'darkContrast'       => 'تباين داكن',
@@ -3816,6 +4085,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Модули ориентации',
 						),
 						'features'               => array(
+							'skipToContent'      => 'К содержанию',
+							'skipChoose'         => 'Выберите...',
+							'skipMain'           => 'Основное содержание',
+							'skipNavigation'     => 'Навигация',
+							'skipFooter'         => 'Нижний колонтитул',
 							'biggerText'         => 'Размер шрифта',
 							'highlightLinks'     => 'Выделить ссылки',
 							'lineHeight'         => 'Высота строки',
@@ -3823,7 +4097,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Большой курсор',
 							'textMagnifier'      => 'Увеличитель текста',
 							'dyslexicFont'       => 'Шрифт для людей с дислексией',
+							'alignDefault'       => 'Выравнивание текста',
+							'alignLeft'          => 'По левому краю',
 							'alignCenter'        => 'Выравнивание по центру',
+							'alignRight'         => 'По правому краю',
 							'letterSpacing'      => 'Межбуквенный интервал',
 							'fontWeight'         => 'Толщина шрифта',
 							'darkContrast'       => 'Темный контраст',
@@ -3913,6 +4190,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'अभिविन्यास मॉड्यूल',
 						),
 						'features'               => array(
+							'skipToContent'      => 'सामग्री पर जाएं',
+							'skipChoose'         => 'चुनें...',
+							'skipMain'           => 'मुख्य सामग्री',
+							'skipNavigation'     => 'नेविगेशन',
+							'skipFooter'         => 'फ़ुटर',
 							'biggerText'         => 'फ़ॉन्ट आकार',
 							'highlightLinks'     => 'लिंक्स को हाइलाइट करें',
 							'lineHeight'         => 'लाइन हाइट',
@@ -3920,7 +4202,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'बड़ा कर्सर',
 							'textMagnifier'      => 'पाठ मैग्नीफायर',
 							'dyslexicFont'       => 'डिस्लेक्सिक फ़ॉन्ट',
+							'alignDefault'       => 'पाठ संरेखण',
+							'alignLeft'          => 'बाईं ओर संरेखण',
 							'alignCenter'        => 'केंद्र संरेखण',
+							'alignRight'         => 'दाईं ओर संरेखण',
 							'letterSpacing'      => 'अक्षर स्पेसिंग',
 							'fontWeight'         => 'फ़ॉन्ट वजन',
 							'darkContrast'       => 'गहरा कांट्रास्ट',
@@ -4010,6 +4295,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Модулі орієнтації',
 						),
 						'features'               => array(
+							'skipToContent'      => 'До вмісту',
+							'skipChoose'         => 'Виберіть...',
+							'skipMain'           => 'Основний вміст',
+							'skipNavigation'     => 'Навігація',
+							'skipFooter'         => 'Нижній колонтитул',
 							'biggerText'         => 'Розмір шрифту',
 							'highlightLinks'     => 'Підсвітити посилання',
 							'lineHeight'         => 'Висота рядка',
@@ -4017,7 +4307,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Великий курсор',
 							'textMagnifier'      => 'Магніфікатор тексту',
 							'dyslexicFont'       => 'Шрифт для дислексії',
+							'alignDefault'       => 'Вирівнювання тексту',
+							'alignLeft'          => 'По лівому краю',
 							'alignCenter'        => 'Вирівнювання по центру',
+							'alignRight'         => 'По правому краю',
 							'letterSpacing'      => 'Міжлітерний інтервал',
 							'fontWeight'         => 'Товщина шрифту',
 							'darkContrast'       => 'Темний контраст',
@@ -4107,6 +4400,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Moduli orijentacije',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Прескочи на садржај',
+							'skipChoose'         => 'Изаберите...',
+							'skipMain'           => 'Главни садржај',
+							'skipNavigation'     => 'Навигација',
+							'skipFooter'         => 'Подножје',
 							'biggerText'         => 'Veličina fonta',
 							'highlightLinks'     => 'Istakni linkove',
 							'lineHeight'         => 'Visina linije',
@@ -4114,7 +4412,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Veliki kursor',
 							'textMagnifier'      => 'Magnifikator teksta',
 							'dyslexicFont'       => 'Font za disleksiju',
+							'alignDefault'       => 'Poravnanje teksta',
+							'alignLeft'          => 'Poravnanje lijevo',
 							'alignCenter'        => 'Poravnanje po centru',
+							'alignRight'         => 'Poravnanje desno',
 							'letterSpacing'      => 'Razmak između slova',
 							'fontWeight'         => 'Debljina fonta',
 							'darkContrast'       => 'Tamni kontrast',
@@ -4204,6 +4505,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Orientation Modules',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Skip to content',
+							'skipChoose'         => 'Choose...',
+							'skipMain'           => 'Main Content',
+							'skipNavigation'     => 'Navigation',
+							'skipFooter'         => 'Footer',
 							'biggerText'         => 'Font Size',
 							'highlightLinks'     => 'Highlight Links',
 							'lineHeight'         => 'Line Height',
@@ -4211,7 +4517,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Big Cursor',
 							'textMagnifier'      => 'Text Magnifier',
 							'dyslexicFont'       => 'Dyslexic Font',
-							'alignCenter'        => 'Align Text',
+							'alignDefault'       => 'Align Text',
+							'alignLeft'          => 'Align Left',
+							'alignCenter'        => 'Align Centre',
+							'alignRight'         => 'Align Right',
 							'letterSpacing'      => 'Letter Spacing',
 							'fontWeight'         => 'Font Weight',
 							'darkContrast'       => 'Dark Contrast',
@@ -4297,6 +4606,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'ماژول‌های جهت‌گیری',
 						),
 						'features'               => array(
+							'skipToContent'      => 'رفتن به محتوا',
+							'skipChoose'         => 'انتخاب کنید...',
+							'skipMain'           => 'محتوای اصلی',
+							'skipNavigation'     => 'ناوبری',
+							'skipFooter'         => 'پاورقی',
 							'biggerText'         => 'اندازه فونت',
 							'highlightLinks'     => 'برجسته کردن لینک‌ها',
 							'lineHeight'         => 'ارتفاع خط',
@@ -4304,7 +4618,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'مکان‌نما بزرگ',
 							'textMagnifier'      => 'ذره‌بین متن',
 							'dyslexicFont'       => 'فونت دیسلکسی',
+							'alignDefault'       => 'تراز متن',
+							'alignLeft'          => 'تراز چپ',
 							'alignCenter'        => 'تراز وسط',
+							'alignRight'         => 'تراز راست',
 							'letterSpacing'      => 'فاصله حروف',
 							'fontWeight'         => 'ضخامت فونت',
 							'darkContrast'       => 'کنتراست تیره',
@@ -4390,6 +4707,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'מודולי כיוון',
 						),
 						'features'               => array(
+							'skipToContent'      => 'דלג לתוכן',
+							'skipChoose'         => 'בחר...',
+							'skipMain'           => 'תוכן ראשי',
+							'skipNavigation'     => 'ניווט',
+							'skipFooter'         => 'כותרת תחתונה',
 							'biggerText'         => 'גודל גופן',
 							'highlightLinks'     => 'הדגש קישורים',
 							'lineHeight'         => 'גובה שורה',
@@ -4397,7 +4719,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'סמן גדול',
 							'textMagnifier'      => 'זכוכית מגדלת לטקסט',
 							'dyslexicFont'       => 'גופן לדיסלקציה',
+							'alignDefault'       => 'יישור טקסט',
+							'alignLeft'          => 'יישור שמאל',
 							'alignCenter'        => 'יישור למרכז',
+							'alignRight'         => 'יישור ימין',
 							'letterSpacing'      => 'מרווח אותיות',
 							'fontWeight'         => 'עובי גופן',
 							'darkContrast'       => 'ניגודיות כהה',
@@ -4483,6 +4808,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Модули за ориентација',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Прескокни на содржината',
+							'skipChoose'         => 'Изберете...',
+							'skipMain'           => 'Главна содржина',
+							'skipNavigation'     => 'Навигација',
+							'skipFooter'         => 'Подножје',
 							'biggerText'         => 'Големина на фонт',
 							'highlightLinks'     => 'Истакни врски',
 							'lineHeight'         => 'Висина на линија',
@@ -4490,7 +4820,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Голем курсор',
 							'textMagnifier'      => 'Лупа за текст',
 							'dyslexicFont'       => 'Фонт за дислексија',
+							'alignDefault'       => 'Порамнување',
+							'alignLeft'          => 'Лево порамнување',
 							'alignCenter'        => 'Центрирај',
+							'alignRight'         => 'Десно порамнување',
 							'letterSpacing'      => 'Растојание меѓу букви',
 							'fontWeight'         => 'Дебелина на фонт',
 							'darkContrast'       => 'Темен контраст',
@@ -4576,6 +4909,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'โมดูลการวางแนว',
 						),
 						'features'               => array(
+							'skipToContent'      => 'ข้ามไปยังเนื้อหา',
+							'skipChoose'         => 'เลือก...',
+							'skipMain'           => 'เนื้อหาหลัก',
+							'skipNavigation'     => 'การนำทาง',
+							'skipFooter'         => 'ส่วนท้าย',
 							'biggerText'         => 'ขนาดฟอนต์',
 							'highlightLinks'     => 'เน้นลิงก์',
 							'lineHeight'         => 'ความสูงบรรทัด',
@@ -4583,7 +4921,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'เคอร์เซอร์ขนาดใหญ่',
 							'textMagnifier'      => 'แว่นขยายข้อความ',
 							'dyslexicFont'       => 'ฟอนต์สำหรับผู้บกพร่องทางการอ่าน',
+							'alignDefault'       => 'จัดข้อความ',
+							'alignLeft'          => 'จัดชิดซ้าย',
 							'alignCenter'        => 'จัดกึ่งกลาง',
+							'alignRight'         => 'จัดชิดขวา',
 							'letterSpacing'      => 'ระยะห่างตัวอักษร',
 							'fontWeight'         => 'ความหนาฟอนต์',
 							'darkContrast'       => 'คอนทราสต์เข้ม',
@@ -4669,6 +5010,11 @@ class Accessibility_Pro_Public {
 							'orientationModules' => 'Mô-đun Định hướng',
 						),
 						'features'               => array(
+							'skipToContent'      => 'Chuyển đến nội dung',
+							'skipChoose'         => 'Chọn...',
+							'skipMain'           => 'Nội dung chính',
+							'skipNavigation'     => 'Điều hướng',
+							'skipFooter'         => 'Chân trang',
 							'biggerText'         => 'Kích thước Phông chữ',
 							'highlightLinks'     => 'Làm nổi bật Liên kết',
 							'lineHeight'         => 'Chiều cao Dòng',
@@ -4676,7 +5022,10 @@ class Accessibility_Pro_Public {
 							'cursor'             => 'Con trỏ Lớn',
 							'textMagnifier'      => 'Kính lúp Văn bản',
 							'dyslexicFont'       => 'Phông chữ cho Chứng khó đọc',
+							'alignDefault'       => 'Căn chỉnh văn bản',
+							'alignLeft'          => 'Căn trái',
 							'alignCenter'        => 'Căn giữa',
+							'alignRight'         => 'Căn phải',
 							'letterSpacing'      => 'Khoảng cách Chữ cái',
 							'fontWeight'         => 'Độ đậm Phông chữ',
 							'darkContrast'       => 'Tương phản Tối',
@@ -4737,6 +5086,7 @@ class Accessibility_Pro_Public {
 					'highlight-titles'       => $module_settings['highlight_titles'],
 					'highlight-all'          => $module_settings['highlight_all'],
 					'stop-animations'        => $module_settings['stop_animations'],
+					'skip-to-content'        => $module_settings['skip_to_content'],
 				),
 			)
 		);
@@ -4789,6 +5139,7 @@ class Accessibility_Pro_Public {
 			'highlight_titles'    => 'onetap_hide_highlight_titles',
 			'highlight_all'       => 'onetap_hide_highlight_all',
 			'stop_animations'     => 'onetap_hide_stop_animations',
+			'skip_to_content'     => 'onetap_hide_skip_content',
 		);
 
 		// Loop through module settings and add classes for disabled modules.
@@ -4812,6 +5163,8 @@ class Accessibility_Pro_Public {
 	public function render_accessibility_template() {
 		$status = get_option( 'onetap_license_status' );
 		if ( $status ) {
+			$module_settings           = $this->get_module_settings();
+			$onetap_skip_to_content_on = isset( $module_settings['skip_to_content'] ) && 'on' === $module_settings['skip_to_content'];
 			?>
 			<section class="onetap-container-toggle" style="display: none;">
 				<?php
@@ -5522,10 +5875,18 @@ class Accessibility_Pro_Public {
 							<div class="onetap-features">
 								<div class="onetap-box-features">						
 									<!-- Feature Align Text -->
-									<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-align-center">
+									<button type="button" role="button" aria-pressed="false" class="onetap-box-feature onetap-align-center onetap-text-align-mode-off">
 										<div class="onetap-icon">
-											<span class="onetap-icon-animation">
-												<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.72 3.805c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m2 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 12.376.06 12.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-12.403-.055-12.547.002m-2 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m4 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.077.03 1.429.043 4.267.043s4.19-.013 4.267-.043a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.15-.057-8.404-.055-8.547.002" fill-rule="evenodd"/></svg>
+											<span class="onetap-icon-animation onetap-text-align-icons">
+												<span class="onetap-text-align-icon onetap-text-align-icon--left" aria-hidden="true">
+													<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.72 3.805c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m0 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 12.376.06 12.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-12.403-.055-12.547.002m0 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m0 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.077.03 1.429.043 4.267.043s4.19-.013 4.267-.043a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.15-.057-8.404-.055-8.547.002" fill-rule="evenodd"/></svg>
+												</span>
+												<span class="onetap-text-align-icon onetap-text-align-icon--center" aria-hidden="true">
+													<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.72 3.805c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m2 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 12.376.06 12.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-12.403-.055-12.547.002m-2 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m4 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.077.03 1.429.043 4.267.043s4.19-.013 4.267-.043a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.15-.057-8.404-.055-8.547.002" fill-rule="evenodd"/></svg>
+												</span>
+												<span class="onetap-text-align-icon onetap-text-align-icon--right" aria-hidden="true">
+													<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.72 3.805c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m4 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 12.376.06 12.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-12.403-.055-12.547.002m-4 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.158.06 16.376.06 16.534 0a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.151-.058-16.403-.055-16.547.002m8 5c-.262.104-.451.395-.451.695a.75.75 0 0 0 .464.697c.077.03 1.429.043 4.267.043s4.19-.013 4.267-.043a.75.75 0 0 0 .464-.697.75.75 0 0 0-.464-.697c-.15-.057-8.404-.055-8.547.002" fill-rule="evenodd"/></svg>
+												</span>
 											</span>
 										</div>
 										<div class="onetap-title">
@@ -5773,6 +6134,23 @@ class Accessibility_Pro_Public {
 											<span class="onetap-heading"><?php esc_html_e( 'Stop Animations', 'accessibility-plugin-onetap-pro' ); ?></span>
 										</div>
 									</button>
+								</div>
+							</div>
+						</div>						
+
+						<!-- Features Skip to Content -->
+						<div class="onetap-features-container onetap-skip-content">
+							<div class="onetap-features">
+								<div class="onetap-skip-content-control">
+									<label for="skip-content-select" class="onetap-skip-label">
+										<?php esc_html_e( 'Skip To Content', 'accessibility-plugin-onetap-pro' ); ?>
+									</label>
+									<select id="skip-content-select" class="onetap-skip-select">
+										<option value=""><?php esc_html_e( 'Choose...', 'accessibility-plugin-onetap-pro' ); ?></option>
+										<option value="main"><?php esc_html_e( 'Main Content', 'accessibility-plugin-onetap-pro' ); ?></option>
+										<option value="navigation"><?php esc_html_e( 'Navigation', 'accessibility-plugin-onetap-pro' ); ?></option>
+										<option value="footer"><?php esc_html_e( 'Footer', 'accessibility-plugin-onetap-pro' ); ?></option>
+									</select>
 								</div>
 							</div>
 						</div>						

@@ -2,26 +2,19 @@
 
 namespace WPML\TM\ATE\ClonedSites\SetupMigration;
 
+use WPML\TM\ATE\ClonedSites\AutoMigration\Handler as AutoMigrationHandler;
 use WPML\TM\ATE\ClonedSites\SetupMigration\Resetter\AmsCredentialsCleaner;
 use WPML\TM\ATE\ClonedSites\SetupMigration\Resetter\SiteKeyCleaner;
 use WPML\TM\ATE\ClonedSites\SetupMigration\Resetter\SetupStepRewinder;
 
 class ClonedSiteResetter {
 
-	/** @var AmsCredentialsCleaner */
 	private $credentialsCleaner;
 
-	/** @var SiteKeyCleaner */
 	private $siteKeyCleaner;
 
-	/** @var SetupStepRewinder */
 	private $setupStepRewinder;
 
-	/**
-	 * @param AmsCredentialsCleaner $credentialsCleaner
-	 * @param SiteKeyCleaner        $siteKeyCleaner
-	 * @param SetupStepRewinder     $setupStepRewinder
-	 */
 	public function __construct(
 		AmsCredentialsCleaner $credentialsCleaner,
 		SiteKeyCleaner $siteKeyCleaner,
@@ -35,6 +28,7 @@ class ClonedSiteResetter {
 	public function reset( string $currentStep ): string {
 		$this->credentialsCleaner->clear();
 		$this->siteKeyCleaner->unregister();
+		AutoMigrationHandler::clearMigrationFlag();
 
 		return $this->setupStepRewinder->maybeRewindCurrentStep( $currentStep );
 	}

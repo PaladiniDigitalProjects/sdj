@@ -11,20 +11,10 @@ class Attachment {
 
 	private static $withOutSizeRegEx = '/-\d+[Xx]\d+\./';
 
-	/**
-	 * @param string $urlWithMaybeSize
-	 *
-	 * @return string
-	 */
 	private static function removeSizeFromUrl( $urlWithMaybeSize ) {
 		return Str::pregReplace( self::$withOutSizeRegEx, '.', $urlWithMaybeSize );
 	}
 
-	/**
-	 * @param array $data
-	 *
-	 * @return string
-	 */
 	public static function extractSrcFromAttributes( $data ) {
 		if ( ! array_key_exists( 'attributes', $data ) || ! is_array( $data['attributes'] ) || ! array_key_exists( 'src', $data['attributes'] ) ) {
 			return '';
@@ -39,12 +29,6 @@ class Attachment {
 		return self::removeSizeFromUrl( $src );
 	}
 
-	/**
-	 * @param string      $url
-	 * @param string|null $urlWithoutSize
-	 *
-	 * @return int|null The found post ID, or null on failure.
-	 */
 	public static function idFromUrlCache( $url, $urlWithoutSize = null ) {
 		if ( array_key_exists( $url, self::$cache ) ) {
 			return self::$cache[ $url ];
@@ -61,11 +45,6 @@ class Attachment {
 		return null;
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return int|null The found post ID, or null on failure.
-	 */
 	public static function idFromUrl( $url ) {
 		$urlWithoutSize = self::removeSizeFromUrl( $url );
 		$maybeId        = self::idFromUrlCache( $url, $urlWithoutSize );
@@ -100,11 +79,6 @@ class Attachment {
 		return null;
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return int The found post ID, or 0 on failure.
-	 */
 	public static function idByGuid( $url ) {
 		if ( array_key_exists( $url , self::$cache ) ) {
 			return self::$cache[$url];
@@ -112,7 +86,7 @@ class Attachment {
 
 		global $wpdb;
 
-		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid='%s' LIMIT 1", $url ) );
+		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid='%s' ORDER BY ID ASC LIMIT 1", $url ) );
 
 		return $attachment && count( $attachment )
 			? $attachment[0]
@@ -134,7 +108,7 @@ class Attachment {
 		list( $pathes, $urlsToPathes, $pathesToUrls ) = self::getPathesFromUrls( $urls );
 
 		$results = $wpdb->get_results(
-			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value IN (" . wpml_prepare_in( $pathes, '%s' ) . ")"
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value IN (" . wpml_prepare_in( $pathes, '%s' ) . ") ORDER BY post_id ASC"
 		);
 
 		$results = array_map(
@@ -150,11 +124,6 @@ class Attachment {
 		return self::mapUrlsToPostIds( $results, $urls, $pathes, $urlsToPathes, $pathesToUrls );
 	}
 
-	/**
-	 * @param array $urls
-	 *
-	 * @return array
-	 */
 	public static function getPathesFromUrls( $urls ) {
 		$urlsToPathes = [];
 		$pathesToUrls = [];
@@ -178,8 +147,10 @@ class Attachment {
 		foreach ( $results as $result ) {
 			foreach ( $pathes as $path ) {
 				if ( $path === $result['value'] ) {
-					$url                   = $pathesToUrls[ $path ];
-					$urlsToPostIds[ $url ] = (int) $result['id'];
+					$url = $pathesToUrls[ $path ];
+					if ( null === $urlsToPostIds[ $url ] ) {
+						$urlsToPostIds[ $url ] = (int) $result['id'];
+					}
 					break;
 				}
 			}
@@ -202,11 +173,6 @@ class Attachment {
 		return $urlsToPostIds;
 	}
 
-	/**
-	 * @param string $url
-	 *
-	 * @return string
-	 */
 	public static function urlToPath( $url ) {
 		$dir  = wp_get_upload_dir();
 		$path = $url;

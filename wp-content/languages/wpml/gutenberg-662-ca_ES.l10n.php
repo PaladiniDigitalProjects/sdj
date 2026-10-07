@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['33d640af2e60a593dd5410807d4d71ba'=>'https://dev.sjd.es/comites-de-etica/comite-de-etica-asistencial-san-juan-de-dios-andalucia/','80b062916be02db61f78a253163440e5'=>'https://dev.sjd.es/comites-de-etica/ceis/','http://dev.sjd.es/comites-de-etica/ceis/'=>'https://dev.sjd.es/comites-de-etica/ceis/','http://dev.sjd.es/comites-de-etica/comite-de-etica-asistencial-san-juan-de-dios-andalucia/'=>'https://dev.sjd.es/comites-de-etica/comite-de-etica-asistencial-san-juan-de-dios-andalucia/']];

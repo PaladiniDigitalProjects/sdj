@@ -168,6 +168,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 				$feature_name             = isset( $option['feature_name'] ) ? $option['feature_name'] : '';
 				$first_control            = isset( $option['first_control'] ) ? $option['first_control'] : '';
 				$is_pro                   = isset( $option['is_pro'] ) ? $option['is_pro'] : '';
+				$is_beta                  = ! empty( $option['is_beta'] );
 				$label                    = isset( $option['label'] ) ? $option['label'] : '';
 				$last_control             = isset( $option['last_control'] ) ? $option['last_control'] : '';
 				$name                     = $option['name'];
@@ -204,6 +205,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 					'first_control'            => $first_control,
 					'id'                       => $name,
 					'is_pro'                   => $is_pro,
+					'is_beta'                  => $is_beta,
 					'label'                    => $label,
 					'label_for'                => "{$section}[{$name}]",
 					'last_control'             => $last_control,
@@ -266,14 +268,18 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 				'class'         => array(),
 				'href'          => array(),
 				'target'        => array(),
+				'rel'           => array(),
 				'title'         => array(),
 				'data-image-id' => array(),
+				'aria-current'  => array(),
 			),
 			'div'      => array(
 				'class'              => array(),
 				'style'              => array(),
 				'data-device'        => array(),
 				'data-default-color' => array(),
+				'role'               => array(),
+				'aria-label'         => array(),
 			),
 			'ul'       => array(
 				'class' => array(),
@@ -456,7 +462,14 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 		$html .= '<div class="' . $parsed_args['classes'] . '">';
 
 		if ( $parsed_args['setting_title'] ) {
-			$html .= '<span class="setting-title">' . $parsed_args['setting_title'] . '</span>';
+			if ( ! empty( $parsed_args['args']['setting_header_after_title'] ) ) {
+				$html .= '<div class="setting-header-row setting-header-row--image-alt-list">';
+				$html .= '<span class="setting-title">' . $parsed_args['setting_title'] . '</span>';
+				$html .= $parsed_args['args']['setting_header_after_title'];
+				$html .= '</div>';
+			} else {
+				$html .= '<span class="setting-title">' . $parsed_args['setting_title'] . '</span>';
+			}
 		}
 
 		if ( $parsed_args['setting_description'] && ! $parsed_args['hide_setting_description'] ) {
@@ -559,6 +572,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 		// Build switch content attributes.
 		$switch_icon  = isset( $args['switch_icon'] ) ? esc_url( $args['switch_icon'] ) : '';
 		$is_pro       = isset( $args['is_pro'] ) ? (bool) $args['is_pro'] : false;
+		$is_beta      = ! empty( $args['is_beta'] );
 		$feature_name = isset( $args['feature_name'] ) ? esc_html( $args['feature_name'] ) : '';
 		$feature_desc = isset( $args['feature_desc'] ) ? esc_html( $args['feature_desc'] ) : '';
 		$switch_style = isset( $args['switch_style'] ) ? esc_attr( $args['switch_style'] ) : '';
@@ -588,7 +602,14 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 
 		// Display feature name - only show if feature_name exists (regardless of is_pro status).
 		if ( ! empty( $feature_name ) ) {
-			$input_html .= '<span class="feature-name">' . $feature_name . ( $is_pro ? '<span class="pro">' . esc_html__( 'PRO', 'accessibility-plugin-onetap-pro' ) . '</span>' : '' ) . '</span>';
+			$input_html .= '<span class="feature-name">' . $feature_name;
+			if ( $is_pro ) {
+				$input_html .= '<span class="pro">' . esc_html__( 'PRO', 'accessibility-plugin-onetap-pro' ) . '</span>';
+			}
+			if ( $is_beta ) {
+				$input_html .= '<span class="onetap-admin-beta-badge">' . esc_html__( 'Beta', 'accessibility-plugin-onetap-pro' ) . '</span>';
+			}
+			$input_html .= '</span>';
 		}
 
 		// Feature description - only show if feature_desc is provided (regardless of is_pro status).
@@ -932,6 +953,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 		// Build module labels content attributes.
 		$module_icon  = isset( $args['module_icon'] ) ? esc_url( $args['module_icon'] ) : '';
 		$is_pro       = isset( $args['is_pro'] ) ? (bool) $args['is_pro'] : false;
+		$is_beta      = ! empty( $args['is_beta'] );
 		$feature_name = isset( $args['feature_name'] ) ? esc_html( $args['feature_name'] ) : '';
 		$feature_desc = isset( $args['feature_desc'] ) ? esc_html( $args['feature_desc'] ) : '';
 		$module_style = isset( $args['module_style'] ) ? esc_attr( $args['module_style'] ) : '';
@@ -964,7 +986,14 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 
 		// Display feature name - only show if feature_name exists (regardless of is_pro status).
 		if ( ! empty( $feature_name ) ) {
-			$input_html .= '<span class="feature-name">' . $feature_name . ( $is_pro ? '<span class="pro">' . esc_html__( 'PRO', 'accessibility-plugin-onetap-pro' ) . '</span>' : '' ) . '</span>';
+			$input_html .= '<span class="feature-name">' . $feature_name;
+			if ( $is_pro ) {
+				$input_html .= '<span class="pro">' . esc_html__( 'PRO', 'accessibility-plugin-onetap-pro' ) . '</span>';
+			}
+			if ( $is_beta ) {
+				$input_html .= '<span class="onetap-admin-beta-badge">' . esc_html__( 'Beta', 'accessibility-plugin-onetap-pro' ) . '</span>';
+			}
+			$input_html .= '</span>';
 		}
 
 		// Feature description - only show if feature_desc is provided (regardless of is_pro status).
@@ -1682,16 +1711,52 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 		$parsed_args         = $this->parse_template_args( $args );
 		$parsed_args['type'] = isset( $args['type'] ) ? $args['type'] : 'alt-text';
 
-		// Get current page for pagination.
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$allowed_filters = array( 'all', 'with', 'without' );
+		$alt_filter      = isset( $_GET['alt_text_filter'] ) ? sanitize_key( wp_unslash( $_GET['alt_text_filter'] ) ) : 'all';
+		if ( ! in_array( $alt_filter, $allowed_filters, true ) ) {
+			$alt_filter = 'all';
+		}
+
 		$current_page = isset( $_GET['alt_text_page'] ) ? max( 1, intval( $_GET['alt_text_page'] ) ) : 1;
 		$per_page     = 10; // Number of images per page.
-		$offset       = ( $current_page - 1 ) * $per_page;
 
-		// Get images from WordPress Media Library.
-		$image_list   = $this->get_media_library_images( $per_page, $offset );
-		$total_images = $this->get_total_media_count();
-		$total_pages  = ceil( $total_images / $per_page );
+		$total_images = $this->get_total_media_count( $alt_filter );
+		$total_pages  = $total_images > 0 ? (int) ceil( $total_images / $per_page ) : 0;
+		if ( $total_pages > 0 ) {
+			$current_page = min( $current_page, $total_pages );
+		} else {
+			$current_page = 1;
+		}
+		$offset = ( $current_page - 1 ) * $per_page;
+
+		$image_list = $this->get_media_library_images( $per_page, $offset, $alt_filter );
+
+		$filter_links   = array();
+		$filter_configs = array(
+			'all'     => __( 'All', 'accessibility-plugin-onetap-pro' ),
+			'with'    => __( 'With Alt Text', 'accessibility-plugin-onetap-pro' ),
+			'without' => __( 'Without Alt Text', 'accessibility-plugin-onetap-pro' ),
+		);
+		foreach ( $filter_configs as $key => $label ) {
+			$is_active      = ( $key === $alt_filter );
+			$filter_href    = add_query_arg(
+				array(
+					'alt_text_filter' => 'all' === $key ? false : $key,
+					'alt_text_page'   => false,
+				)
+			);
+			$link_class     = 'apop-alt-text-filter__link' . ( $is_active ? ' is-active' : '' );
+			$aria_current   = $is_active ? ' aria-current="page"' : '';
+			$filter_links[] = '<a class="' . esc_attr( $link_class ) . '" href="' . esc_url( $filter_href ) . '"' . $aria_current . '>' . esc_html( $label ) . '</a>';
+		}
+		$args['setting_header_after_title'] = '<div class="apop-alt-text-filter" role="group" aria-label="' . esc_attr__( 'Filter images by alt text', 'accessibility-plugin-onetap-pro' ) . '">' . implode( '<span class="apop-alt-text-filter__sep"> | </span>', $filter_links ) . '</div>';
+
+		// Append a Beta badge next to the "Edit Alt Text" title.
+		$args['setting_title'] .= ' <span class="onetap-admin-beta-badge">' . esc_html__( 'Beta', 'accessibility-plugin-onetap-pro' ) . '</span>';
+
+		$apop_altpilot_ai_cta   = $this->get_altpilot_cta_link_attrs();
+		$apop_altpilot_ai_extra = ( '_blank' === $apop_altpilot_ai_cta['target'] ) ? ' target="_blank" rel="noopener noreferrer"' : '';
 
 		// Build image list HTML with dynamic data.
 		$list_html  = '<div class="box box1">';
@@ -1746,18 +1811,18 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 				$list_html .= '<div class="col actions">';
 				$list_html .= '<div class="action-buttons">';
 
-				// AI button.
-				$list_html .= '<a href="https://www.altpilot.ai/" target="_blank" class="button ai-btn" title="Generate with AltPilot.ai" data-image-id="' . esc_attr( $image_id ) . '">';
+				// AI button (AltPilot admin when plugin active, else marketing site).
+				$list_html .= '<a href="' . esc_url( $apop_altpilot_ai_cta['url'] ) . '"' . $apop_altpilot_ai_extra . ' class="button outline ai-btn" title="' . esc_attr__( 'Generate with AltPilot.ai', 'accessibility-plugin-onetap-pro' ) . '" data-image-id="' . esc_attr( $image_id ) . '">';
 				$list_html .= '<img src="' . ACCESSIBILITY_PLUGIN_ONETAP_PRO_PLUGINS_URL . 'assets/images/admin/ai-generate.svg" alt="AltPilot.ai" />';
 				$list_html .= '</a>';
 
 				// Edit button.
-				$list_html .= '<button type="button" class="button edit-btn" title="Edit alt text" data-image-id="' . esc_attr( $image_id ) . '">';
+				$list_html .= '<button type="button" class="button outline edit-btn" title="Edit alt text" data-image-id="' . esc_attr( $image_id ) . '">';
 				$list_html .= '<img src="' . ACCESSIBILITY_PLUGIN_ONETAP_PRO_PLUGINS_URL . 'assets/images/admin/pencil.svg" alt="edit" />';
 				$list_html .= '</button>';
 
 				// Save button.
-				$list_html .= '<button type="button" class="hide button save-btn" title="Save alt text" data-image-id="' . esc_attr( $image_id ) . '">';
+				$list_html .= '<button type="button" class="hide button outline save-btn" title="Save alt text" data-image-id="' . esc_attr( $image_id ) . '">';
 				$list_html .= '<img src="' . ACCESSIBILITY_PLUGIN_ONETAP_PRO_PLUGINS_URL . 'assets/images/admin/save.svg" alt="save" />';
 				$list_html .= '</button>';
 
@@ -1767,10 +1832,12 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 				$list_html .= '</div>'; // End row.
 			}
 		} else {
-			// No images found.
+			$empty_msg  = 'all' === $alt_filter
+				? __( 'No images found in Media Library.', 'accessibility-plugin-onetap-pro' )
+				: __( 'No images match this filter.', 'accessibility-plugin-onetap-pro' );
 			$list_html .= '<div class="row no-images">';
 			$list_html .= '<div class="col" style="text-align: center; padding: 40px;">';
-			$list_html .= '<p>' . __( 'No images found in Media Library.', 'accessibility-plugin-onetap-pro' ) . '</p>';
+			$list_html .= '<p>' . esc_html( $empty_msg ) . '</p>';
 			$list_html .= '</div>';
 			$list_html .= '</div>';
 		}
@@ -1785,14 +1852,14 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 			// Previous button.
 			$list_html .= '<div class="col prev">';
 			if ( $current_page > 1 ) {
-				$prev_url   = add_query_arg( 'alt_text_page', $current_page - 1 );
+				$prev_url   = add_query_arg( $this->get_alt_text_list_query_args( $current_page - 1, $alt_filter ) );
 				$list_html .= '<a href="' . esc_url( $prev_url ) . '" class="button prev-btn">';
-				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M18.0279 11.4872H5.02222M5.02222 11.4872L11.5251 17.99M5.02222 11.4872L11.5251 4.98431" stroke="#A4A7AE" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M18.0279 11.4872H5.02222M5.02222 11.4872L11.5251 17.99M5.02222 11.4872L11.5251 4.98431" stroke="#fff" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 				$list_html .= __( 'Previous', 'accessibility-plugin-onetap-pro' );
 				$list_html .= '</a>';
 			} else {
 				$list_html .= '<a href="#" class="button disable prev-btn">';
-				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M18.0279 11.4872H5.02222M5.02222 11.4872L11.5251 17.99M5.02222 11.4872L11.5251 4.98431" stroke="#D5D7DA" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M18.0279 11.4872H5.02222M5.02222 11.4872L11.5251 17.99M5.02222 11.4872L11.5251 4.98431" stroke="#fff" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 				$list_html .= __( 'Previous', 'accessibility-plugin-onetap-pro' );
 				$list_html .= '</a>';
 			}
@@ -1807,7 +1874,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 			$end_page   = min( $total_pages, $current_page + 2 );
 
 			if ( $start_page > 1 ) {
-				$list_html .= '<li><a href="' . esc_url( add_query_arg( 'alt_text_page', 1 ) ) . '">1</a></li>';
+				$list_html .= '<li><a href="' . esc_url( add_query_arg( $this->get_alt_text_list_query_args( 1, $alt_filter ) ) ) . '">1</a></li>';
 				if ( $start_page > 2 ) {
 					$list_html .= '<li>...</li>';
 				}
@@ -1817,7 +1884,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 				if ( $i === $current_page ) {
 					$list_html .= '<li><a href="#" class="current">' . $i . '</a></li>';
 				} else {
-					$list_html .= '<li><a href="' . esc_url( add_query_arg( 'alt_text_page', $i ) ) . '">' . $i . '</a></li>';
+					$list_html .= '<li><a href="' . esc_url( add_query_arg( $this->get_alt_text_list_query_args( $i, $alt_filter ) ) ) . '">' . $i . '</a></li>';
 				}
 			}
 
@@ -1825,7 +1892,7 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 				if ( $end_page < $total_pages - 1 ) {
 					$list_html .= '<li>...</li>';
 				}
-				$list_html .= '<li><a href="' . esc_url( add_query_arg( 'alt_text_page', $total_pages ) ) . '">' . $total_pages . '</a></li>';
+				$list_html .= '<li><a href="' . esc_url( add_query_arg( $this->get_alt_text_list_query_args( $total_pages, $alt_filter ) ) ) . '">' . $total_pages . '</a></li>';
 			}
 
 			$list_html .= '</ul>';
@@ -1834,15 +1901,15 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 			// Next button.
 			$list_html .= '<div class="col next">';
 			if ( $current_page < $total_pages ) {
-				$next_url   = add_query_arg( 'alt_text_page', $current_page + 1 );
+				$next_url   = add_query_arg( $this->get_alt_text_list_query_args( $current_page + 1, $alt_filter ) );
 				$list_html .= '<a href="' . esc_url( $next_url ) . '" class="button next-btn">';
 				$list_html .= __( 'Next', 'accessibility-plugin-onetap-pro' );
-				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M4.97217 11.4872H17.9779M17.9779 11.4872L11.475 4.98431M17.9779 11.4872L11.475 17.99" stroke="#A4A7AE" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M4.97217 11.4872H17.9779M17.9779 11.4872L11.475 4.98431M17.9779 11.4872L11.475 17.99" stroke="#fff" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 				$list_html .= '</a>';
 			} else {
 				$list_html .= '<a href="#" class="button disable next-btn">';
 				$list_html .= __( 'Next', 'accessibility-plugin-onetap-pro' );
-				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M4.97217 11.4872H17.9779M17.9779 11.4872L11.475 4.98431M17.9779 11.4872L11.475 17.99" stroke="#D5D7DA" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+				$list_html .= '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 23 23" fill="none"><path d="M4.97217 11.4872H17.9779M17.9779 11.4872L11.475 4.98431M17.9779 11.4872L11.475 17.99" stroke="#fff" stroke-width="1.85796" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 				$list_html .= '</a>';
 			}
 			$list_html .= '</div>';
@@ -1856,13 +1923,58 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 	}
 
 	/**
+	 * AltPilot CTA: plugin settings in admin when active, otherwise marketing URL.
+	 *
+	 * @since 1.0.0
+	 * @return array{url:string,target:string} target is empty for same-window admin links.
+	 */
+	public function get_altpilot_cta_link_attrs() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		if ( is_plugin_active( 'altpilot/altpilot.php' ) ) {
+			return array(
+				'url'    => admin_url( 'admin.php?page=altpilot' ),
+				'target' => '',
+			);
+		}
+		return array(
+			'url'    => 'https://www.altpilot.ai/',
+			'target' => '_blank',
+		);
+	}
+
+	/**
+	 * Build query arguments for alt-text list URLs (pagination + filter).
+	 *
+	 * @param int    $page   Page number (1-based).
+	 * @param string $filter Filter key: all|with|without.
+	 * @return array Arguments for add_query_arg().
+	 */
+	private function get_alt_text_list_query_args( $page, $filter ) {
+		$args = array();
+		if ( $page > 1 ) {
+			$args['alt_text_page'] = $page;
+		} else {
+			$args['alt_text_page'] = false;
+		}
+		if ( 'all' !== $filter ) {
+			$args['alt_text_filter'] = $filter;
+		} else {
+			$args['alt_text_filter'] = false;
+		}
+		return $args;
+	}
+
+	/**
 	 * Get images from WordPress Media Library with pagination.
 	 *
-	 * @param int $per_page Number of images per page.
-	 * @param int $offset Offset for pagination.
+	 * @param int    $per_page Number of images per page.
+	 * @param int    $offset   Offset for pagination.
+	 * @param string $filter   Filter: all, with, or without (alt text present / missing).
 	 * @return array Array of image data.
 	 */
-	private function get_media_library_images( $per_page = 10, $offset = 0 ) {
+	private function get_media_library_images( $per_page = 10, $offset = 0, $filter = 'all' ) {
 		$args = array(
 			'post_type'      => 'attachment',
 			'post_mime_type' => 'image',
@@ -1872,6 +1984,34 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 			'orderby'        => 'ID',
 			'order'          => 'DESC',
 		);
+
+		if ( 'without' === $filter ) {
+			$args['meta_query'] = array(
+				'relation' => 'OR',
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'value'   => '',
+					'compare' => '=',
+				),
+			);
+		} elseif ( 'with' === $filter ) {
+			$args['meta_query'] = array(
+				'relation' => 'AND',
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'value'   => '',
+					'compare' => '!=',
+				),
+			);
+		}
 
 		$query  = new WP_Query( $args );
 		$images = array();
@@ -1911,9 +2051,10 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 	/**
 	 * Get total count of images in Media Library.
 	 *
+	 * @param string $filter Filter: all, with, or without (alt text present / missing).
 	 * @return int Total number of images.
 	 */
-	private function get_total_media_count() {
+	private function get_total_media_count( $filter = 'all' ) {
 		$args = array(
 			'post_type'      => 'attachment',
 			'post_mime_type' => 'image',
@@ -1921,6 +2062,34 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 		);
+
+		if ( 'without' === $filter ) {
+			$args['meta_query'] = array(
+				'relation' => 'OR',
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'compare' => 'NOT EXISTS',
+				),
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'value'   => '',
+					'compare' => '=',
+				),
+			);
+		} elseif ( 'with' === $filter ) {
+			$args['meta_query'] = array(
+				'relation' => 'AND',
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => '_wp_attachment_image_alt',
+					'value'   => '',
+					'compare' => '!=',
+				),
+			);
+		}
 
 		$query = new WP_Query( $args );
 		return $query->found_posts;
@@ -1994,6 +2163,13 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 		$button_class = isset( $args['button_class'] ) ? esc_attr( $args['button_class'] ) : '';
 		$button_link  = isset( $args['button_link'] ) ? esc_url( $args['button_link'] ) : '';
 
+		$button_link_new_tab = true;
+		if ( isset( $args['name'] ) && 'alt-text-ai' === $args['name'] ) {
+			$altpilot_cta        = $this->get_altpilot_cta_link_attrs();
+			$button_link         = esc_url( $altpilot_cta['url'] );
+			$button_link_new_tab = ( '_blank' === $altpilot_cta['target'] );
+		}
+
 		// Check if label exists and is not empty, then add padding-top-0 class (except for style2 style).
 		$label_class = ( isset( $args['label'] ) && ! empty( $args['label'] ) && 'style2' !== $feature_style ) ? ' padding-top-0' : '';
 
@@ -2041,8 +2217,8 @@ class Onetap_Pro_Accessibility_Settings_Manager {
 
 		// Build button/link element based on whether link is provided.
 		if ( ! empty( $button_link ) ) {
-			// Create link if button_link is provided.
-			$input_html .= '<a href="' . $button_link . '" target="_blank"' . ( ! empty( $button_class ) ? ' class="button outline ' . $button_class . '"' : ' class="button outline"' ) . '>';
+			$link_target = $button_link_new_tab ? ' target="_blank" rel="noopener noreferrer"' : '';
+			$input_html .= '<a href="' . $button_link . '"' . $link_target . ( ! empty( $button_class ) ? ' class="button outline ' . $button_class . '"' : ' class="button outline"' ) . '>';
 		} else {
 			// Create button if no link provided.
 			$input_html .= '<button' . ( ! empty( $button_class ) ? ' class="button outline ' . $button_class . '"' : ' class="button outline"' ) . '>';

@@ -9,19 +9,43 @@ use WPML\FP\Fns;
 use WPML\FP\Logic;
 use WPML\FP\Lst;
 use WPML\FP\Obj;
+use WPML\LIB\WP\User;
 use WPML\TM\API\ATE;
 use WPML\TM\API\Jobs;
 use WPML\TM\ATE\Review\ReviewStatus;
+use WPML\TM\Jobs\JobLog;
 use function WPML\Container\make;
 use function WPML\FP\partial;
 use function WPML\FP\pipe;
 
 class UpdateTranslation implements IHandler {
 	public function run( Collection $data ) {
-		$jobId            = $data->get( 'jobId' );
-		$postId           = $data->get( 'postId' );
+		$jobId            = (int) $data->get( 'jobId' );
+		$suppliedPostId   = $data->get( 'postId' );
 		$completedInATE   = $data->get( 'completedInATE' );
 		$clickedBackInATE = $data->get( 'clickedBackInATE' );
+
+		$job = Jobs::get( $jobId );
+
+		if ( ! $job || ! Jobs::shouldBeATESynced( $job ) ) {
+			return Either::left( 'Insufficient permissions' );
+		}
+
+		$postId = (int) Obj::prop( 'element_id', $job );
+		if (
+			! $postId
+			|| ( null !== $suppliedPostId && (int) $suppliedPostId !== $postId )
+			|| ! $this->isAuthorized( $job, $postId )
+		) {
+			return Either::left( 'Insufficient permissions' );
+		}
+
+		JobLog::add( 'update_translation_returned', [
+			'job_id'             => $jobId,
+			'post_id'            => $postId,
+			'completed_in_ate'   => $completedInATE,
+			'clicked_back_in_ate' => $clickedBackInATE,
+		] );
 
 		if ( $completedInATE === 'COMPLETED_WITHOUT_CHANGED' || $clickedBackInATE ) {
 			return $this->completeWithoutChanges( $jobId );
@@ -60,9 +84,13 @@ class UpdateTranslation implements IHandler {
 		$userClickedCompleteInATE = Fns::always( $completedInATE === 'COMPLETED' );
 		$otherwise                = Fns::always( true );
 
+		$deliveredStatus = $completedInATE === 'COMPLETED'
+			? 'already-applied-reload-required'
+			: 'applied-without-changes';
+
 		$handleATEResult = Logic::cond( [
 			[ $shouldApplyXLIFF, $applyXLIFF ],
-			[ $isDelivered, Fns::always( Either::of( 'applied-without-changes'  ) ) ],
+			[ $isDelivered, Fns::always( Either::of( $deliveredStatus ) ) ],
 			[ $userClickedCompleteInATE, Fns::always( Either::of( 'underway' ) ) ],
 			[ $isTranslating, Fns::always( Either::of( 'in-progress' ) ) ],
 			[ Logic::isEmpty(), Fns::always( Either::left( 'error' ) ) ],
@@ -72,6 +100,19 @@ class UpdateTranslation implements IHandler {
 		return Either::of( $jobId )
 		             ->map( [ $ateAPI, 'checkJobStatus' ] )
 		             ->chain( $handleATEResult );
+	}
+
+	private function isAuthorized( $job, $postId ) {
+		if ( User::canManageTranslations() ) {
+			return true;
+		}
+
+		$translatorId = (int) Obj::prop( 'translator_id', $job );
+		if ( $translatorId && get_current_user_id() !== $translatorId ) {
+			return false;
+		}
+
+		return current_user_can( 'edit_post', $postId );
 	}
 
 	private function completeWithoutChanges( $jobId ) {
@@ -86,9 +127,6 @@ class UpdateTranslation implements IHandler {
 		             ->map( $applyWithoutChanges )
 		             ->map( Fns::always( 'applied-without-changes' ) );
 	}
-	/**
-	 * @param int $jobId
-	 */
 	public function maybeSetNeedsReviewStatus( $jobId ) {
 		$job = Jobs::get( $jobId );
 		if ( ReviewStatus::doesJobNeedReview( $job ) ) {

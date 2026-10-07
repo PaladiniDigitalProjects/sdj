@@ -1,11 +1,2 @@
 <?php
-
-namespace WPML\UserInterface\Web\Core\Component\Notices\WarningTranslationEdit\Application;
-
-interface TranslationEditorInterface {
-
-
-  public function getTranslationEditorLink( int $postId ): string;
-
-
-}
+require_once __DIR__ . '/../../../../../../../../../../../wpml/src/UserInterface/Web/Core/Component/Notices/WarningTranslationEdit/Application/TranslationEditorInterface.php';

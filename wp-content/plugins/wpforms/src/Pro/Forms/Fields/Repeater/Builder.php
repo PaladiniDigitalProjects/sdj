@@ -104,10 +104,13 @@ class Builder {
 				'wpforms-lead-forms'  => esc_html__( 'The Repeater field cannot be used when Lead Forms is enabled.', 'wpforms' ),
 			],
 			'fields_mapping'                      => [
-				'title'   => esc_html__( 'Are you sure you want to move this field?', 'wpforms' ),
-				'and'     => esc_html__( 'and', 'wpforms' ),
+				'title'        => esc_html__( 'Are you sure you want to move this field?', 'wpforms' ),
+				'and'          => esc_html__( 'and', 'wpforms' ),
 				/* translators: %s - Addon name. */
-				'content' => esc_html__( 'It\'s currently mapped to %s, which will be reset if you add this field to a repeater.', 'wpforms' ),
+				'content'      => esc_html__( 'It\'s currently mapped to %s, which will be reset if you add this field to a repeater.', 'wpforms' ),
+				'title_bulk'   => esc_html__( 'Are you sure you want to move these fields?', 'wpforms' ),
+				/* translators: %1$s - comma-separated field names, %2$s - name(s) of the section(s) the fields are mapped in. */
+				'content_bulk' => esc_html__( '%1$s are currently mapped to %2$s. These mappings will be reset if you add the fields to a repeater.', 'wpforms' ),
 			],
 		];
 

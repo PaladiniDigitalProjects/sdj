@@ -1,21 +1,13 @@
 <?php
 
-// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared
-// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 class WPML_PB_String_Translation {
 
-	/** @var  wpdb $wpdb */
 	protected $wpdb;
 
 	public function __construct( wpdb $wpdb ) {
 		$this->wpdb = $wpdb;
 	}
 
-	/**
-	 * @param array $package_data
-	 *
-	 * @return array
-	 */
 	public function get_package_strings( array $package_data ) {
 		$strings    = [];
 		$package_id = $this->get_package_id( $package_data );
@@ -43,13 +35,6 @@ class WPML_PB_String_Translation {
 		return $strings;
 	}
 
-	/**
-	 * @param string $context
-	 * @param array  $columns
-	 * @param string $conditions
-	 *
-	 * @return array
-	 */
 	public function getStringsInContext( string $context, array $columns = [ '*' ], string $conditions = '' ) {
 		$columns = array_intersect(
 			$columns,
@@ -64,11 +49,11 @@ class WPML_PB_String_Translation {
 			return [];
 		}
 
-		$sqlColumns = join( ', ', $columns );
+		$sql_columns = join( ', ', $columns );
 		return $this->wpdb->get_results(
 			$this->wpdb->prepare(
 				"
-				SELECT {$sqlColumns}
+				SELECT {$sql_columns}
 				FROM {$this->wpdb->prefix}icl_strings
 				WHERE context = %s
 				{$conditions}
@@ -82,35 +67,19 @@ class WPML_PB_String_Translation {
 		icl_unregister_string( $string_data['context'], $string_data['name'] );
 
 		$field_type = 'package-string-' . $string_data['package_id'] . '-' . $string_data['id'];
-		$job_id     = $this->get_job_id( $field_type );
-		if ( ! $job_id || ! $this->is_job_in_progress( $job_id ) ) {
-			$this->wpdb->delete( $this->wpdb->prefix . 'icl_translate', [ 'field_type' => $field_type ], [ '%s' ] );
-		}
+
+		$this->wpdb->query(
+			$this->wpdb->prepare(
+				"DELETE FROM {$this->wpdb->prefix}icl_translate
+				WHERE field_type = %s
+				AND job_id NOT IN (
+					SELECT job_id FROM {$this->wpdb->prefix}icl_translate_job WHERE translated = 0
+				)",
+				$field_type
+			)
+		);
 	}
 
-	/**
-	 * @param string $field_type
-	 *
-	 * @return int
-	 */
-	private function get_job_id( $field_type ) {
-		return (int) $this->wpdb->get_var( $this->wpdb->prepare( "SELECT MAX(job_id) FROM {$this->wpdb->prefix}icl_translate WHERE field_type = %s", $field_type ) );
-	}
-
-	/**
-	 * @param int $job_id
-	 *
-	 * @return bool
-	 */
-	private function is_job_in_progress( $job_id ) {
-		return ! (bool) $this->wpdb->get_var( $this->wpdb->prepare( "SELECT translated FROM {$this->wpdb->prefix}icl_translate_job WHERE job_id = %d", $job_id ) );
-	}
-
-	/**
-	 * @param array $package_data
-	 *
-	 * @return bool
-	 */
 	private function get_package_id( array $package_data ) {
 		$package_id            = false;
 		$sql_to_get_package_id = $this->wpdb->prepare(
@@ -134,15 +103,9 @@ class WPML_PB_String_Translation {
 		return $package_id;
 	}
 
-	/**
-	 * @param string|null $string_value
-	 *
-	 * @return string
-	 */
 	public function get_string_hash( $string_value ) {
 		$string_value = is_null( $string_value ) ? '' : $string_value;
 
 		return md5( $string_value );
 	}
 }
-// phpcs:enable

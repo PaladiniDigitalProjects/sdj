@@ -1,14 +1,7 @@
 <?php
-/**
- * @author OnTheGo Systems
- */
 class WPML_Support_Info {
-	/** @var wpdb */
 	private $wpdb;
 
-	/**
-	 * @param wpdb $wpdb
-	 */
 	public function __construct( wpdb $wpdb ) {
 		$this->wpdb = $wpdb;
 	}
@@ -35,6 +28,10 @@ class WPML_Support_Info {
 	}
 
 	public function get_original_ini_get( string $key ) {
+		if ( ! function_exists( 'ini_get_all' ) ) {
+			return $this->read_original_ini_fallback( $key );
+		}
+
 		$array = ini_get_all();
 		if ( $array === false || ! isset( $array[ $key ] )
 		     || ! isset( $array[ $key ]['global_value'] )
@@ -43,6 +40,24 @@ class WPML_Support_Info {
 		}
 
 		return $array[ $key ]['global_value'];
+	}
+
+	private function read_original_ini_fallback( $key ) {
+		if ( function_exists( 'get_cfg_var' ) ) {
+			$value = get_cfg_var( $key );
+			if ( is_string( $value ) && '' !== $value ) {
+				return $value;
+			}
+		}
+
+		if ( function_exists( 'ini_get' ) ) {
+			$value = ini_get( $key );
+			if ( is_string( $value ) && '' !== $value ) {
+				return $value;
+			}
+		}
+
+		return false;
 	}
 
 	public function get_memory_usage() {

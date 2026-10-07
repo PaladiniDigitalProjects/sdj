@@ -14,12 +14,8 @@ class Hooks implements \IWPML_Action {
 		[ 'wc_remove_category_base', 'taxonomy', 'product_cat' ],
 	];
 
-	/** @var \WPML_ST_Slug_Translation_Settings_Factory $slugTranslationSettingsFactory */
 	private $slugTranslationSettingsFactory;
 
-	/**
-	 * @param \WPML_ST_Slug_Translation_Settings_Factory $slugTranslationSettingsFactory
-	 */
 	public function __construct( \WPML_ST_Slug_Translation_Settings_Factory $slugTranslationSettingsFactory ) {
 		$this->slugTranslationSettingsFactory = $slugTranslationSettingsFactory;
 	}

@@ -5,6 +5,7 @@ namespace WPML\StringTranslation\Infrastructure\Setting\Repository;
 use WPML\FP\Str;
 use WPML\StringTranslation\Application\Setting\Repository\SettingsRepositoryInterface;
 use WPML\StringTranslation\Application\Setting\Repository\UrlRepositoryInterface;
+use WPML\StringTranslation\Infrastructure\TranslateEverything\EnglishSourceLanguage;
 use WPML\ST\MO\Hooks\PreloadThemeMoFile;
 
 class SettingsRepository implements SettingsRepositoryInterface {
@@ -13,41 +14,32 @@ class SettingsRepository implements SettingsRepositoryInterface {
 
 	const DETECT_JS_STRINGS = 'detect_js_strings';
 
-	/**
-	 * Some plugin in the frontend can contain bug and output random string, example:
-	 * echo __( 'Some string from plugin' . rand(1, X), 'Y');
-	 * We will queue all such strings and if TEA is enabled we will start translating when admin will visit admin panel.
-	 * We should limit how many strings are queued to be set as frontend simultaneously.
-	 * Queue will be flushed once admin will visit the page.
-	 */
+	const AUTOREGISTER_STRINGS_ENABLED_TIME_KEY = 'autoregister_strings_enabled_time';
+
+	const AUTOREGISTER_STRINGS_TIMEOUT = 2 * HOUR_IN_SECONDS;
+
 	const MAX_QUEUED_FRONTEND_STRINGS_COUNT = 2500;
 
-	/** @var \SitePress */
 	private $sitepress;
 
-	/** @var UrlRepositoryInterface */
+	private $wpLocaleSwitches = [];
+
 	private $urlRepository;
 
-	/** @var array */
 	private $settings;
 
-	/** @var boolean|null */
 	private $isAdmin;
 
-	/** @var boolean */
 	private $isAutoregistrationEnabled = false;
 
-	/** @var null|boolean */
 	private $shouldSkipAutoregistrationForCurrentLanguage;
 
-	/** @var null|boolean */
+	private $englishSourceLanguageCode = [];
+
 	private $shouldNotAutoregisterStringsFromCurrentUrl;
 
 	private $maxQueuedFrontendStringsCount = self::MAX_QUEUED_FRONTEND_STRINGS_COUNT;
 
-	/**
-	 * @param \SitePress $sitepress
-	 */
 	public function __construct(
 		$sitepress,
 		UrlRepositoryInterface $urlRepository
@@ -81,9 +73,6 @@ class SettingsRepository implements SettingsRepositoryInterface {
 		return $this->getAutoregisterStringsTypeSetting() === SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_DISABLED;
 	}
 
-	/**
-	 * @param int|string $value
-	 */
 	public function setAutoregisterStringsTypeSetting( $value ) {
 		$allowedValues = [
 			SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_ONLY_VIEWED_BY_ADMIN,
@@ -97,10 +86,19 @@ class SettingsRepository implements SettingsRepositoryInterface {
 			return;
 		}
 
+		$isEnabled = $value !== SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_DISABLED;
+
 		$settings = $this->getSettings();
 		$settings['autoregister_strings'] = $value;
+
+		if ( $isEnabled ) {
+			$settings[ self::AUTOREGISTER_STRINGS_ENABLED_TIME_KEY ] = time();
+		} else {
+			unset( $settings[ self::AUTOREGISTER_STRINGS_ENABLED_TIME_KEY ] );
+		}
+
 		$this->saveSettings( $settings );
-		$this->updateWpmlSettingToPreloadThemeMoFilesAutomatically( $value !== SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_DISABLED );
+		$this->updateWpmlSettingToPreloadThemeMoFilesAutomatically( $isEnabled );
 	}
 
 	private function updateWpmlSettingToPreloadThemeMoFilesAutomatically( bool $isEnabled ) {
@@ -118,7 +116,38 @@ class SettingsRepository implements SettingsRepositoryInterface {
 			$this->saveSettings( $settings );
 		}
 
-		return (int)$settings['autoregister_strings'];
+		$type = (int) $settings['autoregister_strings'];
+
+		if ( $type === SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_DISABLED ) {
+			return $type;
+		}
+
+		return $this->endAutoregisterStringsModeIfHorizonPassed( $type );
+	}
+
+	private function endAutoregisterStringsModeIfHorizonPassed( int $type ): int {
+		$settings  = $this->getSettings();
+		$enabledAt = isset( $settings[ self::AUTOREGISTER_STRINGS_ENABLED_TIME_KEY ] )
+			? (int) $settings[ self::AUTOREGISTER_STRINGS_ENABLED_TIME_KEY ]
+			: 0;
+
+		if ( $enabledAt <= 0 ) {
+			$settings[ self::AUTOREGISTER_STRINGS_ENABLED_TIME_KEY ] = time();
+			$this->saveSettings( $settings );
+
+			return $type;
+		}
+
+		if ( time() - $enabledAt < self::AUTOREGISTER_STRINGS_TIMEOUT ) {
+			return $type;
+		}
+
+		$settings['autoregister_strings'] = SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_DISABLED;
+		unset( $settings[ self::AUTOREGISTER_STRINGS_ENABLED_TIME_KEY ] );
+		$this->saveSettings( $settings );
+		$this->updateWpmlSettingToPreloadThemeMoFilesAutomatically( false );
+
+		return SettingsRepositoryInterface::AUTOREGISTER_STRINGS_TYPE_DISABLED;
 	}
 
 	public function getVisibleColumns(): array {
@@ -169,9 +198,6 @@ class SettingsRepository implements SettingsRepositoryInterface {
 		return $settings['autoregister_strings_were_new_translations_loaded'];
 	}
 
-	/**
-	 * @param int|string $value
-	 */
 	public function saveKeyToSettings( string $keyName, $value = 1 ) {
 		$settings = $this->getSettings();
 		$settings[ $keyName ] = $value;
@@ -239,7 +265,7 @@ class SettingsRepository implements SettingsRepositoryInterface {
 			return $this->shouldSkipAutoregistrationForCurrentLanguage;
 		}
 
-		$this->shouldSkipAutoregistrationForCurrentLanguage = 'en' === $this->sitepress->get_current_language();
+		$this->shouldSkipAutoregistrationForCurrentLanguage = $this->getEnglishSourceLanguageCode() === $this->sitepress->get_current_language();
 
 		return $this->shouldSkipAutoregistrationForCurrentLanguage;
 	}
@@ -261,13 +287,21 @@ class SettingsRepository implements SettingsRepositoryInterface {
 	}
 
 	public function getDefaultLanguageLocaleCode(): string {
-		$activeLanguages = $this->getActiveLanguages();
-		return $activeLanguages[ $this->getDefaultLanguageCode() ]['default_locale'];
+		return (string) $this->sitepress->get_locale_from_language_code( $this->getDefaultLanguageCode() );
 	}
 
-	/**
-	 * @return string[]
-	 */
+	public function getEnglishSourceLanguageCode(): string {
+		$activeCodes = $this->getActiveLanguageCodes();
+		$defaultCode = $this->getDefaultLanguageCode();
+		$key         = implode( ',', $activeCodes ) . '|' . $defaultCode;
+
+		if ( ! isset( $this->englishSourceLanguageCode[ $key ] ) ) {
+			$this->englishSourceLanguageCode = [ $key => EnglishSourceLanguage::resolve( $activeCodes, $defaultCode ) ];
+		}
+
+		return $this->englishSourceLanguageCode[ $key ];
+	}
+
 	public function getActiveSecondaryLanguageCodes(): array {
 		$activeLanguageCodes = $this->getActiveLanguageCodes();
 		$defaultLanguageCode = $this->getDefaultLanguageCode();
@@ -284,13 +318,9 @@ class SettingsRepository implements SettingsRepositoryInterface {
 		return $languageCodes;
 	}
 
-	/**
-	 * Returns full locale names like 'es_ES' or 'it_IT'.
-	 * @return string[]
-	 */
 	public function getActiveSecondaryLanguageLocales(): array {
 		$activeLanguages       = $this->getActiveLanguages();
-		$defaultLanguageLocale = $activeLanguages[ $this->getDefaultLanguageCode() ]['default_locale'];
+		$defaultLanguageLocale = $this->getDefaultLanguageLocaleCode();
 
 		$locales = [];
 		foreach ( $activeLanguages as $activeLanguageName => $activeLanguageData ) {
@@ -304,9 +334,53 @@ class SettingsRepository implements SettingsRepositoryInterface {
 		return $locales;
 	}
 
-	/**
-	 * @return array {languageCode: string, languageFullName: string, languageFlagUrl: string}
-	 */
+	public function getActiveSecondaryLanguageLocalePairs(): array {
+		$defaultLanguageCode = $this->getDefaultLanguageCode();
+		$pairs               = [];
+
+		foreach ( $this->getActiveLanguages() as $languageCode => $languageData ) {
+			if (
+				$languageCode === $defaultLanguageCode
+				|| ! isset( $languageData['default_locale'] )
+				|| ! is_string( $languageData['default_locale'] )
+				|| '' === $languageData['default_locale']
+			) {
+				continue;
+			}
+
+			$pairs[] = [
+				'languageCode' => (string) $languageCode,
+				'locale'       => $languageData['default_locale'],
+			];
+		}
+
+		return $pairs;
+	}
+
+	public function getStringHarvestLanguageLocalePairs(): array {
+		$pairs       = $this->getActiveSecondaryLanguageLocalePairs();
+		$defaultCode = $this->getDefaultLanguageCode();
+
+		if ( '' === $defaultCode || \WPML\Core\SharedKernel\Component\Language\Domain\LanguageCode::isEnglish( $defaultCode ) ) {
+			return $pairs;
+		}
+
+		$defaultLocale = $this->getDefaultLanguageLocaleCode();
+		if ( '' === $defaultLocale ) {
+			return $pairs;
+		}
+
+		array_unshift(
+			$pairs,
+			[
+				'languageCode' => $defaultCode,
+				'locale'       => $defaultLocale,
+			]
+		);
+
+		return $pairs;
+	}
+
 	public function getLanguageDetails( string $languageCode ): array {
 		$details = $this->sitepress->get_language_details( $languageCode );
 		$flagUrl = $this->sitepress->get_flag_url( $languageCode );
@@ -356,12 +430,15 @@ class SettingsRepository implements SettingsRepositoryInterface {
 			return $this->shouldNotAutoregisterStringsFromCurrentUrl = true;
 		}
 
-		if ( ! $this->urlRepository->isFrontendRequest() ) {
+		if ( ! $this->urlRepository->isFrontendRequest() && ! $this->getShouldRegisterBackendStringsSetting() ) {
 			return $this->shouldNotAutoregisterStringsFromCurrentUrl = true;
 		}
 
+		$restPrefix = trim( function_exists( 'rest_get_url_prefix' ) ? (string) rest_get_url_prefix() : '', '/' );
+		$restPrefix = '' === $restPrefix ? 'wp-json' : $restPrefix;
+
 		$this->shouldNotAutoregisterStringsFromCurrentUrl = (
-			$url === '/wp-json/' ||
+			$url === '/' . $restPrefix . '/' ||
 			Str::startsWith( '/wp-cron', $url )
 		);
 
@@ -378,22 +455,16 @@ class SettingsRepository implements SettingsRepositoryInterface {
 		$this->isAdmin = $this->getIsAdminFromCapabilities();
 	}
 
-	/**
-	 * @param string[] $domainsToAllowReloadTranslations
-	 *
-	 * $domainsToAllowReloadTranslations param is required for example in the following case:
-	 *     When we are switching secondary languages and loading translations for each language in the
-	 *     \WPML\StringTranslation\Infrastructure\StringCore\Repository\TranslationsRepository.php
-	 *     in the older WP versions(< 6 like in 5.9.3 for example) the translations will be loaded only
-	 *     for the first language. After that domain will be set in $l10n_unloaded array and translations
-	 *     for the next languages will not be loaded. So, we need to clean it up in such cases to allow reloading.
-	 */
-	public function switchToLocale( string $locale, array $domainsToAllowReloadTranslations = [] ) {
-		switch_to_locale( $locale );
-		// Without switch_lang in sitepress determine_locale() in load_plugin_textdomain/load_theme_textdomain
-		// will return default language locale and file with translations will not be loaded.
-		$languageCode = explode('_', $locale )[0];
-		$this->sitepress->switch_lang( $languageCode );
+	public function switchToLocale( string $locale, array $domainsToAllowReloadTranslations = [], $languageCode = null ) {
+		if ( ! is_string( $languageCode ) || '' === $languageCode ) {
+			$languageCode = $this->getActiveLanguageCodeForLocale( $locale );
+		}
+
+		if ( '' !== $languageCode ) {
+			$this->sitepress->switch_lang( $languageCode );
+		}
+
+		$this->wpLocaleSwitches[] = (bool) switch_to_locale( $locale );
 
 		global $l10n_unloaded;
 		foreach ( array_unique( $domainsToAllowReloadTranslations ) as $domain ) {
@@ -402,32 +473,44 @@ class SettingsRepository implements SettingsRepositoryInterface {
 	}
 
 	public function restorePreviousLocale() {
-		restore_previous_locale();
+		if ( array_pop( $this->wpLocaleSwitches ) ) {
+			restore_previous_locale();
+		}
 		$this->sitepress->switch_lang();
 	}
 
-	/**
-	 * @param string|null $sourceLanguageCode
-	 *
-	 * @return string[]
-	 */
+	public function resolveLanguageCodeFromLocale( string $locale ): string {
+		$code = '';
+		if ( method_exists( $this->sitepress, 'get_language_code_from_locale' ) ) {
+			$code = (string) $this->sitepress->get_language_code_from_locale( $locale );
+		}
+
+		return '' !== $code ? $code : $this->getDefaultLanguageCode();
+	}
+
+	private function getActiveLanguageCodeForLocale( string $locale ): string {
+		foreach ( $this->getActiveLanguages() as $languageCode => $languageData ) {
+			if ( isset( $languageData['default_locale'] ) && $languageData['default_locale'] === $locale ) {
+				return (string) $languageCode;
+			}
+		}
+
+		return '';
+	}
+
 	public function getAllTargetLanguagesBySource( $sourceLanguageCode ): array {
-		if ( $sourceLanguageCode === 'en' ) {
+		$activeLanguageCodes = $this->getActiveLanguageCodes();
+
+		if ( $sourceLanguageCode === $this->getEnglishSourceLanguageCode() ) {
 			return array_filter(
-				$this->getActiveLanguageCodes(),
+				$activeLanguageCodes,
 				function ( $languageCode ) use ( $sourceLanguageCode ) {
 					return $languageCode !== $sourceLanguageCode;
 				}
 			);
 		}
 
-		// In this case we need to select all languages, because we may be need to add source language as target for strings.
-		// Example: Default Language = Italian, Secondary Languages = French, Spanish.
-		// Strings in the strings table have English as language field.
-		// In such case default Italian language will be source language only to post types,
-		// but for strings source language is English and translation languages are Italian, French, Spanish.
-		// We should be able to render all 3 translation statuses in the strings table, so we are selecting all codes here including default one.
-		return $this->getActiveLanguageCodes();
+		return $activeLanguageCodes;
 	}
 
 	public function getLanguageForDomain( string $domain ): string {
@@ -436,7 +519,7 @@ class SettingsRepository implements SettingsRepositoryInterface {
 
 		return ( isset( $settings[ $key ] ) && isset( $settings[ $key ][ $domain ] ) )
 			? $settings[ $key ][ $domain ]
-			: 'en';
+			: $this->getEnglishSourceLanguageCode();
 	}
 
 	public function setLanguageForDomain( string $domain, string $language ) {

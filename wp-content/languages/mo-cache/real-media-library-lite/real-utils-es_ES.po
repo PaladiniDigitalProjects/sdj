@@ -14,6 +14,48 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.4.3\n"
 
+#: Service.php:140
+msgid "No such plugin slug available."
+msgstr "No tenemos ese slug del plugin disponible."
+
+#: Service.php:192
+msgid "The abstract implementation for your slug could not be found."
+msgstr "No se ha podido encontrar la implementación abstracta para su slug."
+
+#: WelcomePage.php:62
+msgid "Learn more about this plugin"
+msgstr "Conocer más sobre este plugin"
+
+#: WelcomePage.php:69 WelcomePage.php:166
+msgid "Support"
+msgstr "Soporte"
+
+#: WelcomePage.php:74 WelcomePage.php:169
+msgid "Rate plugin"
+msgstr "Evalúe el plugin"
+
+#: WelcomePage.php:158
+msgid "Version"
+msgstr "Versión"
+
+#: WelcomePage.php:163
+msgid "Info"
+msgstr "Información"
+
+#: WelcomePage.php:177
+msgid "Key feature"
+msgid_plural "Key features"
+msgstr[0] "Función principal"
+msgstr[1] "Funciones principales"
+
+#: WelcomePage.php:253
+msgid "Additional plugins by devowl.io"
+msgstr "Otros plugins de devowl.io"
+
+#: WelcomePage.php:334
+msgid "Available in"
+msgstr "Disponible en"
+
 #: cross/CrossRealCategoryLibrary.php:50
 msgid "Do you manage many categories?"
 msgstr "¿Gestiona muchas categorías?"
@@ -127,14 +169,6 @@ msgstr ""
 "nombres relevantes y consiga una mejor clasificación en los motores de "
 "búsqueda!"
 
-#: Service.php:140
-msgid "No such plugin slug available."
-msgstr "No tenemos ese slug del plugin disponible."
-
-#: Service.php:192
-msgid "The abstract implementation for your slug could not be found."
-msgstr "No se ha podido encontrar la implementación abstracta para su slug."
-
 #. translators:
 #: view/Options.php:48
 #, php-format
@@ -142,47 +176,13 @@ msgid "Products of %s"
 msgstr "Productos de %s"
 
 #. translators:
-#: view/Options.php:70
+#: view/Options.php:67
 #, php-format
 msgid ""
 "Show advertising for not yet installed %s products in the WordPress backend"
 msgstr ""
 "Mostrar publicidad de productos %s aún no instalados en el backend de "
 "WordPress"
-
-#: WelcomePage.php:59
-msgid "Learn more about this plugin"
-msgstr "Conocer más sobre este plugin"
-
-#: WelcomePage.php:66 WelcomePage.php:160
-msgid "Support"
-msgstr "Soporte"
-
-#: WelcomePage.php:71 WelcomePage.php:163
-msgid "Rate plugin"
-msgstr "Evalúe el plugin"
-
-#: WelcomePage.php:152
-msgid "Version"
-msgstr "Versión"
-
-#: WelcomePage.php:157
-msgid "Info"
-msgstr "Información"
-
-#: WelcomePage.php:171
-msgid "Key feature"
-msgid_plural "Key features"
-msgstr[0] "Función principal"
-msgstr[1] "Funciones principales"
-
-#: WelcomePage.php:247
-msgid "Additional plugins by devowl.io"
-msgstr "Otros plugins de devowl.io"
-
-#: WelcomePage.php:328
-msgid "Available in"
-msgstr "Disponible en"
 
 #~ msgid "You must agree to our privacy policy to continue."
 #~ msgstr "Debe aceptar nuestra política de privacidad para continuar."

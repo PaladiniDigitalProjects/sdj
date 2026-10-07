@@ -53,11 +53,11 @@ msgstr ""
 "WordPress se debe únicamente a que no se previno técnicamente. ¡Esperamos "
 "que entienda la situación si esta le causa cualquier inconveniente!"
 
-#: license/License.php:223 license/License.php:258
+#: license/License.php:223 license/License.php:261
 msgid "You have not yet activated a license for this plugin on your website."
 msgstr "No ha activado todavía una licencia para este plugin en su sitio web."
 
-#: license/License.php:320
+#: license/License.php:326
 msgid ""
 "The license has been automatically deactivated because your website is "
 "running on a new domain. Please activate the license again!"
@@ -65,11 +65,11 @@ msgstr ""
 "La licencia se ha desactivado automáticamente porque su sitio web se está "
 "operando en un nuevo dominio. ¡Por favor, active la licencia de nuevo!"
 
-#: license/License.php:326
+#: license/License.php:332
 msgid "License key"
 msgstr "Clave de licencia"
 
-#: license/License.php:391
+#: license/License.php:397
 msgid "No programmatic activation found for this plugin."
 msgstr "No se ha encontrado ninguna activación programática para este plugin."
 
@@ -100,7 +100,7 @@ msgstr ""
 "Debe tener al menos una licencia de un sitio en uso dentro de su multisitio."
 
 #. translators:
-#: license/PluginUpdateLicensePool.php:170
+#: license/PluginUpdateLicensePool.php:173
 #, php-format
 msgid ""
 "The license server for checking the license cannot be reached. Please check "
@@ -110,7 +110,7 @@ msgstr ""
 "favor, compruebe si está bloqueando el acceso a %s con un cortafuegos, por "
 "ejemplo."
 
-#: rest/PluginUpdate.php:165
+#: rest/PluginUpdate.php:167
 msgid "Something went wrong. Please try again later!"
 msgstr "Algo ha ido mal. Por favor, ¡vuelva a intentarlo más tarde!"
 
@@ -122,16 +122,16 @@ msgstr "Descartar"
 msgid "You have not yet entered the license key."
 msgstr "Todavía no ha introducido la clave de licencia."
 
-#: view/PluginUpdateView.php:116
+#: view/PluginUpdateView.php:118
 msgid "Activate the license to receive automatic updates."
 msgstr "Active la licencia para recibir actualizaciones automáticas."
 
-#: view/PluginUpdateView.php:142
+#: view/PluginUpdateView.php:145
 msgid "License"
 msgstr "Licencia"
 
 #. translators:
-#: view/PluginUpdateView.php:172
+#: view/PluginUpdateView.php:175
 #, php-format
 msgid ""
 "You have not yet activated a license for the %s plugin. Activate the licence "
@@ -141,7 +141,7 @@ msgstr ""
 "para recibir actualizaciones automáticas."
 
 #. translators:
-#: view/PluginUpdateView.php:193
+#: view/PluginUpdateView.php:196
 #, php-format
 msgid ""
 "Updates of %s are waiting for you when you activate your license. Activate "
@@ -151,7 +151,7 @@ msgstr ""
 "¡Actívela ahora en los ajustes!"
 
 #. translators:
-#: view/PluginUpdateView.php:200
+#: view/PluginUpdateView.php:203
 #, php-format
 msgid "Activate your %s to use all features with great support. Activate now!"
 msgstr ""
@@ -159,7 +159,7 @@ msgstr ""
 "¡Actívelo ahora!"
 
 #. translators:
-#: view/PluginUpdateView.php:204
+#: view/PluginUpdateView.php:210
 #, php-format
 msgid ""
 "You have not yet activated your %s license. Activate your license now in the "
@@ -167,7 +167,7 @@ msgid ""
 msgstr "Todavía no ha activado su licencia %s. ¡Actívela ahora en los ajustes!"
 
 #. translators:
-#: view/PluginUpdateView.php:211
+#: view/PluginUpdateView.php:217
 #, php-format
 msgid ""
 "You are not allowed to use %s according to our license terms unless you have "
@@ -178,7 +178,7 @@ msgstr ""
 "compre una ahora!"
 
 #. translators:
-#: view/PluginUpdateView.php:219
+#: view/PluginUpdateView.php:225
 #, php-format
 msgid ""
 "Attention! Pirates distribute %s for free without a license. Activate your "
@@ -188,7 +188,7 @@ msgstr ""
 "¡Active su licencia en los ajustes para demostrar que usted no es un pirata!"
 
 #. translators:
-#: view/PluginUpdateView.php:227
+#: view/PluginUpdateView.php:233
 #, php-format
 msgid ""
 "You are probably using an illegally purchased copy of %s without a license. "
@@ -198,7 +198,7 @@ msgstr ""
 "licencia. ¡Compruebe su licencia ahora!"
 
 #. translators:
-#: view/PluginUpdateView.php:235
+#: view/PluginUpdateView.php:241
 #, php-format
 msgid ""
 "You are probably using an illegal copy of %s. Purchase a license now or "
@@ -209,6 +209,6 @@ msgstr ""
 "ahora o active su licencia en los ajustes y continúe utilizando este "
 "software con una consciencia limpia!"
 
-#: view/PluginUpdateView.php:271
+#: view/PluginUpdateView.php:277
 msgid "Activate now"
 msgstr "Activar ahora"

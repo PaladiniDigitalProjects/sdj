@@ -304,6 +304,9 @@ class Frontend {
 
 		$clone_list = $this->get_clone_list_hidden_input( $field );
 
+		// The template must stay wrapped in <script type="text/html">: the frontend handler resolves it
+		// with a tag-qualified selector, and wp_kses_post() strips <script> from untrusted post content.
+		// Switching this to a kses-allowed element would reopen a stored XSS (#18228).
 		$template_html = sprintf(
 			'<script type="text/html" class="tmpl-wpforms-field-repeater-template-%1$d-%2$d">%3$s</script>',
 			$field['id'] ?? 0,

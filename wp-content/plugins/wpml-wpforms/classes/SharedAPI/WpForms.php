@@ -12,6 +12,7 @@ use WPML\Forms\WPForms\Hooks\EntryEdit;
 use WPML\Forms\WPForms\Hooks\EntryPreviewField;
 use WPML\Forms\WPForms\Hooks\FormPages;
 use WPML\Forms\WPForms\Hooks\Import;
+use WPML\Forms\WPForms\Language\RequestScope;
 use WPML\Forms\WPForms\Addons\SaveAndResume;
 use WPML\Forms\WPForms\Hooks\SubLabels;
 use WPML\Forms\WPForms\Hooks\TranslateEverythingHooks;
@@ -27,28 +28,27 @@ class WpForms extends Base {
 
 	const TITLE = 'WPForms';
 
-	/** Gets package slug. */
 	protected function getSlug() {
 		return self::SLUG;
 	}
 
-	/** Gets package title. */
 	protected function getTitle() {
 		return self::TITLE;
 	}
 
-	/** Adds hooks. */
 	protected function addHooks() {
-		/** @var SitePress $sitepress */
 		global $sitepress;
 
 		$formsFactory = new FormsFactory( $this->preferences );
+
+		$languageScope = new RequestScope( $sitepress );
 
 		$wpforms = new Strings(
 			$this->getSlug(),
 			$this->getTitle(),
 			$formsFactory,
-			$sitepress
+			$sitepress,
+			$languageScope
 		);
 		$wpforms->addHooks();
 
@@ -74,7 +74,7 @@ class WpForms extends Base {
 		}
 
 		if ( is_admin() ) {
-			$entryEdit = new EntryEdit( $wpforms );
+			$entryEdit = new EntryEdit( $wpforms, $sitepress );
 			$entryEdit->addHooks();
 		}
 
@@ -82,7 +82,8 @@ class WpForms extends Base {
 			$this->getSlug(),
 			$this->getTitle(),
 			$formsFactory,
-			$sitepress
+			$sitepress,
+			$languageScope
 		);
 		$entryPreviewField->addHooks();
 

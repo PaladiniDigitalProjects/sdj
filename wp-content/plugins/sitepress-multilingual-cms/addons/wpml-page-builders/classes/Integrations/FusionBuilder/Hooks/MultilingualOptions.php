@@ -9,15 +9,13 @@ use function WPML\FP\spreadArgs;
 class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, \IWPML_REST_Action, \IWPML_DIC_Action {
 
 	const OPTIONS_SCREEN_ID = 'appearance_page_avada_options';
-	const NOTICE_GROUP      = 'wpml-multilingual-options'; // Coming from the deprecated WPML_Multilingual_Options API in WPML core.
+	const NOTICE_GROUP      = 'wpml-multilingual-options';
 
 	const OPTION_NAME = 'fusion_options';
 	const CONTEXT     = 'admin_texts_fusion_options';
 
-	/** @var \WPML_PB_String_Translation $pbStringTranslation */
 	private $pbStringTranslation;
 
-	/** @var array<int,string> $updated_translation_ids */
 	private $updatedTranslations = [];
 
 	public function __construct( \WPML_PB_String_Translation $pbStringTranslation ) {
@@ -72,7 +70,9 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 			$currentLanguageDisplayName
 		) . '</h4>'
 		. '<ul>'
+		/* translators: First line of the notice on the Avada theme options screen, shown while one language is being edited. */
 		. '<li>' . __( 'Avada stores a separate set of options for each language.', 'sitepress' ) . '</li>'
+		/* translators: Second line of that notice; the switcher is WPML's language switcher in the WordPress admin bar. */
 		. '<li>' . __( 'To edit other languages, use the switcher in the top admin bar.', 'sitepress' ) . '</li>';
 		if ( $dashboardUrl ) {
 			$text .= '<li>' . sprintf(
@@ -90,7 +90,9 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 	}
 
 	private function getNoticeContentForAllLanguages() {
+		/* translators: Heading of the notice on the Avada theme options screen, shown while the all-languages view is being edited. */
 		$text  = '<h4>' . __( 'You\'re editing theme options for all languages', 'sitepress' ) . '</h4>'
+			/* translators: Body of that notice. */
 			. '<p>' . __( 'Your edits will be synchronized to all languages on your site.', 'sitepress' ) . '</p>';
 		$text .= '<div class="otgs-notice warning">';
 		if ( defined( 'WPML_ST_FOLDER' ) ) {
@@ -118,15 +120,9 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 			return null;
 		}
 
-		return admin_url( 'admin.php?page=tm/menu/main.php&sections=string' );
+		return admin_url( 'admin.php?page=tm/menu/main.php&sm=dashboard&sections=string' );
 	}
 
-	/**
-	 * @param int      $translationId
-	 * @param array    $translationData
-	 * @param string   $language
-	 * @param int|null $stringId
-	 */
 	public function syncStringsToOptions( $translationId, $translationData = [], $language = '', $stringId = null ) {
 		if ( ! $stringId ) {
 			return;
@@ -200,9 +196,6 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 		}
 	}
 
-	/**
-	 * @return array<string,array>
-	 */
 	private function getNamesToOptionPaths() {
 		$translatableNamesSetting = get_option( \WPML_Admin_Texts::TRANSLATABLE_NAMES_SETTING, [] );
 		$translatableAvadaOptions = Obj::prop( self::OPTION_NAME, $translatableNamesSetting );
@@ -210,14 +203,6 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 			return [];
 		}
 
-		/**
-		 * @param array  $options
-		 * @param string $key
-		 * @param array  $path
-		 * @param array  $paths
-		 *
-		 * @return array
-		 */
 		$namesToPaths = function( $options, $key = '', $path = [], $paths = [] ) use ( &$namesToPaths ) {
 			foreach ( $options as $optionName => $optionPath ) {
 				$iterationPath   = $path;
@@ -234,10 +219,6 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 		return $namesToPaths( $translatableAvadaOptions, '[' . self::OPTION_NAME . ']' );
 	}
 
-	/**
-	 * @param array $oldOptions
-	 * @param array $newOptions
-	 */
 	public function syncOptionsToStrings( $oldOptions, $newOptions ) {
 		$defaultLanguage = apply_filters( 'wpml_default_language', null );
 		$currentLanguage = apply_filters( 'wpml_current_language', null );
@@ -268,11 +249,6 @@ class MultilingualOptions implements \IWPML_Backend_Action, \IWPML_AJAX_Action, 
 
 		$registeredStrings = wp_list_pluck( $stringsInDomain, 'id', 'name' );
 
-		/**
-		 * @param array<string,string|array> $optionsList
-		 * @param array<string,mixed>        $translatableNames
-		 * @param string                     $stringNamePrefix
-		 */
 		$registerTranslations = function( $optionsList, $translatableNames, $stringNamePrefix = '' ) use ( &$registerTranslations, $currentLanguage, $defaultLanguage, $registeredStrings ) {
 			foreach ( $optionsList as $optionKey => $optionValue ) {
 				if ( ! isset( $translatableNames[ $optionKey ] ) ) {

@@ -549,8 +549,11 @@ class ListTable extends WP_List_Table {
 		$entry_fields = (array) wpforms_decode( $entry->fields );
 		$value        = $entry_fields[ $field_id ]['value'] ?? '';
 
+		// Malformed entries can store an array, flatten it so the string functions below don't fatal.
+		$value = wpforms_flatten_field_value( $value );
+
 		if ( ! wpforms_is_empty_string( $value ) ) {
-			$value = wp_strip_all_tags( trim( $value ) );
+			$value = wpforms_neutralize_html_tags( trim( $value ) );
 		}
 
 		if ( ! wpforms_is_empty_string( $value ) ) {
@@ -559,8 +562,10 @@ class ListTable extends WP_List_Table {
 			$value      = $this->truncate_long_value( $value, $field_type );
 			$value      = nl2br( $value );
 
-			/** This filter is documented in src/SmartTags/SmartTag/FieldHtmlId.php.*/
-			return apply_filters( 'wpforms_html_field_value', $value, $entry_fields[ $field_id ], $this->form_data, 'entry-table' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+			return wpforms_esc_entry_field_value(
+				/** This filter is documented in src/SmartTags/SmartTag/FieldHtmlId.php.*/
+				apply_filters( 'wpforms_html_field_value', $value, $entry_fields[ $field_id ], $this->form_data, 'entry-table' ) // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+			);
 		}
 
 		return '-';
@@ -2044,14 +2049,17 @@ class ListTable extends WP_List_Table {
 		$chars_limit = 75;
 
 		// Decode HTML entities to avoid truncating on &euro; and similar.
-		$value = html_entity_decode( $value, ENT_COMPAT, 'UTF-8' );
+		// The decode and the encode below must use the same quote flags: ENT_COMPAT leaves `&#039;`
+		// undecoded, so the encode would then escape its ampersand and an apostrophe coming in from
+		// wpforms_neutralize_html_tags() would reach the browser as a literal `&#039;`.
+		$value = html_entity_decode( $value, ENT_QUOTES, 'UTF-8' );
 
 		$lines = preg_split( '/\r\n|\r|\n/', $value );
 		$value = array_slice( $lines, 0, $lines_limit );
 		$value = implode( PHP_EOL, $value );
 
 		// Encode HTML entities back to prevent XSS.
-		$value = htmlentities( $value, ENT_COMPAT, 'UTF-8' );
+		$value = htmlentities( $value, ENT_QUOTES, 'UTF-8' );
 
 		if ( strlen( $value ) > $chars_limit ) {
 			return mb_substr( $value, 0, $chars_limit ) . '&hellip;';

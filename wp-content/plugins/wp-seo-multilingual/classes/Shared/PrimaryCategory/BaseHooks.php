@@ -4,12 +4,6 @@ namespace WPML\WPSEO\Shared\PrimaryCategory;
 
 abstract class BaseHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action {
 
-	/**
-	 * Get mapping of meta keys to taxonomy names.
-	 * To be implemented in child classes.
-	 *
-	 * @return array
-	 */
 	abstract public function getMetaKeysMapping();
 
 	public function add_hooks() {
@@ -20,16 +14,6 @@ abstract class BaseHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Actio
 		remove_filter( 'get_post_metadata', [ $this, 'translateTermId' ], 20 );
 	}
 
-	/**
-	 * Translates the primary category ID.
-	 *
-	 * @param null   $value
-	 * @param int    $postId
-	 * @param string $key
-	 * @param bool   $single
-	 *
-	 * @return int|int[]|null
-	 */
 	public function translateTermId( $value, $postId, $key, $single ) {
 		$metaKeysMapping = $this->getMetaKeysMapping();
 		if ( in_array( $key, array_keys( $metaKeysMapping ), true ) ) {

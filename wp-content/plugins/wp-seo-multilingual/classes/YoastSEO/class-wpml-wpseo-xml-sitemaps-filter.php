@@ -5,33 +5,15 @@ use WPML\Settings\LanguageNegotiation;
 
 class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 
-	/**
-	 * @var SitePress
-	 */
 	protected $sitepress;
 
-	/**
-	 * @var WPML_URL_Converter
-	 */
 	private $wpml_url_converter;
 
-	/**
-	 * @var WPML_Debug_BackTrace
-	 */
 	private $back_trace;
 
-	/**
-	 * @var WPSEO_Sitemap_Image_Parser
-	 */
 	private $image_parser;
 
-	/**
-	 * @param SitePress                  $sitepress
-	 * @param WPML_URL_Converter         $wpml_url_converter
-	 * @param WPSEO_Sitemap_Image_Parser $image_parser
-	 * @param WPML_Debug_BackTrace       $back_trace
-	 */
-	public function __construct( $sitepress, $wpml_url_converter, WPSEO_Sitemap_Image_Parser $image_parser, WPML_Debug_BackTrace $back_trace = null ) {
+	public function __construct( $sitepress, $wpml_url_converter, WPSEO_Sitemap_Image_Parser $image_parser, ?WPML_Debug_BackTrace $back_trace = null ) {
 		$this->sitepress          = $sitepress;
 		$this->wpml_url_converter = $wpml_url_converter;
 		$this->image_parser       = $image_parser;
@@ -53,7 +35,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 			add_filter( 'wpseo_posts_where', [ $wpml_query_filter, 'filter_single_type_where' ], 10, 2 );
 			add_filter( 'wpseo_typecount_join', [ $wpml_query_filter, 'filter_single_type_join' ], 10, 2 );
 			add_filter( 'wpseo_typecount_where', [ $wpml_query_filter, 'filter_single_type_where' ], 10, 2 );
-			add_action( 'wpseo_xmlsitemaps_config', [ $this, 'list_domains' ] );
 		} else {
 			add_filter( 'wpseo_sitemap_post_type_first_links', [ $this, 'addTranslatedFirstLinks' ], 10, 2 );
 			add_filter( 'wpseo_xml_sitemap_post_url', [ $this, 'exclude_hidden_language_posts' ], 10, 2 );
@@ -69,12 +50,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		add_filter( 'wpseo_exclude_from_sitemap_by_term_ids', [ $this, 'excludeHiddenLanguagesTerms' ] );
 	}
 
-	/**
-	 * @param array  $links
-	 * @param string $postType
-	 *
-	 * @return array
-	 */
 	public function addTranslatedFirstLinks( $links, $postType ) {
 		if ( ! $this->sitepress->is_translated_post_type( $postType ) ) {
 			return $links;
@@ -115,11 +90,13 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 						}
 						break;
 					}
-					// If we don't have WooCommerce, we fall through to the default case.
 				default:
 					$this->sitepress->switch_lang( $langCode );
-					$url = get_post_type_archive_link( $postType );
-					$this->sitepress->switch_lang();
+					try {
+						$url = get_post_type_archive_link( $postType );
+					} finally {
+						$this->sitepress->switch_lang();
+					}
 			}
 
 			if ( $url ) {
@@ -140,16 +117,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 	}
 
 
-	/**
-	 * Update home_url for language per-domain configuration to return correct URL in sitemap.
-	 *
-	 * @param string $home_url
-	 * @param string $url
-	 * @param string $path
-	 * @param string $orig_scheme
-	 *
-	 * @return bool|mixed|string
-	 */
 	public function get_home_url_filter( $home_url, $url, $path, $orig_scheme ) {
 		if ( 'relative' !== $orig_scheme ) {
 			$home_url = $this->wpml_url_converter->convert_url( $home_url, $this->sitepress->get_current_language() );
@@ -157,50 +124,8 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $home_url;
 	}
 
-	/**
-	 * List sitemaps in other domains.
-	 * Only used when language URL format is 'one domain per language'.
-	 */
-	public function list_domains() {
-		$ls_languages = $this->sitepress->get_ls_languages();
-		if ( $ls_languages ) {
-
-			echo '<h3>' . esc_html__( 'WPML', 'wp-seo-multilingual' ) . '</h3>';
-			echo esc_html__( 'Sitemaps for each language can be accessed below. You need to submit all these sitemaps to Google.', 'wp-seo-multilingual' );
-			echo '<table class="wpml-sitemap-translations" style="margin-left: 1em; margin-top: 1em;">';
-
-			foreach ( $ls_languages as $lang ) {
-				$url = $lang['url'] . 'sitemap_index.xml';
-				echo '<tr>';
-				echo '<td>';
-				echo '<a ';
-				echo 'href="' . esc_url( $url ) . '" ';
-				echo 'target="_blank" ';
-				echo 'class="button-secondary" ';
-				printf(
-					"style=\"background-image:url('%s'); background-repeat: no-repeat; background-position: 2px center; background-size: 16px; padding-left: 20px; width: 100%%;\"",
-					esc_url( $lang['country_flag_url'] )
-				);
-				echo '>';
-				echo esc_html( $lang['translated_name'] );
-				echo '</a>';
-				echo '</td>';
-				echo '</tr>';
-			}
-			echo '</table>';
-		}
-	}
-
-	/**
-	 * Deactivate auto-adjust-ids while building the sitemap.
-	 *
-	 * @param string $type
-	 * @return string
-	 */
 	public function wpseo_build_sitemap_post_type_filter( $type ) {
 		global $sitepress_settings;
-		// Before building the sitemap and as we are on front-end make sure links aren't translated.
-		// The setting should not be updated in DB.
 		$sitepress_settings['auto_adjust_ids'] = 0;
 
 		if ( ! LanguageNegotiation::isDomain() ) {
@@ -212,32 +137,19 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $type;
 	}
 
-	/**
-	 * Exclude posts under hidden language.
-	 *
-	 * @param  string   $url  Post URL.
-	 * @param  stdClass $post Object with some post information.
-	 *
-	 * @return string|null
-	 */
 	public function exclude_hidden_language_posts( $url, $post ) {
-		// Check that at least ID is set in post object.
 		if ( ! isset( $post->ID ) ) {
 			return $url;
 		}
 
-		// Get list of hidden languages.
 		$hidden_languages = $this->sitepress->get_setting( 'hidden_languages', [] );
 
-		// If there are no hidden languages return original URL.
 		if ( empty( $hidden_languages ) ) {
 			return $url;
 		}
 
-		// Get language information for post.
 		$language_info = $this->sitepress->post_translations()->get_element_lang_code( $post->ID );
 
-		// If language code is one of the hidden languages return null to skip the post.
 		if ( in_array( $language_info, $hidden_languages, true ) ) {
 			return null;
 		}
@@ -254,7 +166,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		}
 
 		foreach ( $hiddenLanguages as $language ) {
-			// phpcs:disable
 			$query = $wpdb->prepare(
 				"SELECT wptt.term_id
 				FROM {$wpdb->prefix}term_taxonomy AS wptt
@@ -264,7 +175,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 				$language
 			);
 			$terms   = $wpdb->get_col( $query );
-			// phpcs:enable
 
 			$termIds = array_merge( $termIds, array_map( 'intval', $terms ) );
 		}
@@ -272,11 +182,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $termIds;
 	}
 
-	/**
-	 * @param array $excluded_post_ids
-	 *
-	 * @return array
-	 */
 	public function exclude_translations_of_static_pages( $excluded_post_ids ) {
 		$static_pages = [ 'page_on_front', 'page_for_posts' ];
 		foreach ( $static_pages as $static_page ) {
@@ -291,12 +196,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $excluded_post_ids;
 	}
 
-	/**
-	 * @param string $home_url
-	 * @param string $original_url
-	 *
-	 * @return string
-	 */
 	public function maybe_return_original_url_in_get_home_url_filter( $home_url, $original_url ) {
 		if ( $home_url === $original_url ) {
 			return $home_url;
@@ -319,9 +218,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $home_url;
 	}
 
-	/**
-	 * @return WPML_Debug_BackTrace
-	 */
 	private function get_back_trace() {
 		if ( null === $this->back_trace ) {
 			$this->back_trace = new WPML_Debug_BackTrace( phpversion() );
@@ -330,32 +226,14 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $this->back_trace;
 	}
 
-	/**
-	 * Get the translated post_id for a certain optionb.
-	 *
-	 * @param string $option The option we need.
-	 * @param string $lang   The language we need.
-	 * @return int
-	 */
 	private function get_post_id_for_option( $option, $lang ) {
 		return $this->sitepress->get_object_id( get_option( $option ), 'page', false, $lang );
 	}
 
-	/**
-	 * @param string $lang_code
-	 *
-	 * @return bool|mixed|string
-	 */
 	private function get_translated_home_url( $lang_code ) {
 		return $this->wpml_url_converter->convert_url( home_url(), $lang_code );
 	}
 
-	/**
-	 * Get a list of images attached to this page.
-	 *
-	 * @param int $page_id
-	 * @return array
-	 */
 	private function get_images( $page_id ) {
 		$images = [];
 
@@ -366,12 +244,6 @@ class WPML_WPSEO_XML_Sitemaps_Filter implements IWPML_Action {
 		return $images;
 	}
 
-	/**
-	 * Removes the sitemap query_var on non-default languages.
-	 * This will only run when the language URL format is not per domain.
-	 *
-	 * @param WP_Query $wp_query Passed WP query object.
-	 */
 	public function remove_sitemap_from_non_default_languages( &$wp_query ) {
 		if (
 				$wp_query->get( 'sitemap' )

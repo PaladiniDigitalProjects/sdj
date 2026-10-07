@@ -2,6 +2,7 @@
 
 namespace WPMailSMTP;
 
+use WPMailSMTP\Admin\DebugEvents\DebugEvents;
 use WPMailSMTP\Helpers\Helpers;
 
 /**
@@ -82,6 +83,22 @@ class WP {
 	}
 
 	/**
+	 * True if WP is serving a REST API request.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_doing_rest_request() {
+
+		if ( function_exists( 'wp_is_serving_rest_request' ) ) {
+			return wp_is_serving_rest_request();
+		}
+
+		return ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+	}
+
+	/**
 	 * True if I am in the Admin Panel, not doing AJAX.
 	 *
 	 * @since 1.0.0
@@ -113,6 +130,75 @@ class WP {
 			'key'            => sanitize_key( $key ),
 			'error_code'     => $error_code,
 		];
+	}
+
+	/**
+	 * Add an admin notice and append the DebugEvent referenced by `?debug_event_id=` in
+	 * the current request URL (if any) on a new line below the notice copy.
+	 *
+	 * Use this from redirect-based flows where the upstream request constructed a URL
+	 * like `?error=foo&debug_event_id=42` to carry the underlying technical detail to
+	 * the landing page. The opt-in form (rather than auto-detection in add_admin_notice)
+	 * prevents the detail from attaching to unrelated notices that happen to render on
+	 * the same page.
+	 *
+	 * Signature mirrors add_admin_notice.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $message        Message text (HTML is OK).
+	 * @param string $class          Display class (severity).
+	 * @param bool   $is_dismissible Whether the message should be dismissible.
+	 * @param string $key            Unique key for the notice.
+	 * @param string $error_code     Optional error code displayed next to the notice.
+	 */
+	public static function add_admin_notice_with_debug( $message, $class = self::ADMIN_NOTICE_INFO, $is_dismissible = true, $key = '', $error_code = '' ) {
+
+		self::add_admin_notice(
+			$message . self::get_debug_event_detail_html(),
+			$class,
+			$is_dismissible,
+			$key,
+			$error_code
+		);
+	}
+
+	/**
+	 * Render the inline HTML for a debug event referenced by the current request URL.
+	 *
+	 * Cached per request — the DebugEvents lookup runs at most once. Returns an empty
+	 * string when no `debug_event_id` is present in the URL or the event cannot be
+	 * resolved.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return string
+	 */
+	private static function get_debug_event_detail_html() {
+
+		static $cache = [];
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$event_id = isset( $_GET['debug_event_id'] ) ? absint( wp_unslash( $_GET['debug_event_id'] ) ) : 0;
+
+		if ( isset( $cache[ $event_id ] ) ) {
+			return $cache[ $event_id ];
+		}
+
+		$cache[ $event_id ] = '';
+
+		if ( $event_id <= 0 ) {
+			return $cache[ $event_id ];
+		}
+
+		$details = DebugEvents::get_debug_messages( $event_id );
+		$detail  = is_array( $details ) ? reset( $details ) : '';
+
+		if ( ! empty( $detail ) ) {
+			$cache[ $event_id ] = '<code class="wp-mail-smtp-notice__debug-detail">' . esc_html( $detail ) . '</code>';
+		}
+
+		return $cache[ $event_id ];
 	}
 
 	/**
@@ -203,8 +289,8 @@ class WP {
 	}
 
 	/**
-	 * Get the postfix for assets files - ".min" or empty.
-	 * ".min" if in production mode.
+	 * Get the postfix for JS asset files - ".min" or empty, ".min" in production mode.
+	 * Unminified CSS is not shipped, so stylesheet URLs point at ".min.css" directly.
 	 *
 	 * @since 1.0.0
 	 *
@@ -361,6 +447,77 @@ class WP {
 		$main_site_options = get_blog_option( get_main_site_id(), Options::META_KEY, [] );
 
 		return ! empty( $main_site_options['general']['network_wide'] );
+	}
+
+	/**
+	 * Whether this request is being served for the network admin.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_network_admin_scope() {
+
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		if ( is_network_admin() ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Names the admin the request came from; every caller verifies its own nonce.
+		return self::is_doing_self_ajax() && ! empty( $_REQUEST['network_admin'] );
+	}
+
+	/**
+	 * Whether the site is a local installation.
+	 *
+	 * @since 4.10.0
+	 *
+	 * @return bool
+	 */
+	public static function is_local_environment() {
+
+		$is_local_environment = false;
+
+		if ( function_exists( 'wp_get_environment_type' ) ) {
+			$is_local_environment = in_array(
+				wp_get_environment_type(),
+				[
+					'local',
+					'development',
+				],
+				true
+			);
+		}
+
+		// Matched on the host's trailing label rather than anywhere in the URL, so a
+		// public name that merely contains one of these does not read as local.
+		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+
+		foreach ( [ '.local', '.localhost', '.test' ] as $suffix ) {
+			if ( substr( $host, - strlen( $suffix ) ) === $suffix ) {
+				$is_local_environment = true;
+			}
+		}
+
+		$server_address = isset( $_SERVER['SERVER_ADDR'] )
+			? sanitize_text_field( wp_unslash( $_SERVER['SERVER_ADDR'] ) )
+			: '';
+
+		if ( in_array( $server_address, [ '127.0.0.1', '::1', '0.0.0.0' ], true ) ) {
+			$is_local_environment = true;
+		}
+
+		/**
+		 * Whether the site is a local installation.
+		 *
+		 * @since 4.10.0
+		 *
+		 * @param bool $is_local_environment Whether the environment is local.
+		 */
+		return (bool) apply_filters( 'wp_mail_smtp_wp_is_local_environment', $is_local_environment );
 	}
 
 	/**

@@ -10,11 +10,6 @@ class ScriptRegistry {
 	const OPTION_KEY_PATHS       = 'paths';
 	const OPTION_KEY_TEXTDOMAINS = 'textdomains';
 
-	/**
-	 * @param array $scriptsMap
-	 *
-	 * @return void
-	 */
 	public static function register( $scriptsMap ) {
 		$persistedPaths       = self::getPersistedPaths();
 		$persistedTextDomains = self::getPersistedTextdomains();
@@ -27,7 +22,6 @@ class ScriptRegistry {
 				$persistedPaths[ $handle ] = $path;
 
 				if ( $textDomain ) {
-					// Many scripts don't have a text domain, we'll store only existing ones.
 					$persistedTextDomains[ $handle ] = $textDomain;
 				}
 			}
@@ -40,31 +34,23 @@ class ScriptRegistry {
 		OptionManager::updateWithoutAutoLoad( self::OPTION_GROUP, self::OPTION_KEY_TEXTDOMAINS, $persistedTextDomains );
 	}
 
-	/**
-	 * @param string $handle
-	 * @param string $src
-	 *
-	 * @return string[]|null
-	 */
 	private static function getRelativeFilePathAndDomain( $handle, $src ) {
-		/** @var \WP_Scripts $wp_scripts */
 		$wp_scripts = wp_scripts();
 
 		$dep = $wp_scripts->registered[ $handle ] ?? null;
 		$src = $dep->src ?? $src;
 
 		if ( ! $src ) {
-			return null; // nothing to resolve (inline or data-only).
+			return null;
 		}
 
-		// Build absolute URL from base_url when needed.
 		if ( 0 === strpos( $src, '//' ) ) {
 			$absURL = ( is_ssl() ? 'https:' : 'http:' ) . $src;
 		} elseif ( preg_match( '#^https?://#i', $src ) ) {
 			$absURL = $src;
-		} elseif ( '/' === $src[0] ) { // starts with / -> site root relative
+		} elseif ( '/' === $src[0] ) {
 			$absURL = home_url( $src );
-		} else { // relative to base_url in WP_Scripts
+		} else {
 			$absURL = trailingslashit( $wp_scripts->base_url ) . $src;
 		}
 
@@ -91,44 +77,43 @@ class ScriptRegistry {
 		return null;
 	}
 
-	/**
-	 * @param string $id
-	 * @param string $type
-	 *
-	 * @return string[]
-	 */
 	public static function getAbsScriptPathsForComponents( $id, $type ) {
-		$needle = null;
+		$component_dir = false;
 
 		if ( 'plugin' === $type ) {
-			$parts  = explode( '/', $id );
-			$needle = wp_normalize_path( WP_PLUGIN_DIR . '/' . $parts[0] . '/' ) ;
+			$parts         = explode( '/', $id );
+			$component_dir = \WPML_ST_Path_Confinement::resolve_contained(
+				WP_PLUGIN_DIR . '/' . $parts[0],
+				WP_PLUGIN_DIR
+			);
 		} elseif ( 'theme' === $type ) {
-			$needle = wp_normalize_path( get_theme_root() . '/' . $id . '/' );
+			$theme = wp_get_theme( $id );
+			if ( $theme->exists() ) {
+				$component_dir = \WPML_ST_Path_Confinement::resolve_contained(
+					$theme->get_stylesheet_directory(),
+					$theme->get_theme_root()
+				);
+			}
 		}
 
-		if ( $needle ) {
-			return wpml_collect( self::getPersistedPaths() )
-				->filter( function( $relFilePath ) use ( $needle ) {
-					$haystack = ABSPATH . wp_normalize_path( $relFilePath );
-
-					return strpos( $haystack, $needle ) === 0;
-				} )
-				->map( function( $relFilePath ) {
-					return ABSPATH . $relFilePath;
-				} )
-				->values()
-				->toArray();
+		if ( empty( $component_dir ) ) {
+			return [];
 		}
 
-		return [];
+		return wpml_collect( self::getPersistedPaths() )
+			->filter( function( $relFilePath ) use ( $component_dir ) {
+				return false !== \WPML_ST_Path_Confinement::resolve_contained(
+					ABSPATH . wp_normalize_path( $relFilePath ),
+					$component_dir
+				);
+			} )
+			->map( function( $relFilePath ) {
+				return ABSPATH . $relFilePath;
+			} )
+			->values()
+			->toArray();
 	}
 
-	/**
-	 * @param string $absPath
-	 *
-	 * @return array<string,string>
-	 */
 	public static function getHandleAndTextdomainByPath( $absPath ) {
 		$handle = wpml_collect( self::getPersistedPaths() )
 			->filter( function( $relPath ) use ( $absPath ) {
@@ -146,16 +131,10 @@ class ScriptRegistry {
 		return [ $handle, $textdomain ];
 	}
 
-	/**
-	 * @return array
-	 */
 	private static function getPersistedPaths() {
 		return (array) OptionManager::getOr( [], self::OPTION_GROUP, self::OPTION_KEY_PATHS );
 	}
 
-	/**
-	 * @return array
-	 */
 	private static function getPersistedTextdomains() {
 		return (array) OptionManager::getOr( [], self::OPTION_GROUP, self::OPTION_KEY_TEXTDOMAINS );
 	}

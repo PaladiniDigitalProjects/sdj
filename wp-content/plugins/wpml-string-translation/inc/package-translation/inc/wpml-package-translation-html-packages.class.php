@@ -32,6 +32,7 @@ class WPML_Package_Translation_HTML_Packages {
 			}
 		}
 
+		/* translators: Heading at the top of the Packages page. */
 		$table_title               = __( 'Package Management', 'wpml-string-translation' );
 		$package_kind_label        = __( 'Display packages for this kind:', 'wpml-string-translation' );
 		$package_kind_options[- 1] = __( 'Display packages for this kind:', 'wpml-string-translation' );
@@ -65,6 +66,7 @@ class WPML_Package_Translation_HTML_Packages {
 		<input id="delete_packages" type="button" class="button-primary wpml-button base-btn" value="<?php echo __( 'Delete Selected Packages', 'wpml-string-translation' ); ?>" disabled="disabled"/>
 		&nbsp;
 		<span class="spinner"></span>
+		<?php /* translators: Question in the confirmation box on the Packages page when packages are about to be deleted. "Their" refers to those packages. Keep the line break marked \n. */ ?>
 		<span style="display:none" class="js-delete-confirm-message"><?php echo __( "Are you sure you want to delete these packages?\nTheir strings and translations will be deleted too.", 'wpml-string-translation' ); ?></span>
 
 		<?php
@@ -79,9 +81,6 @@ class WPML_Package_Translation_HTML_Packages {
 		}
 	}
 
-	/**
-	 * @param array<\WPML_Package> $packages
-	 */
 	public function package_translation_menu_body( $packages ) {
 		if ( ! $packages ) {
 			$this->package_translation_menu_no_packages();
@@ -95,23 +94,32 @@ class WPML_Package_Translation_HTML_Packages {
 		<tr>
 			<th scope="col" class="manage-column column-cb check-column">
 				<label for="select_all_package_<?php echo $position; ?>" class="visually-hidden">
+					<?php /* translators: Label read out to screen readers for the checkbox in the table heading on the Packages page that picks every row. Verb, imperative. */ ?>
 					<?php _e( 'Select All', 'wpml-string-translation' ); ?>
 				</label>
 				<input id="select_all_package_<?php echo $position; ?>" class="wpml-checkbox-native js_package_all_cb" type="checkbox"/>
 			</th>
+			<?php /* translators: Column heading on the Packages page: what sort of package the row holds. Noun, not the adjective meaning "nice". */ ?>
 			<th scope="col"><?php echo __( 'Kind', 'wpml-string-translation' ); ?></th>
+			<?php /* translators: Column heading in the tables of texts, of packages and of themes and plugins: the name of the item in the row. Noun, not the verb "to name". */ ?>
 			<th scope="col"><?php echo __( 'Name', 'wpml-string-translation' ); ?></th>
+			<?php /* translators: Column heading on the Packages page: further details about the package. Noun. */ ?>
 			<th scope="col"><?php echo __( 'Info', 'wpml-string-translation' ); ?></th>
 		</tr>
 		<?php
 	}
 
 	public function render_string_package_status( $string_count, $translation_in_progress, $default_package_language ) {
+		/* translators: Part of the summary shown for each package on the Packages page. %s: the number of texts in the package. */
 		$package_statuses[] = sprintf( __( 'Contains %s strings', 'wpml-string-translation' ), $string_count );
 		if ( $translation_in_progress ) {
-			$package_statuses[] = '(' . __( 'Translation is in progress', 'wpml-string-translation' ) . ')';
+			$package_statuses[] = __( '(Translation is in progress)', 'wpml-string-translation' );
 		}
-		$package_statuses[] = __( 'Default package language', 'wpml-string-translation' ) . ': ' . $default_package_language;
+		$package_statuses[] = sprintf(
+			/* translators: Part of the summary shown for each package on the Packages page. %s: the name of the language the package was written in. */
+			__( 'Default package language: %s', 'wpml-string-translation' ),
+			$default_package_language
+		);
 
 		echo implode( ' - ', $package_statuses );
 	}
@@ -126,9 +134,6 @@ class WPML_Package_Translation_HTML_Packages {
 		<?php
 	}
 
-	/**
-	 * @param array<\WPML_Package> $packages
-	 */
 	private function package_translation_menu_items( $packages ) {
 		global $wpdb, $sitepress;
 

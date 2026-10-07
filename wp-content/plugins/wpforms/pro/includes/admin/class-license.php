@@ -21,6 +21,13 @@ class WPForms_License {
 	private const LICENSE_UPDATE_TIME_OPTION = 'wpforms_license_updates';
 
 	/**
+	 * Option storing a hash of the last validated key, used to detect key changes.
+	 *
+	 * @since 2.0.1
+	 */
+	private const LICENSE_KEY_HASH_OPTION = 'wpforms_license_key_hash';
+
+	/**
 	 * License ajax count option name.
 	 *
 	 * @since 1.8.7
@@ -188,6 +195,7 @@ class WPForms_License {
 		$this->reset_license_flags( $option );
 
 		update_option( 'wpforms_license', $option );
+		update_option( self::LICENSE_KEY_HASH_OPTION, md5( $key ), false );
 
 		$this->clear_cache();
 
@@ -248,6 +256,7 @@ class WPForms_License {
 			if ( false !== get_option( self::LICENSE_UPDATE_TIME_OPTION ) ) {
 				// Flush timestamp interval when a key is missing or not available.
 				delete_option( self::LICENSE_UPDATE_TIME_OPTION );
+				delete_option( self::LICENSE_KEY_HASH_OPTION );
 			}
 
 			return;
@@ -256,7 +265,11 @@ class WPForms_License {
 		// Perform a request to validate the key once a day.
 		$time = time();
 
-		if ( $time < (int) get_option( self::LICENSE_UPDATE_TIME_OPTION ) ) {
+		// A changed key (e.g. the WPFORMS_LICENSE_KEY constant was added or updated) is validated
+		// immediately — its stored status flags belong to the previous key.
+		$is_key_changed = get_option( self::LICENSE_KEY_HASH_OPTION ) !== md5( $key );
+
+		if ( ! $is_key_changed && $time < (int) get_option( self::LICENSE_UPDATE_TIME_OPTION ) ) {
 			return;
 		}
 
@@ -264,9 +277,10 @@ class WPForms_License {
 
 		// Get the option again to check that update_option was successful, and the option was not altered by any filters.
 		if (
-			$update &&
-			$time < (int) get_option( self::LICENSE_UPDATE_TIME_OPTION )
+			$is_key_changed ||
+			( $update && $time < (int) get_option( self::LICENSE_UPDATE_TIME_OPTION ) )
 		) {
+			update_option( self::LICENSE_KEY_HASH_OPTION, md5( $key ), false );
 			$this->validate_key( $key );
 		}
 	}
@@ -584,8 +598,8 @@ class WPForms_License {
 	 */
 	public function notices(): void { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		// Do not display notices if the user does not have permission or is on the settings page.
-		if ( ! wpforms_current_user_can() || wpforms_is_admin_page( 'settings' ) ) {
+		// Do not display notices if the user does not have permission or is on the settings or dashboard page.
+		if ( ! wpforms_current_user_can() || wpforms_is_admin_page( 'settings' ) || wpforms_is_admin_page( 'dashboard' ) ) {
 			return;
 		}
 

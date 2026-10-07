@@ -5,10 +5,6 @@ namespace OTGS\Installer\Recommendations;
 class Storage {
 	const ADMIN_NOTICES_OPTION = 'otgs_installer_recommendations_admin_notices_v2';
 
-	/**
-	 * @param string $key
-	 * @param array $data
-	 */
 	public static function save( $key, $data ) {
 		$current                                   = get_option( self::ADMIN_NOTICES_OPTION, [] );
 		$current[ $data['repository_id'] ][ $key ] = $data;
@@ -44,9 +40,6 @@ class Storage {
 		update_option( self::ADMIN_NOTICES_OPTION, $current, 'no' );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getAll() {
 		return get_option( self::ADMIN_NOTICES_OPTION, [] );
 	}

@@ -47,6 +47,7 @@
 					// Get current page parameter safely.
 					// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 					$apop_current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+					$alt_url           = admin_url( 'admin.php?page=apop-alt-text' );
 					?>
 					<li>
 						<a class="header-nav-link<?php echo ( 'apop-settings' === $apop_current_page ) ? ' active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=apop-settings' ) ); ?>">
@@ -61,6 +62,11 @@
 					<li>
 						<a class="header-nav-link<?php echo ( 'apop-accessibility-status' === $apop_current_page ) ? ' active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=apop-accessibility-status' ) ); ?>">
 							<?php esc_html_e( 'Statement', 'accessibility-plugin-onetap-pro' ); ?>
+						</a>
+					</li>
+					<li>
+						<a class="header-nav-link<?php echo ( 'apop-alt-text' === $apop_current_page ) ? ' active' : ''; ?>" href="<?php echo esc_url( $alt_url ); ?>">
+							<?php esc_html_e( 'Alt Text', 'accessibility-plugin-onetap-pro' ); ?>
 						</a>
 					</li>
 					<li>

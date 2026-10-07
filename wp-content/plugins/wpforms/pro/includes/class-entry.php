@@ -1143,7 +1143,9 @@ class WPForms_Entry_Handler extends WPForms_DB {
 			user_agent varchar(256) NOT NULL,
 			user_uuid varchar(36) NOT NULL,
 			PRIMARY KEY  (entry_id),
-			KEY form_id (form_id)
+			KEY form_id (form_id),
+			KEY date_form (date, form_id),
+			KEY status_date (status, date)
 		) {$charset_collate};";
 
 		dbDelta( $sql );

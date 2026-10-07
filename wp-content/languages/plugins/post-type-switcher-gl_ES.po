@@ -1,0 +1,73 @@
+# Translation of Plugins - Post Type Switcher - Stable (latest release) in Galician
+# This file is distributed under the same license as the Plugins - Post Type Switcher - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2026-09-30 21:40:34+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.1.0\n"
+"Language: gl_ES\n"
+"Project-Id-Version: Plugins - Post Type Switcher - Stable (latest release)\n"
+
+#. Author URI of the plugin
+#: post-type-switcher.php
+msgid "https://jjj.software"
+msgstr "https://jjj.software"
+
+#. Author of the plugin
+#: post-type-switcher.php
+msgid "Triple J Software, Inc."
+msgstr "Triple J Software, Inc."
+
+#. Description of the plugin
+#: post-type-switcher.php
+msgid "A simple way to change a post's type in WordPress"
+msgstr "Unha maneira sinxela de cambiar un tipo de contido en WordPress"
+
+#: post-type-switcher.php:489
+msgid "Sorry, you cannot do this."
+msgstr "Síntoo, non podes facer isto."
+
+#: post-type-switcher.php:478
+msgid "Missing data."
+msgstr "Faltan datos."
+
+#: post-type-switcher.php:435
+msgid "&mdash; No Change &mdash;"
+msgstr "&mdash; Sen cambios &mdash;"
+
+#: post-type-switcher.php:290 post-type-switcher.php:317 assets/js/block.js:1
+msgid "Post Type"
+msgstr "Tipo de entrada"
+
+#. Plugin Name of the plugin
+#: post-type-switcher.php
+msgid "Post Type Switcher"
+msgstr "Post Type Switcher"
+
+#. Plugin URI of the plugin
+#: post-type-switcher.php
+msgid "https://wordpress.org/plugins/post-type-switcher/"
+msgstr "https://gl.wordpress.org/plugins/post-type-switcher/"
+
+#: post-type-switcher.php:222
+msgid "Type"
+msgstr "Tipo"
+
+#: post-type-switcher.php:193
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: post-type-switcher.php:192
+msgid "OK"
+msgstr "OK"
+
+#: post-type-switcher.php:177
+msgid "Edit"
+msgstr "Modificar"
+
+#: post-type-switcher.php:172
+msgid "Post Type:"
+msgstr "Tipo de contido"

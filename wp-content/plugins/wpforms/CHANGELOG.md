@@ -1,6 +1,274 @@
 # Changelog
 All notable changes to this project will be documented in this file and formatted via [this recommendation](https://keepachangelog.com/).
 
+## [2.0.2.2] - 2026-10-06
+### Added
+- Support for the Nigerian Naira (NGN), Ghanaian Cedi (GHS), and Kenyan Shilling (KES) currencies.
+- The Form Builder now tells site owners that PDFs are generated on WPForms servers in the United States before the PDF addon is installed or activated.
+
+### Fixed
+- The Setup Wizard handed off to its hosted version even when that version could not connect back to the site, so it failed on its first request instead of falling back to the local Getting Started setup.
+- Email addresses used as payment titles were displayed capitalized in the Payments table.
+- PayPal Commerce forms now always require a completed payment before saving an entry.
+- Smart Tag values used inside embedded content in a Confirmation message or a form description were not always escaped properly.
+
+## [2.0.2.1] - 2026-09-23
+### Changed
+- The Keyboard Shortcuts modal in the Form Builder was reorganized into a single two-column list that pairs related shortcuts side by side, and widened so no shortcut wraps onto a second line.
+
+### Fixed
+- Values submitted to a form embedded with the WPForms block were echoed back into the re-rendered form with shortcode delimiters intact.
+- A Smart Tag placed inside an HTML attribute in a Confirmation message, a form description, a field description or a User Registration message could alter the markup around it, or turn a link into a script, once its value contained a quote or an unsafe URL.
+
+## [2.0.2] - 2026-09-15
+### Added
+- New Dashboard that displays entries, payments, form views, top locations, and recommended next steps across all forms at a glance is now the first page you see when opening WPForms.
+- The Camera field now mirrors photos taken with the front-facing camera to match the live preview.
+- Video, audio, and image files in a Modern File Upload field now show a matching preview icon instead of the same generic document icon.
+- Links in AI Chat responses are now clickable and open in a new tab.
+- The AI form editing chat can now restore the form to its previous state when asked — reverting the most recent change, the same way as pressing Undo.
+- The `{all_fields}` smart tag now accepts an `exclude` parameter to omit specific fields by ID or all Hidden fields from notification emails, e.g. `{all_fields exclude="4,5"}` or `{all_fields exclude="hidden"}`.
+- Suggested privacy policy text for the AI features now appears on the WordPress Privacy Policy Guide screen (Settings > Privacy > Policy Guide), so site owners can adopt it into their own policy.
+
+### Changed
+- The "Minimum time to submit" spam protection is now measured on the server, so it can no longer be bypassed by bots.
+- The Form Builder no longer saves the form and creates a revision when a WPForms AI editing prompt makes no changes to the form.
+- Conditional Logic rules in a field's Smart Logic settings now display on two lines, and each rule control reveals its full text on hover for better readability.
+- The Google Calendar, Google Drive, Google Sheets, and Google Maps icons were updated to match Google's current branding.
+
+### Fixed
+- The Modern File Upload field used fixed colors for uploaded file thumbnails, text, and dividers instead of the form's theme colors.
+- The Repeater field header and empty rows remained in HTML email notifications when all fields inside the Repeater were empty or excluded from the {all_fields} output.
+- A line break was stored as the entry value of a Checkboxes or Multiple Dropdown field when Show Values was enabled and choice labels were left empty.
+- A browser console error appeared when a color picker in the Form Builder was refreshed while a color was still being selected.
+- Installing an addon or plugin from WPForms was reported as failed when it printed a message during activation, even though it was successfully installed and active.
+- The selected file of a Camera field placed in a Layout field overflowed its column on phones in landscape orientation, leaving a large gap before the delete icon and covering content in the next column.
+- The Camera field showed a black screen with no explanation when another app or an incoming call took over the camera; an error message now appears and the preview is restored when the camera window is closed and reopened.
+- Repeater field values landed under the wrong columns in bulk entry exports when rows were deleted before submitting, and exports could contain more row columns than the Repeater's maximum.
+- The browser's file picker opened instead of the Camera modal when clicking 'Capture With Your Camera' on a Modern-style File Upload field in an Elementor Popup or in any other form added to the page after it loaded.
+- A Cloudflare Turnstile warning appeared in the browser console after a form was successfully submitted.
+- A marketing provider connection's Form Field Value dropdown did not refresh Name (First/Middle/Last) or Address subfield options when the field's Format or Scheme setting was changed in the Form Builder; it only refreshed when a field was added, removed, or relabeled.
+- On right-to-left sites, the back arrow and card arrows in the Form Embed Wizard's Add to a New Page popup pointed the wrong way, and the QR Code icon was separated from its accompanying text.
+- Form submissions were silently marked as spam when the CAPTCHA provider rejected the site's secret key. An admin notice now reports the problem so it can be corrected, and the notice disappears once the CAPTCHA is reconfigured or disabled.
+- The Form Builder opened from the Get Started button in the WPForms block stayed stuck on a loading spinner on some sites and could not be saved or closed.
+- Undoing a change to a conditional logic rule's field or operator in the Form Builder did not restore the entered value, causing the form to save it as empty.
+- Canceling the confirmation when turning off Conditional Logic in the Form Builder still added a step to the undo history, causing the next Undo click to do nothing.
+- New form templates could remain hidden for up to a week after a WPForms update because the templates cache was not refreshed during the update.
+- Saving a form showed a popup warning that AJAX form submissions are required for the PayPal Commerce field even after that field had been deleted.
+- Locked fields in the Form Builder, such as the Page Break field's Progress Indicator, could be moved out of their fixed position when dragged as part of a multi-selected group of fields.
+- A PHP deprecation notice appeared on the Forms Analytics page when debugging was enabled on PHP 8.1 and later.
+- Adding or duplicating a notification, confirmation, or addon connection in the Form Builder caused Undo/Redo to overwrite existing ones with the new one's settings.
+- The submit button did not switch to the processing text and stayed unchanged while a PayPal Commerce card payment was being processed.
+- The Email Summary email contained no form entries or trends data on sites running MySQL 5.7.
+- The Email Summary showed a blank trend percentage for a form that received exactly one entry in the previous week.
+- Security hardening for the Stripe payment refund process.
+- The AI chat displayed raw technical error messages (such as browser exceptions and connection timeouts) instead of user-friendly error notices, and splitting a form into pages could fail with such errors.
+- AI form editing silently failed to update Likert Scale field rows or columns, or Survey field questions.
+- On right-to-left sites, the AI chat window opened anchored to the wrong side of the screen instead of mirroring to the left, and the stop button lost its padding and stuck to the corner of the message field during response generation.
+- Undo and Redo controls in the Form Builder could disappear after two quick changes to the same setting.
+- Buttons in the Conversational Forms and Form Pages sections of the Form Builder were taller than buttons in all other sections.
+- The standard Submit button appeared next to the PayPal Commerce payment buttons in the Form Builder preview after editing a form with the AI Smart Form Editor.
+- Adding or removing a row in the Stripe Custom Meta table in the Form Builder was not tracked by Undo and Redo.
+- Edits to the Redirect URL field in a Brevo connection were not tracked by Undo and Redo in the Form Builder.
+- Fixed an issue with Email Summaries that in some cases resulted in the same info block being sent every week instead of rotating through the available blocks.
+- Fixed an issue where AI Form Edit did not properly populate conditional logic rules for credit card fields, resulting in empty field selectors. Conditional logic for credit card fields (Stripe, Authorize.Net, Mercado Pago, Square, PayPal) now applies correctly when using AI Form Edit.
+- Extra small padding was displayed on the right side of the AI chat when using a Mac browser.
+
+## [2.0.1.1] - 2026-08-27
+### Fixed
+- Undoing the removal of a secure Custom Value in an addon's Field Mapping settings restored it unlocked, causing the value to no longer be saved securely.
+- The weekly Email Summary email always displayed the same informational block instead of moving on to the next one.
+
+## [2.0.1] - 2026-08-25
+### Added
+- New QR Code setting generates a downloadable code for a chosen page or URL.
+- New Add Media button in the Confirmation Message editor allows inserting images from the Media Library.
+- A Smart Tags picker in the Page Break field Progress Text setting makes it easy to insert the current page and last page values.
+- Marketing provider custom fields can now be mapped to individual Address field subfields — Address Line 1, Address Line 2, City, State, ZIP/Postal Code, and Country — instead of only the whole Address field.
+- The Layout field is now found in the Form Builder Add Fields panel when searching for "side by side", "grid", "arrange", and other multi-column terms.
+- The File Upload field is now found in the Form Builder Add Fields panel when searching for "attach", "document", "resume", and other file attachment terms.
+- A scheduled task now periodically clears stale temporary files from the file upload tmp directory, independent of whether an upload session ever completes.
+- Form templates are now found in the Form Builder when searching for related terms, not only by their exact names.
+- Buttons in the Form Builder and on WPForms admin pages now show a visible focus indicator during keyboard navigation, and it no longer appears on mouse click.
+- Product education banners in the Form Builder recommending the Form Abandonment and Save and Resume addons for forms with many fields.
+
+### Changed
+- Stripe Radar-blocked payments now appear in the payment log with a distinct label instead of the generic decline message.
+- Updated DOMPurify library to 3.4.13.
+- Builder keyboard shortcuts on Mac now use ⌘ instead of Ctrl where possible, and the Keyboard Shortcuts popup reflects the platform.
+
+### Fixed
+- The Smart Tags widget in the Form Builder did not highlight required fields with a red border when validation failed.
+- PayPal Commerce checkout failed with a fatal error when the Shipping Email setting pointed to an Email field with Confirm Email enabled.
+- The WPForms block showed a Get Started button that led users without form-creation permission to an access-denied error; the block now explains the missing permission instead.
+- Additional Information columns were empty when a background entry export task ran outside WP-Cron (e.g., via the Action Scheduler async runner or WP-CLI).
+- Two fields appeared active after duplicating a field inside a Layout or Repeater field.
+- A PHP notice was logged on the front-end when a payment field (Multiple Items, Checkbox Items, or Dropdown Items) contained a choice saved without a label.
+- Form templates in the Form Builder Setup panel were not filtered by the form's selected category, showing all templates instead.
+- The show/hide icon on the Password field appeared oversized in the Divi Editor form preview when Classic markup was enabled.
+- A Lite Connect entry restore could not be retried after automatic attempts failed, leaving the progress notice stuck with no way to try again.
+- Google Calendar connection settings, including Title, Description, and Location, were not restored when using Undo/Redo in the Form Builder.
+- AI Generate Formula feature incorrectly used Payment Checkbox label text instead of configured prices when generating calculation formulas.
+- Some button icons were misaligned on WordPress 7.0.
+- Incorrect spacing between the icon and text in the Form Builder top bar buttons.
+- A broken image appeared instead of the addon icon on the WordPress Updates page in some cases; the WPForms logo is now shown.
+- Clicking Previous on the last page of a multi-page form did nothing when the form's closing Page Break field had been removed.
+- The Previous button on the last page of a multi-page form appeared even when Display Previous was turned off, and on single-page forms where it had nowhere to navigate, if the form's closing Page Break field had been removed.
+- A multi-page form whose opening Page Break field had been removed rendered with a broken layout and no Submit button.
+- Handling of passwords and other sensitive values in debug output and logs was improved for better security.
+- Choice checkboxes and radio buttons in the Form Builder had no visible border and appeared stretched into ovals in Safari.
+- The Advanced, AI MCP, and other collapsible settings section titles in the Form Builder lacked a tooltip explaining their expand/collapse action.
+- The notification email sent when an entry was marked as Not Spam showed only the first row of Repeater fields.
+- Collapsible settings sections in the Form Builder, such as AI MCP, did not stay closed after the page was reloaded.
+- The Analytics page still showed AI promotions when AI features were hidden.
+- Reordering choices in a Checkbox field in the Form Builder caused a browser console error and stopped the field preview from updating.
+- Square payments failed on every retry after a submission with an invalid credit card expiration date, even once the card details were corrected.
+- The Payments page showed too much space between elements when no payments had been collected yet.
+- PayPal Commerce subscription checkout failed with a fatal error when the account was disconnected while the form was loaded.
+- Temporary file handling in the Entries Export tool was improved for better security.
+- The entries list and entry export failed with a fatal error, and entry views displayed "Array" instead of the file, when a File Upload or Camera field value was stored as an array.
+- The Subscriber Email and New Subscriber Email dropdowns in an ActiveCampaign connection were empty for a form that had only one Email field.
+- The Page Indicator, Icon Choices, and Rating fields lost their colors in the Block Editor form preview, and in Repeater field rows added on the front end, when Include Form Styling was set to Base styling only or No styling.
+- Fields with no delete icon in the Form Builder, such as the Page Break field Progress Indicator and Previous button, could still be removed by pressing the Delete or Backspace key.
+- The Form Builder popup shown when refusing to delete a locked field via the Delete key displayed no message and used an error style instead of the standard Field Locked notice.
+- Individual Name and Address subfields were missing from a marketing provider connection's field mapping after the mapped field was deleted and a new one was added.
+- The entries list and its date range filter failed with a fatal error when the site's timezone offset setting was empty.
+- Importing entries from a source that contained certain characters, such as emoji, could silently fail; the import now completes, or shows a clear error when the data cannot be saved.
+- The Form Builder warned that a field's addon was incompatible and needed an update when the addon was installed and up to date but not yet configured; a Setup Required notice now links to the addon's settings instead.
+- The Smart Tags picker next to a Google Sheets connection's Custom Value field stopped responding after a form field was added, deleted, or renamed, until the Form Builder was reloaded.
+- Visitors were not taken to the destination set in the form's Confirmations settings after submitting a form when a plugin or custom code supplied an invalid redirect address.
+- Exporting entries failed with an "Unknown request" error when the form data contained characters not supported by the site's database character set.
+- PHP warnings were logged when a Camera field photo was shown in the Entry Preview but the captured photo was no longer available, which was most noticeable in Conversational Forms.
+- Conditional Logic Hide/Show rules did not work on choice fields imported from Ninja Forms.
+- On right-to-left sites, the country code dropdown of the Smart-format Phone field was misaligned with the field and its arrow indicator appeared on the right instead of the left.
+- The mapping-loss confirmation did not appear for the grabbed field when multi-selected fields were dragged into a Repeater field, leaving a stale field reference in the Marketing and Notifications mapping dropdowns until the page was reloaded.
+- Extra empty space appeared above a Repeater field on the front-end when the Repeater before it was hidden by conditional logic.
+- Added warnings for empty or invalid notification email addresses in the Form Builder.
+- Various buttons across plugin admin pages showed the default blue focus outline instead of their custom focus styles after being clicked.
+- PHP fatal error that could take down the admin area on multisite when updating with a legacy PayPal Commerce connection active.
+- Pages rendered in response to a form submission are no longer cacheable, and submitted values are no longer written back into the form when a submission is rejected.
+
+## [2.0.0.5] - 2026-08-18
+### Fixed
+- Repeater field clone handling was improved.
+- The WPForms admin menu left a large empty gap below it on mobile screens when viewing non-WPForms admin pages.
+
+## [2.0.0.4] - 2026-08-12
+### Fixed
+- Lite Connect site registration failed permanently when the admin user profile had an empty first or last name, blocking entry backups.
+- The Onboarding Wizard would time out in some cases.
+
+## [2.0.0.3] - 2026-08-11
+### Added
+- New supported currencies.
+- License Validation modal prompting users to activate or renew an inactive license.
+
+### Fixed
+- Handling of marketing provider connections in the Form Builder was improved.
+- Permission handling in the Export Forms tool was improved.
+- Form data handling in the Block Editor was improved.
+- Some characters in a marketing provider connection's name were not escaped properly, which could affect the Form Builder when opening a form.
+- Rich Text field handling was improved.
+- Entry print preview handling was improved.
+- Entry value display on the Print page, Edit screen, entries list, and in email notifications was improved.
+- Repeater field clone handling was improved.
+- Rich Text field attachment cleanup during entry purge was improved.
+- Users who were allowed to see only their own forms' entries could export entries from forms owned by other users.
+- Uploaded file handling in the Entry Preview field was improved.
+- Fixed a PHP warning (undefined array key) that occurred when scheduled Entry Automation export tasks ran with Dropbox Links or other addon-provided columns enabled.
+- Field value display on the Entry View and Print pages, the Edit screen, the entries list, and the single payment page was improved.
+- Users without permission to view forms could see every form on the site, including other authors' forms, through the Elementor and Divi form selectors.
+
+## [2.0.0.2] - 2026-07-16
+### Fixed
+- Form submissions could still be blocked by stricter web application firewall configurations that flagged the JSON structure of the Form Analytics data; the data attached to each submission is now base64-encoded.
+- A cross-site scripting vulnerability when a page combined a WPForms captcha with a specially crafted OptinMonster campaign.
+
+## [2.0.0.1] - 2026-07-16
+### Fixed
+- Form submissions could be blocked by a web application firewall, such as Cloudflare's OWASP ruleset, because of the format of the Form Analytics data attached to each submission.
+
+## [2.0.0] - 2026-07-14
+### Added
+- New Onboarding Wizard and Setup Checklist page in the WPForms admin menu to guide users through essential configuration steps. #17609
+- Photos captured with the Camera field are shown as image thumbnails in Entry Preview before form submission.
+- New Reconnect button for invalid payment connections in the Form Builder Payments Settings panel.
+- Built-in Form Analytics gives users direct visibility into form performance — views, conversion rates, field-level interactions, and drop-offs — without requiring external tools or configuration.
+- AI Chat assistant on the analytics page lets users ask plain-language questions about their form data and receive clear, actionable recommendations.
+- Import Entries now shows a notice listing form fields that cannot be mapped because their type is not supported.
+
+### Changed
+- The Form Builder Setup panel now opens significantly faster.
+- Updated DOMPurify library to 3.4.11.
+- The AI Chat button in the Form Builder is now shown in grey and displays a tooltip explaining that WPForms AI is not available on local sites.
+- Updated woocommerce/action-scheduler library to 4.0.0.
+- Stripe payment security is enhanced with automatic detection and blocking of card testing attacks and other fraudulent activity.
+
+### Fixed
+- Fancy fields in the Form Builder Add Fields panel were arranged out of order, breaking the side-by-side pairing of related fields.
+- Randomize the position of the correct answer in AI-generated graded quizzes.
+- The show/hide icon on the Password field appeared oversized in the Block Editor form preview when Classic markup was enabled.
+- Admin notices about incompatible WPForms versions are now shown only to users who can update plugins.
+- A choice deleted in the Form Builder could still appear as an empty option on the front-end and triggered PHP warnings on the form, entry, and print views.
+- Fields placed inside a Layout field were rendered twice in email notifications and PDF attachments when using the `{all_fields}` smart tag.
+- Custom Field mapping in marketing addon connections was cleared when canceling the confirmation dialog to move a field into a Repeater field.
+- The settings gear icon on the Entries, Payments, and Dashboard pages was displayed in the wrong color and oversized when Elementor plugin was active.
+- Form submission was stalling without redirecting to the credit card validation error page when using PayPal Commerce fields with Progress Bar page navigation.
+- Form elements could appear disabled after a Stripe 3D Secure authentication failure, even though they remained editable.
+- The connection icon was displayed in the Builder settings for payment methods even when no account was connected.
+- Stripe subscription renewals could remain in the Pending status and display an outdated renewal date on the Payment Single page. #17735,
+- Images uploaded via a password-protected File Upload field were not displaying correctly in the form confirmation message.
+- Connected payment methods checkmark could still appear in the Form Builder Payments panel after switching to a template without a payment field.
+- Locations in the Geolocation Map field could not be reordered by drag and drop until the Form Builder page was refreshed.
+- The Connector progress indicator was not visible on multi-page forms viewed on mobile devices, which prevented tapping it to navigate between pages.
+- The Weekly Email Summary email content was displayed right-aligned instead of centered in the web version of Gmail.
+- The Themes panel in the Form Builder Settings did not re-open when its menu item was clicked again after navigating away and back.
+- A PHP warning was logged when restoring a trashed form on PHP 8.3 and higher.
+- File access restrictions could not be enabled on a copied File Upload field that was incorrectly treated as attached to a notification.
+- The Page Break field's selected Page Navigation Alignment reverted to its default in the Form Builder preview after a page refresh.
+- The Previous button on multi-page forms was missing its button group wrapper, causing inconsistent styling between the Previous and Next buttons.
+- Temporary files from a rejected Modern File Upload could be left in the uploads directory when the upload failed validation.
+- A PHP warning was logged when generating the Weekly Summary email on PHP 8.5 and higher, and its form trends could cover the wrong date range on sites not set to UTC time.
+
+## [1.10.2.1] - 2026-06-25
+### Added
+- AI MCP settings section in the Form Builder with the MCP write-access toggle.
+
+### Fixed
+- Forms scrolled back to the first text input when adjusting a Number Slider in Chrome on Android.
+- Conditional logic added through the AI Smart Form Editor could be left empty the first time it was enabled on a field.
+- Email notification header sanitization was improved for better security.
+
+## [1.10.2] - 2026-06-16
+### Added
+- The Abilities API now supports creating new forms, editing existing form fields, and editing form settings.
+
+### Changed
+- Stripe subscriptions that finish all configured billing cycles are now marked as Completed.
+
+### Fixed
+- Password field with Strength option turned on generated PHP Deprecated notices when submitting the form on PHP 8.0+.
+- Delete icon overlapped form name in the Bulk Edit Tags field during bulk edits.
+- Fixed "RECOMMENDED" badge on the Addons page wrapping onto two lines at narrow viewport widths.
+- The "Pro" upgrade badge was incorrectly displayed on the Geolocation settings page for Elite license holders when the addon was not installed.
+- Custom CSS configured in the Form Builder was not applied when the form was embedded via the Gutenberg block.
+- An AbortError: Transition was skipped console error appeared in the Form Builder on WordPress 7.0.
+- Fatal error when opening the Edit Entry page for a Map field placed inside a Repeater field.
+- PayPal Credit payment status was not being synchronized in WPForms > Payments.
+- The Query String Variable smart tag key was unexpectedly reset when the Email field default value was cleared and re-configured in the Form Builder.
+- Default notification is now correctly skipped when its Status is set to Inactive.
+- Extra row appeared below the WPForms plugin in the Plugins list when an update or activation notice was shown on WordPress 7.0.
+- Stripe block-editor CSS and JS assets no longer load unconditionally on every Block Editor screen. They now load only when the `wpforms/form-selector` block is present.
+- The Phone field ignored the Field Size option (Small, Medium, Large) and always displayed at full width.
+- Pro addon "requires WPForms X or above" notice was shown to Lite users.
+- The Next button on multi-page forms could fail to advance when remote field validation was used on sites with a slow database.
+- The `wpforms_emails_send_email_data` filter silently discarded any changes to the headers key before sending the email.
+- PHP fatal error when submitting a form with the {page_url} smart tag if the page_url POST field was sent as an array.
+- SVG files uploaded via Image Choices and the Content field were not properly sanitized before rendering.
+- Active addons not covered by the current license were incorrectly shown as incompatible on the Addons page.
+- Orphaned rows could accumulate in the Entry Meta table when spam submissions occurred on forms with entry storage disabled.
+- An invalid notice about Fastlane and alternative payment methods appeared in Stripe and Square subscription payment settings in the Form Builder.
+
 ## [1.10.1.1] - 2026-06-03
 ### Added
 - Inline Connect buttons in the Form Builder Payments panel, allowing users to connect their payment accounts without leaving the form editor.
@@ -40,6 +308,8 @@ All notable changes to this project will be documented in this file and formatte
 - An incorrect error message was shown when the daily AI request limit was reached, referring to form generation instead of AI usage.
 - Duplicate confirmations, notifications, or Quiz Outcomes were created in the Form Builder when the "OK" button was clicked multiple times quickly.
 - Stripe payment submissions failed when a Multiple Choice payment field with HTML in its labels was controlled by Conditional Logic.
+- The Entry Meta table grew indefinitely with unused rows for forms that had entry storage disabled.
+- Fatal error when opening the Form Builder if a form's theme Custom CSS or Copy/Paste Style Settings were stored as an array instead of a string.
 
 ## [1.10.0.5] - 2026-05-12
 ### Changed

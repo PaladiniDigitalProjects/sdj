@@ -18,9 +18,6 @@ class DeleteFileHashingOption implements \IWPML_St_Upgrade_Command {
 	public function run_frontend() {
 	}
 
-	/**
-	 * @return string
-	 */
 	public static function get_command_id() {
 		return __CLASS__;
 	}

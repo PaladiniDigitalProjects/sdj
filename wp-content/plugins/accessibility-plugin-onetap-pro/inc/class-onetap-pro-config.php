@@ -23,26 +23,27 @@ class Onetap_Pro_Config {
 	 * @var array
 	 */
 	public static $settings = array(
-		'icons'                      => 'design1',
-		'size'                       => 'design-size2',
-		'border'                     => 'design-border2',
-		'color'                      => '#0048FE',
-		'widget_position'            => 'bottom-right',
-		'position_top_bottom'        => 20,
-		'position_left_right'        => 20,
-		'widget_position_tablet'     => 'bottom-right',
-		'position_top_bottom_tablet' => 20,
-		'position_left_right_tablet' => 20,
-		'widget_position_mobile'     => 'bottom-right',
-		'position_top_bottom_mobile' => 20,
-		'position_left_right_mobile' => 20,
-		'hide_on_desktop'            => 'off',
-		'hide_on_tablet'             => 'off',
-		'hide_on_mobile'             => 'off',
-		'language'                   => 'en',
-		'language_toggles'           => 'en',
-		'license'                    => '',
-		'hide_powered_by_onetap'     => 'off',
+		'icons'                            => 'design1',
+		'size'                             => 'design-size2',
+		'border'                           => 'design-border2',
+		'color'                            => '#0048FE',
+		'toggle-widget-button-focus-style' => 'off',
+		'widget_position'                  => 'bottom-right',
+		'position_top_bottom'              => 20,
+		'position_left_right'              => 20,
+		'widget_position_tablet'           => 'bottom-right',
+		'position_top_bottom_tablet'       => 20,
+		'position_left_right_tablet'       => 20,
+		'widget_position_mobile'           => 'bottom-right',
+		'position_top_bottom_mobile'       => 20,
+		'position_left_right_mobile'       => 20,
+		'hide_on_desktop'                  => 'off',
+		'hide_on_tablet'                   => 'off',
+		'hide_on_mobile'                   => 'off',
+		'language'                         => 'en',
+		'language_toggles'                 => 'en',
+		'license'                          => '',
+		'hide_powered_by_onetap'           => 'off',
 	);
 
 	/**
@@ -76,6 +77,7 @@ class Onetap_Pro_Config {
 		'highlight_titles'       => 'on',
 		'highlight_all'          => 'on',
 		'stop_animations'        => 'on',
+		'skip_to_content'        => 'on',
 	);
 
 	/**

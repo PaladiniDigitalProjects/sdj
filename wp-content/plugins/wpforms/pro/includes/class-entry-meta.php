@@ -115,7 +115,8 @@ class WPForms_Entry_Meta_Handler extends WPForms_DB {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		$charset_collate = $wpdb->get_charset_collate();
+		$charset_collate  = $wpdb->get_charset_collate();
+		$max_index_length = self::MAX_INDEX_LENGTH;
 
 		$sql = "CREATE TABLE {$this->table_name} (
 			id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -127,7 +128,8 @@ class WPForms_Entry_Meta_Handler extends WPForms_DB {
 			data longtext NOT NULL,
 			date datetime NOT NULL,
 			PRIMARY KEY  (id),
-			KEY entry_id (entry_id)
+			KEY entry_id (entry_id),
+			KEY type_date (type($max_index_length), date)
 		) {$charset_collate};";
 
 		dbDelta( $sql );

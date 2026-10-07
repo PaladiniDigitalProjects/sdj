@@ -8,13 +8,6 @@ use WPML\LIB\WP\Hooks;
 
 use function WPML\FP\spreadArgs;
 
-/**
- * @phpstan-type FieldArray array{
- *     field_type?: string,
- *     title?: string,
- *     group?: array<string,string>
- * }
- */
 abstract class BaseHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Action {
 
 	const PURPOSE_SEO_TITLE     = 'seo_title';
@@ -29,36 +22,16 @@ abstract class BaseHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Actio
 			->then( spreadArgs( [ $this, 'addAdminTextPrefix' ] ) );
 	}
 
-	/**
-	 * @return string
-	 */
 	abstract protected function getFieldPrefix();
 
-	/**
-	 * @return array<string,string>
-	 */
 	abstract protected function getTopLevelGroup();
 
-	/**
-	 * @return array<string,string>
-	 */
 	abstract protected function getKeyPurposeMap();
 
-	/**
-	 * @param array<string,string> $prefixes
-	 *
-	 * @return array<string,string>
-	 */
 	public function addAdminTextPrefix( $prefixes ) {
 		return array_merge( $prefixes, static::getTopLevelGroup() );
 	}
 
-	/**
-	 * @param list<FieldArray> $fields
-	 * @param object|mixed     $job
-	 *
-	 * @return list<FieldArray>
-	 */
 	public function adjustFields( $fields, $job ) {
 		foreach ( $fields as &$field ) {
 			$fieldType = Obj::prop( 'field_type', $field );
@@ -73,22 +46,10 @@ abstract class BaseHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Actio
 		return $fields;
 	}
 
-	/**
-	 * @param FieldArray   $field
-	 * @param string|null  $fieldType
-	 * @param object|mixed $job
-	 *
-	 * @return FieldArray
-	 */
 	protected function extraAdjustField( $field, $fieldType, $job ) {
 		return $field;
 	}
 
-	/**
-	 * @param FieldArray $field
-	 *
-	 * @return FieldArray
-	 */
 	private function addTitleAndGroup( $field ) {
 		$title = (string) Obj::prop( 'title', $field );
 		if ( $title && Str::startsWith( $this->getFieldPrefix(), $title ) ) {
@@ -103,11 +64,6 @@ abstract class BaseHooks implements \IWPML_Frontend_Action, \IWPML_Backend_Actio
 		return $field;
 	}
 
-	/**
-	 * @param FieldArray $field
-	 *
-	 * @return FieldArray
-	 */
 	private function addPurpose( $field ) {
 		$fieldKey = preg_replace( '/^(' . self::PREFIX_JOB_FIELD_TERM . '?field-)(.*)(-\d+)$/', '$2', $field['field_type'] );
 

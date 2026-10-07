@@ -39,8 +39,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="try-free"><?php esc_html_e( 'Try 25 Images for Free', 'accessibility-plugin-onetap-pro' ); ?></span>
 				</div>
 
+				<?php
+				$apop_altpilot_cta = $this->settings_api->get_altpilot_cta_link_attrs();
+				$apop_altpilot_rel = ( '_blank' === $apop_altpilot_cta['target'] ) ? 'noopener noreferrer' : '';
+				?>
 				<div class="link">
-					<a href="https://www.altpilot.ai/" target="_blank" class="button-alt-pilot"><?php esc_html_e( 'Start with AltPilot.ai', 'accessibility-plugin-onetap-pro' ); ?></a>
+					<a href="<?php echo esc_url( $apop_altpilot_cta['url'] ); ?>" class="button-alt-pilot"<?php echo $apop_altpilot_cta['target'] ? ' target="' . esc_attr( $apop_altpilot_cta['target'] ) . '" rel="' . esc_attr( $apop_altpilot_rel ) . '"' : ''; ?>><?php esc_html_e( 'Start with AltPilot.ai', 'accessibility-plugin-onetap-pro' ); ?></a>
 				</div>
 			</div>
 		</div>

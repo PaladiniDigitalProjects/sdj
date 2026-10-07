@@ -3684,6 +3684,10 @@ header.wp-block-template-part {
 header.wp-block-template-part.headerup {
   transform: translateY(-13rem);
 }
+header.wp-block-template-part:has(.is-menu-open) {
+  transform: none !important;
+  transition: none !important;
+}
 header.wp-block-template-part.fullheader {
   transition: 0.35s;
   transform: translateY(0);
@@ -9187,3 +9191,39 @@ header.wp-block-template-part .Sub_Menus ul.wp-block-navigation__container li {
     order: 2;
   }
 }/*# sourceMappingURL=estils.css.map */
+
+
+.wp-block-columns:has(.pds-terms-wrapper) {
+  align-items: center !important;
+}
+
+.wp-block-categories-list.pds-terms-wrapper {
+  padding-top: 8.855px;
+  margin-bottom: -8.855px;
+}
+.wp-block-categories-list .pds-terms-toggle {
+  box-sizing: border-box;
+  border: 0 solid #007FAD;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem 0.45rem 1rem;
+  line-height: 130%;
+  margin: 0 0.75rem 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: rgb(255, 255, 255);
+  color: #007FAD;
+  transition: 0.35s;
+}
+.wp-block-categories-list .pds-terms-toggle:hover {
+  background-color: #007FAD;
+  color: #ffffff;
+}
+
+.wp-block-categories-list .pds-terms-toggle:after {
+  content: "+";
+  padding-left: 0.35rem;
+}
+.wp-block-categories-list .pds-terms-toggle[aria-expanded=true]:after {
+  content: "-";
+}

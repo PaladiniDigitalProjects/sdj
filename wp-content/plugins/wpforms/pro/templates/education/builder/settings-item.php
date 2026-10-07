@@ -15,6 +15,7 @@
  * @var string $video         Video URL.
  * @var string $utm_content   UTM content.
  * @var string $message       Inform message.
+ * @var string $disclosure    Data-processing disclosure shown below the install or activate modal buttons.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,6 +34,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	data-license="<?php echo esc_attr( $license_level ); ?>"
 	data-utm-content="<?php echo esc_attr( $utm_content ); ?>"
    	data-message="<?php echo esc_attr( $message ); ?>"
+	data-disclosure="<?php echo esc_attr( $disclosure ); ?>"
 >
 		<?php echo esc_html( $name ); ?>
 		<i class="fa fa-angle-right wpforms-toggle-arrow"></i>

@@ -2,18 +2,26 @@
 
 namespace WPML\TM\Upgrade\Commands;
 
-use WPML\TM\ATE\ClonedSites\AliasDomainCheckHandler;
+use WPML\TM\ATE\ClonedSites\AliasDomainProber;
+use WPML\TM\ATE\ClonedSites\AliasDomainResetFlag;
 use WPML\TM\ATE\ClonedSites\SecondaryDomains;
 
 class ValidateAliasDomain implements \IWPML_Upgrade_Command {
 
-	const BANNER_CONTEXT_OPTION = 'wpml_cloned_site_banner_context';
-	const RETRY_OPTION          = 'wpml_alias_domain_validation_retry';
-	const MAX_ATTEMPTS          = 3;
-	const MIN_DELAY_SECONDS     = 60;
+	const RETRY_OPTION      = 'wpml_alias_domain_validation_retry';
+	const MAX_ATTEMPTS      = 3;
+	const MIN_DELAY_SECONDS = 60;
 
-	/** @var bool */
+	private $prober;
+
+	private $amsApi;
+
 	private $result = false;
+
+	public function __construct( $prober = null, $amsApi = null ) {
+		$this->prober = $prober instanceof AliasDomainProber ? $prober : new AliasDomainProber();
+		$this->amsApi = $amsApi instanceof \WPML_TM_AMS_API ? $amsApi : \WPML\Container\make( \WPML_TM_AMS_API::class );
+	}
 
 	public function run_admin() {
 		$this->result = $this->run();
@@ -29,7 +37,6 @@ class ValidateAliasDomain implements \IWPML_Upgrade_Command {
 		return null;
 	}
 
-	/** @return bool */
 	public function get_results() {
 		return $this->result;
 	}
@@ -58,10 +65,10 @@ class ValidateAliasDomain implements \IWPML_Upgrade_Command {
 		$token    = $retryState ? $retryState['token'] : wp_generate_password( 32, false );
 		$attempts = $retryState ? $retryState['attempts'] : 0;
 
-		if ( $this->probeOriginalDomain( $originalSiteUrl, $token ) ) {
+		if ( $this->prober->probe( $originalSiteUrl, $token ) ) {
 			delete_option( self::RETRY_OPTION );
 
-			if ( $this->isSharedDatabase( $token ) ) {
+			if ( $this->prober->isSameDatabase( $token ) ) {
 				return true;
 			}
 
@@ -84,57 +91,10 @@ class ValidateAliasDomain implements \IWPML_Upgrade_Command {
 		return false;
 	}
 
-	/**
-	 * @param array|null $retryState
-	 *
-	 * @return bool
-	 */
 	private function isTooSoonToRetry( $retryState ) {
 		return $retryState && ( time() - $retryState['last_attempt'] ) < self::MIN_DELAY_SECONDS;
 	}
 
-	/**
-	 * @param string $originalSiteUrl
-	 * @param string $token
-	 *
-	 * @return bool
-	 */
-	private function probeOriginalDomain( $originalSiteUrl, $token ) {
-		$url = add_query_arg(
-			AliasDomainCheckHandler::GET_PARAM,
-			$token,
-			trailingslashit( $originalSiteUrl )
-		);
-
-		$response = wp_remote_get( $url, [
-			'timeout'   => 10,
-			'sslverify' => false,
-		] );
-
-		if ( is_wp_error( $response ) ) {
-			return false;
-		}
-
-		$code = wp_remote_retrieve_response_code( $response );
-		$body = wp_remote_retrieve_body( $response );
-
-		return $code === 200
-			&& strpos( $body, AliasDomainCheckHandler::RESPONSE_BODY ) !== false;
-	}
-
-	/**
-	 * @param string $expectedToken
-	 *
-	 * @return bool
-	 */
-	private function isSharedDatabase( $expectedToken ) {
-		return AliasDomainCheckHandler::getAndDeleteToken() === $expectedToken;
-	}
-
-	/**
-	 * @param string $token
-	 * @param int    $attempts
-	 */
 	private function scheduleRetry( $token, $attempts ) {
 		update_option( self::RETRY_OPTION, [
 			'token'        => $token,
@@ -147,6 +107,12 @@ class ValidateAliasDomain implements \IWPML_Upgrade_Command {
 		$secondaryDomains = new SecondaryDomains();
 		$secondaryDomains->reset();
 
-		update_option( self::BANNER_CONTEXT_OPTION, 'alias_domain_reset', 'no' );
+		AliasDomainResetFlag::set();
+
+		add_action( 'admin_init', [ $this, 'probeAmsToTriggerMigrationBanner' ], 999 );
+	}
+
+	public function probeAmsToTriggerMigrationBanner() {
+		$this->amsApi->getGlossaryCount();
 	}
 }

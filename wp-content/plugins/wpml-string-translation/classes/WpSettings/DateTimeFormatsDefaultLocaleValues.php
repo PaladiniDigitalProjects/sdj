@@ -1,9 +1,4 @@
 <?php
-/**
- * Update date time formats
- *
- * @package WPML\ST
- */
 
 namespace WPML\ST\WpSettings;
 
@@ -19,40 +14,18 @@ class DateTimeFormatsDefaultLocaleValues implements \IWPML_Action {
 	const STRING_NAME_TIME_FORMAT               = 'time_format';
 	const STRING_NAME_LINKS_UPDATED_DATE_FORMAT = 'links_updated_date_format';
 
-	/**
-	 * DefaultMO to find default translation of strings
-	 *
-	 * @var DefaultMO $default_mo
-	 */
 	private $default_mo;
 
-	/**
-	 * Translated strings
-	 *
-	 * @var string[] $cached_strings
-	 */
 	private $cached_strings = [];
 
 	public function __construct( DefaultMO $default_mo ) {
 		$this->default_mo = $default_mo;
 	}
-	/**
-	 * Add WP Hooks
-	 *
-	 * @return void
-	 */
 	public function add_hooks() {
 		add_action( 'wpml_update_active_languages', [ $this, 'update_action' ] );
 		add_filter( 'pre_update_option_' . WPML_Admin_Texts::TRANSLATABLE_NAMES_SETTING, [ $this, 'update_admin_option_action' ] );
 	}
 
-	/**
-	 * Update default values for date time formats action hook
-	 *
-	 * @param array $old_languages - list of old languages.
-	 *
-	 * @return void
-	 */
 	public function update_action( $old_languages = array() ) {
 		$formats      = [
 			self::STRING_NAME_DATE_FORMAT,
@@ -65,13 +38,6 @@ class DateTimeFormatsDefaultLocaleValues implements \IWPML_Action {
 			->each( Fns::unary( $updateFormat ) );
 	}
 
-	/**
-	 * Update default values for date time formats action hook if admin texts added
-	 *
-	 * @param mixed $new_value - new value of WPML_Admin_Texts::TRANSLATABLE_NAMES_SETTING option.
-	 *
-	 * @return mixed
-	 */
 	public function update_admin_option_action( $new_value ) {
 
 		$formats = [
@@ -101,14 +67,6 @@ class DateTimeFormatsDefaultLocaleValues implements \IWPML_Action {
 		return $new_value;
 	}
 
-	/**
-	 * Undocumented function
-	 *
-	 * @param string $name - name of the datetime format wp option.
-	 * @param array  $old_languages - list of old languages.
-	 *
-	 * @return void
-	 */
 	public function update_format( $name, $old_languages = array() ) {
 		$wpml_st_string_factory = make( \WPML_ST_String_Factory::class );
 
@@ -119,14 +77,6 @@ class DateTimeFormatsDefaultLocaleValues implements \IWPML_Action {
 		}
 	}
 
-	/**
-	 * Use translation string to add default translation for existing languages from mo files
-	 *
-	 * @param \WPML_ST_String $string - string object.
-	 * @param array           $old_languages - list of old languages.
-	 *
-	 * @return void
-	 */
 	private function set_default_translations( \WPML_ST_String $string, $old_languages = array() ) {
 		global $sitepress, $wpdb;
 

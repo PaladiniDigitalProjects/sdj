@@ -12,26 +12,12 @@ class FieldNamePatterns {
 
 	const OPTION_KEY = 'acfml_field_name_patterns';
 
-	/**
-	 * @var array
-	 */
 	private $localPatterns = [];
 
-	/**
-	 * @var array $cachedMatches
-	 */
 	private $cachedMatches = [];
 
-	/**
-	 * @var array $cachedLocalMatches
-	 */
 	private $cachedLocalMatches = [];
 
-	/**
-	 * @param array $fieldGroup
-	 *
-	 * @return void
-	 */
 	public function updateFieldNamePatterns( $fieldGroup ) {
 		$namePatterns = wpml_collect();
 
@@ -42,18 +28,12 @@ class FieldNamePatterns {
 				return $field;
 			};
 
-			Fields::iterate( acf_get_fields( $fieldGroup ), $getFieldNamePattern, Fns::identity() );
+			Fields::iterate( Fields::getFresh( $fieldGroup ), $getFieldNamePattern, Fns::identity() );
 		}
 
 		$this->updateGroup( $fieldGroup['key'], $namePatterns->toArray() );
 	}
 
-	/**
-	 * @param string $groupKey
-	 * @param array  $groupPatterns
-	 *
-	 * @return void
-	 */
 	public function updateGroup( $groupKey, $groupPatterns ) {
 		$allPatterns = $this->getAllPatterns();
 
@@ -66,11 +46,10 @@ class FieldNamePatterns {
 		update_option( self::OPTION_KEY, $allPatterns, false );
 	}
 
-	/**
-	 * @param string $fieldName
-	 *
-	 * @return string|null
-	 */
+	public function removeGroup( $groupKey ) {
+		$this->updateGroup( $groupKey, [] );
+	}
+
 	public function findMatchingGroup( $fieldName ) {
 		if ( array_key_exists( $fieldName, $this->cachedMatches ) ) {
 			return $this->cachedMatches[ $fieldName ];
@@ -88,12 +67,6 @@ class FieldNamePatterns {
 		return $this->cachedMatches[ $fieldName ];
 	}
 
-	/**
-	 * @param string $fieldName
-	 * @param string $source
-	 *
-	 * @return string|null
-	 */
 	public function findMatchingLocalGroup( $fieldName, $source = 'json' ) {
 		if ( ! array_key_exists( $source, $this->cachedLocalMatches ) ) {
 			$this->cachedLocalMatches[ $source ] = [];
@@ -115,15 +88,19 @@ class FieldNamePatterns {
 		return $this->cachedLocalMatches[ $source ][ $fieldName ];
 	}
 
-	/**
-	 * @param string   $fieldName
-	 * @param string[] $patterns
-	 *
-	 * @return bool
-	 */
+	public function findMatchingValue( $fieldName, array $patternsToValue ) {
+		foreach ( $patternsToValue as $pattern => $value ) {
+			if ( $this->matchesPattern( $fieldName, $pattern ) ) {
+				return $value;
+			}
+		}
+
+		return null;
+	}
+
 	private function matches( $fieldName, $patterns ) {
 		foreach ( $patterns as $pattern ) {
-			if ( Str::match( '/^' . $pattern . '$/', $fieldName ) ) {
+			if ( $this->matchesPattern( $fieldName, $pattern ) ) {
 				return true;
 			}
 		}
@@ -131,18 +108,14 @@ class FieldNamePatterns {
 		return false;
 	}
 
-	/**
-	 * @return array
-	 */
-	private function getAllPatterns() {
+	private function matchesPattern( $fieldName, $pattern ) {
+		return (bool) Str::match( '/^' . $pattern . '$/', $fieldName );
+	}
+
+	public function getAllPatterns() {
 		return (array) get_option( self::OPTION_KEY, [] );
 	}
 
-	/**
-	 * @param string $source
-	 *
-	 * @return array<string,array<string>>
-	 */
 	private function buildLocalPatterns( $source = 'json' ) {
 		$this->localPatterns[ $source ] = wpml_collect( acf_get_field_groups() )
 			->filter( function( $fieldGroup ) use ( $source ) {
@@ -173,11 +146,6 @@ class FieldNamePatterns {
 		return $this->localPatterns[ $source ];
 	}
 
-	/**
-	 * @param string $source
-	 *
-	 * @return array<string,array<string>>
-	 */
 	private function getAllLocalPatterns( $source = 'json' ) {
 		if ( isset( $this->localPatterns[ $source ] ) ) {
 			return $this->localPatterns[ $source ];

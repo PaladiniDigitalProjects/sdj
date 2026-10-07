@@ -578,64 +578,34 @@ class Config {
 		],
 	];
 
-	/**
-	 *
-	 * @param string $namespace
-	 * @param string $key
-	 *
-	 * @return array
-	 */
 	public static function get( $namespace, $key ) {
 		return Obj::propOr( [], 0, Fns::filter( Relation::propEq( 'key', $key ), self::getFor( $namespace ) ) );
 	}
 
-	/**
-	 * @param string $namespace
-	 *
-	 * @return array
-	 */
 	private static function getFor( $namespace ) {
 		return Fns::filter( Relation::propEq( 'namespace', $namespace ), self::DATA );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getForGroup() {
 		return self::getFor( 'group' );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getForField() {
 		return self::getFor( 'field' );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getForLayout() {
 		return self::getFor( 'layout' );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getForCpt() {
 		return self::getFor( 'cpt' );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getForTaxonomy() {
 		return self::getFor( 'taxonomy' );
 	}
 
-	/**
-	 * @return array
-	 */
 	public static function getForOptionsPage() {
 		return self::getFor( 'options-page' );
 	}

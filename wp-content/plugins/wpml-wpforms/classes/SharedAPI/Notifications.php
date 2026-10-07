@@ -15,7 +15,6 @@ class Notifications extends Base {
 
 	const EMAIL_HTML_CONTEXT = 'email-html';
 
-	/** Adds hooks. */
 	public function addHooks() {
 		add_filter( 'wpforms_process_before_form_data', [ $this, 'applyConfirmationTranslations' ] );
 		add_filter( 'wpforms_emails_send_email_data', [ $this, 'applyEmailTranslations' ], 10, 2 );
@@ -26,7 +25,6 @@ class Notifications extends Base {
 		add_filter( 'wpforms_html_field_value', [ $this, 'restoreRawValuesForHtmlEmail' ], 10, 4 );
 		add_filter( 'wpforms_plaintext_field_value', [ $this, 'restoreRawValuesForNotifications' ], 10, 2 );
 
-		// These are only required in the 'Pro' version.
 		if (
 			class_exists( WPForms_Conditional_Logic_Fields::class )
 			&& has_filter( 'wpforms_entry_email_process', [ WPForms_Conditional_Logic_Fields::instance(), 'process_notification_conditionals' ] )
@@ -36,14 +34,6 @@ class Notifications extends Base {
 		}
 	}
 
-	/**
-	 * @param string $value
-	 * @param array  $field
-	 * @param array  $formData
-	 * @param string $context
-	 *
-	 * @return string
-	 */
 	public function restoreRawValuesForHtmlEmail( string $value, array $field, array $formData, string $context ) : string {
 		if ( self::EMAIL_HTML_CONTEXT === $context ) {
 			return $this->restoreRawValuesForNotifications( $value, $field );
@@ -52,12 +42,6 @@ class Notifications extends Base {
 		return $value;
 	}
 
-	/**
-	 * @param string $value
-	 * @param array  $field
-	 *
-	 * @return string
-	 */
 	public function restoreRawValuesForNotifications( string $value, array $field ) : string {
 		if (
 			in_array( $field['type'], [ 'radio', 'select', 'checkbox' ], true )
@@ -69,15 +53,6 @@ class Notifications extends Base {
 		return $value;
 	}
 
-	/**
-	 * Restores field labels to default language.
-	 *
-	 * @param array $fields   The form fields.
-	 * @param array $entry    The form entry.
-	 * @param array $formData The form data.
-	 *
-	 * @return array
-	 */
 	public function restoreFieldLabelsToDefaultLanguage( $fields, $entry, $formData ) {
 
 		$formPost = wpforms()->get( 'form' )->get(
@@ -99,21 +74,18 @@ class Notifications extends Base {
 			}
 
 			if ( array_key_exists( $key, $entryFields ) ) {
-				$field['value'] = $this->getFieldValue( $field, $entry['fields'][ $key ], $formPostField, $translatedFields[ $key ] );
+				$field['value'] = $this->getFieldValue(
+					$field,
+					$entry['fields'][ $key ],
+					$formPostField,
+					Obj::propOr( [], $key, $translatedFields )
+				);
 			}
 		}
 
 		return $fields;
 	}
 
-	/**
-	 * Applies translations to email data.
-	 *
-	 * @param array              $data Email data.
-	 * @param \WPForms_WP_Emails $emails WPForms email object.
-	 *
-	 * @return mixed
-	 */
 	public function applyEmailTranslations( $data, $emails ) {
 		$package = $this->newPackage( $this->getId( $emails->form_data ) );
 
@@ -155,22 +127,10 @@ class Notifications extends Base {
 		return $translated['notifications'][ $emails->notification_id ];
 	}
 
-	/**
-	 * Restores current language.
-	 *
-	 * @codeCoverageIgnore
-	 */
 	public function restoreLanguage() {
 		do_action( 'wpml_restore_language_from_email' );
 	}
 
-	/**
-	 * Applies form confirmations translations.
-	 *
-	 * @param array $formData Form data.
-	 *
-	 * @return array
-	 */
 	public function applyConfirmationTranslations( $formData ) {
 
 		$package = $this->newPackage( $this->getId( $formData ) );
@@ -190,15 +150,6 @@ class Notifications extends Base {
 		return $formData;
 	}
 
-	/**
-	 * Returns language to use for translation based on email.
-	 * Will use the language of the post if non site user.
-	 *
-	 * @param string $language Language detected.
-	 * @param string $email The user email.
-	 *
-	 * @return string
-	 */
 	public function getLanguageForEmail( $language, $email ) {
 		$user = get_user_by( 'email', $email );
 		if ( isset( $user->ID ) ) {
@@ -207,23 +158,16 @@ class Notifications extends Base {
 		return $this->getCurrentFormLanguage();
 	}
 
-	/**
-	 * @return string
-	 */
 	private function getCurrentFormLanguage() {
 		return apply_filters( 'wpml_current_language', '' );
 	}
 
-	/**
-	 * @param array        $field Field in default language.
-	 * @param array|string $entryField
-	 * @param array        $originalField
-	 * @param array        $translatedField
-	 * @return string
-	 */
 	private function getFieldValue( $field, $entryField, $originalField, $translatedField ) {
 		$getField         = Obj::path( Fns::__, $field );
 		$getOriginalField = Obj::path( Fns::__, $originalField );
+		$getAnswerLabel   = function ( array $path ) use ( $translatedField, $originalField ) {
+			return $this->getAnswerLabel( $path, $translatedField, $originalField );
+		};
 
 		switch ( $field['type'] ) {
 			case 'select':
@@ -242,15 +186,20 @@ class Notifications extends Base {
 
 			case 'likert_scale':
 				$value = '';
-				foreach ( $field['value_raw'] as $key => $val ) {
-					$value .= PHP_EOL . $getOriginalField( [ 'rows', $key ] ) . ':' . PHP_EOL
-						. $getOriginalField( [ 'columns', $val ] );
+				$rows  = is_array( $field['value_raw'] ) ? $field['value_raw'] : [];
+				foreach ( $rows as $rowKey => $columnKeys ) {
+					$columns = [];
+					foreach ( (array) $columnKeys as $columnKey ) {
+						$columns[] = $getAnswerLabel( [ 'columns', $columnKey ] );
+					}
+					$value .= PHP_EOL . $getAnswerLabel( [ 'rows', $rowKey ] ) . ':' . PHP_EOL
+						. implode( ', ', $columns );
 				}
 				return $value;
 
 			case 'payment-multiple':
 			case 'payment-select':
-				return $getOriginalField( [ 'choices', $field['value_raw'], 'label' ] )
+				return $getAnswerLabel( [ 'choices', $field['value_raw'], 'label' ] )
 						. ' - ' . $getField( [ 'currency' ] )
 						. ' ' . $getField( [ 'amount' ] );
 
@@ -258,7 +207,7 @@ class Notifications extends Base {
 				$value     = '';
 				$choiceIds = explode( ',', $field['value_raw'] );
 				foreach ( $choiceIds as $key ) {
-					$value .= PHP_EOL . $getOriginalField( [ 'choices', $key, 'label' ] )
+					$value .= PHP_EOL . $getAnswerLabel( [ 'choices', $key, 'label' ] )
 						. ' - ' . $getField( [ 'currency' ] )
 						. ' ' . $getOriginalField( [ 'choices', $key, 'value' ] );
 				}
@@ -269,12 +218,18 @@ class Notifications extends Base {
 		}
 	}
 
-	/**
-	 * @param array $originalField
-	 * @param array $translatedField
-	 *
-	 * @return array
-	 */
+	private function getAnswerLabel( array $path, array $translatedField, array $originalField ) {
+		$submitted = Obj::path( $path, $translatedField );
+
+		if ( is_string( $submitted ) && '' !== $submitted ) {
+			return $submitted;
+		}
+
+		$original = Obj::path( $path, $originalField );
+
+		return is_string( $original ) ? $original : '';
+	}
+
 	private function getChoiceMap( $originalField, $translatedField ) {
 		if ( Obj::prop( 'dynamic_choices', $originalField ) ) {
 			return [];
@@ -293,16 +248,6 @@ class Notifications extends Base {
 		return $choicesMap;
 	}
 
-	/**
-	 * Restore labels in form data before processing conditional logic for form entry notifications.
-	 *
-	 * @param bool  $process   Whether to process the logic or not.
-	 * @param array $fields    List of submitted fields.
-	 * @param array $form_data Form data and settings.
-	 * @param int   $id        Notification ID.
-	 *
-	 * @return bool
-	 */
 	public function processNotificationConditionals( $process, $fields, $form_data, $id ) {
 		$conditionalLogicFields = WPForms_Conditional_Logic_Fields::instance();
 
@@ -311,12 +256,6 @@ class Notifications extends Base {
 		return $conditionalLogicFields->process_notification_conditionals( $process, $fields, $form_data, $id );
 	}
 
-	/**
-	 * @param array $form_data Form data and settings.
-	 * @param array $fields    List of submitted fields.
-	 *
-	 * @return array
-	 */
 	private function restoreConditionalLabels( $form_data, $fields ) {
 		foreach ( $form_data['fields'] as $form_field_id => &$form_field_data ) {
 			if ( isset( $form_field_data['choices'] ) ) {
@@ -332,13 +271,6 @@ class Notifications extends Base {
 		return $form_data;
 	}
 
-	/**
-	 * @param int|string $key
-	 * - standard field: 1
-	 * - repeater key: 2, 2_2, 2_3 (when more than one option)
-	 *
-	 * @return int
-	 */
 	private function decodeFieldKey( $key ) {
 		return strpos( $key, '_' ) !== false
 			? (int) substr( $key, 0, strpos( $key, '_' ) )

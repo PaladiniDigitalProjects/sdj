@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['#centros'=>'#centros','905b020aa96732eeaa88187694c53d96'=>'https://dev.sjd.es/ca/vull-donar/','90fd5bc198fcd2b880f53e0b16cb2b7d'=>'#centros','Encuentra tu centro'=>'Cerca el teu centre','Quiero donar'=>'Vull donar','e7ebf19b1b760a58d64733ee61c2e46a'=>'Cerca el teu centre','f86300059bb853e20de9d88ebc24cc81'=>'Vull donar','https://dev.sjd.es/quiero-donar/'=>'https://dev.sjd.es/ca/vull-donar/']];

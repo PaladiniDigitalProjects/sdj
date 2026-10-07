@@ -906,11 +906,11 @@ class Field extends FieldLite {
 	 */
 	private function get_field_value( $field, $form_data ): string {
 
-		$value = $field['value'] ?? '';
+		$value = wpforms_flatten_field_value( $field['value'] ?? '' );
 		$type  = $field['type'];
 
 		/** This filter is documented in src/SmartTags/SmartTag/FieldHtmlId.php. */
-		$value = (string) apply_filters( 'wpforms_html_field_value', wp_strip_all_tags( $value ), $field, $form_data, 'entry-preview' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
+		$value = (string) apply_filters( 'wpforms_html_field_value', wpforms_neutralize_html_tags( $value ), $field, $form_data, 'entry-preview' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName
 
 		/**
 		 * The field value inside for exact field type the entry preview field.
@@ -1001,8 +1001,8 @@ class Field extends FieldLite {
 
 		$field_type = $field['type'];
 
-		// Compatibility with Authorize.Net and Stripe addons.
-		if ( wpforms_is_empty_string( $value ) && in_array( $field_type, [ 'stripe-credit-card', 'authorize_net' ], true ) ) {
+		// Compatibility with Authorize.Net, Mercado Pago, and Stripe addons.
+		if ( wpforms_is_empty_string( $value ) && in_array( $field_type, [ 'stripe-credit-card', 'authorize_net', 'mercado_pago' ], true ) ) {
 			return false;
 		}
 

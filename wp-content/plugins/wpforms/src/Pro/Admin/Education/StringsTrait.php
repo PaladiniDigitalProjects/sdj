@@ -13,6 +13,7 @@ trait StringsTrait {
 	 * Localize common strings for Pro.
 	 *
 	 * @since 1.8.8
+	 * @since 2.0.1 Added the `addon_configure` strings.
 	 *
 	 * @return array
 	 */
@@ -40,6 +41,10 @@ trait StringsTrait {
 			'title'       => esc_html__( 'Incompatible Addon', 'wpforms' ),
 			'button_text' => esc_html__( 'Check for Update', 'wpforms' ),
 			'button_url'  => admin_url( 'update-core.php' ),
+		];
+
+		$strings['addon_configure'] = [
+			'title' => esc_html__( 'Setup Required', 'wpforms' ),
 		];
 
 		$license_key = wpforms_get_license_key();

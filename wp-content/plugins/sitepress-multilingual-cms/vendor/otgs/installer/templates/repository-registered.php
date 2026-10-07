@@ -36,15 +36,12 @@ class Registered {
 					<?php \OTGS\Installer\Templates\Repository\RegisteredButtons::render( $model ); ?>
 				</div>
 			</div>
+			<div class="installer-error-box hidden"></div>
 		</div>
 		<?php
 
 	}
 
-	/**
-	 * @param $repoId
-	 * @return string
-	 */
 	private static function getMaskedSiteKey( $repoId ) {
 		$siteKey = \WP_Installer()->get_site_key( $repoId );
 		return str_repeat('*', strlen( $siteKey ) - 4 ) . substr( $siteKey, -4 );

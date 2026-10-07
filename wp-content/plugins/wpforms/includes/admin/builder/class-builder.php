@@ -263,7 +263,7 @@ class WPForms_Builder {
 
 		// Allow based styles added in WP 7.0.
 		// Otherwise, there is an issue with the Upload Media button.
-		if ( version_compare( $GLOBALS['wp_version'], '7.0-alpha', '>=' ) ) {
+		if ( wpforms_is_wp_version_at_least( '7.0-alpha' ) ) {
 			$allowed_styles[] = 'wp-base-styles';
 		}
 
@@ -480,6 +480,8 @@ class WPForms_Builder {
 		// Force hide an admin side menu.
 		echo '<style>#adminmenumain { display: none !important }</style>';
 
+		$this->suppress_view_transition_abort_error();
+
 		/**
 		 * Form Builder admin head action.
 		 *
@@ -488,6 +490,25 @@ class WPForms_Builder {
 		 * @since 1.4.6
 		 */
 		do_action( 'wpforms_builder_admin_head', $this->view );
+	}
+
+	/**
+	 * Prevent the `AbortError: Transition was skipped` console error on WP 7.0+.
+	 *
+	 * @since 1.10.2
+	 */
+	private function suppress_view_transition_abort_error(): void {
+
+		// View Transitions in the admin are a WP 7.0+ feature, so there's nothing to do before that.
+		if ( ! wpforms_is_wp_version_at_least( '7.0-alpha' ) ) {
+			return;
+		}
+
+		// Opt the Builder into the transition (overrides the opt-out in builder-basic.css).
+		echo '<style>@view-transition { navigation: auto; }</style>';
+
+		// Skip the transition on both ends and resolve its promises so nothing stays unhandled.
+		echo '<script>(function(){var skip=function(event){var transition=event.viewTransition;if(!transition){return;}transition.skipTransition();transition.ready.catch(function(){});transition.finished.catch(function(){});};window.addEventListener("pagereveal",skip);window.addEventListener("pageswap",skip);})();</script>';
 	}
 
 	/**
@@ -514,7 +535,7 @@ class WPForms_Builder {
 
 		// Make sure that base styles (added in WP 7.0) are enqueued.
 		// Otherwise, there is an issue with the Upload Media button.
-		if ( version_compare( $GLOBALS['wp_version'], '7.0-alpha', '>=' ) ) {
+		if ( wpforms_is_wp_version_at_least( '7.0-alpha' ) ) {
 			wp_enqueue_style( 'wp-base-styles' );
 		}
 
@@ -654,7 +675,7 @@ class WPForms_Builder {
 			'dom-purify',
 			WPFORMS_PLUGIN_URL . 'assets/lib/purify.min.js',
 			[],
-			'3.4.1',
+			'3.4.13',
 			false
 		);
 
@@ -715,6 +736,7 @@ class WPForms_Builder {
 				'jquery-confirm',
 				'choicesjs',
 				'wpforms-builder-choicesjs',
+				'wp-a11y',
 			],
 			WPFORMS_VERSION,
 			false
@@ -872,6 +894,12 @@ class WPForms_Builder {
 			'field_locked_msg'                        => esc_html__( 'This field cannot be deleted or duplicated.', 'wpforms-lite' ),
 			'field_locked_no_delete_msg'              => esc_html__( 'This field cannot be deleted.', 'wpforms-lite' ),
 			'field_locked_no_duplicate_msg'           => esc_html__( 'This field cannot be duplicated.', 'wpforms-lite' ),
+			/* translators: %s - field label. */
+			'field_move_at_end'                       => esc_html__( '%s is already at the end.', 'wpforms-lite' ),
+			/* translators: %s - field label. */
+			'field_move_at_start'                     => esc_html__( '%s is already at the start.', 'wpforms-lite' ),
+			/* translators: %1$s - field label, %2$d - new field position, %3$d - total number of fields. */
+			'field_moved'                             => esc_html__( '%1$s moved to position %2$d of %3$d.', 'wpforms-lite' ),
 			'fields_available'                        => esc_html__( 'Available Fields', 'wpforms-lite' ),
 			'fields_unavailable'                      => esc_html__( 'No fields available', 'wpforms-lite' ),
 			'heads_up'                                => esc_html__( 'Heads up!', 'wpforms-lite' ),
@@ -962,6 +990,7 @@ class WPForms_Builder {
 			'upload_image_remove'                     => esc_html__( 'Remove Image', 'wpforms-lite' ),
 			'upload_image_extensions'                 => $image_extensions,
 			'upload_image_extensions_error'           => esc_html__( 'You tried uploading a file type that is not allowed. Please try again.', 'wpforms-lite' ),
+			'add_media'                               => esc_html__( 'Add Media', 'wpforms-lite' ),
 			'provider_add_new_acc_btn'                => esc_html__( 'Add', 'wpforms-lite' ),
 			'pro'                                     => wpforms()->is_pro(),
 			'is_gutenberg'                            => ! is_plugin_active( 'classic-editor/classic-editor.php' ),
@@ -992,6 +1021,15 @@ class WPForms_Builder {
 				'first'  => esc_html__( 'First', 'wpforms-lite' ),
 				'middle' => esc_html__( 'Middle', 'wpforms-lite' ),
 				'last'   => esc_html__( 'Last', 'wpforms-lite' ),
+			],
+			// Address field subfield formats for provider field mapping.
+			'address_field_formats'                   => [
+				'address1' => esc_html__( 'Address Line 1', 'wpforms-lite' ),
+				'address2' => esc_html__( 'Address Line 2', 'wpforms-lite' ),
+				'city'     => esc_html__( 'City', 'wpforms-lite' ),
+				'state'    => esc_html__( 'State / Province / Region', 'wpforms-lite' ),
+				'postal'   => esc_html__( 'ZIP / Postal Code', 'wpforms-lite' ),
+				'country'  => esc_html__( 'Country', 'wpforms-lite' ),
 			],
 			'no_pages_found'                          => esc_html__( 'No results found', 'wpforms-lite' ),
 			'no_results_found'                        => esc_html__( 'Sorry, no results found', 'wpforms-lite' ),
@@ -1166,10 +1204,12 @@ class WPForms_Builder {
 			'SettingsPanel'                     => "settings-panel$min.js",
 			'SettingsConfirmations'             => "settings-confirmations$min.js",
 			'SettingsNotifications'             => "settings-notifications$min.js",
+			'SettingsQrCode'                    => "settings-qr-code$min.js",
 			'BuilderProviders'                  => "builder-providers$min.js",
 			'Captcha'                           => "captcha$min.js",
 			'SaveExit'                          => "save-exit$min.js",
 			'KeyboardShortcuts'                 => "keyboard-shortcuts$min.js",
+			'FieldMover'                        => "field-mover$min.js",
 			'DragFields'                        => "drag-fields$min.js",
 			'DragFieldsMultiSelect'             => "drag-fields-multi-select$min.js",
 			'UndoRedoHelpers'                   => "undo-redo/helpers$min.js",
@@ -1202,6 +1242,7 @@ class WPForms_Builder {
 			'MultiSelect'                       => "multi-select/multi-select$min.js",
 			'MultiSelectKeyboardShortcuts'      => "multi-select/keyboard-shortcuts$min.js",
 			'CopyPaste'                         => "copy-paste$min.js",
+			'TemplatesInfiniteScroll'           => "templates-infinite-scroll$min.js",
 			'Deprecated'                        => "deprecated$min.js",
 		];
 
@@ -1460,6 +1501,10 @@ class WPForms_Builder {
 			$entry_obj             = wpforms()->obj( 'entry' );
 			$args['has_entries']   = $entry_obj && $entry_obj->get_entries( [ 'form_id' => $this->form->ID ], true );
 			$args['can_duplicate'] = $this->can_duplicate();
+
+			// Form Analytics is a Pro/Elite feature. Basic and Plus see the upgrade
+			// upsell in the Pro context-menu template, mirroring Lite.
+			$args['has_analytics_access'] = in_array( wpforms_get_license_type(), [ 'pro', 'elite', 'agency', 'ultimate' ], true );
 		}
 
 		return $args;
@@ -1722,8 +1767,7 @@ class WPForms_Builder {
 											title="<?php esc_attr_e( 'Preview Form Ctrl+P', 'wpforms-lite' ); ?>"
 											target="_blank"
 											rel="noopener noreferrer">
-										<i class="fa fa-eye"></i>
-										<span class="text"><?php esc_html_e( 'Preview', 'wpforms-lite' ); ?></span>
+										<i class="fa fa-eye"></i><span class="text"><?php esc_html_e( 'Preview', 'wpforms-lite' ); ?></span>
 									</a>
 									<button
 											type="button"
@@ -1745,7 +1789,9 @@ class WPForms_Builder {
 								<?php if ( $this->form->post_type === 'wpforms-template' ) : ?>
 									<button id="wpforms-embed"
 											class="wpforms-btn wpforms-btn-toolbar wpforms-btn-light-grey wpforms-btn-light-grey-disabled"
-											title="<?php esc_attr_e( 'You cannot embed a form template', 'wpforms-lite' ); ?>">
+											title="<?php esc_attr_e( 'You cannot embed a form template', 'wpforms-lite' ); ?>"
+											aria-disabled="true"
+											tabindex="-1">
 										<i class="fa fa-code"></i><span class="text"><?php esc_html_e( 'Embed', 'wpforms-lite' ); ?></span>
 									</button>
 								<?php else : ?>
@@ -1760,8 +1806,7 @@ class WPForms_Builder {
 							<button id="wpforms-save"
 									class="wpforms-btn wpforms-btn-toolbar wpforms-btn-orange"
 									title="<?php esc_attr_e( 'Save Form Ctrl+S', 'wpforms-lite' ); ?>">
-								<i class="fa fa-check"></i><i class="wpforms-loading-spinner wpforms-loading-white wpforms-loading-inline wpforms-hidden"></i>
-								<span class="text"><?php esc_html_e( 'Save', 'wpforms-lite' ); ?></span>
+								<i class="fa fa-check"></i><i class="wpforms-loading-spinner wpforms-loading-white wpforms-loading-inline wpforms-hidden"></i><span class="text"><?php esc_html_e( 'Save', 'wpforms-lite' ); ?></span>
 							</button>
 						<?php endif; ?>
 

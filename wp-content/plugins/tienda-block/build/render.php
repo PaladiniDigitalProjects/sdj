@@ -62,6 +62,33 @@ $wrapper_attrs = function_exists( 'get_block_wrapper_attributes' )
     <!-- CONTENT + MAP -->
     <section class="tienda-content-section">
         <div class="tienda-content">
+            <?php
+            $current_lang = function_exists( 'apply_filters' ) ? apply_filters( 'wpml_current_language', null ) : null;
+            if ( 'ca' === $current_lang ) :
+                $flecha_url  = '';
+                $flecha_ids  = get_posts( array(
+                    'post_type'      => 'attachment',
+                    'posts_per_page' => 1,
+                    'fields'         => 'ids',
+                    'meta_query'     => array(
+                        array(
+                            'key'     => '_wp_attached_file',
+                            'value'   => 'flecha_transparente.png',
+                            'compare' => 'LIKE',
+                        ),
+                    ),
+                ) );
+                if ( ! empty( $flecha_ids ) ) {
+                    $flecha_url = wp_get_attachment_image_url( $flecha_ids[0], 'full' );
+                }
+            ?>
+                <a href="https://sjd.es/ca/centres/" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;margin-bottom:1rem">
+                    <?php if ( $flecha_url ) : ?>
+                        <img src="<?php echo esc_url( $flecha_url ); ?>" alt="" style="width:30px;height:auto;flex-shrink:0">
+                    <?php endif; ?>
+                    <span class="has-accent-1-color has-text-color has-link-color has-medium-font-size" style="font-style:normal;font-weight:600">Tots els centres</span>
+                </a>
+            <?php endif; ?>
             <?php the_content(); ?>
 
             <div class="info-store">

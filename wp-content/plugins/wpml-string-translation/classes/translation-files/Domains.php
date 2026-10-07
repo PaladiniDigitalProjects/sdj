@@ -23,25 +23,16 @@ class Domains {
 	const MO_DOMAINS_CACHE_GROUP = 'WPML_ST_CACHE';
 	const MO_DOMAINS_CACHE_KEY   = 'wpml_string_translation_has_mo_domains';
 
-	/** @var wpdb $wpdb */
 	private $wpdb;
 
-	/** @var PackageDomains $package_domains */
 	private $package_domains;
 
-	/** @var WPML_ST_Translations_File_Dictionary $file_dictionary */
 	private $file_dictionary;
 
-	/** @var null|Collection $jed_domains */
 	private static $jed_domains;
 
-	/**
-	 * Domains constructor.
-	 *
-	 * @param wpdb                                 $wpdb            The WordPress database instance.
-	 * @param PackageDomains                       $package_domains The package domains instance.
-	 * @param WPML_ST_Translations_File_Dictionary $file_dictionary The translations file dictionary.
-	 */
+	private static $mo_domains_invalidated = false;
+
 	public function __construct(
 		wpdb $wpdb,
 		PackageDomains $package_domains,
@@ -53,9 +44,6 @@ class Domains {
 	}
 
 
-	/**
-	 * @return Collection
-	 */
 	public function getMODomains() {
 		$transient_key = self::MO_DOMAINS_CACHE_KEY;
 
@@ -64,28 +52,28 @@ class Domains {
 			return $cacheItem->get();
 		}
 
-		// If not in object cache, try transient.
 		$transient = get_transient( $transient_key );
 		if ( false !== $transient ) {
 			return $transient;
 		}
 
-		// If not in any cache, fetch from database.
 		$excluded_domains = self::getReservedDomains()->merge( $this->getJEDDomains() );
 
-		$sql = "
-			SELECT DISTINCT context {$this->getCollateForContextColumn( $this->wpdb )}
-			FROM {$this->wpdb->prefix}icl_strings
-		";
-
-		$mo_domains = wpml_collect( $this->wpdb->get_col( $sql ) )
+		$wpdb        = $this->wpdb;
+		$mo_domains = wpml_collect(
+			$wpdb->get_col(
+				sprintf(
+					"SELECT DISTINCT context %s
+					FROM {$wpdb->prefix}icl_strings",
+					esc_sql( $this->getCollateForContextColumn( $wpdb ) )
+				)
+			)
+		)
 			->diff( $excluded_domains )
 			->values();
 
-		// If we don't get any data from DB, we set cache expire time to be 15 minutes so that cache refreshes in lesser time.
 		$cacheLifeTime = $mo_domains->count() <= 0 ? 15 * MINUTE_IN_SECONDS : HOUR_IN_SECONDS;
 
-		// Try to store in object cache first.
 		Cache::set(
 			self::MO_DOMAINS_CACHE_GROUP,
 			self::MO_DOMAINS_CACHE_KEY,
@@ -93,8 +81,7 @@ class Domains {
 			$mo_domains
 		);
 
-		// Use transient as fallback only if object cache is not being used.
-		if ( ! wp_using_ext_object_cache() ) {
+		if ( ! wp_using_ext_object_cache() && ! self::isInvalidatedThisRequest() ) {
 			set_transient( $transient_key, $mo_domains, $cacheLifeTime );
 		}
 
@@ -104,7 +91,10 @@ class Domains {
 	public static function invalidateMODomainCache() {
 		static $invalidationScheduled = false;
 
-		delete_transient( self::MO_DOMAINS_CACHE_KEY );
+		if ( ! self::$mo_domains_invalidated ) {
+			self::$mo_domains_invalidated = true;
+			delete_transient( self::MO_DOMAINS_CACHE_KEY );
+		}
 
 		if ( ! $invalidationScheduled ) {
 			$invalidationScheduled = true;
@@ -117,24 +107,19 @@ class Domains {
 		}
 	}
 
+	private static function isInvalidatedThisRequest() {
+		return self::$mo_domains_invalidated;
+	}
 
 
-	/**
-	 * Returns a collection of MO domains that
-	 * WPML needs to automatically load.
-	 *
-	 * @return Collection
-	 */
-	public function getCustomMODomains() {
+
+	public function getCustomMODomains( $locale = null ) {
+		$locale            = $locale ?: determine_locale();
 		$all_mo_domains    = $this->getMODomains();
-		$native_mo_domains = $this->file_dictionary->get_domains( 'mo', get_locale() );
+		$native_mo_domains = $this->file_dictionary->get_domains( 'mo', $locale );
 
 		return $all_mo_domains->reject(
 			function ( $domain ) use ( $native_mo_domains ) {
-				/**
-				 * Admin texts, packages, string shortcodes are handled separately,
-				 * so they are loaded on-demand.
-				 */
 				return null === $domain
 					   || 0 === strpos( $domain, WPML_Admin_Texts::DOMAIN_NAME_PREFIX )
 					   || $this->package_domains->isPackage( $domain )
@@ -144,9 +129,6 @@ class Domains {
 		)->values();
 	}
 
-	/**
-	 * @return Collection
-	 */
 	public function getJEDDomains() {
 		if ( ! self::$jed_domains instanceof Collection ) {
 			self::$jed_domains = wpml_collect( $this->file_dictionary->get_domains( 'json' ) );
@@ -155,11 +137,6 @@ class Domains {
 		return self::$jed_domains;
 	}
 
-	/**
-	 * @param string $domain
-	 *
-	 * @return bool
-	 */
 	public function hasNoNativeTranslationFile( $domain ) {
 		return ! wpml_collect( $this->file_dictionary->get_domains() )
 			->first( Relation::equals( $domain ) );
@@ -170,12 +147,6 @@ class Domains {
 		self::$jed_domains = null;
 	}
 
-	/**
-	 * Domains that are not handled with MO files,
-	 * but have direct DB queries.
-	 *
-	 * @return Collection
-	 */
 	public static function getReservedDomains() {
 		return wpml_collect(
 			[
@@ -184,9 +155,6 @@ class Domains {
 		);
 	}
 
-	/**
-	 * @return Collection
-	 */
 	private function getPackageDomains() {
 		return $this->package_domains->getDomains();
 	}

@@ -1,8 +1,5 @@
 <?php
 
-/**
- * @return mixed
- */
 function icl_get_languages_names() {
 	static $__icl_lang_names_cached = null;
 
@@ -18,9 +15,6 @@ function icl_get_languages_names() {
 }
 
 
-/**
- * @return array
- */
 function icl_get_languages_codes() {
 	static $result = null;
 
@@ -151,7 +145,6 @@ function icl_get_languages_codes() {
 			'Portuguese, Brazil'    => 'pt-br',
 			'Portuguese, Portugal'  => 'pt-pt',
 			'Punjabi'               => 'pa',
-			'Quechua'               => 'qu',
 			'Rhaeto-Romance'        => 'rm',
 			'Romanian'              => 'ro',
 			'Russian'               => 'ru',
@@ -210,9 +203,6 @@ function icl_get_languages_codes() {
 	return $result;
 }
 
-/**
- * @return array
- */
 function icl_get_languages_locales() {
 	static $result = null;
 
@@ -272,7 +262,6 @@ function icl_get_languages_locales() {
 			'pl'      => 'pl_PL',
 			'pt-br'   => 'pt_BR',
 			'pt-pt'   => 'pt_PT',
-			'qu'      => 'quz_PE',
 			'ro'      => 'ro_RO',
 			'ru'      => 'ru_RU',
 			'si'      => 'si_LK',

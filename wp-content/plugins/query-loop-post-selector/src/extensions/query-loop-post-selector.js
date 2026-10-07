@@ -15,82 +15,82 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { PostSelector } from '../components';
 
 const withSelectivePostControl = createHigherOrderComponent((BlockEdit) => {
-	return (props) => {
-		const isInitialRender = useRef(true);
-		const postType = get(props, 'attributes.query.postType', 'post');
-		const currentQuery = get(props, 'attributes.query', {});
+  return (props) => {
+    const rawPostType = get(props, 'attributes.query.postType'); // sin valor por defecto
+    const postType = rawPostType || 'post';
+    const currentQuery = get(props, 'attributes.query', {});
+    const prevPostType = useRef(); // sin inicializar
 
-		const currentSelectivePosts = get(
-			currentQuery,
-			'qlpspSelectivePosts',
-			[]
-		);
+    const currentSelectivePosts = get(
+      currentQuery,
+      'qlpspSelectivePosts',
+      []
+    );
 
-		const inherit = get(currentQuery, 'inherit', false);
+    const inherit = get(currentQuery, 'inherit', false);
 
-		useEffect(() => {
-			/**
-			 * PDS 2026-07-23: només reseteja la selecció si postType/inherit
-			 * canvien de valor DE DEBÒ. El codi original reseteja en qualsevol
-			 * re-invocació de l'efecte (p.ex. el doble muntatge de React 18 /
-			 * StrictMode), i això esborrava els "Selective Posts" cada cop que
-			 * s'editava la pàgina. Guardem el valor confirmat al ref.
-			 */
-			const prev = isInitialRender.current;
-			isInitialRender.current = { postType, inherit };
+    useEffect(() => {
+      // Aún no ha llegado el valor real de postType: no juzgar todavía.
+      if (rawPostType === undefined) {
+        return;
+      }
 
-			if (
-				prev !== true &&
-				( prev.postType !== postType || prev.inherit !== inherit )
-			) {
-				/** Resetting the selective posts, due to real post type change. */
-				props.setAttributes({
-					query: {
-						...currentQuery,
-						qlpspSelectivePosts: [],
-					},
-				});
-			}
-		}, [postType, inherit]);
+      // Primera vez que vemos un valor real: solo lo guardamos como referencia.
+      if (prevPostType.current === undefined) {
+        prevPostType.current = rawPostType;
+        return;
+      }
 
-		if ('core/query' !== props.name) {
-			return <BlockEdit {...props} />;
-		}
+      // Solo resetea si el valor real cambió de verdad.
+      if (rawPostType !== prevPostType.current) {
+        props.setAttributes({
+          query: {
+            ...currentQuery,
+            qlpspSelectivePosts: [],
+          },
+        });
+      }
 
-		return (
-			<>
-				<BlockEdit {...props} />
-				{!inherit && (
-					<InspectorControls>
-						<PanelBody
-							title={__(
-								'Selective Posts',
-								'query-loop-post-selector'
-							)}
-						>
-							<PostSelector
-								postType={postType}
-								value={currentSelectivePosts}
-								onChange={(newSelectivePosts) =>
-									props.setAttributes({
-										query: {
-											...currentQuery,
-											qlpspSelectivePosts:
-												newSelectivePosts,
-										},
-									})
-								}
-							/>
-						</PanelBody>
-					</InspectorControls>
-				)}
-			</>
-		);
-	};
+      prevPostType.current = rawPostType;
+    }, [rawPostType, inherit]);
+
+    if ('core/query' !== props.name) {
+      return <BlockEdit {...props} />;
+    }
+
+    return (
+      <>
+        <BlockEdit {...props} />
+        {!inherit && (
+          <InspectorControls>
+            <PanelBody
+              title={__(
+                'Selective Posts',
+                'query-loop-post-selector'
+              )}
+            >
+              <PostSelector
+                postType={postType}
+                value={currentSelectivePosts}
+                onChange={(newSelectivePosts) =>
+                  props.setAttributes({
+                    query: {
+                      ...currentQuery,
+                      qlpspSelectivePosts: newSelectivePosts,
+                    },
+                  })
+                }
+              />
+            </PanelBody>
+          </InspectorControls>
+        )}
+      </>
+    );
+  };
 }, 'withSelectivePostControl');
 
 addFilter(
-	'editor.BlockEdit',
-	'small-plugins/with-query-loop-selective-post-control',
-	withSelectivePostControl
+  'editor.BlockEdit',
+  'small-plugins/with-query-loop-selective-post-control',
+  withSelectivePostControl
 );

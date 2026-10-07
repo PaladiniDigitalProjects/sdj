@@ -7,11 +7,6 @@ use WPML\FP\Obj;
 
 class DynamicChoices {
 
-	/**
-	 * @param array $field
-	 *
-	 * @return array
-	 */
 	public static function convertRawValue( array $field ) : array {
 		if (
 			Field::hasChoices( $field )

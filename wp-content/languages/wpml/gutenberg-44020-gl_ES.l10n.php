@@ -1,0 +1,2 @@
+<?php
+return ['messages'=>['03c4298e863a06fb2ecdd328bae920f3'=>'https://dev.sjd.es/quienes-somos/conocimiento/publicaciones/','25156e84fcd51d3f797565d6fe92daec'=>'https://dev.sjd.es/san-juan-de-dios/','http://dev.sjd.es/quienes-somos/conocimiento/publicaciones/'=>'https://dev.sjd.es/quienes-somos/conocimiento/publicaciones/','http://dev.sjd.es/san-juan-de-dios/'=>'https://dev.sjd.es/san-juan-de-dios/']];

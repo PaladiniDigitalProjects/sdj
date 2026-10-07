@@ -2,32 +2,18 @@
 
 namespace WPML\PB\Elementor\Hooks;
 
+use WPML\PB\Elementor\Helper\ElementTree;
+
 class DisplayConditions implements \IWPML_Frontend_Action {
 
-	/** @var array|null */
 	private $conditionConfig;
 
 	public function add_hooks() {
 		add_filter( 'elementor/frontend/builder_content_data', [ $this, 'convertDisplayConditions' ], 10, 2 );
 	}
 
-	/**
-	 * @return array
-	 */
 	private function getConditionConfig() {
 		if ( ! isset( $this->conditionConfig ) ) {
-			/**
-			 * Filter the display conditions IDs that should be converted.
-			 *
-			 * @since 2.3.0
-			 *
-			 * @param array $conditionConfig {
-			 *     @type array $condition_name {
-			 *         @type string $field Field name containing the IDs to convert
-			 *         @type string $type  Type of content ('term' or 'post')
-			 *     }
-			 * }
-			 */
 			$this->conditionConfig = apply_filters(
 				'wpml_elementor_display_conditions_ids_to_convert',
 				[
@@ -58,31 +44,18 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		return $this->conditionConfig;
 	}
 
-	/**
-	 * @param array $dataArray
-	 * @param int   $postId
-	 *
-	 * @return array
-	 */
-	public function convertDisplayConditions( $dataArray, $postId ) {
-		foreach ( $dataArray as &$data ) {
-			if ( isset( $data['settings']['e_display_conditions'] ) && is_array( $data['settings']['e_display_conditions'] ) ) {
-				$data['settings']['e_display_conditions'] = $this->processDisplayConditions( $data['settings']['e_display_conditions'] );
-			}
-
-			if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
-				$data['elements'] = $this->convertDisplayConditions( $data['elements'], $postId );
-			}
-		}
-
-		return $dataArray;
+	public function convertDisplayConditions( $dataArray, $postId = null ) {
+		return ElementTree::map( $dataArray, [ $this, 'convertDisplayConditionsInElement' ] );
 	}
 
-	/**
-	 * @param array $conditions
-	 *
-	 * @return array
-	 */
+	public function convertDisplayConditionsInElement( $element ) {
+		if ( isset( $element['settings']['e_display_conditions'] ) && is_array( $element['settings']['e_display_conditions'] ) ) {
+			$element['settings']['e_display_conditions'] = $this->processDisplayConditions( $element['settings']['e_display_conditions'] );
+		}
+
+		return $element;
+	}
+
 	private function processDisplayConditions( $conditions ) {
 		return array_map(
 			function ( $conditionJson ) {
@@ -99,11 +72,6 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		);
 	}
 
-	/**
-	 * @param mixed $condition
-	 *
-	 * @return array|null
-	 */
 	private function parseCondition( $condition ) {
 		if ( is_array( $condition ) ) {
 			return $condition;
@@ -121,11 +89,6 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		return null;
 	}
 
-	/**
-	 * @param array $condition
-	 *
-	 * @return array
-	 */
 	private function convertCondition( $condition ) {
 		return array_map(
 			function ( $conditionGroup ) {
@@ -135,11 +98,6 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		);
 	}
 
-	/**
-	 * @param array $conditionGroups
-	 *
-	 * @return array
-	 */
 	private function convertConditionIds( $conditionGroups ) {
 		$isSingleLegacyCondition = $conditionGroups && 0 !== array_keys( $conditionGroups )[0];
 
@@ -156,12 +114,6 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		return $isSingleLegacyCondition ? $result[0] : $result;
 	}
 
-	/**
-	 * @param array $conditionGroup
-	 * @param array $configForCondition
-	 *
-	 * @return array
-	 */
 	private function convertIdsForCondition( $conditionGroup, $configForCondition ) {
 		$conditionGroup[ $configForCondition['field'] ] = array_map(
 			function ( $term ) use ( $configForCondition ) {
@@ -177,21 +129,11 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		return $conditionGroup;
 	}
 
-	/**
-	 * @param string $condition
-	 *
-	 * @return array|null
-	 */
 	private function getConfigForCondition( $condition ) {
 		$allConfig = $this->getConditionConfig();
 		return array_key_exists( $condition, $allConfig ) ? $allConfig[ $condition ] : null;
 	}
 
-	/**
-	 * @param array $term
-	 *
-	 * @return array
-	 */
 	private function convertTermId( $term ) {
 		if ( ! isset( $term['id'] ) ) {
 			return $term;
@@ -206,11 +148,6 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		return $term;
 	}
 
-	/**
-	 * @param array $item
-	 *
-	 * @return array
-	 */
 	private function convertPostId( $item ) {
 		if ( ! isset( $item['id'] ) ) {
 			return $item;
@@ -221,12 +158,6 @@ class DisplayConditions implements \IWPML_Frontend_Action {
 		return $item;
 	}
 
-	/**
-	 * @param int|string $elementId
-	 * @param string     $elementType
-	 *
-	 * @return int|string
-	 */
 	private function convertId( $elementId, $elementType ) {
 		return apply_filters( 'wpml_object_id', $elementId, $elementType, true );
 	}

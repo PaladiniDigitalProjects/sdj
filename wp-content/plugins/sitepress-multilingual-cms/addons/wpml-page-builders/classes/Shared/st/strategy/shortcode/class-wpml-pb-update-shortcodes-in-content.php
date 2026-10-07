@@ -6,15 +6,10 @@ class WPML_PB_Update_Shortcodes_In_Content {
 
 	const LONG_STRING_THRESHOLD = 5000;
 
-	/** @var  WPML_PB_Shortcode_Strategy $strategy */
 	private $strategy;
-	/** @var WPML_PB_Shortcode_Encoding $encoding */
 	private $encoding;
-	/** @var string */
 	private $new_content;
-	/** @var array */
 	private $string_translations;
-	/** @var string */
 	private $lang;
 
 	public function __construct( WPML_PB_Shortcode_Strategy $strategy, WPML_PB_Shortcode_Encoding $encoding ) {
@@ -104,10 +99,8 @@ class WPML_PB_Update_Shortcodes_In_Content {
 				$this->new_content = str_replace( $block, $new_block, $this->new_content );
 			} else {
 				if ( $is_attribute && $attr ) {
-					// Quotes needs to be converted to entities, otherwise they can match with
-					// the shortcode attributes delimiters and break the attributes.
-					$translation = str_replace( [ "'", '"' ], [ '&apos;', '&quot;' ], $translation );
-					$pattern     = '/' . $attr . '=(["\'])' . preg_quote( $original, '/' ) . '(["\'])/';
+					$translation = $this->escape_attribute_value_delimiter( $translation, $block, $attr, $original );
+					$pattern     = '/' . preg_quote( $attr, '/' ) . '=(["\'])' . preg_quote( $original, '/' ) . '(["\'])/';
 					$replacement = $attr . '=${1}' . $this->escape_backward_reference_on_replacement_string( $translation ) . '${2}';
 				} else {
 					$used_wrapper = false !== strpos( $new_block, '[' . WPML_PB_Shortcode_Content_Wrapper::WRAPPER_SHORTCODE_NAME . ']' );
@@ -131,27 +124,22 @@ class WPML_PB_Update_Shortcodes_In_Content {
 		return $new_block;
 	}
 
-	/**
-	 * We need to escape backward references that could be included in the replacement text
-	 * e.g. '$1999.each' => '$19' is considered as a backward reference
-	 *
-	 * @param string $stringToEscape
-	 *
-	 * @return string
-	 */
 	private function escape_backward_reference_on_replacement_string( $stringToEscape ) {
 		return preg_replace( '/\$([\d]{1,2})/', '\\\$${1}', $stringToEscape );
+	}
+
+	private function escape_attribute_value_delimiter( $translation, $block, $attr, $original ) {
+		$delimiter = preg_match( '/' . preg_quote( $attr, '/' ) . '=(["\'])' . preg_quote( $original, '/' ) . '/', $block, $matches )
+			? $matches[1]
+			: '"';
+
+		return str_replace( $delimiter, '"' === $delimiter ? '&quot;' : '&apos;', $translation );
 	}
 
 	private function replace_content_without_delimiters( $block, $replacement ) {
 		return preg_replace( '/(]\s*)' . preg_quote( $block, '/' ) . '(\s*\[)/', '${1}' . $replacement . '${2}', $this->new_content, 1 );
 	}
 
-	/**
-	 * @param string $maybeLongString
-	 *
-	 * @return bool
-	 */
 	private function is_string_too_long_for_regex( $maybeLongString ) {
 		return mb_strlen( $maybeLongString ) > self::LONG_STRING_THRESHOLD;
 	}
@@ -191,12 +179,6 @@ class WPML_PB_Update_Shortcodes_In_Content {
 		}
 	}
 
-	/**
-	 * @param string|null $translation
-	 * @param string      $encoding
-	 *
-	 * @return string
-	 */
 	private function filter_attribute_translation( $translation, $encoding ) {
 		if ( is_null( $translation ) ) {
 			return '';

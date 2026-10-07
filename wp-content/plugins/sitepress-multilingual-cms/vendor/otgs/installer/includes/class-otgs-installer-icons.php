@@ -2,9 +2,6 @@
 
 class OTGS_Installer_Icons {
 
-	/**
-	 * @var WP_Installer
-	 */
 	private $installer;
 
 	public function __construct( WP_Installer $installer ) {
@@ -15,12 +12,6 @@ class OTGS_Installer_Icons {
 		add_filter( 'otgs_installer_upgrade_check_response', array( $this, 'add_icons_on_response' ), 10, 2 );
 	}
 
-	/**
-	 * @param stdClass $response
-	 * @param string $name
-	 *
-	 * @return stdClass
-	 */
 	public function add_icons_on_response( $response, $name ) {
 		$repositories = array_keys( $this->installer->get_repositories() );
 		$product = '';

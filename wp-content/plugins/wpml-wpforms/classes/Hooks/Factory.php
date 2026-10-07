@@ -8,11 +8,6 @@ use WPML_Package;
 
 class Factory {
 
-	/**
-	 * @param int $package
-	 *
-	 * @return WPML_Package
-	 */
 	public function getWpmlPackage( int $package ): WPML_Package {
 		return new WPML_Package( $package );
 	}

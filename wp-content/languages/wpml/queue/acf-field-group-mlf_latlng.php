@@ -1,0 +1,2 @@
+<?php
+return ['items'=>['Position'=>['urls'=>[],'names'=>['group-mlf_latlng-title-52f5e0bc3859bc5f5e25130b6c7e8881'],'cmp'=>['wpml-string-translation',1]],'Latitude'=>['urls'=>[],'names'=>['field-field_mlf_latitude-label-3b0eb7469ba9c95f3a05c4cef1f6aac4'],'cmp'=>['wpml-string-translation',1]],'Longitude'=>['urls'=>[],'names'=>['field-field_mlf_longitude-label-9b4dabc50f0b8ccba1c8981831abdad8'],'cmp'=>['wpml-string-translation',1]]]];

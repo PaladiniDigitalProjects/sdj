@@ -4,16 +4,12 @@ namespace WPML\ST\StringsScanning\JS;
 
 class Scanner {
 
-	/**
-	 * @param string                                             $file
-	 * @param string                                             $componentDomain
-	 * @param callable(string, string, string, string, int):void $storeResults
-	 *
-	 * @return void
-	 */
 	public function scan( $file, $componentDomain, $storeResults ) {
 		try {
-			require_once WPML_ST_PATH . '/lib/StringScanning/vendor/autoload.php';
+			$string_scanning_autoloader = WPML_ST_PATH . '/lib/StringScanning/vendor/autoload.php';
+			if ( is_readable( $string_scanning_autoloader ) ) {
+				require_once $string_scanning_autoloader;
+			}
 
 			if (
 				! class_exists( '\Gettext\Translations' )
@@ -24,14 +20,13 @@ class Scanner {
 			}
 
 			$xdebugMaxNestingLevel = (string) ini_get( 'xdebug.max_nesting_level' );
-			/** @see https://github.com/mck89/peast?tab=readme-ov-file#known-issues */
 			ini_set( 'xdebug.max_nesting_level', '1024' );
 
 			$translations = [ new \Gettext\Translations() ];
 			$options      = [
 				'file'          => $file,
 				'extensions'    => [ 'js', 'jsx' ],
-				'addReferences' => true, // Optional: If enabled, we also get the file and the line where the string was found.
+				'addReferences' => true,
 				'functions'     => [
 					'__'  => 'text_domain',
 					'_x'  => 'text_context_domain',
@@ -55,7 +50,6 @@ class Scanner {
 			$jedDomain  = \WPML_ST_JED_Domain::get( $textdomain, $handle );
 
 			foreach ( $translations[0] as $translation ) {
-				/** @var \Gettext\Translation $translation */
 				$stringValue = $translation->getOriginal();
 				$refs        = $translation->getReferences();
 				$firstLine   = $refs[0][1] ?? null;

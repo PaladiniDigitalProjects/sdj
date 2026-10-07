@@ -16,39 +16,30 @@ class Groups {
 	const TOP_LEVEL_WIDGETS_DESCRIPTION = 'Widgets';
 	const WIDGET_GROUP_NAME             = 'Widget';
 
-	/**
-	 * @param array $elements
-	 *
-	 * @return array
-	 */
 	public static function flattenHierarchy( $elements ) {
 		$groups = self::extractGroupIds( $elements );
 		if ( ! $groups ) {
 			return $elements;
 		}
 
-		$flattenGroup = function ( $element ) use ( $groups ) {
-			if ( ! isset( $element['extradata'] ) ) {
+		$plan = self::planFlattenedGroups( $elements, $groups );
+
+		$flattenGroup = function ( $element ) use ( $plan ) {
+			if ( ! isset( $element['extradata']['group_id'], $element['extradata']['group'] ) ) {
 				return $element;
 			}
 
-			$extradata = $element['extradata'];
+			$groupId = $element['extradata']['group_id'];
 
-			if ( ! isset( $extradata['group_id'], $extradata['group'] ) ) {
+			if ( empty( $groupId ) || ! self::isPBGroup( $groupId ) ) {
 				return $element;
 			}
 
-			if ( ! empty( $extradata['group_id'] ) && self::isPBGroup( $extradata['group_id'] ) ) {
-				if ( self::isBlockElementInGroup( $extradata['group_id'] ) ) {
-					list( $extradata['group_id'], $extradata['group'] ) = self::getBlockGroup( $extradata['group_id'] );
-				} elseif ( self::isSingleElementInGroup( $extradata['group_id'], $groups ) ) {
-					$extradata['group_id'] = self::removeLastCrumb( $extradata['group_id'] );
-					$extradata['group']    = self::removeLastCrumb( $extradata['group'] );
-				} else {
-					$extradata['group_id'] = self::removeAllExceptLastCrumb( $extradata['group_id'] );
-					$extradata['group']    = self::removeAllExceptLastCrumb( $extradata['group'] );
-				}
-				$element['extradata'] = $extradata;
+			if ( self::isBlockElementInGroup( $groupId ) ) {
+				list( $element['extradata']['group_id'], $element['extradata']['group'] ) = self::getBlockGroup( $groupId );
+			} elseif ( isset( $plan[ $groupId ] ) ) {
+				$element['extradata']['group_id'] = $plan[ $groupId ]['group_id'];
+				$element['extradata']['group']    = $plan[ $groupId ]['group'];
 			}
 
 			return $element;
@@ -59,20 +50,90 @@ class Groups {
 			->all();
 	}
 
-	/**
-	 * @param string $groupId
-	 *
-	 * @return bool
-	 */
+	private static function planFlattenedGroups( array $elements, array $groups ): array {
+		$resolved               = [];
+		$truePathsByCollapsedId = [];
+
+		foreach ( $elements as $element ) {
+			if ( ! isset( $element['extradata']['group_id'], $element['extradata']['group'] ) ) {
+				continue;
+			}
+
+			$groupId = $element['extradata']['group_id'];
+
+			if ( empty( $groupId )
+				|| ! self::isPBGroup( $groupId )
+				|| self::isBlockElementInGroup( $groupId )
+				|| isset( $resolved[ $groupId ] )
+			) {
+				continue;
+			}
+
+			if ( self::isSingleElementInGroup( $groupId, $groups ) ) {
+				$collapsedId = self::removeLastCrumb( $groupId );
+				$label       = self::removeLastCrumb( $element['extradata']['group'] );
+				$truePath    = self::removeLeafCrumb( $groupId );
+			} else {
+				$collapsedId = self::removeAllExceptLastCrumb( $groupId );
+				$label       = self::removeAllExceptLastCrumb( $element['extradata']['group'] );
+				$truePath    = $groupId;
+			}
+
+			$resolved[ $groupId ] = compact( 'collapsedId', 'label', 'truePath' );
+
+			if ( ! in_array( $truePath, $truePathsByCollapsedId[ $collapsedId ] ?? [], true ) ) {
+				$truePathsByCollapsedId[ $collapsedId ][] = $truePath;
+			}
+		}
+
+		$groupIdByTruePath = self::resolveCollidingGroupIds( $truePathsByCollapsedId );
+
+		$plan = [];
+		foreach ( $resolved as $groupId => $data ) {
+			$plan[ $groupId ] = [
+				'group_id' => $groupIdByTruePath[ $data['truePath'] ],
+				'group'    => $data['label'],
+			];
+		}
+
+		return $plan;
+	}
+
+	private static function resolveCollidingGroupIds( array $truePathsByCollapsedId ): array {
+		$reserved = [];
+		foreach ( $truePathsByCollapsedId as $collapsedId => $truePaths ) {
+			if ( 1 === count( $truePaths ) ) {
+				$reserved[ $collapsedId ] = true;
+			}
+		}
+
+		$groupIdByTruePath = [];
+		foreach ( $truePathsByCollapsedId as $collapsedId => $truePaths ) {
+			if ( 1 === count( $truePaths ) ) {
+				$groupIdByTruePath[ $truePaths[0] ] = $collapsedId;
+				continue;
+			}
+
+			$base  = (string) preg_replace( '/-\d+$/', '', $collapsedId );
+			$index = 0;
+			foreach ( $truePaths as $truePath ) {
+				do {
+					$candidate = $base . '-' . $index;
+					++$index;
+				} while ( isset( $reserved[ $candidate ] ) );
+
+				$reserved[ $candidate ]         = true;
+				$groupIdByTruePath[ $truePath ] = $candidate;
+			}
+		}
+
+		return $groupIdByTruePath;
+	}
+
 	private static function isPBGroup( $groupId ) {
 		return (bool) Str::startsWith( \WPML_TM_Page_Builders::TOP_LEVEL_GROUP_ID, $groupId );
 	}
 
-	/**
-	 * @param array $elements
-	 *
-	 * @return array
-	 */
 	public static function extractGroupIds( $elements ) {
 		return pipe(
 			Lst::pluck( 'extradata' ),
@@ -80,12 +141,6 @@ class Groups {
 		)( $elements );
 	}
 
-	/**
-	 * @param string $needle
-	 * @param array  $haystack
-	 *
-	 * @return bool
-	 */
 	public static function isSingleElementInGroup( $needle, $haystack ) {
 		$count = wpml_collect( $haystack )
 			->map( 'trailingslashit' )
@@ -95,24 +150,13 @@ class Groups {
 		return 1 === $count;
 	}
 
-	/**
-	 * @param string $groupId
-	 *
-	 * @return bool
-	 */
 	public static function isBlockElementInGroup( $groupId ) {
 		return (bool) preg_match( '/\/block-\d+\//', $groupId );
 	}
 
-	/**
-	 * @param string $group
-	 *
-	 * @return string
-	 */
 	public static function removeLastCrumb( $group ) {
 		$crumbs = explode( self::PATH_SEPARATOR, $group );
 
-		// Except if there is only 1 (ie: Main Content).
 		if ( count( $crumbs ) > 1 ) {
 			array_pop( $crumbs );
 		}
@@ -120,11 +164,6 @@ class Groups {
 		return self::removeAllExceptLastCrumb( implode( self::PATH_SEPARATOR, $crumbs ) );
 	}
 
-	/**
-	 * @param string $group
-	 *
-	 * @return string
-	 */
 	public static function removeAllExceptLastCrumb( $group ) {
 		$crumbs = explode( self::PATH_SEPARATOR, $group );
 
@@ -133,11 +172,16 @@ class Groups {
 			: $group;
 	}
 
-	/**
-	 * @param string $groupIds
-	 *
-	 * @return string[]
-	 */
+	private static function removeLeafCrumb( string $group ): string {
+		$crumbs = explode( self::PATH_SEPARATOR, $group );
+
+		if ( count( $crumbs ) > 1 ) {
+			array_pop( $crumbs );
+		}
+
+		return implode( self::PATH_SEPARATOR, $crumbs );
+	}
+
 	private static function getBlockGroup( string $groupIds ): array {
 		$blockId = null;
 
@@ -170,11 +214,6 @@ class Groups {
 		];
 	}
 
-	/**
-	 * @param string $sidebarId
-	 *
-	 * @return string
-	 */
 	private static function getSidebarName( $sidebarId ) {
 		global $wp_registered_sidebars;
 
@@ -183,22 +222,10 @@ class Groups {
 			: Labels::convertToHuman( $sidebarId, true );
 	}
 
-	/**
-	 * @param string $title
-	 *
-	 * @return bool
-	 */
 	public static function isGroupLabel( $title ) {
-		return false !== strpos( $title, self::LABEL_SEPARATOR );
+		return false !== strpos( (string) $title, self::LABEL_SEPARATOR );
 	}
 
-	/**
-	 * @param string[] $groups
-	 * @param string   $title
-	 * @param int|null $sequence
-	 *
-	 * @return string
-	 */
 	public static function buildGroupLabel( $groups, $title, $sequence = null ) {
 		if ( ! $groups ) {
 			return $title;
@@ -209,11 +236,6 @@ class Groups {
 			. self::LABEL_SEPARATOR . $title;
 	}
 
-	/**
-	 * @param string $groupLabel
-	 *
-	 * @return array{string[], string}
-	 */
 	public static function parseGroupLabel( $groupLabel ) {
 		list( $groups, $title ) = explode( self::LABEL_SEPARATOR, $groupLabel, 2 );
 
@@ -223,12 +245,6 @@ class Groups {
 		];
 	}
 
-	/**
-	 * @param string $groupLabel
-	 * @param int    $imageId
-	 *
-	 * @return string
-	 */
 	public static function appendImageIdToGroupLabel( $groupLabel, $imageId ) {
 		list( $group, $title ) = explode( self::LABEL_SEPARATOR, $groupLabel, 2 );
 

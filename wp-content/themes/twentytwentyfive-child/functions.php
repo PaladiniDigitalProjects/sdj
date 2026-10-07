@@ -413,3 +413,110 @@ function sjd_redirect_noticias_to_actualidad() {
     }
 }
 add_action( 'template_redirect', 'sjd_redirect_noticias_to_actualidad' );
+
+/**
+ * Red de seguridad: evita que un bloque Query Loop con selección manual de
+ * posts (plugin Query Loop Post Selector) pierda esa selección cuando
+ * WordPress reguarda la página como efecto colateral de editar otra
+ * plantilla (header/footer) en el Editor de sitio.
+ * Ver LOG SJD Sessió 35.
+ */
+function pds_protect_query_loop_selection( $prepared_post, $request ) {
+    if ( empty( $prepared_post->ID ) || empty( $prepared_post->post_content ) ) {
+        return $prepared_post;
+    }
+    if ( strpos( $prepared_post->post_content, '<!-- wp:query' ) === false ) {
+        return $prepared_post;
+    }
+
+    $old_post = get_post( $prepared_post->ID );
+    if ( ! $old_post || strpos( (string) $old_post->post_content, '<!-- wp:query' ) === false ) {
+        return $prepared_post;
+    }
+
+    $old_selections = array();
+    pds_collect_query_selections( parse_blocks( $old_post->post_content ), $old_selections );
+
+    if ( empty( $old_selections ) ) {
+        return $prepared_post;
+    }
+
+    $new_blocks = parse_blocks( $prepared_post->post_content );
+    $changed    = pds_restore_query_selections( $new_blocks, $old_selections );
+
+    if ( $changed ) {
+        $prepared_post->post_content = serialize_blocks( $new_blocks );
+    }
+
+    return $prepared_post;
+}
+add_filter( 'rest_pre_insert_page', 'pds_protect_query_loop_selection', 10, 2 );
+
+// Recoge, de una lista de bloques, las selecciones manuales (no vacías) de
+// cada core/query, indexadas por su nombre de bloque (metadata.name).
+function pds_collect_query_selections( $blocks, &$out ) {
+    foreach ( $blocks as $block ) {
+        if ( ( $block['blockName'] ?? '' ) === 'core/query' ) {
+            $selective = $block['attrs']['query']['qlpspSelectivePosts'] ?? array();
+            $name      = $block['attrs']['metadata']['name'] ?? null;
+            if ( $name && ! empty( $selective ) ) {
+                $out[ $name ] = $selective;
+            }
+        }
+        if ( ! empty( $block['innerBlocks'] ) ) {
+            pds_collect_query_selections( $block['innerBlocks'], $out );
+        }
+    }
+}
+
+// Recorre los bloques nuevos y, si un core/query con nombre conocido trae la
+// selección vacía pero antes tenía posts guardados, la restaura.
+function pds_restore_query_selections( &$blocks, $old_selections ) {
+    $changed = false;
+
+    foreach ( $blocks as &$block ) {
+        if ( ( $block['blockName'] ?? '' ) === 'core/query' ) {
+            $current = $block['attrs']['query']['qlpspSelectivePosts'] ?? array();
+            $name    = $block['attrs']['metadata']['name'] ?? null;
+
+            if ( empty( $current ) && $name && ! empty( $old_selections[ $name ] ) ) {
+                $block['attrs']['query']['qlpspSelectivePosts'] = $old_selections[ $name ];
+                $changed = true;
+            }
+        }
+        if ( ! empty( $block['innerBlocks'] ) ) {
+            if ( pds_restore_query_selections( $block['innerBlocks'], $old_selections ) ) {
+                $changed = true;
+            }
+        }
+    }
+
+    return $changed;
+}
+
+
+/**
+ * Xarxa de seguretat addicional per al mateix bug: amb WPML 4.9.7 el filtre
+ * `render_block` de dalt ja no intercepta l'onclick (WPML::LanguageSwitcher\Render
+ * el segueix injectant igual, però pel camí que sigui que ara el renderitzi ja
+ * no passa pel filtre de bloc). En comptes de perseguir el hook exacte, es
+ * neteja l'HTML final sencer de la pàgina abans d'enviar-lo, que funciona
+ * independentment de per on WPML l'hagi generat. Incidència 2026-09-18.
+ */
+function sjd_strip_wpml_switcher_onclick_fullpage( $html ) {
+    if ( is_string( $html ) && strpos( $html, 'const ariaExpanded = this.children[0]' ) !== false ) {
+        $html = preg_replace(
+            '/\s*onclick="\(\(\)=(?:>|&gt;)\{const ariaExpanded[^"]*"/',
+            '',
+            $html
+        );
+    }
+    return $html;
+}
+
+add_action( 'template_redirect', function () {
+    if ( ! is_admin() ) {
+        ob_start( 'sjd_strip_wpml_switcher_onclick_fullpage' );
+    }
+} );
+

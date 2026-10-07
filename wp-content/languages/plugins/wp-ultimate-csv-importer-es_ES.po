@@ -1,0 +1,69 @@
+# Translation of Plugins - WP Ultimate CSV Importer – WordPress Import &amp; Export for CSV, XML &amp; Excel - Stable (latest release) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - WP Ultimate CSV Importer – WordPress Import &amp; Export for CSV, XML &amp; Excel - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2026-06-30 09:07:53+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.3\n"
+"Language: es\n"
+"Project-Id-Version: Plugins - WP Ultimate CSV Importer – WordPress Import &amp; Export for CSV, XML &amp; Excel - Stable (latest release)\n"
+
+#. Author URI of the plugin
+#: wp-ultimate-csv-importer.php
+msgid "https://www.smackcoders.com/wordpress.html"
+msgstr "https://www.smackcoders.com/wordpress.html"
+
+#: wp-ultimate-csv-importer.php:513
+msgid "Maintenance Mode"
+msgstr "Modo de mantenimiento"
+
+#: SmackCSVImporterInstall.php:217
+msgid "for 10x faster import performance with easy user interface."
+msgstr "para un rendimiento de importación 10 veces más rápido con una sencilla interfaz de usuario."
+
+#: SmackCSVImporterInstall.php:217
+msgid "Download and replace the latest version of"
+msgstr "Descargar y reemplazar la última versión de"
+
+#: SmackCSVImporterInstall.php:217
+msgid "Upgrade Notice:"
+msgstr "Aviso de actualización:"
+
+#. Author of the plugin
+#: wp-ultimate-csv-importer.php
+msgid "Smackcoders"
+msgstr "Smackcoders"
+
+#. Description of the plugin
+#: wp-ultimate-csv-importer.php
+msgid "Seamlessly create posts, custom posts, pages, media, SEO and more from your CSV data with ease."
+msgstr "Cree sin problemas entradas, entradas personalizadas, páginas, medios, SEO y mucho más con facilidad a partir de tus datos CSV."
+
+#: SmackCSVImporterInstall.php:73
+msgid "Ultimate CSV Importer PRO data update complete. Thank you for updating to the latest version!"
+msgstr "Actualización completada de los datos de Ultimate CSV Importer PRO. ¡Gracias por actualizar a la última versión!"
+
+#. Plugin URI of the plugin
+#: wp-ultimate-csv-importer.php
+msgid "https://www.smackcoders.com/wp-ultimate-csv-importer-pro.html"
+msgstr "https://www.smackcoders.com/wp-ultimate-csv-importer-pro.html"
+
+#. Plugin Name of the plugin
+#: wp-ultimate-csv-importer.php
+msgid "WP Ultimate CSV Importer"
+msgstr "WP Ultimate CSV Importer"
+
+#: upgrade-to-pro.php:186
+msgid "WP Customer Reviews"
+msgstr "WP Customer Reviews"
+
+#: SaveMapping.php:279
+msgid "Template already exists"
+msgstr "La plantilla ya existe"
+
+#: importExtensions/ElementorImport.php:120
+msgid "View &#8220;%s&#8221;"
+msgstr "Ver «%s»"

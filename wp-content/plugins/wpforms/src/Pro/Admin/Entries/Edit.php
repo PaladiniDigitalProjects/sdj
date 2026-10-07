@@ -952,10 +952,10 @@ class Edit {
 
 		$entry_field = ! empty( $entry_fields[ $field_id ] ) ? $entry_fields[ $field_id ] : $this->get_empty_entry_field_data( $field );
 
-		$value = $entry_field['value'] ?? '';
+		$value = wpforms_flatten_field_value( $entry_field['value'] ?? '' );
 
 		$field_value = ! wpforms_is_empty_string( $value ) ? $value : '';
-		$field_value = apply_filters( 'wpforms_html_field_value', wp_strip_all_tags( $field_value ), $entry_field, $form_data, 'entry-single' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName, WPForms.Comments.PHPDocHooks.RequiredHookDocumentation
+		$field_value = apply_filters( 'wpforms_html_field_value', wpforms_neutralize_html_tags( $field_value ), $entry_field, $form_data, 'entry-single' ); // phpcs:ignore WPForms.PHP.ValidateHooks.InvalidHookName, WPForms.Comments.PHPDocHooks.RequiredHookDocumentation
 
 		$field_class  = ! empty( $field['type'] ) ? sanitize_html_class( 'wpforms-edit-entry-field-' . $field['type'] ) : '';
 		$field_class .= wpforms_is_empty_string( $field_value ) ? ' empty' : '';
@@ -1023,7 +1023,7 @@ class Edit {
 
 		echo '<p class="wpforms-entry-field-value">';
 		echo ! wpforms_is_empty_string( $field_value ) ?
-			nl2br( make_clickable( $field_value ) ) : // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			wpforms_esc_entry_field_value( nl2br( make_clickable( $field_value ) ) ) :
 			esc_html__( 'Empty', 'wpforms' );
 		echo '</p>';
 	}

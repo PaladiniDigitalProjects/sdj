@@ -13,40 +13,66 @@
          "Synchronize translators and translation managers with ATE": [
             "Синхронизировать переводчиков и менеджеров переводов с ATE"
          ],
-         "Please try again in a few minutes. If the problem persists, please contact %sWPML support%s.": [
-            "Пожалуйста, попробуйте еще раз через несколько минут. Если проблема не исчезнет, свяжитесь со %sслужбой поддержки WPML%s."
+         "Please try again in a few minutes. If the problem persists, please contact %1$sWPML support%2$s.": [
+            "Повторите попытку через несколько минут. Если проблема не исчезнет, обратитесь в %1$sподдержку WPML%2$s."
+         ],
+         "Are you sure you want to change the translation option?": [
+            "Вы уверены, что хотите изменить параметр перевода?"
+         ],
+         "No, go back": [
+            "Нет, вернуться"
+         ],
+         "Yes, continue": [
+            "Да, продолжить"
+         ],
+         "Once saved, WPML will automatically send affected posts to translation. This may use additional translation words.": [
+            "После сохранения WPML автоматически отправит затронутые записи на перевод. Для этого могут потребоваться дополнительные слова для перевода."
+         ],
+         "Are you OK with this?": [
+            "Вы согласны с этим?"
          ],
          "Save": [
             "Сохранить"
          ],
-         "Please confirm this translation setting": [
-            "Пожалуйста, подтвердите эту настройку перевода"
+         "This change affects %d post. Once saved, WPML will update the translation status of this post. This can take up to 1 minute.": [
+            "Это изменение затрагивает %d запись. После сохранения WPML обновит статус перевода этой записи. Это может занять до 1 минуты.",
+            "Это изменение затрагивает %d записи. После сохранения WPML обновит статус перевода этих записей. Это может занять до 1 минуты.",
+            "Это изменение затрагивает %d записей. После сохранения WPML обновит статус перевода этих записей. Это может занять до 1 минуты."
          ],
-         "Your site is set to translate all content automatically. When you make <PostTypesNames /> translatable, WPML will automatically translate the %1$d existing item.": [
-            "Ваш сайт настроен на автоматический перевод всего контента. Когда вы сделаете <PostTypesNames /> переводимыми, WPML автоматически переведет %1$d существующий элемент.",
-            "Ваш сайт настроен на автоматический перевод всего контента. Когда вы сделаете <PostTypesNames /> переводимыми, WPML автоматически переведет %1$d существующих элементов.",
-            "Ваш сайт настроен на автоматический перевод всего контента. Когда вы сделаете <PostTypesNames /> переводимыми, WPML автоматически переведет %1$d существующих элементов."
+         "This change affects %1$d post. Once saved, WPML will update the translation status of this post. This can take up to %2$d hours.": [
+            "Это изменение затрагивает %1$d запись. После сохранения WPML обновит статус перевода этой записи. Это может занять до %2$d часов.",
+            "Это изменение затрагивает %1$d записи. После сохранения WPML обновит статус перевода этих записей. Это может занять до %2$d часов.",
+            "Это изменение затрагивает %1$d записей. После сохранения WPML обновит статус перевода этих записей. Это может занять до %2$d часов."
          ],
-         "Your site is set to translate all content automatically. When you make <PostTypesNames /> translatable, WPML will automatically translate all future content.": [
-            "Ваш сайт настроен на автоматический перевод всего контента. Когда вы сделаете <PostTypesNames /> переводимыми, WPML автоматически переведет весь будущий контент."
+         "This change affects %1$d post. Once saved, WPML will update the translation status of this post. This can take up to %2$d minutes.": [
+            "Это изменение затрагивает %1$d запись. После сохранения WPML обновит статус перевода этой записи. Это может занять до %2$d минут.",
+            "Это изменение затрагивает %1$d записи. После сохранения WPML обновит статус перевода этих записей. Это может занять до %2$d минут.",
+            "Это изменение затрагивает %1$d записей. После сохранения WPML обновит статус перевода этих записей. Это может занять до %2$d минут."
          ],
-         "Are you OK with paying for this?": [
-            "Вы согласны оплатить это?"
+         "Calculate Costs": [
+            "Рассчитать стоимость"
          ],
-         "Cancel": [
-            "Отмена"
+         "WPML will automatically translate %1$s into %2$s.": [
+            "WPML автоматически переведет %1$s на %2$s."
          ],
-         "Make translatable": [
-            "Сделать переводимым"
+         "Automatic translation uses translation words.": [
+            "Автоматический перевод использует слова для перевода."
          ],
-         "Yes, translate <b>existing</b> and <b>future</b> content automatically": [
-            "Да, переводить <b>существующий</b> и <b>будущий</b> контент автоматически"
+         "%d term": [
+            "%d элемент",
+            "%d элемента",
+            "%d элементов"
          ],
-         "Yes, but only translate <b>future</b> content automatically": [
-            "Да, но переводить автоматически только <b>будущий</b> контент"
+         "%d language": [
+            "%d язык",
+            "%d языка",
+            "%d языков"
          ],
-         "Yes, translate <b>future</b> content automatically": [
-            "Да, переводить <b>будущий</b> контент автоматически"
+         "%s will be translated.": [
+            "%s будут переведены."
+         ],
+         "WPML's automatic translation service did not accept this request (it answered %d). Wait a minute and try again, and contact WPML support if it keeps happening.": [
+            "Сервис автоматического перевода WPML не принял этот запрос (код ответа: %d). Подождите минуту и попробуйте еще раз. Если проблема повторится, обратитесь в поддержку WPML."
          ]
       }
    }

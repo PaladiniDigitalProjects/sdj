@@ -8,21 +8,12 @@ use ACFML\Repeater\Shuffle\Strategy;
 
 class CheckboxCondition {
 
-	/**
-	 * @var Strategy
-	 */
 	private $shuffled;
 
 	public function __construct( Strategy $shuffled ) {
 		$this->shuffled = $shuffled;
 	}
 
-	/**
-	 * @param  string|int $objectId
-	 * @param  array      $fieldGroups
-	 *
-	 * @return bool
-	 */
 	public function isMet( $objectId, $fieldGroups ) {
 		if ( ! in_array( Mode::getForFieldGroups( $fieldGroups ), [ Mode::ADVANCED, Mode::MIXED ], true ) ) {
 			return false;

@@ -15,6 +15,16 @@ use WPForms\SmartTags\SmartTag\Date;
 class EntriesCount {
 
 	/**
+	 * Entry statuses excluded from the entry count.
+	 *
+	 * Mirrors the Entries page "All" count, which excludes only spam and trash.
+	 * Shared by `prepare_where_conditions()` and `FormDaily::recompute_day()` so both sides count identically.
+	 *
+	 * @since 2.0.2
+	 */
+	public const EXCLUDED_STATUSES = [ SpamEntry::ENTRY_STATUS, 'trash' ];
+
+	/**
 	 * Get entries count grouped by $param.
 	 * Main point of entry to fetch form entry count data from DB.
 	 *
@@ -46,8 +56,8 @@ class EntriesCount {
 			return [];
 		}
 
-		// Modify and set time for $utc_date_end.
-		$modify_offset = (float) get_option( 'gmt_offset' ) * 60 . ' minutes';
+		// Shift local boundaries to UTC: UTC = local − offset.
+		$modify_offset = (float) get_option( 'gmt_offset' ) * -60 . ' minutes';
 		$now_time      = date_format( $now, 'H:i:s' );
 		$utc_date_end  = date_modify( $utc_date_end, $now_time )
 			->modify( $modify_offset )
@@ -100,13 +110,7 @@ class EntriesCount {
 		global $wpdb;
 
 		$table_name = wpforms()->obj( 'entry' )->table_name;
-		$forms      = $this->get_allowed_forms( $form_id );
-
-		$access_obj = wpforms()->obj( 'access' );
-
-		if ( $access_obj ) {
-			$forms = $access_obj->filter_forms_by_current_user_capability( $forms, 'view_entries_form_single' );
-		}
+		$forms      = $this->filter_forms_by_access( $this->get_allowed_forms( $form_id ) );
 
 		if ( empty( $forms ) ) {
 			return [];
@@ -133,14 +137,16 @@ class EntriesCount {
 	 * @since 1.5.4
 	 * @since 1.6.5 Fixed GTM offset.
 	 * @since 1.7.6 Count entries only for published forms.
+	 * @since 2.0.2 Added the `$args` parameter.
 	 *
 	 * @param int           $form_id        Form ID to fetch the data for.
 	 * @param DateTime|null $utc_date_start Start date for the search. Leave it empty to restrict the starting day.
 	 * @param DateTime|null $utc_date_end   End date for the search. Leave it empty to restrict the ending day.
+	 * @param array         $args           Additional arguments. Accepts `limit` to cap the number of returned rows.
 	 *
 	 * @return array
 	 */
-	public function get_by_form_sql( $form_id = 0, $utc_date_start = null, $utc_date_end = null ) {
+	public function get_by_form_sql( int $form_id = 0, ?DateTime $utc_date_start = null, ?DateTime $utc_date_end = null, array $args = [] ): array {
 
 		global $wpdb;
 
@@ -154,7 +160,15 @@ class EntriesCount {
 		$sql = "SELECT form_id, COUNT( entry_id ) as count FROM $table_name";
 
 		$sql .= $this->prepare_where_conditions( $forms, $utc_date_start, $utc_date_end );
-		$sql .= ' GROUP BY form_id ORDER BY count DESC;';
+		$sql .= ' GROUP BY form_id ORDER BY count DESC';
+
+		$limit = isset( $args['limit'] ) ? (int) $args['limit'] : 0;
+
+		if ( $limit > 0 ) {
+			$sql .= $wpdb->prepare( ' LIMIT %d', $limit );
+		}
+
+		$sql .= ';';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$results = (array) $wpdb->get_results( $sql, OBJECT_K );
@@ -163,9 +177,63 @@ class EntriesCount {
 	}
 
 	/**
+	 * Get the total entries count across the allowed forms for a date range in a single query.
+	 *
+	 * Warning! Avoid GTM offsets! We are searching with offset by default.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param int           $form_id        Form ID to fetch the data for. Pass 0 for all forms.
+	 * @param DateTime|null $utc_date_start Start date for the search. Leave it empty to restrict the starting day.
+	 * @param DateTime|null $utc_date_end   End date for the search. Leave it empty to restrict the ending day.
+	 *
+	 * @return int
+	 */
+	public function get_total( int $form_id = 0, ?DateTime $utc_date_start = null, ?DateTime $utc_date_end = null ): int {
+
+		global $wpdb;
+
+		$table_name = wpforms()->obj( 'entry' )->table_name;
+		$forms      = $this->filter_forms_by_access( $this->get_allowed_forms( $form_id ) );
+
+		if ( empty( $forms ) ) {
+			return 0;
+		}
+
+		$sql = "SELECT COUNT( entry_id ) FROM $table_name";
+
+		$sql .= $this->prepare_where_conditions( $forms, $utc_date_start, $utc_date_end );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		return (int) $wpdb->get_var( $sql );
+	}
+
+	/**
+	 * Filter a list of forms by the current user's capability to view their entries.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array $forms List of form IDs.
+	 *
+	 * @return array
+	 */
+	private function filter_forms_by_access( array $forms ): array {
+
+		$access_obj = wpforms()->obj( 'access' );
+
+		if ( ! $access_obj ) {
+			return $forms;
+		}
+
+		return $access_obj->filter_forms_by_current_user_capability( $forms, 'view_entries_form_single' );
+	}
+
+	/**
 	 * Get entries count grouped by form entries trends.
 	 *
 	 * @since 1.8.8
+	 * @since 2.0.2 Replaced the common table expression with a derived table, as CTEs require MySQL 8.0+.
+	 * @since 2.0.2 Fixed the trend percentage for forms with a single entry in the previous week.
 	 *
 	 * @param int           $form_id        Form ID to fetch the data for.
 	 * @param DateTime|null $utc_date_start Start date for the search. Leave it empty to restrict the starting day.
@@ -207,37 +275,35 @@ class EntriesCount {
 		// Build the SQL query.
 		// ! Note that extra spaces are added for readability purposes and are removed before the query is executed.
 		$query   = [];
-		$query[] = 'WITH WeeklyCounts AS (';
+		$query[] = 'SELECT';
+		$query[] = '    form_id,';
+		$query[] = '    SUM(count_current_week) AS count,';
+		$query[] = '    SUM(count_previous_week) AS count_previous_week,';
+		$query[] = '    CASE';
+		$query[] = '        WHEN SUM(count_previous_week) = 0 THEN 100';
+		$query[] = '        WHEN SUM(count_current_week) = 0 THEN -100';
+		$query[] = '        WHEN SUM(count_current_week) = SUM(count_previous_week) THEN 0';
+		$query[] = '        ELSE ROUND(((SUM(count_current_week) - SUM(count_previous_week)) / NULLIF(SUM(count_previous_week), 0)) * 100)';
+		$query[] = '    END AS trends';
+		$query[] = 'FROM (';
 		$query[] = '    SELECT';
 		$query[] = '        form_id,';
-		$query[] = '        SUM(count_current_week) AS count,';
-		$query[] = '        SUM(count_previous_week) AS count_previous_week,';
-		$query[] = '        CASE';
-		$query[] = '            WHEN SUM(count_previous_week) = 0 THEN 100';
-		$query[] = '            WHEN SUM(count_current_week) = 0 THEN -100';
-		$query[] = '            WHEN SUM(count_current_week) = SUM(count_previous_week) THEN 0';
-		$query[] = '            ELSE ROUND(((SUM(count_current_week) - SUM(count_previous_week)) / NULLIF(SUM(count_previous_week), 1)) * 100)';
-		$query[] = '        END AS trends';
-		$query[] = '    FROM (';
-		$query[] = '        SELECT';
-		$query[] = '            form_id,';
-		$query[] = '            COUNT(entry_id) AS count_current_week,';
-		$query[] = '            0 AS count_previous_week';
-		$query[] = "        FROM {$table_name}";
+		$query[] = '        COUNT(entry_id) AS count_current_week,';
+		$query[] = '        0 AS count_previous_week';
+		$query[] = "    FROM {$table_name}";
 		$query[] = $this->prepare_where_conditions( $forms, $utc_date_start_immutable, $utc_date_end_immutable );
-		$query[] = '        GROUP BY form_id';
-		$query[] = '        UNION ALL';
-		$query[] = '        SELECT';
-		$query[] = '            form_id,';
-		$query[] = '            0 AS count_current_week,';
-		$query[] = '            COUNT(entry_id) AS count_previous_week';
-		$query[] = "        FROM {$table_name}";
-		$query[] = $this->prepare_where_conditions( $forms, $prev_utc_date_start_immutable, $prev_utc_date_end_immutable );
-		$query[] = '        GROUP BY form_id';
-		$query[] = '    ) AS WeeklyData';
 		$query[] = '    GROUP BY form_id';
-		$query[] = ')';
-		$query[] = 'SELECT * FROM WeeklyCounts ORDER BY count DESC;';
+		$query[] = '    UNION ALL';
+		$query[] = '    SELECT';
+		$query[] = '        form_id,';
+		$query[] = '        0 AS count_current_week,';
+		$query[] = '        COUNT(entry_id) AS count_previous_week';
+		$query[] = "    FROM {$table_name}";
+		$query[] = $this->prepare_where_conditions( $forms, $prev_utc_date_start_immutable, $prev_utc_date_end_immutable );
+		$query[] = '    GROUP BY form_id';
+		$query[] = ') AS WeeklyData';
+		$query[] = 'GROUP BY form_id';
+		$query[] = 'ORDER BY count DESC;';
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$results = $wpdb->get_results( implode( ' ', $query ), OBJECT_K );
@@ -339,14 +405,14 @@ class EntriesCount {
 		$format        = 'Y-m-d H:i:s';
 		$placeholders  = $forms;
 		$sql           = ' WHERE form_id IN ( ' . implode( ', ', array_fill( 0, count( $forms ), '%d' ) ) . ' )';
-		$modify_offset = (float) get_option( 'gmt_offset' ) * 60 . ' minutes';
+		$modify_offset = (float) get_option( 'gmt_offset' ) * -60 . ' minutes';
 
 		if ( $utc_date_start !== null ) {
 			$sql .= ' AND date >= %s';
 
 			$utc_date_start = clone $utc_date_start;
 
-			$utc_date_start->modify( $modify_offset );
+			$utc_date_start = $utc_date_start->modify( $modify_offset );
 
 			$placeholders[] = $utc_date_start->format( $format );
 		}
@@ -356,15 +422,14 @@ class EntriesCount {
 
 			$utc_date_end = clone $utc_date_end;
 
-			$utc_date_end->modify( $modify_offset );
+			$utc_date_end = $utc_date_end->modify( $modify_offset );
 
 			$placeholders[] = $utc_date_end->format( $format );
 		}
 
-		// Exclude spam entries.
-		$sql           .= ' AND status NOT IN ( %s, %s )';
-		$placeholders[] = SpamEntry::ENTRY_STATUS;
-		$placeholders[] = 'trash';
+		// Exclude spam and trash entries, matching the Entries page count.
+		$sql         .= ' AND status NOT IN ( ' . implode( ', ', array_fill( 0, count( self::EXCLUDED_STATUSES ), '%s' ) ) . ' )';
+		$placeholders = array_merge( $placeholders, self::EXCLUDED_STATUSES );
 
 		return $wpdb->prepare( $sql, $placeholders ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 	}
@@ -378,12 +443,14 @@ class EntriesCount {
 	 *
 	 * @return array
 	 */
-	private function get_allowed_forms( $form_id = 0 ) {
+	private function get_allowed_forms( $form_id = 0 ): array {
 
 		if ( $form_id ) {
 			return wpforms()->obj( 'form' )->get( $form_id ) && get_post_status( $form_id ) === 'publish' ? [ $form_id ] : [];
 		}
 
-		return wpforms()->obj( 'form' )->get( '', [ 'fields' => 'ids' ] );
+		$forms = wpforms()->obj( 'form' )->get( '', [ 'fields' => 'ids' ] );
+
+		return is_array( $forms ) ? $forms : [];
 	}
 }

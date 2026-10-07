@@ -11,12 +11,6 @@ class SaveAndResume extends Base {
 		add_filter( 'wpforms_process_smart_tags', [ $this, 'applyNotificationTranslations' ], 9, 2 );
 	}
 
-	/**
-	 * @param string $message
-	 * @param array  $formData Form data.
-	 *
-	 * @return string
-	 */
 	public function applyNotificationTranslations( $message, $formData ) {
 		if ( strpos( $message, '{resume_link}' ) === false ) {
 			return $message;

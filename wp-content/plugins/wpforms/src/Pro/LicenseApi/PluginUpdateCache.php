@@ -2,6 +2,8 @@
 
 namespace WPForms\Pro\LicenseApi;
 
+use WPForms\Helpers\Plugin;
+
 /**
  * License api plugin update cache.
  *
@@ -110,7 +112,7 @@ class PluginUpdateCache extends LicenseApiCache {
 
 		$plugins = array_keys( get_plugins() );
 
-		$plugins = array_filter( $plugins, [ $this, 'is_wpforms_addon' ] );
+		$plugins = array_filter( $plugins, [ Plugin::class, 'is_wpforms_addon' ] );
 
 		$plugin_slugs = array_map(
 			function ( $plugin_file ) {
@@ -125,37 +127,6 @@ class PluginUpdateCache extends LicenseApiCache {
 	}
 
 	/**
-	 * Check whether a plugin is a wpforms addon.
-	 *
-	 * @since 1.9.4
-	 *
-	 * @param string $plugin Path to the plugin file relative to the plugins' directory.
-	 *
-	 * @return bool
-	 */
-	private function is_wpforms_addon( string $plugin ): bool {
-
-		if ( strpos( $plugin, 'wpforms-' ) !== 0 ) {
-			// No more actions for general plugin.
-			return false;
-		}
-
-		if ( ! function_exists( 'get_plugin_data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		/**
-		 * There are some forks of our plugins having the 'wpforms-' prefix.
-		 * We have to check the Author name in the plugin header.
-		 */
-		$plugin_data   = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin );
-		$plugin_author = isset( $plugin_data['Author'] ) ? strtolower( $plugin_data['AuthorName'] ) : '';
-
-		// No more actions on forks.
-		return $plugin_author === 'wpforms';
-	}
-
-	/**
 	 * Initialize.
 	 *
 	 * @since 1.8.7
@@ -163,6 +134,13 @@ class PluginUpdateCache extends LicenseApiCache {
 	public function init() {
 
 		parent::init();
+
+		// The WPForms Dashboard reuses `force-check=1` to recompute its own aggregate cache
+		// (see WPForms\Admin\Dashboard\Helpers::is_force_refresh()). A plugin-update re-check
+		// is not what the flag means there, so ignore it on that screen.
+		if ( wpforms_is_admin_page( 'dashboard' ) ) {
+			return;
+		}
 
 		// If this is GET force-check=1 set, then invalidate the cache.
 		// We do not check nonce here, as this GET request should be available from the frontend by design.

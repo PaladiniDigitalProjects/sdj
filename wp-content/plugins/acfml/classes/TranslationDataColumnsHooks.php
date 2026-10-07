@@ -13,10 +13,6 @@ class TranslationDataColumnHooks implements \IWPML_Backend_Action {
 	const COLUMN_KEY        = 'acfml-translation-mode';
 	const LABELS_COLUMN_KEY = 'acfml-labels-translation-status';
 
-	/**
-	 * We need to put a higher priority, because ACF will overwrite
-	 * the columns on current_screen hook
-	 */
 	const COLUMN_HOOK_PRIORITY = 11;
 
 	public function add_hooks() {
@@ -34,18 +30,10 @@ class TranslationDataColumnHooks implements \IWPML_Backend_Action {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
 	public static function shouldRegisterColumn() {
 		return filter_input( INPUT_GET, 'post_status' ) !== 'sync';
 	}
 
-	/**
-	 * @param array $columns
-	 *
-	 * @return array
-	 */
 	public function setColumnsTitle( $columns ) {
 		if ( $this->hasTranslationType ) {
 			$columns[ self::COLUMN_KEY ] = $this->contentTypeHelper->getTranslationInfoLabel();
@@ -55,21 +43,17 @@ class TranslationDataColumnHooks implements \IWPML_Backend_Action {
 		return $columns;
 	}
 
-	/**
-	 * @param string $column
-	 * @param int    $postId
-	 */
 	public function setColumnsContent( $column, $postId ) {
 		if ( self::COLUMN_KEY === $column && $this->hasTranslationType ) {
 			$objectSlug = $this->contentTypeHelper->getObjectSlug( $postId );
 			if ( null !== $objectSlug ) {
-				echo $this->getObjectTranslationInformation( $objectSlug ); // phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
+				echo $this->getObjectTranslationInformation( $objectSlug );
 			}
 		}
 
 		if ( self::LABELS_COLUMN_KEY === $column ) {
 			$status = Package::create( $this->contentTypeHelper->getObjectSlug( $postId ), $this->contentTypeHelper->getLabelTranslationsPackageSlug() )->getStatus();
-			echo $this->getTranslationInformation( Package::status2text( $status ) ); // phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
+			echo $this->getTranslationInformation( Package::status2text( $status ) );
 		}
 	}
 

@@ -107,12 +107,12 @@ class WPForms_Conditional_Logic_Core {
 					<table><tbody>
 					<tr class="wpforms-conditional-row" data-field-id="{{ data.fieldID }}" data-input-name="{{ data.fieldName }}">
 						<td class="field">
-							<select name="{{ data.fieldName }}[conditionals][0][0][field]" class="wpforms-conditional-field" data-groupid="0" data-ruleid="0">
+							<select name="{{ data.fieldName }}[conditionals][0][0][field]" class="wpforms-conditional-field" data-groupid="0" data-ruleid="0" title="{{ wpforms_builder.select_field }}">
 								<option value="">{{ wpforms_builder.select_field }}</option>
 							</select>
 						</td>
 						<td class="operator">
-							<select name="{{ data.fieldName }}[conditionals][0][0][operator]" class="wpforms-conditional-operator">
+							<select name="{{ data.fieldName }}[conditionals][0][0][operator]" class="wpforms-conditional-operator" title="{{ wpforms_builder.operator_is }}">
 								<option value="==">{{ wpforms_builder.operator_is }}</option>
 								<option value="!=">{{ wpforms_builder.operator_is_not }}</option>
 								<option value="e">{{ wpforms_builder.operator_empty }}</option>
@@ -126,7 +126,7 @@ class WPForms_Conditional_Logic_Core {
 							</select>
 						</td>
 						<td class="value">
-							<select name="{{ data.fieldName }}[conditionals][0][0][value]" class="wpforms-conditional-value">
+							<select name="{{ data.fieldName }}[conditionals][0][0][value]" class="wpforms-conditional-value" title="{{ wpforms_builder.select_choice }}">
 								<option value="">{{ wpforms_builder.select_choice }}</option>
 							</select>
 						</td>
@@ -213,7 +213,7 @@ class WPForms_Conditional_Logic_Core {
 		$type                      = ! empty( $args['type'] ) ? $args['type'] : 'field';
 		$panel                     = ! empty( $args['panel'] ) ? $args['panel'] : false; // notifications/connections.
 		$parent                    = ! empty( $args['parent'] ) ? $args['parent'] : false; // settings.
-		$subsection                = ! empty( $args['subsection'] ) ? $args['subsection'] : false;
+		$subsection                = ! empty( $args['subsection'] ) ? esc_attr( $args['subsection'] ) : false;
 		$index                     = isset( $args['index'] ) ? esc_attr( $args['index'] ) : '';
 		$index                     = is_numeric( $index ) ? absint( $index ) : $index;
 		$field                     = ! empty( $args['field'] ) ? $args['field'] : false;
@@ -445,13 +445,18 @@ class WPForms_Conditional_Logic_Core {
 										// anchored to.
 										echo '<td class="field">';
 
+											$field_title = isset( $rule['field'], $form_fields[ $rule['field'] ] )
+												? $this->get_form_field_label( $form_fields[ $rule['field'] ] )
+												: __( '--- Select Field ---', 'wpforms' );
+
 											printf(
-												'<select name="%s[conditionals][%d][%d][field]" class="wpforms-conditional-field" data-groupid="%d" data-ruleid="%d">',
+												'<select name="%s[conditionals][%d][%d][field]" class="wpforms-conditional-field" data-groupid="%d" data-ruleid="%d" title="%s">',
 												esc_attr( $field_name ),
 												(int) $group_id,
 												(int) $rule_id,
 												(int) $group_id,
-												(int) $rule_id
+												(int) $rule_id,
+												esc_attr( $field_title )
 											);
 
 												echo '<option value="">' . esc_html__( '--- Select Field ---', 'wpforms' ) . '</option>';
@@ -473,12 +478,7 @@ class WPForms_Conditional_Logic_Core {
 															$selected = false;
 														}
 
-														$field_label = isset( $form_field['label'] ) && ! wpforms_is_empty_string( trim( $form_field['label'] ) )
-															? $form_field['label']
-															: sprintf( /* translators: %d - field ID. */
-																__( 'Field #%d', 'wpforms' ),
-																wpforms_validate_field_id( $form_field['id'] )
-															);
+														$field_label = $this->get_form_field_label( $form_field );
 
 														$selected = selected( $selected, $form_field['id'], false );
 
@@ -497,14 +497,16 @@ class WPForms_Conditional_Logic_Core {
 										// for processing.
 										echo '<td class="operator">';
 
+											$selected_operator = ! empty( $rule['operator'] ) ? $rule['operator'] : false;
+											$operator_title    = isset( $operators[ $selected_operator ] ) ? $operators[ $selected_operator ] : reset( $operators );
+
 											printf(
-												'<select name="%s[conditionals][%s][%s][operator]" class="wpforms-conditional-operator">',
+												'<select name="%s[conditionals][%s][%s][operator]" class="wpforms-conditional-operator" title="%s">',
 												esc_attr( $field_name ),
 												esc_attr( $group_id ),
-												esc_attr( $rule_id )
+												esc_attr( $rule_id ),
+												esc_attr( $operator_title )
 											);
-
-												$selected_operator = ! empty( $rule['operator'] ) ? $rule['operator'] : false;
 
 												foreach ( $operators as $operator_key => $operator_label ) {
 													$is_text_field = ! empty( $rule['field'] ) && ! empty( $form_fields[ $rule['field'] ]['type'] ) && in_array( $form_fields[ $rule['field'] ]['type'], $text_and_numbers_fields, true );
@@ -554,36 +556,42 @@ class WPForms_Conditional_Logic_Core {
 													$type = in_array( $form_fields[ $rule['field'] ]['type'], [ 'rating', 'net_promoter_score', 'number-slider' ], true ) ? 'number' : 'text';
 
 													printf(
-														'<input type="%s" name="%s[conditionals][%s][%s][value]" value="%s" class="wpforms-conditional-value" %s>',
+														'<input type="%s" name="%s[conditionals][%s][%s][value]" value="%s" class="wpforms-conditional-value" title="%s" %s>',
 														esc_attr( $type ),
 														esc_attr( $field_name ),
 														esc_attr( $group_id ),
 														esc_attr( $rule_id ),
+														esc_attr( $rule['value'] ),
 														esc_attr( $rule['value'] ),
 														esc_attr( $disabled )
 													);
 
 												} else {
 
+													/**
+													 * Filter placeholder for the 3rd CL field select.
+													 *
+													 * @since 1.9.8.6
+													 *
+													 * @param string $placeholder Placeholder text.
+													 * @param array  $rule        Current rule.
+													 * @param array  $form_fields Available form fields.
+													 * @param array  $args        Builder block args.
+													 */
+													$placeholder = (string) apply_filters( 'wpforms_conditional_logic_core_value_placeholder', __( '--- Select Choice ---', 'wpforms' ), $rule, $form_fields, $args );
+
+													$value_title = isset( $rule['value'], $form_fields[ $rule['field'] ]['choices'][ $rule['value'] ] )
+														? $this->get_choice_label( $form_fields[ $rule['field'] ]['choices'][ $rule['value'] ], $rule['value'] )
+														: $placeholder;
+
 													printf(
-														'<select name="%1$s[conditionals][%2$s][%3$s][value]" class="wpforms-conditional-value" %4$s>',
+														'<select name="%1$s[conditionals][%2$s][%3$s][value]" class="wpforms-conditional-value" title="%4$s" %5$s>',
 														esc_attr( $field_name ),
 														esc_attr( $group_id ),
 														esc_attr( $rule_id ),
+														esc_attr( $value_title ),
 														esc_attr( $disabled )
 													);
-
-														/**
-														 * Filter placeholder for the 3rd CL field select.
-														 *
-														 * @since 1.9.8.6
-														 *
-														 * @param string $placeholder Placeholder text.
-														 * @param array  $rule        Current rule.
-														 * @param array  $form_fields Available form fields.
-														 * @param array  $args        Builder block args.
-														 */
-														$placeholder = (string) apply_filters( 'wpforms_conditional_logic_core_value_placeholder', __( '--- Select Choice ---', 'wpforms' ), $rule, $form_fields, $args );
 
 														echo '<option value="">' . esc_html( $placeholder ) . '</option>';
 
@@ -597,18 +605,13 @@ class WPForms_Conditional_Logic_Core {
 																}
 
 																$value = isset( $rule['value'] ) ? $rule['value'] : '';
-																$label = ! isset( $option['label'] ) || trim( $option['label'] ) === ''
-																	? sprintf( /* translators: %d - choice number. */
-																		esc_html__( 'Choice %d', 'wpforms' ),
-																		(int) $option_id
-																	)
-																	: $option['label'];
+																$label = $this->get_choice_label( $option, $option_id );
 
 																printf(
 																	'<option value="%1$s" %2$s>%3$s</option>',
 																	esc_attr( $option_id ),
 																	selected( $option_id, $value, false ),
-																	esc_html( trim( $label ) )
+																	esc_html( $label )
 																);
 															}
 														}
@@ -653,6 +656,45 @@ class WPForms_Conditional_Logic_Core {
 		} else {
 			return $output;
 		}
+	}
+
+	/**
+	 * Get a form field label with a fallback for fields without a label.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array $form_field Form field data.
+	 *
+	 * @return string
+	 */
+	private function get_form_field_label( $form_field ) {
+
+		return isset( $form_field['label'] ) && ! wpforms_is_empty_string( trim( $form_field['label'] ) )
+			? $form_field['label']
+			: sprintf( /* translators: %d - field ID. */
+				__( 'Field #%d', 'wpforms' ),
+				wpforms_validate_field_id( $form_field['id'] )
+			);
+	}
+
+	/**
+	 * Get a choice label with a fallback for choices without a label.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array      $option    Choice data.
+	 * @param int|string $option_id Choice number.
+	 *
+	 * @return string
+	 */
+	private function get_choice_label( $option, $option_id ) {
+
+		return ! isset( $option['label'] ) || trim( $option['label'] ) === ''
+			? sprintf( /* translators: %d - choice number. */
+				__( 'Choice %d', 'wpforms' ),
+				(int) $option_id
+			)
+			: trim( $option['label'] );
 	}
 
 	/**

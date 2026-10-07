@@ -19,9 +19,6 @@ class AlternateLangHooks extends BaseAlternateLangHooks {
 		);
 	}
 
-	/**
-	 * @param string $type
-	 */
 	public function add_sitemap_hooks( $type ) {
 		add_filter( 'rank_math/sitemap/' . $type . '_urlset', [ $this, 'addNamespace' ] );
 		add_filter( 'rank_math/sitemap/' . $type . '_sitemap_url', [ $this, 'addAlternateLangDataToFirstLinks' ], 1, 2 );
@@ -30,19 +27,10 @@ class AlternateLangHooks extends BaseAlternateLangHooks {
 		add_filter( 'rank_math/sitemap_url', [ $this, 'insertAlternateLinks' ], 10, 2 );
 	}
 
-	/**
-	 * @return string
-	 */
 	protected function getUtils() {
 		return Utils::class;
 	}
 
-	/**
-	 * @param array     $url
-	 * @param Generator $generator
-	 *
-	 * @return string|array
-	 */
 	public function addAlternateLangDataToFirstLinks( $url, $generator ) {
 		global $wp_filter;
 
@@ -50,7 +38,6 @@ class AlternateLangHooks extends BaseAlternateLangHooks {
 			$url = $this->addAlternateLangDataToFirstLink( $url );
 		}
 
-		/** @var callable(array):int $countCallbacksPerPriority */
 		$countCallbacksPerPriority = function ( $callbacks ) {
 			return count( $callbacks );
 		};
@@ -59,8 +46,6 @@ class AlternateLangHooks extends BaseAlternateLangHooks {
 			->map( $countCallbacksPerPriority )
 			->sum();
 
-		// If we are the only callback, we must convert the array to a string by calling `$generator->sitemap_url`.
-		// Otherwise, we should let the existing callback do that conversion.
 		return $totalCallbacks > 1 ? $url : $generator->sitemap_url( $url );
 	}
 }

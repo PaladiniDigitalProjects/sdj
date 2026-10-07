@@ -224,11 +224,21 @@ class Ajax {
 			$errors    = $result['errors'];
 
 			if ( $importing === 0 ) {
-				$session->advance(
+				$advanced = $session->advance(
 					$result['next_cursor'],
 					0,
 					$errors
 				);
+
+				// Stop when the updated session could not be persisted, instead of masking the write failure.
+				if ( ! $advanced ) {
+					wp_send_json_error(
+						[
+							'message' => $this->get_session_save_error_message(),
+							'errors'  => $errors,
+						]
+					);
+				}
 
 				$this->maybe_complete_import( $session );
 
@@ -276,11 +286,21 @@ class Ajax {
 
 			$this->failed_entries_csv->save( $session );
 
-			$session->advance(
+			$advanced = $session->advance(
 				$result['next_cursor'],
 				$imported,
 				$errors
 			);
+
+			// Stop the import when the updated session could not be persisted, instead of re-looping the same chunk.
+			if ( ! $advanced ) {
+				wp_send_json_error(
+					[
+						'message' => $this->get_session_save_error_message(),
+						'errors'  => $errors,
+					]
+				);
+			}
 
 			$this->maybe_complete_import( $session );
 
@@ -427,7 +447,13 @@ class Ajax {
 			wp_send_json_error( esc_html__( 'Import stopped. No entries for import.', 'wpforms' ) );
 		}
 
-		$session            = ImportSession::create( $source, $this->destination_form_id, $source_identifier );
+		$session = ImportSession::create( $source, $this->destination_form_id, $source_identifier );
+
+		// Bail out when the session payload could not be persisted (e.g. a non-utf8mb4 wp_options table rejecting 4-byte characters).
+		if ( $session === null ) {
+			wp_send_json_error( $this->get_session_save_error_message() );
+		}
+
 		$importer           = new EntryImporter( $this->destination_form_id, $source_identifier, $this->failed_entries_csv );
 		$tasks              = wpforms()->obj( 'tasks' );
 		$destination_fields = $importer->get_destination_fields();
@@ -454,12 +480,27 @@ class Ajax {
 
 		wp_send_json_success(
 			[
-				'request_id'         => $session->get_request_id(),
-				'source_fields'      => $source->get_fields(),
-				'destination_fields' => $destination_fields,
-				'total'              => $source->get_total(),
+				'request_id'                => $session->get_request_id(),
+				'source_fields'             => $source->get_fields(),
+				'destination_fields'        => $destination_fields,
+				'total'                     => $source->get_total(),
+				'unsupported_fields_notice' => $importer->get_unsupported_fields_notice( $source ),
 			]
 		);
+	}
+
+	/**
+	 * Return the error message shown when an import session payload cannot be persisted.
+	 *
+	 * Typically caused by a non-utf8mb4 wp_options table rejecting 4-byte characters (e.g. emoji).
+	 *
+	 * @since 2.0.1
+	 *
+	 * @return string Escaped error message.
+	 */
+	private function get_session_save_error_message(): string {
+
+		return esc_html__( 'The import session could not be saved. Your database may be unable to store some characters (for example emoji). Please contact your host about upgrading the wp_options table to utf8mb4.', 'wpforms' );
 	}
 
 	/**

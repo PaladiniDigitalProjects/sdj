@@ -3,11 +3,9 @@
 declare( strict_types=1 );
 
 use WPML\ATE\Proxies\ProxyRoutingRules;
+use WPML\Remote\TrustedDestinations;
+use WPML\Remote\UntrustedDestinationException;
 
-/**
- * Minimal REST proxy endpoint as a single class.
- * Route: /wp-json/wpml/v1/proxy
- */
 final class WPML_Proxy {
 	const TIMEOUT         = 30;
 	const ROUTE           = '/wpml/v1/proxy';
@@ -26,16 +24,16 @@ final class WPML_Proxy {
 		];
 
 
-	/**
-	 * Even earlier interception during plugins_loaded (priority 0).
-	 * This runs before init/parse_request/REST bootstrap, reducing overall load.
-	 */
 	public static function maybe_handle_request() {
-		// Detect both pretty permalinks and query-string style REST access.
 		$rest_route = self::getRestRoute();
 
 		if ( ! self::routeMatches( $rest_route ) ) {
-			return; // Not our endpoint.
+			return;
+		}
+		if ( \WPML\Setup\Initializer::settingsAreUnrecoverable() ) {
+			$error = \WPML\Setup\Initializer::getSettingsRecoveryError();
+			self::error( 409, $error['code'], $error['message'] );
+			exit;
 		}
 
 		$nonce = self::getWPNonce();
@@ -52,7 +50,11 @@ final class WPML_Proxy {
 			exit;
 		}
 
-		// Serve immediately using the same logic as parse_request interception.
+		if ( ! self::policy()->permits() ) {
+			self::error( 403, 'insufficient_permissions', 'You are not allowed to use the WPML proxy.' );
+			exit;
+		}
+
 		$self = new self();
 
 		$input       = array_merge( (array) $_GET, (array) $_POST );
@@ -89,20 +91,36 @@ final class WPML_Proxy {
 
 		try {
 			$self->validate( $p );
-			$url     = $self->buildUrl( (string) $p['url'], $p['query'] );
+			$url = self::destinations()->assert( $self->buildUrl( (string) $p['url'], $p['query'] ) );
+
+			if ( ! $self->isStaticAssetRelay( $url, (string) $p['method'] ) ) {
+				try {
+					$lock = \WPML\Container\make( \WPML\TM\ATE\ClonedSites\ApiCommunication::class )->checkCloneSiteLock( $url );
+				} catch ( Throwable $t ) {
+					$lock = \WPML\TM\ATE\ClonedSites\ReconnectState::get()
+						? \WPML\TM\ATE\ClonedSites\ApiCommunication::reconnectingError()
+						: null;
+				}
+				if ( is_wp_error( $lock ) ) {
+					self::error( 503, (string) $lock->get_error_code(), $lock->get_error_message() );
+					exit;
+				}
+			}
+
 			$headers = $self->parseHeaders( $p['headers'], isset( $p['content_type'] ) ? (string) $p['content_type'] : null );
 
 			if ( ! isset( $headers['Accept'] ) && ! isset( $headers['accept'] ) ) {
-				$headers['Accept'] = '*/*'; // [wpmldev-5894] [WPML PROXY] Ensure wp_remote_request sets a default Accept header to prevent empty response bodies from AMS requests when cURL is not installed
+				$headers['Accept'] = '*/*';
 			}
-			$args = [
-				'method'      => (string) $p['method'],
-				'headers'     => $headers,
-				'timeout'     => self::TIMEOUT,
-				'redirection' => 0,
-			];
+			$args = TrustedDestinations::requestArgs(
+				[
+					'method'  => (string) $p['method'],
+					'headers' => $headers,
+					'timeout' => self::TIMEOUT,
+				]
+			);
 			if ( strtoupper( (string) $p['method'] ) !== 'GET' && $p['body'] !== null ) {
-				$args['body'] = is_array( $p['body'] ) ? http_build_query( $p['body'] ) : (string) $p['body'];
+				$args['body'] = is_array( $p['body'] ) ? \wpml_http_build_query( $p['body'] ) : (string) $p['body'];
 			}
 
 			$result = wp_remote_request( $url, $args );
@@ -120,7 +138,6 @@ final class WPML_Proxy {
 			$body        = wp_remote_retrieve_body( $result );
 			$respHeaders = $self->filterHeaders( (array) $respHeaders );
 
-			// Make the proxy resilient when the client’s server forces an incorrect MIME type - For more details see wpmldev-5793
 			$respHeaders = $self->maybeForceContentTypeByUrl( $respHeaders, $url );
 
 			if ( function_exists( 'status_header' ) ) {
@@ -130,54 +147,37 @@ final class WPML_Proxy {
 				@http_response_code( (int) $status );
 			}
 
-			// Send a clean response (suppress errors, clear buffers, set length, emit headers/body, flush, exit).
 			$self->sendCleanResponse( $respHeaders, (string) $body );
+		} catch ( UntrustedDestinationException $e ) {
+			self::error( 400, 'invalid_url', 'The URL is not a trusted ATE/AMS destination (' . $e->reason() . ').' );
+			exit;
 		} catch ( Throwable $e ) {
-			self::error( 500, 'internal_error', $e->getMessage() );
+			self::error( 500, 'internal_error', \WPML\WordPress\ClientSafeError::message( 'ATE proxy', $e ) );
 			exit;
 		}
 	}
 
-	/**
-	 * Send a clean proxied response: suppress error output, clear buffers, avoid WP shutdown prints,
-	 * set Content-Length, emit headers/body, optionally flush via FastCGI, and exit.
-	 *
-	 * @param array  $respHeaders
-	 * @param string $body
-	 *
-	 * @return void
-	 */
 	private function sendCleanResponse( array $respHeaders, string $body ) {
-		// [Goal] Prevent notices/warnings from polluting the proxied response.
-		// Disable error display at runtime and swallow PHP errors from being echoed.
 		if ( function_exists( 'ini_set' ) ) {
 			@ini_set( 'display_errors', '0' );
 		}
 		set_error_handler(
             function () {
-                // Swallow all PHP errors (still logged if logging is enabled)
                 return true;
             },
             E_ALL
         );
 
-		// [Goal] Ensure no previous buffered output leaks into the response.
-		// Clear all active output buffers before sending headers/body.
 		while ( ob_get_level() > 0 ) {
 			@ob_end_clean();
 		}
 
-		// [Goal] Avoid typical WordPress shutdown callbacks that might print.
-		// This does not affect PHP-level shutdown functions but prevents WP hooks from emitting content.
 		if ( function_exists( 'remove_all_actions' ) ) {
 			remove_all_actions( 'shutdown' );
 		}
 
-		// [Goal] Provide a strict, predictable response size.
-		// Add Content-Length so clients can trust the payload size.
 		$respHeaders['Content-Length'] = (string) strlen( (string) $body );
 
-		// Emit headers
 		foreach ( $respHeaders as $name => $value ) {
 			if ( $name === '' ) {
 				continue;
@@ -186,21 +186,26 @@ final class WPML_Proxy {
 			@header( $line, true );
 		}
 
-		// Emit body
-		echo (string) $body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo (string) $body;
 
-		// [Goal] Flush response to client ASAP when using FPM/FastCGI.
 		if ( function_exists( 'fastcgi_finish_request' ) ) {
 			@fastcgi_finish_request();
 		}
 
-		// [Goal] Terminate immediately to avoid any further processing.
 		exit;
 	}
 
-	/**
-	 * @return false|string|null
-	 */
+	public static function policy() {
+		return \WPML\Request\Policy\Registry::declare(
+			\WPML\Request\Policy\Registry::PSEUDO_ROUTE,
+			self::ROUTE,
+			\WPML\Request\Policy\Policy::capability(
+				[ 'translate', 'manage_translations' ],
+				\WPML\Request\Policy\Authenticity::restNonce()
+			)
+		);
+	}
+
 	public static function getRestRoute() {
 		$rest_route = isset( $_GET['rest_route'] ) ? (string) $_GET['rest_route'] : null;
 		if ( ! $rest_route ) {
@@ -213,11 +218,6 @@ final class WPML_Proxy {
 		return $rest_route;
 	}
 
-	/**
-	 * Extract REST nonce from headers or params.
-	 *
-	 * @return string|null
-	 */
 	private static function getWPNonce() {
 		if ( isset( $_SERVER['HTTP_X_WP_NONCE'] ) && $_SERVER['HTTP_X_WP_NONCE'] !== '' ) {
 			return (string) $_SERVER['HTTP_X_WP_NONCE'];
@@ -238,39 +238,17 @@ final class WPML_Proxy {
 		if ( $url === '' || $method === '' ) {
 			throw new InvalidArgumentException( 'Required parameters missing.' );
 		}
-		$parts   = parse_url( $url );
-		$host    = isset( $parts['host'] ) ? strtolower( (string) $parts['host'] ) : '';
-		$allowed = $this->allowedHosts();
-		if ( $host === '' || ! $this->isAllowedHost( $host, $allowed ) ) {
-			throw new InvalidArgumentException( 'Invalid URL. Host is not allowed.' );
-		}
+
+		self::destinations()->assert( $url );
 	}
 
-
-	private function isAllowedHost( string $host, array $allowed ) {
-		foreach ( $allowed as $pattern ) {
-			$pattern = strtolower( trim( (string) $pattern ) );
-			if ( $pattern === '' ) {
-				continue;
-			}
-			if ( strpos( $pattern, '*.' ) === 0 ) {
-				$base   = substr( $pattern, 2 );
-				$suffix = '.' . $base;
-				if ( $host === $base || ( strlen( $host ) > strlen( $suffix ) && substr( $host, - strlen( $suffix ) ) === $suffix ) ) {
-					return true;
-				}
-			}
-			if ( $host === $pattern ) {
-				return true;
-			}
-		}
-
-		return false;
+	public static function destinations() {
+		return TrustedDestinations::forAteAndAms();
 	}
 
 	private function buildUrl( string $url, $query ) {
 		if ( is_array( $query ) ) {
-			$query = http_build_query( $query );
+			$query = \wpml_http_build_query( $query );
 		}
 		if ( is_string( $query ) && $query !== '' ) {
 			$parts = parse_url( $url );
@@ -323,14 +301,6 @@ final class WPML_Proxy {
 		return $out;
 	}
 
-	/**
-	 * Normalize/force Content-Type from URL extension
-	 *
-	 * @param array  $headers
-	 * @param string $url
-	 *
-	 * @return array
-	 */
 	private function maybeForceContentTypeByUrl( array $headers, string $url ): array {
 		$path = (string) parse_url( $url, PHP_URL_PATH );
 		$ext  = strtolower( (string) pathinfo( $path, PATHINFO_EXTENSION ) );
@@ -365,15 +335,25 @@ final class WPML_Proxy {
 		return $headers;
 	}
 
+	private function isStaticAssetRelay( $url, $method ) {
+		if ( strtoupper( $method ) !== 'GET' ) {
+			return false;
+		}
+
+		$path = (string) parse_url( $url, PHP_URL_PATH );
+		$ext  = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
+
+		$assetExtensions = [ 'js', 'mjs', 'css', 'map', 'svg', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'ico', 'woff', 'woff2', 'ttf', 'wasm' ];
+
+		return in_array( $ext, $assetExtensions, true );
+	}
+
 	private function readRawBody() {
 		$raw = file_get_contents( 'php://input' );
 
 		return $raw === false ? '' : $raw;
 	}
 
-	/**
-	 * @return void
-	 */
 	public static function error( $status_code, $error, $message ) {
 		if ( function_exists( 'status_header' ) ) {
 			status_header( $status_code );
@@ -381,7 +361,6 @@ final class WPML_Proxy {
 		if ( function_exists( 'http_response_code' ) ) {
 			@http_response_code( $status_code );
 		}
-		// Optional: ensure no prior buffered output
 		while ( ob_get_level() > 0 ) {
 			@ob_end_clean(); }
 
@@ -395,7 +374,6 @@ final class WPML_Proxy {
 		@header( 'Content-Length: ' . strlen( (string) $payload ), true );
 
 		echo (string) $payload;
-		// Optional: fastcgi_finish_request if available
 		if ( function_exists( 'fastcgi_finish_request' ) ) {
 			@fastcgi_finish_request(); }
 		exit;

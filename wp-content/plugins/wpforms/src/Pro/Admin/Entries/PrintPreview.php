@@ -98,6 +98,12 @@ class PrintPreview {
 	 */
 	public function is_print_page() {
 
+		// The print preview is a real admin page load only. `is_admin()` is also true on
+		// admin-ajax.php, where no admin page is rendered and the request may be unauthenticated.
+		if ( wp_doing_ajax() ) {
+			return false;
+		}
+
 		// Only proceed for the form builder.
 		return wpforms_is_admin_page( 'entries', 'print' );
 	}
@@ -121,9 +127,16 @@ class PrintPreview {
 		$entry_ids = array_map( 'absint', explode( ',', wp_unslash( $_GET['entry_id'] ) ) );
 
 		foreach ( $entry_ids as $entry_id ) {
+			// Filter entries to ensure the current user can access their details.
+			// Checked explicitly because the entry handler only applies its implicit
+			// `view_entry_single` default when `Access\Capabilities::init_allowed()` is true,
+			// which is false for AJAX-classified requests.
+			if ( ! wpforms_current_user_can( 'view_entry_single', $entry_id ) ) {
+				continue;
+			}
+
 			$_entry = wpforms()->obj( 'entry' )->get( $entry_id );
 
-			// Filter entries to ensure the current user can access their details.
 			if ( ! is_object( $_entry ) ) {
 				continue;
 			}
@@ -369,7 +382,7 @@ class PrintPreview {
 
 		// phpcs:disable WPForms.PHP.ValidateHooks.InvalidHookName
 		/** This filter is documented in src/SmartTags/SmartTag/FieldHtmlId.php.*/
-		$field_value     = isset( $field['value'] ) ? apply_filters( 'wpforms_html_field_value', wp_strip_all_tags( $field['value'] ), $field, $this->form_data, 'entry-single' ) : '';
+		$field_value     = isset( $field['value'] ) ? apply_filters( 'wpforms_html_field_value', wpforms_neutralize_html_tags( wpforms_flatten_field_value( $field['value'] ) ), $field, $this->form_data, 'entry-single' ) : '';
 		$field_value_raw = $field['value_raw'] ?? '';
 		// phpcs:enable WPForms.PHP.ValidateHooks.InvalidHookName
 
@@ -434,7 +447,7 @@ class PrintPreview {
 		$template_name   = $is_image_choice && ! $is_images_hide ? 'image-choice' : 'choice';
 		$is_dynamic      = ! empty( $field['dynamic'] );
 
-		$field_value     = $field['value'] ?? '';
+		$field_value     = wpforms_flatten_field_value( $field['value'] ?? '' );
 		$field_value_raw = $field['value_raw'] ?? '';
 
 		// If a field supports the "Show Values" feature and a default value is an empty string,
@@ -449,7 +462,7 @@ class PrintPreview {
 
 		// phpcs:disable WPForms.PHP.ValidateHooks.InvalidHookName
 		/** This filter is documented in src/SmartTags/SmartTag/FieldHtmlId.php.*/
-		$value = apply_filters( 'wpforms_html_field_value', wp_strip_all_tags( $value ), $field, $this->form_data, 'entry-single' );
+		$value = apply_filters( 'wpforms_html_field_value', wpforms_neutralize_html_tags( $value ), $field, $this->form_data, 'entry-single' );
 		// phpcs:enable WPForms.PHP.ValidateHooks.InvalidHookName
 
 		if ( $is_dynamic ) {
@@ -489,7 +502,7 @@ class PrintPreview {
 
 		return sprintf(
 			'<div class="field-value-default-mode">%1$s</div><div class="field-value-choices-mode">%2$s</div>',
-			wpforms_is_empty_string( $value ) ? esc_html__( 'Empty', 'wpforms' ) : $value,
+			wpforms_is_empty_string( $value ) ? esc_html__( 'Empty', 'wpforms' ) : wpforms_esc_entry_field_value( $value ),
 			wpforms_esc_unselected_choices( $choices_html )
 		);
 	}
@@ -544,10 +557,12 @@ class PrintPreview {
 		$show_values      = $this->form_data['fields'][ $field['id'] ]['show_values'] ?? false;
 		$choice_value_key = ! wpforms_is_empty_string( $field['value_raw'] ) && $show_values ? 'value' : 'label';
 
-		$label = wpforms_is_empty_string( $choice[ $choice_value_key ] )
+		// Guard against a missing dynamic key (label or value) on a label-less leftover choice.
+		// A '0' is a valid value, so check with isset() rather than empty().
+		$label = isset( $choice[ $choice_value_key ] ) && ! wpforms_is_empty_string( $choice[ $choice_value_key ] )
+			? sanitize_text_field( $choice[ $choice_value_key ] )
 			/* translators: %s - choice number. */
-			? sprintf( esc_html__( 'Choice %s', 'wpforms' ), $key )
-			: sanitize_text_field( $choice[ $choice_value_key ] );
+			: sprintf( esc_html__( 'Choice %s', 'wpforms' ), $key );
 
 		return in_array( $label, $active_choices, true );
 	}

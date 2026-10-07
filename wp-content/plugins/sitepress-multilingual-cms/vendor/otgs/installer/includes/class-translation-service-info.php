@@ -29,7 +29,7 @@ class Translation_Service_Info {
 			$save_settings = true;
 		}
 
-		if ( ! empty( $data->ts_info['client_id'] ) ) { // can be updated
+		if ( ! empty( $data->ts_info['client_id'] ) ) {
 			$settings['repositories'][ $repository_id ]['ts_info']['client_id'] = $data->ts_info['client_id'];
 
 			$save_settings = true;

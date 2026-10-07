@@ -2,12 +2,31 @@
 
 namespace WPForms\Pro\Admin\Entries\Export\Traits;
 
+use Exception;
+
 /**
  * Export trait.
  *
  * @since 1.8.5
  */
 trait Export {
+
+	/**
+	 * Object-level access check: the current user must be allowed to view entries of the exact form.
+	 *
+	 * @since 2.0.1
+	 *
+	 * @param int $form_id Form ID the export request is scoped to.
+	 *
+	 * @throws Exception When entries of the given form are not accessible to the current user.
+	 */
+	private function guard_form_entries_access( int $form_id ) {
+
+		if ( ! $form_id || ! wpforms_current_user_can( 'view_entries_form_single', $form_id ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Reused, already-escaped message from Export::$errors.
+			throw new Exception( $this->export->errors['security'] );
+		}
+	}
 
 	/**
 	 * Get dynamic columns notice.
@@ -91,6 +110,7 @@ trait Export {
 			'checkbox',
 			'file-upload',
 			'likert_scale',
+			'ranking',
 			'payment-checkbox',
 			'payment-single',
 			'payment-select',
@@ -116,7 +136,7 @@ trait Export {
 		}
 
 		// The rest of the fields are multiple choice by default.
-		if ( in_array( $type, [ 'checkbox', 'payment-checkbox', 'likert_scale', 'address' ], true ) ) {
+		if ( in_array( $type, [ 'checkbox', 'payment-checkbox', 'likert_scale', 'ranking', 'address' ], true ) ) {
 			return true;
 		}
 

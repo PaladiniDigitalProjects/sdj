@@ -9,14 +9,8 @@ use function WPML\FP\pipe;
 
 class AteFieldReorder {
 
-	/**
-	 * @var array
-	 */
 	private $fieldsOrder;
 
-	/**
-	 * @var AteFieldAdjuster
-	 */
 	private $adjuster;
 
 	public function __construct( array $formData, AteFieldAdjuster $adjuster ) {
@@ -71,11 +65,9 @@ class AteFieldReorder {
 				$bPartsLength = $getPartsLength( $b );
 
 				if ( $aPartsLength !== $bPartsLength ) {
-					// Nested strings should come last.
 					return $aPartsLength - $bPartsLength;
 				}
 
-				// Same field ID and parts length: check label precedence (symmetric).
 				$isLabelA = Str::startsWith( 'label', $getStringName( $a ) );
 				$isLabelB = Str::startsWith( 'label', $getStringName( $b ) );
 
@@ -85,16 +77,13 @@ class AteFieldReorder {
 					return 1;
 				}
 
-				// Same field, same parts, same label status: use original index (stable).
 				return $getOriginalIndex( $a ) - $getOriginalIndex( $b );
 			}
 
-			// Different field IDs: use form order with fallback.
 			$orderA    = $this->fieldsOrder[ $getFieldId( $a ) ] ?? PHP_INT_MAX;
 			$orderB    = $this->fieldsOrder[ $getFieldId( $b ) ] ?? PHP_INT_MAX;
 			$orderDiff = $orderA - $orderB;
 
-			// If form order differs, use it; otherwise stable tie-breaker.
 			return 0 !== $orderDiff ? $orderDiff : ( $getOriginalIndex( $a ) - $getOriginalIndex( $b ) );
 		};
 

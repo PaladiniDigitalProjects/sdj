@@ -5,7 +5,6 @@ use WPML\FP\Obj;
 
 class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 
-	/** @var array $shorcodes */
 	private $shortcodes = [
 		WPML_PB_Shortcode_Content_Wrapper::WRAPPER_SHORTCODE_NAME => [
 			'encoding'           => '',
@@ -16,14 +15,26 @@ class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 		],
 	];
 
-	/** @var  WPML_PB_Factory $factory */
 	private $factory;
 
-	/** @var WPML_Page_Builder_Settings $page_builder_settings */
 	private $page_builder_settings;
+
+	private $shortcodes_provider = null;
 
 	public function __construct( WPML_Page_Builder_Settings $page_builder_settings ) {
 		$this->page_builder_settings = $page_builder_settings;
+	}
+
+	public function set_shortcodes_provider( callable $provider ) {
+		$this->shortcodes_provider = $provider;
+	}
+
+	private function ensure_shortcodes_loaded() {
+		if ( null !== $this->shortcodes_provider ) {
+			$provider                  = $this->shortcodes_provider;
+			$this->shortcodes_provider = null;
+			$this->add_shortcodes( (array) $provider() );
+		}
 	}
 
 	public function add_shortcodes( $shortcode_data ) {
@@ -55,22 +66,27 @@ class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 	}
 
 	public function get_shortcodes() {
+		$this->ensure_shortcodes_loaded();
 		return array_keys( $this->shortcodes );
 	}
 
 	public function get_shortcode_attributes( $tag ) {
+		$this->ensure_shortcodes_loaded();
 		return array_keys( $this->shortcodes[ $tag ]['attributes'] );
 	}
 
 	public function get_shortcode_tag_encoding( $tag ) {
+		$this->ensure_shortcodes_loaded();
 		return $this->shortcodes[ $tag ]['encoding'];
 	}
 
 	public function get_shortcode_tag_encoding_condition( $tag ) {
+		$this->ensure_shortcodes_loaded();
 		return $this->shortcodes[ $tag ]['encoding-condition'];
 	}
 
 	public function get_shortcode_tag_type( $tag ) {
+		$this->ensure_shortcodes_loaded();
 		if ( $this->shortcodes[ $tag ]['type'] ) {
 			return strtoupper( $this->shortcodes[ $tag ]['type'] );
 		}
@@ -78,14 +94,17 @@ class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 	}
 
 	public function get_shortcode_ignore_content( $tag ) {
+		$this->ensure_shortcodes_loaded();
 		return $this->shortcodes[ $tag ]['ignore-content'];
 	}
 
 	public function get_shortcode_attribute_encoding( $tag, $attribute ) {
+		$this->ensure_shortcodes_loaded();
 		return $this->shortcodes[ $tag ]['attributes'][ $attribute ]['encoding'];
 	}
 
 	public function get_shortcode_attribute_type( $tag, $attribute ) {
+		$this->ensure_shortcodes_loaded();
 		if ( $this->shortcodes[ $tag ]['attributes'][ $attribute ]['type'] ) {
 			return strtoupper( $this->shortcodes[ $tag ]['attributes'][ $attribute ]['type'] );
 		}
@@ -93,6 +112,7 @@ class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 	}
 
 	public function get_shortcode_attribute_label( $tag, $attribute ) {
+		$this->ensure_shortcodes_loaded();
 		$labelPath = 'content' === $attribute ? [ $tag, 'label' ] : [ $tag, 'attributes', $attribute, 'label' ];
 
 		return Obj::pathOr( '', $labelPath, $this->shortcodes );
@@ -102,23 +122,13 @@ class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 		return $this->factory->get_shortcode_parser( $this );
 	}
 
-	/**
-	 * @param \WP_Post|stdClass $post
-	 */
 	public function register_strings( $post ) {
 		if ( Gutenberg::doesNotHaveBlock( $post->post_content ) ) {
 			$this->register_strings_in_content( $post->ID, $post->post_content, null );
 		}
 	}
 
-	/**
-	 * @param string|int                           $post_id
-	 * @param string                               $content
-	 * @param WPML\PB\Shortcode\StringCleanUp|null $stringCleanUp
-	 *
-	 * @return bool
-	 */
-	public function register_strings_in_content( $post_id, $content, $stringCleanUp = null ) {
+	public function register_strings_in_content( $post_id, $content, ?WPML\PB\Shortcode\StringCleanUp $stringCleanUp = null ) {
 		$register_shortcodes = $this->factory->get_register_shortcodes( $this );
 
 		return $register_shortcodes->register_shortcode_strings( $post_id, $content, $stringCleanUp );
@@ -157,10 +167,6 @@ class WPML_PB_Shortcode_Strategy implements IWPML_PB_Strategy {
 		return $this->factory->get_string_translations( $this )->remove_string( $string_data );
 	}
 
-	/**
-	 * @param int    $post_id
-	 * @param string $post_content
-	 */
 	public function migrate_location( $post_id, $post_content ) {
 		$migrate_locations = $this->factory->get_register_shortcodes( $this, true );
 		$migrate_locations->register_shortcode_strings( $post_id, $post_content, null );

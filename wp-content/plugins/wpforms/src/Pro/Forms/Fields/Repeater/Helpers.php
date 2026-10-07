@@ -273,6 +273,123 @@ class Helpers {
 	}
 
 	/**
+	 * Renumber repeater clone keys in entry fields to ordinal row positions.
+	 *
+	 * Clone numbers are assigned in the browser and are not guaranteed to be
+	 * contiguous: deleting a row before submitting leaves gaps (e.g. 3, 4
+	 * instead of 2, 3). Renumbering makes the Nth row of every entry use the
+	 * same clone key, so bulk export columns align across entries.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array $entry_fields Entry fields keyed by field ID.
+	 * @param array $form_fields  Form fields.
+	 *
+	 * @return array
+	 */
+	public static function normalize_entry_fields_clone_numbers( array $entry_fields, array $form_fields ): array {
+
+		$key_map            = [];
+		$remapped_repeaters = [];
+
+		foreach ( self::get_repeater_fields( $form_fields ) as $repeater_id => $repeater_field ) {
+			$repeater_field  = self::normalize_repeater_setting( $repeater_field );
+			$original_fields = self::get_repeater_original_field_ids( $repeater_field );
+
+			$clones = self::get_ordered_clones( $entry_fields, $original_fields );
+
+			foreach ( $clones as $index => $clone_number ) {
+				$ordinal = $index + 2;
+
+				if ( $ordinal === (int) $clone_number ) {
+					continue;
+				}
+
+				$remapped_repeaters[ $repeater_id ] = $repeater_id;
+
+				foreach ( $original_fields as $original_field_id ) {
+					$key_map[ (int) $original_field_id . '_' . (int) $clone_number ] = (int) $original_field_id . '_' . $ordinal;
+				}
+			}
+		}
+
+		if ( ! $key_map ) {
+			return $entry_fields;
+		}
+
+		$normalized = self::apply_clone_key_map( $entry_fields, $key_map );
+
+		// A stale clone list would contradict the renumbered keys, so drop it and let it be derived from them.
+		foreach ( $remapped_repeaters as $repeater_id ) {
+			if ( isset( $normalized[ $repeater_id ] ) && is_array( $normalized[ $repeater_id ] ) ) {
+				unset( $normalized[ $repeater_id ]['clone_list'] );
+			}
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Collect repeater clone numbers in a single ordered pass over the entry keys.
+	 *
+	 * This keeps the visual row order even when a row misses some of its child keys.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array $entry_fields    Entry fields keyed by field ID.
+	 * @param array $original_fields Original field IDs of the repeater.
+	 *
+	 * @return array
+	 */
+	private static function get_ordered_clones( array $entry_fields, array $original_fields ): array {
+
+		$original_ids = array_map( 'intval', $original_fields );
+		$clones       = [];
+
+		foreach ( array_keys( $entry_fields ) as $field_key ) {
+			if ( ! wpforms_is_repeater_child_field( $field_key ) ) {
+				continue;
+			}
+
+			$ids = wpforms_get_repeater_field_ids( $field_key );
+
+			// Skip clones that belong to other repeaters in the same form.
+			if ( in_array( $ids['original_id'], $original_ids, true ) ) {
+				$clones[ $ids['index_id'] ] = $ids['index_id'];
+			}
+		}
+
+		return array_values( $clones );
+	}
+
+	/**
+	 * Rekey entry fields according to the given clone key map.
+	 *
+	 * @since 2.0.2
+	 *
+	 * @param array $entry_fields Entry fields keyed by field ID.
+	 * @param array $key_map      Map of old clone keys to new ones.
+	 *
+	 * @return array
+	 */
+	private static function apply_clone_key_map( array $entry_fields, array $key_map ): array {
+
+		$normalized = [];
+
+		foreach ( $entry_fields as $key => $field ) {
+			$new_key = $key_map[ (string) $key ] ?? $key;
+
+			if ( $new_key !== $key && is_array( $field ) && isset( $field['id'] ) ) {
+				$field['id'] = $new_key;
+			}
+
+			$normalized[ $new_key ] = $field;
+		}
+
+		return $normalized;
+	}
+
+	/**
 	 * Create repeater rows.
 	 *
 	 * @since 1.8.9

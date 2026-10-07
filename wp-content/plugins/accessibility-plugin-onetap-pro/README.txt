@@ -3,7 +3,7 @@ Donate link: https://wponetap.com/
 Tags:              accessibility, tools
 Requires at least: 6.0
 Tested up to:      6.9
-Stable tag:        6.14.0
+Stable tag:        6.15.1
 Requires PHP:      7.4
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html

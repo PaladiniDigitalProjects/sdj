@@ -385,7 +385,7 @@ class WPForms_Updater {
 			'package'          => '',
 			'download_url'     => '',
 			'changelog'        => implode( '', $plugin_info['changelog'] ?? [] ),
-			'icon'             => $plugin_info['icon'] ?? '',
+			'icon'             => ! empty( $plugin_info['icon'] ) ? $plugin_info['icon'] : 'sullie.png',
 			'icons'            => $plugin_info['icons'] ?? [],
 			'banners'          => (object) [
 				'low'  => 'https://plugins.svn.wordpress.org/wpforms-lite/assets/banner-772x250.png',

@@ -5,19 +5,10 @@ use WPML\ST\TranslationFile\StringCollation;
 class WPML_ST_Strings_Stats {
 	use StringCollation;
 
-	/**
-	 * @var SitePress
-	 */
 	private $sitepress;
 
-	/**
-	 * @var wpdb
-	 */
 	private $wpdb;
 
-	/**
-	 * @var array
-	 */
 	private $stats;
 
 	public function __construct( wpdb $wpdb, SitePress $sitepress ) {
@@ -25,11 +16,6 @@ class WPML_ST_Strings_Stats {
 		$this->sitepress = $sitepress;
 	}
 
-	/**
-	 * @param string $component_name
-	 * @param string $type
-	 * @param string $domain
-	 */
 	public function update( $component_name, $type, $domain ) {
 		$count           = $this->get_count( $domain );
 		$string_settings = $this->sitepress->get_setting( 'st' );
@@ -38,11 +24,6 @@ class WPML_ST_Strings_Stats {
 		$this->sitepress->save_settings();
 	}
 
-	/**
-	 * @param string $domain
-	 *
-	 * @return int
-	 */
 	private function get_count( $domain ) {
 		if ( ! $this->stats ) {
 			$this->set_stats();
@@ -52,7 +33,13 @@ class WPML_ST_Strings_Stats {
 	}
 
 	private function set_stats() {
-		$count_query = 'SELECT context, COUNT(id) count FROM ' . $this->wpdb->prefix . 'icl_strings GROUP BY context ' . $this->getCollateForContextColumn( $this->wpdb );
-		$this->stats = $this->wpdb->get_results( $count_query, OBJECT_K );
+		$wpdb        = $this->wpdb;
+		$this->stats = $wpdb->get_results(
+			sprintf(
+				"SELECT context, COUNT(id) count FROM {$wpdb->prefix}icl_strings GROUP BY context %s",
+				esc_sql( $this->getCollateForContextColumn( $wpdb ) )
+			),
+			OBJECT_K
+		);
 	}
 }
