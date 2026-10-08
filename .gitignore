@@ -93,3 +93,6 @@ wp-content/themes/**/*.zip
 sql/
 *.sql
 *.sql.gz
+
+# Predictive Search: índice generado por el plugin (se regenera solo)
+wp-content/plugins/predictive-search-plugin/index/search-*
